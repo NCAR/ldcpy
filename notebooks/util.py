@@ -5,6 +5,15 @@ from scipy import stats as stats
 ###############
 
 def open_datasets(list_of_files, ensemble_names):
+    """
+    Open several different netCDF files, concanate across
+    a new 'ensemble' dimension
+    """
+
+    # Error checking:
+    # list_of_files and ensemble_names must be same length
+    assert len(list_of_files) == len(ensemble_names), "open_dataset arguments must be same length"
+
     ds_list = []
     for filename in list_of_files:
         ds_list.append(xr.open_dataset(filename))
