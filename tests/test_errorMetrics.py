@@ -73,4 +73,12 @@ class TestErrorMetrics(TestCase):
         em.get_all_metrics()
         print(em.get_all_metrics(exclude={"error", "squared_error", "absolute_error"}))
 
+    def test_TS_02(self):
+        import xarray as xr
+        import zfpy
 
+        ds = xr.open_dataset('../data/orig.TS.100days.nc')
+
+        TS = ds.TS
+
+        print(type(TS))

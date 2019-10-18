@@ -1,4 +1,5 @@
 import numpy as np
+import xarray as xr
 from scipy import stats as stats
 
 
@@ -25,6 +26,7 @@ class ErrorMetrics(object):
     }
 
     def __init__(self, observed: np.ndarray, modelled: np.ndarray) -> None:
+        # TODO: Support also xarray
         if isinstance(observed, np.ndarray) and isinstance(modelled, np.ndarray):
             if observed.shape != modelled.shape:
                 raise ValueError("both observed and modelled must have the same shape")
