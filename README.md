@@ -1,4 +1,4 @@
-# ldc-tools
+# ldcpy
 tools for analyzing and applying lossy data compression to geoscience data
 
 ## References
