@@ -8,7 +8,7 @@ from cartopy.util import add_cyclic_point
 
 ###############
 
-def plot_compare_mean(ds, varname, ens_o, ens_r, method_str, nlevs=24):
+def compare_mean(ds, varname, ens_o, ens_r, method_str, nlevs=24):
     """
     visualize mean value at each grid point for orig and compressed (time-series)
     assuming FV data and put the weighted mean
@@ -52,7 +52,7 @@ def plot_compare_mean(ds, varname, ens_o, ens_r, method_str, nlevs=24):
 
 ###############
 
-def plot_compare_std(ds, varname, ens_o, ens_r, method_str, nlevs=24):
+def compare_std(ds, varname, ens_o, ens_r, method_str, nlevs=24):
     """
     TODO: visualize std dev at each grid point for orig and compressed (time-series)
     assuming FV mean
@@ -91,7 +91,7 @@ def plot_compare_std(ds, varname, ens_o, ens_r, method_str, nlevs=24):
 
 ###############
 
-def plot_mean_error(ds, varname, ens_o, ens_r, method_str):
+def mean_error(ds, varname, ens_o, ens_r, method_str):
     """
     visualize the mean error
     want to be able to input multiple?
@@ -118,7 +118,7 @@ def plot_mean_error(ds, varname, ens_o, ens_r, method_str):
 
 ###############
 
-def plot_error_time_series(ds, varname, ens_o, ens_r):
+def error_time_series(ds, varname, ens_o, ens_r):
     """
     error time series
     """
