@@ -128,8 +128,8 @@ def error_time_series(ds, varname, ens_o, ens_r):
 
 def _calc_contour_levels(dat_1, dat_2, nlevs):
     # both plots use same contour levels
-    minval = np.floor(np.nanmin(np.minimum(dat_1, dat_2)))
-    maxval = np.ceil(np.nanmax(np.maximum(dat_1, dat_2)))
+    minval = np.nanmin(np.minimum(dat_1, dat_2))
+    maxval = np.nanmax(np.maximum(dat_1, dat_2))
     levels = minval + np.arange(nlevs+1)*(maxval - minval)/nlevs
     #print('Min value: {}\nMax value: {}'.format(minval, maxval))
     return levels
