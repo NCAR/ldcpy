@@ -26,6 +26,19 @@ def open_datasets(list_of_files, ensemble_names):
 
 ###############
 
+def print_stats(ds, varname, ens_o, ens_r, time=0):
+    print('Comparing {} data to {} data'.format(ens_o, ens_r))
+    orig_val = ds[varname].sel(ensemble=ens_o).isel(time=time)
+    recon_val = ds[varname].sel(ensemble=ens_r).isel(time=time)
+    print('KS = {}'.format(calc_ks(orig_val, recon_val)))
+    print('corr = {}'.format(calc_corr(orig_val, recon_val)))
+    print('nrmse = {}'.format(calc_nrmse(orig_val, recon_val)))
+    print('mae = {}'.format(calc_mae(orig_val, recon_val)))
+    print('me = {}'.format(calc_me(orig_val, recon_val)))
+    print('me = {}'.format(calc_maxerr(orig_val, recon_val)))
+
+###############
+
 def calc_ks(orig_val, recon_val):
     """
     calculate K-S p-value
