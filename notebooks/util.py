@@ -1,5 +1,19 @@
+import xarray as xr
 import numpy as np
 from scipy import stats as stats
+
+###############
+
+def open_datasets(list_of_files, ensemble_names):
+    ds_list = []
+    for filename in list_of_files:
+        ds_list.append(xr.open_dataset(filename))
+
+    full_ds = xr.concat(ds_list, 'ensemble', data_vars=['TS'])
+    full_ds['ensemble'] = xr.DataArray(ensemble_names, dims='ensemble')
+    del ds_list
+
+    return(full_ds)
 
 ###############
 
