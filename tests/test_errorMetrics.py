@@ -53,4 +53,7 @@ class TestErrorMetrics(TestCase):
         )
 
         import json
+        # print(em.get_all_metrics())
         print(json.dumps(em.get_all_metrics(), indent=4, separators=(",", ": ")))
+
+        print(json.dumps(em.get_all_metrics({"error", "squared_error", "absolute_error"}), indent=4, separators=(",", ": ")))

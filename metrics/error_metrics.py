@@ -3,8 +3,32 @@ from scipy import stats as stats
 
 
 class ErrorMetrics(object):
+    _available_metrics_name = {
+        "mean_observed",
+        "variance_observed",
+        "standard_deviation_observed",
+        "mean_modelled",
+        "variance_modelled",
+        "standard_deviation_modelled",
+        "error",
+        "mean_error",
+        "min_error",
+        "max_error",
+        "absolute_error",
+        "squared_error",
+        "mean_absolute_error",
+        "mean_squared_erro",
+        "root_mean_squared_error",
+        "ks_p_value",
+        "covariance",
+        "pearson_correlation_coefficient"
+    }
+
     def __init__(self, observed: np.ndarray, modelled: np.ndarray) -> None:
         if isinstance(observed, np.ndarray) and isinstance(modelled, np.ndarray):
+            if observed.shape != modelled.shape:
+                raise ValueError("both observed and modelled must have the same shape")
+            self._shape = observed.shape
             self._observed = observed if (observed.dtype == np.float64) else observed.astype(np.float64)
             self._mean_observed = None
             self._variance_observed = None
@@ -33,29 +57,23 @@ class ErrorMetrics(object):
     def _is_memoized(self, metric_name: str) -> bool:
         return hasattr(self, metric_name) and (self.__getattribute__(metric_name) is not None)
 
-    def get_all_metrics(self) -> dict:
-        return {
-            "mean_observed":                    self.mean_observed,
-            "variance_observed":                self.variance_observed,
-            "standard_deviation_observed":      self.standard_deviation_observed,
+    @classmethod
+    def get_available_metrics_name(cls):
+        return cls._available_metrics_name.copy()
 
-            "mean_modelled":                    self.mean_modelled,
-            "variance_modelled":                self.variance_modelled,
-            "standard_deviation_modelled":      self.standard_deviation_modelled,
+    def get_all_metrics(self, exclude=None) -> dict:
+        exclude = set() if exclude is None else exclude
+        if isinstance(exclude, set) and \
+                all(map(lambda e: isinstance(e, str), exclude)):
 
-            "error":                            self.error.tolist(),
-            "mean_error":                       self.mean_error,
-            "min_error":                        self.min_error,
-            "max_error":                        self.max_error,
-            "absolute_error":                   self.absolute_error.tolist(),
-            "squared_error":                    self.squared_error.tolist(),
-            "mean_absolute_error":              self.mean_absolute_error,
-            "mean_squared_erro":                self.mean_squared_error,
-            "root_mean_squared_error":          self.root_mean_squared_error,
-            "ks_p_value":                       self.ks_p_value,
-            "covariance":                       self.covariance,
-            "pearson_correlation_coefficient":  self.pearson_correlation_coefficient
-        }
+            output = {}
+            for name in self.get_available_metrics_name():
+                if name not in exclude:
+                    tmp_value = self.get_metrics_by_name(name)
+                    output[name] = tmp_value if (tmp_value.size == 1) else tmp_value.tolist()
+            return output
+        else:
+            raise TypeError("exclude must be a list of string values.")
 
     @property
     def observed(self) -> np.ndarray:
@@ -241,9 +259,11 @@ class ErrorMetrics(object):
     @property
     def ks_p_value(self):
         if not self._is_memoized("_ks_p_value"):
-            self._ks_p_value = stats.pearsonr(
-                np.ravel(self.observed),
-                np.ravel(self.modelled)
+            self._ks_p_value = np.asanyarray(
+                stats.pearsonr(
+                    np.ravel(self.observed),
+                    np.ravel(self.modelled)
+                )
             )
         return self._ks_p_value
 
@@ -275,3 +295,46 @@ class ErrorMetrics(object):
     @pearson_correlation_coefficient.setter
     def pearson_correlation_coefficient(self, value):
         pass
+
+    def get_metrics_by_name(self, name: str):
+        if isinstance(name, str):
+            if name == "mean_observed":
+                return self.mean_observed
+            if name == "variance_observed":
+                return self.variance_modelled
+            if name == "standard_deviation_observed":
+                return self.standard_deviation_observed
+            if name == "mean_modelled":
+                return self.mean_modelled
+            if name == "variance_modelled":
+                return self.variance_modelled
+            if name == "standard_deviation_modelled":
+                return self.standard_deviation_observed
+            if name == "error":
+                return self.error
+            if name == "mean_error":
+                return self.mean_error
+            if name == "min_error":
+                return self.min_error
+            if name == "max_error":
+                return self.max_error
+            if name == "absolute_error":
+                return self.absolute_error
+            if name == "squared_error":
+                return self.squared_error
+            if name == "mean_absolute_error":
+                return self.mean_absolute_error
+            if name == "mean_squared_erro":
+                return self.mean_squared_error
+            if name == "root_mean_squared_error":
+                return self.root_mean_squared_error
+            if name == "ks_p_value":
+                return self.ks_p_value
+            if name == "covariance":
+                return self.covariance
+            if name == "pearson_correlation_coefficient":
+                return self.pearson_correlation_coefficient
+
+            raise ValueError(f"there is no metrics with the name: {name}.")
+        else:
+            raise TypeError("name must be a string.")
