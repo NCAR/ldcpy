@@ -57,3 +57,20 @@ class TestErrorMetrics(TestCase):
         print(json.dumps(em.get_all_metrics(), indent=4, separators=(",", ": ")))
 
         print(json.dumps(em.get_all_metrics({"error", "squared_error", "absolute_error"}), indent=4, separators=(",", ": ")))
+
+    def test_TS_01(self):
+        import xarray as xr
+        import zfpy
+
+        ds = xr.open_dataset('../data/orig.TS.100days.nc')
+        TS = ds.TS.values
+        TS_compressed = zfpy.compress_numpy(TS, tolerance=0.01)
+        TS_decompressed = zfpy.decompress_numpy(TS_compressed)
+
+        em = ErrorMetrics(observed=TS, modelled=TS_decompressed)
+        print("mean squared error: ", em.mean_squared_error)
+
+        em.get_all_metrics()
+        print(em.get_all_metrics(exclude={"error", "squared_error", "absolute_error"}))
+
+
