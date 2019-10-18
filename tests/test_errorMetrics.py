@@ -1,6 +1,6 @@
 import numpy as np
 from unittest import TestCase
-from metrics.error_metrics import ErrorMetrics
+from ldcpy.error_metrics import ErrorMetrics
 
 
 class TestErrorMetrics(TestCase):

@@ -3,3 +3,4 @@ numpy
 netcdf4
 cython
 scipy
+matplotlib

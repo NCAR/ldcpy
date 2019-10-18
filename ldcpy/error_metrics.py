@@ -52,7 +52,7 @@ class ErrorMetrics(object):
             self._covariance = None
             self._pearson_correlation_coefficient = None
         else:
-            raise TypeError("both measured and observed must be of type numpy.ndarray")
+            raise TypeError(f"both measured and observed must be of type numpy.ndarray. Type(observed): {str(type(observed))}, type(modelled): {str(type(modelled))}")
 
     def _is_memoized(self, metric_name: str) -> bool:
         return hasattr(self, metric_name) and (self.__getattribute__(metric_name) is not None)
