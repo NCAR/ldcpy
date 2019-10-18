@@ -4,3 +4,6 @@ netcdf4
 cython
 scipy
 matplotlib
+cartopy
+cmocean
+jupyterlab
