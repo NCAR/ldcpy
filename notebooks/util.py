@@ -30,16 +30,16 @@ def print_stats(ds, varname, ens_o, ens_r, time=0):
     print('Comparing {} data to {} data'.format(ens_o, ens_r))
     orig_val = ds[varname].sel(ensemble=ens_o).isel(time=time)
     recon_val = ds[varname].sel(ensemble=ens_r).isel(time=time)
-    print('KS = {}'.format(calc_ks(orig_val, recon_val)))
-    print('corr = {}'.format(calc_corr(orig_val, recon_val)))
-    print('nrmse = {}'.format(calc_nrmse(orig_val, recon_val)))
-    print('mae = {}'.format(calc_mae(orig_val, recon_val)))
-    print('me = {}'.format(calc_me(orig_val, recon_val)))
-    print('me = {}'.format(calc_maxerr(orig_val, recon_val)))
+    print('KS = {}'.format(_calc_ks(orig_val, recon_val)))
+    print('corr = {}'.format(_calc_corr(orig_val, recon_val)))
+    print('nrmse = {}'.format(_calc_nrmse(orig_val, recon_val)))
+    print('mae = {}'.format(_calc_mae(orig_val, recon_val)))
+    print('me = {}'.format(_calc_me(orig_val, recon_val)))
+    print('me = {}'.format(_calc_maxerr(orig_val, recon_val)))
 
 ###############
 
-def calc_ks(orig_val, recon_val):
+def _calc_ks(orig_val, recon_val):
     """
     calculate K-S p-value
     """
@@ -50,7 +50,7 @@ def calc_ks(orig_val, recon_val):
 
 ###############
 
-def calc_corr(orig_val, recon_val):
+def _calc_corr(orig_val, recon_val):
     """
     pearson correlation coefficient
     """
@@ -61,7 +61,7 @@ def calc_corr(orig_val, recon_val):
 
 ###############
 
-def calc_nrmse(orig_val, recon_val):
+def _calc_nrmse(orig_val, recon_val):
     """
     normalized (by range) root mean square error
     """
@@ -75,7 +75,7 @@ def calc_nrmse(orig_val, recon_val):
 
 ###############
 
-def calc_mae(orig_val, recon_val):
+def _calc_mae(orig_val, recon_val):
     """
     mean absolute error (not weighted - yet)
     """
@@ -84,7 +84,7 @@ def calc_mae(orig_val, recon_val):
 
 ###############
 
-def calc_me(orig_val, recon_val):
+def _calc_me(orig_val, recon_val):
     """
     mean error
     """
@@ -93,7 +93,7 @@ def calc_me(orig_val, recon_val):
 
 ###############
 
-def calc_maxerr(orig_val, recon_val):
+def _calc_maxerr(orig_val, recon_val):
     """
     max error
     """
