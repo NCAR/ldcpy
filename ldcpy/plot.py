@@ -1,10 +1,12 @@
 import numpy as np
+import xarray as xr
 import matplotlib.pyplot as plt
 #import matplotlib as mpl
 import cartopy
 import cartopy.crs as ccrs
 import cmocean
 from cartopy.util import add_cyclic_point
+import math
 
 ###############
 
@@ -91,6 +93,67 @@ def compare_std(ds, varname, ens_o, ens_r, method_str, nlevs=24):
 
 ###############
 
+def compare_con_var(ds, varname, ens_o, ens_r, method_str, nlevs=24, dir="NS"):
+    """
+    TODO: visualize contrast variance at each grid point for orig and compressed (time-series)
+    assuming FV mean
+    """
+
+    assert dir in ["NS", "EW"], "direction must be NS or EW"
+    if dir == "NS":
+        lat_length = ds[varname].sel(ensemble=ens_o).sizes['lat']
+        o_1, o_2 = xr.align(ds[varname].sel(ensemble=ens_o).head({'lat': lat_length-1}),
+                        ds[varname].sel(ensemble=ens_o).tail({'lat': lat_length-1}), join='override')
+        r_1, r_2 = xr.align(ds[varname].sel(ensemble=ens_r).head({'lat': lat_length-1}),
+                        ds[varname].sel(ensemble=ens_r).tail({'lat': lat_length-1}), join='override')
+    else:
+        lon_length = ds[varname].sel(ensemble=ens_o).sizes['lon']
+        ds[varname].sel(ensemble=ens_o).head({'lon': lon_length-1})
+        o_1, o_2 = xr.align(ds[varname].sel(ensemble=ens_o),
+                            xr.concat([ds[varname].sel(ensemble=ens_o).tail({'lon': lon_length-1}),
+                                       ds[varname].sel(ensemble=ens_o).head({'lon': 1})], dim="lon"), join='override')
+        r_1, r_2 = xr.align(ds[varname].sel(ensemble=ens_r),
+                            xr.concat([ds[varname].sel(ensemble=ens_r).tail({'lon': lon_length-1}),
+                                       ds[varname].sel(ensemble=ens_r).head({'lon': 1})], dim="lon"), join='override')
+
+    con_var_o = xr.ufuncs.square((o_1 - o_2)).mean(dim='time')
+    con_var_r = xr.ufuncs.square((r_1 - r_2)).mean(dim='time')
+    log_con_var_data_o = xr.ufuncs.log10(con_var_o)
+    log_con_var_data_r = xr.ufuncs.log10(con_var_r)
+
+    lat_o = log_con_var_data_o['lat']
+    lat_r = log_con_var_data_r['lat']
+    cy_data_o, lon_o = add_cyclic_point(log_con_var_data_o, coord=log_con_var_data_o['lon'])
+    cy_data_r, lon_r = add_cyclic_point(log_con_var_data_r, coord=log_con_var_data_r['lon'])
+    fig = plt.figure(dpi=300, figsize=(9, 2.5))
+
+    mymap = plt.get_cmap('binary_r')
+
+    # both plots use same contour levels
+    levels = _calc_contour_levels(cy_data_o, cy_data_r, nlevs)
+
+    ax1 = plt.subplot(1, 2, 1, projection=ccrs.Robinson(central_longitude=0.0))
+    title = f'orig:{varname}: {dir} con_var'
+    ax1.set_title(title)
+    pc1 = ax1.contourf(lon_o, lat_o, cy_data_o, transform=ccrs.PlateCarree(), cmap=mymap, levels=levels)
+    ax1.set_global()
+    ax1.coastlines()
+
+    ax2 = plt.subplot(1, 2, 2, projection=ccrs.Robinson(central_longitude=0.0))
+    title = f'{method_str}:{varname}: {dir} con_var'
+    ax2.set_title(title)
+    pc2 = ax2.contourf(lon_r, lat_r, cy_data_r, transform=ccrs.PlateCarree(), cmap=mymap, levels=levels)
+    ax2.set_global()
+    ax2.coastlines()
+
+    # add colorbar
+    fig.subplots_adjust(left=0.1, right=0.9, bottom=0.05, top=0.95)
+    cax = fig.add_axes([0.1, 0, 0.8, 0.05])
+    cbar = fig.colorbar(pc1, cax=cax,  orientation='horizontal')
+    cbar.ax.tick_params(labelsize=8, rotation=30)
+
+###############
+
 def mean_error(ds, varname, ens_o, ens_r, method_str):
     """
     visualize the mean error
@@ -127,8 +190,14 @@ def error_time_series(ds, varname, ens_o, ens_r):
 ###############
 
 def _calc_contour_levels(dat_1, dat_2, nlevs):
+    """
+    TODO: minval returns the smallest value not equal to -inf, is there a more elegant solution to plotting -inf values
+    (for EW contrast variance in particular)?
+    """
     # both plots use same contour levels
     minval = np.nanmin(np.minimum(dat_1, dat_2))
+    if(minval == -math.inf):
+        minval = np.minimum(dat_1[np.isfinite(dat_1)].min(), dat_2[np.isfinite(dat_2)].min())
     maxval = np.nanmax(np.maximum(dat_1, dat_2))
     levels = minval + np.arange(nlevs+1)*(maxval - minval)/nlevs
     #print('Min value: {}\nMax value: {}'.format(minval, maxval))
