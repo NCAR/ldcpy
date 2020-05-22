@@ -18,7 +18,7 @@ class ErrorMetrics(object):
         "absolute_error",
         "squared_error",
         "mean_absolute_error",
-        "mean_squared_erro",
+        "mean_squared_error",
         "root_mean_squared_error",
         "ks_p_value",
         "covariance",
@@ -326,7 +326,7 @@ class ErrorMetrics(object):
                 return self.squared_error
             if name == "mean_absolute_error":
                 return self.mean_absolute_error
-            if name == "mean_squared_erro":
+            if name == "mean_squared_error":
                 return self.mean_squared_error
             if name == "root_mean_squared_error":
                 return self.root_mean_squared_error
