@@ -1,0 +1,5 @@
+name: cartopy_install
+channels:
+- conda-forge
+dependencies:
+- cartopy

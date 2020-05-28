@@ -1,0 +1,2 @@
+conda env update -q -f cartopy.yml
+pip install .
