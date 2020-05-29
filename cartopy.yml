@@ -1,0 +1,5 @@
+name: cartopy_env
+channels:
+- conda-forge
+dependencies:
+- cartopy
