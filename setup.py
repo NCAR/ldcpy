@@ -9,6 +9,8 @@ from setuptools import find_packages, setup
 with open('requirements.txt') as f:
     install_requires = f.read().strip().split('\n')
 
+with open('requirements_dev.txt') as f:
+    dev_requires = f.read().strip().split('\n')
 
 if exists('README.rst'):
     with open('README.rst') as f:
@@ -21,7 +23,9 @@ CLASSIFIERS = [
     'Intended Audience :: Science/Research',
     'Programming Language :: Python',
     'Programming Language :: Python :: 3',
+    'Programming Language :: Python :: 3.6',
     'Programming Language :: Python :: 3.7',
+    'Programming Language :: Python :: 3.8',
     'Topic :: Scientific/Engineering',
 ]
 
@@ -29,7 +33,7 @@ setup(
     name='ldcpy',
     description='A library for lossy compression of netCDF files using xarray',
     long_description=long_description,
-    python_requires='>=3.7',
+    python_requires='>=3.6',
     maintainer='Alex Pinard',
     maintainer_email='apinard@mines.edu',
     classifiers=CLASSIFIERS,
@@ -43,6 +47,7 @@ setup(
     package_dir={'ldcpy': 'ldcpy'},
     include_package_data=True,
     install_requires=install_requires,
+    extras_require={'dev': dev_requires},
     license='Apache 2.0',
     zip_safe=False,
     keywords='compression, xarray',
