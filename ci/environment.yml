@@ -1,0 +1,11 @@
+name: ldcpy_env
+channels:
+  - conda-forge
+dependencies:
+  - cartopy
+  - codecov
+  - netcdf4
+  - pip
+  - pytest
+  - pytest-cov
+  - xarray
