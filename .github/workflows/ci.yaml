@@ -36,7 +36,7 @@ jobs:
       - name: Set up conda environment
         shell: bash -l {0}
         run: |
-          conda env update -n base -f ${{ environment-file }}
+          conda env update -n base -f ci/environment.yml
           python -m pip install -e .
           conda list
 
