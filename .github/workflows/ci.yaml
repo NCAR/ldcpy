@@ -28,7 +28,7 @@ jobs:
           key: ${{ runner.os }}-conda-${{ env.CACHE_NUMBER }}-${{ hashFiles('ci/environment.yml') }}
       - uses: goanpeca/setup-miniconda@v1
         with:
-          activate-environment: sandbox-devel # Defined in ci/environment.yml
+          activate-environment: ldcpy_env # Defined in ci/environment.yml
           auto-update-conda: false
           python-version: ${{ matrix.python-version }}
           environment-file: ci/environment.yml
@@ -36,6 +36,7 @@ jobs:
       - name: Set up conda environment
         shell: bash -l {0}
         run: |
+          conda env update -n base -f ${{ environment-file }}
           python -m pip install -e .
           conda list
 
