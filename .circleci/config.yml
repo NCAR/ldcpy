@@ -11,11 +11,9 @@ workflows:
               only:
                 - master
     jobs:
-      - "upstream-dev"
       - "python-3.7"
   default:
     jobs:
-      - "upstream-dev"
       - "python-3.7"
 
 shared: &shared
@@ -54,12 +52,6 @@ shared: &shared
 
 
 jobs:
-  "upstream-dev":
-    <<: *shared
-    docker:
-      - image: ncarxdev/miniconda:3.7
-    environment:
-      ENV_FILE: "./ci/environment-upstream-dev.yml"
 
   "python-3.7":
     <<: *shared
