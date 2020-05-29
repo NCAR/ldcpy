@@ -5,38 +5,42 @@ from scipy import stats as stats
 
 class ErrorMetrics(object):
     _available_metrics_name = {
-        "mean_observed",
-        "variance_observed",
-        "standard_deviation_observed",
-        "mean_modelled",
-        "variance_modelled",
-        "standard_deviation_modelled",
-        "error",
-        "mean_error",
-        "min_error",
-        "max_error",
-        "absolute_error",
-        "squared_error",
-        "mean_absolute_error",
-        "mean_squared_error",
-        "root_mean_squared_error",
-        "ks_p_value",
-        "covariance",
-        "pearson_correlation_coefficient"
+        'mean_observed',
+        'variance_observed',
+        'standard_deviation_observed',
+        'mean_modelled',
+        'variance_modelled',
+        'standard_deviation_modelled',
+        'error',
+        'mean_error',
+        'min_error',
+        'max_error',
+        'absolute_error',
+        'squared_error',
+        'mean_absolute_error',
+        'mean_squared_error',
+        'root_mean_squared_error',
+        'ks_p_value',
+        'covariance',
+        'pearson_correlation_coefficient',
     }
 
     def __init__(self, observed: np.ndarray, modelled: np.ndarray) -> None:
         # TODO: Support also xarray
         if isinstance(observed, np.ndarray) and isinstance(modelled, np.ndarray):
             if observed.shape != modelled.shape:
-                raise ValueError("both observed and modelled must have the same shape")
+                raise ValueError('both observed and modelled must have the same shape')
             self._shape = observed.shape
-            self._observed = observed if (observed.dtype == np.float64) else observed.astype(np.float64)
+            self._observed = (
+                observed if (observed.dtype == np.float64) else observed.astype(np.float64)
+            )
             self._mean_observed = None
             self._variance_observed = None
             self._standard_deviation_observed = None
 
-            self._modelled = modelled if (observed.dtype == np.float64) else modelled.astype(np.float64)
+            self._modelled = (
+                modelled if (observed.dtype == np.float64) else modelled.astype(np.float64)
+            )
             self._mean_modelled = None
             self._variance_modelled = None
             self._standard_deviation_modelled = None
@@ -54,7 +58,9 @@ class ErrorMetrics(object):
             self._covariance = None
             self._pearson_correlation_coefficient = None
         else:
-            raise TypeError(f"both measured and observed must be of type numpy.ndarray. Type(observed): {str(type(observed))}, type(modelled): {str(type(modelled))}")
+            raise TypeError(
+                f'both measured and observed must be of type numpy.ndarray. Type(observed): {str(type(observed))}, type(modelled): {str(type(modelled))}'
+            )
 
     def _is_memoized(self, metric_name: str) -> bool:
         return hasattr(self, metric_name) and (self.__getattribute__(metric_name) is not None)
@@ -65,8 +71,7 @@ class ErrorMetrics(object):
 
     def get_all_metrics(self, exclude=None) -> dict:
         exclude = set() if exclude is None else exclude
-        if isinstance(exclude, set) and \
-                all(map(lambda e: isinstance(e, str), exclude)):
+        if isinstance(exclude, set) and all(map(lambda e: isinstance(e, str), exclude)):
 
             output = {}
             for name in self.get_available_metrics_name():
@@ -75,7 +80,7 @@ class ErrorMetrics(object):
                     output[name] = tmp_value if (tmp_value.size == 1) else tmp_value.tolist()
             return output
         else:
-            raise TypeError("exclude must be a list of string values.")
+            raise TypeError('exclude must be a list of string values.')
 
     @property
     def observed(self) -> np.ndarray:
@@ -87,7 +92,7 @@ class ErrorMetrics(object):
 
     @property
     def mean_observed(self) -> np.ndarray:
-        if not self._is_memoized("_mean_observed"):
+        if not self._is_memoized('_mean_observed'):
             self._mean_observed = self.observed.mean()
 
         return self._mean_observed
@@ -98,14 +103,14 @@ class ErrorMetrics(object):
 
     @property
     def variance_observed(self) -> np.ndarray:
-        if not self._is_memoized("_variance_observed"):
+        if not self._is_memoized('_variance_observed'):
             self._variance_observed = self.observed.var()
 
         return self._variance_observed
 
     @property
     def standard_deviation_observed(self) -> np.ndarray:
-        if not self._is_memoized("_standard_deviation_observed"):
+        if not self._is_memoized('_standard_deviation_observed'):
             self._standard_deviation_observed = np.sqrt(self.variance_observed)
 
         return self._standard_deviation_observed
@@ -128,7 +133,7 @@ class ErrorMetrics(object):
 
     @property
     def mean_modelled(self) -> np.ndarray:
-        if not self._is_memoized("_mean_modelled"):
+        if not self._is_memoized('_mean_modelled'):
             self._mean_modelled = self.modelled.mean()
 
         return self._mean_modelled
@@ -139,7 +144,7 @@ class ErrorMetrics(object):
 
     @property
     def variance_modelled(self) -> np.ndarray:
-        if not self._is_memoized("_variance_modelled"):
+        if not self._is_memoized('_variance_modelled'):
             self._variance_modelled = self.modelled.var()
 
         return self._variance_modelled
@@ -150,7 +155,7 @@ class ErrorMetrics(object):
 
     @property
     def standard_deviation_modelled(self) -> np.ndarray:
-        if not self._is_memoized("_standard_deviation_modelled"):
+        if not self._is_memoized('_standard_deviation_modelled'):
             self._standard_deviation_modelled = np.sqrt(self.variance_modelled)
 
         return self._standard_deviation_modelled
@@ -161,7 +166,7 @@ class ErrorMetrics(object):
 
     @property
     def error(self) -> np.ndarray:
-        if not self._is_memoized("_error"):
+        if not self._is_memoized('_error'):
             self._error = self.observed - self.modelled
 
         return self._error
@@ -172,7 +177,7 @@ class ErrorMetrics(object):
 
     @property
     def mean_error(self) -> np.ndarray:
-        if not self._is_memoized("_mean_error"):
+        if not self._is_memoized('_mean_error'):
             self._mean_error = self.error.mean()
 
         return self._mean_error
@@ -183,7 +188,7 @@ class ErrorMetrics(object):
 
     @property
     def min_error(self) -> np.ndarray:
-        if not self._is_memoized("_min_error"):
+        if not self._is_memoized('_min_error'):
             self._min_error = self.error.min(initial=None)
 
         return self._min_error
@@ -194,7 +199,7 @@ class ErrorMetrics(object):
 
     @property
     def max_error(self) -> np.ndarray:
-        if not self._is_memoized("_max_error"):
+        if not self._is_memoized('_max_error'):
             self._max_error = self.error.max(initial=None)
 
         return self._max_error
@@ -205,7 +210,7 @@ class ErrorMetrics(object):
 
     @property
     def absolute_error(self) -> np.ndarray:
-        if not self._is_memoized("_absolute_error"):
+        if not self._is_memoized('_absolute_error'):
             self._absolute_error = self.error.__abs__()
 
         return self._absolute_error
@@ -216,7 +221,7 @@ class ErrorMetrics(object):
 
     @property
     def squared_error(self) -> np.ndarray:
-        if not self._is_memoized("_squared_error"):
+        if not self._is_memoized('_squared_error'):
             self._squared_error = np.power(self.error, 2)
 
         return self._squared_error
@@ -227,7 +232,7 @@ class ErrorMetrics(object):
 
     @property
     def mean_absolute_error(self) -> np.ndarray:
-        if not self._is_memoized("_mean_absolute_error"):
+        if not self._is_memoized('_mean_absolute_error'):
             self._mean_absolute_error = self.absolute_error.mean()
 
         return self._mean_absolute_error
@@ -238,7 +243,7 @@ class ErrorMetrics(object):
 
     @property
     def mean_squared_error(self):
-        if not self._is_memoized("_mean_squared_error"):
+        if not self._is_memoized('_mean_squared_error'):
             self._mean_squared_error = self.squared_error.mean()
 
         return self._mean_squared_error
@@ -249,7 +254,7 @@ class ErrorMetrics(object):
 
     @property
     def root_mean_squared_error(self) -> np.ndarray:
-        if not self._is_memoized("_root_mean_squared_error"):
+        if not self._is_memoized('_root_mean_squared_error'):
             self._root_mean_squared_error = np.sqrt(self.mean_squared_error)
 
         return self._root_mean_squared_error
@@ -260,12 +265,9 @@ class ErrorMetrics(object):
 
     @property
     def ks_p_value(self):
-        if not self._is_memoized("_ks_p_value"):
+        if not self._is_memoized('_ks_p_value'):
             self._ks_p_value = np.asanyarray(
-                stats.pearsonr(
-                    np.ravel(self.observed),
-                    np.ravel(self.modelled)
-                )
+                stats.pearsonr(np.ravel(self.observed), np.ravel(self.modelled))
             )
         return self._ks_p_value
 
@@ -275,7 +277,7 @@ class ErrorMetrics(object):
 
     @property
     def covariance(self) -> np.ndarray:
-        if not self._is_memoized("_covariance"):
+        if not self._is_memoized('_covariance'):
             self._covariance = (
                 (self._modelled - self.mean_modelled) * (self._observed - self.mean_observed)
             ).mean()
@@ -288,9 +290,12 @@ class ErrorMetrics(object):
 
     @property
     def pearson_correlation_coefficient(self) -> np.ndarray:
-        if not self._is_memoized("_pearson_correlation_coefficient"):
-            self._pearson_correlation_coefficient = \
-                self.covariance / self.standard_deviation_modelled / self.standard_deviation_observed
+        if not self._is_memoized('_pearson_correlation_coefficient'):
+            self._pearson_correlation_coefficient = (
+                self.covariance
+                / self.standard_deviation_modelled
+                / self.standard_deviation_observed
+            )
 
         return self._pearson_correlation_coefficient
 
@@ -300,43 +305,43 @@ class ErrorMetrics(object):
 
     def get_metrics_by_name(self, name: str):
         if isinstance(name, str):
-            if name == "mean_observed":
+            if name == 'mean_observed':
                 return self.mean_observed
-            if name == "variance_observed":
+            if name == 'variance_observed':
                 return self.variance_modelled
-            if name == "standard_deviation_observed":
+            if name == 'standard_deviation_observed':
                 return self.standard_deviation_observed
-            if name == "mean_modelled":
+            if name == 'mean_modelled':
                 return self.mean_modelled
-            if name == "variance_modelled":
+            if name == 'variance_modelled':
                 return self.variance_modelled
-            if name == "standard_deviation_modelled":
+            if name == 'standard_deviation_modelled':
                 return self.standard_deviation_observed
-            if name == "error":
+            if name == 'error':
                 return self.error
-            if name == "mean_error":
+            if name == 'mean_error':
                 return self.mean_error
-            if name == "min_error":
+            if name == 'min_error':
                 return self.min_error
-            if name == "max_error":
+            if name == 'max_error':
                 return self.max_error
-            if name == "absolute_error":
+            if name == 'absolute_error':
                 return self.absolute_error
-            if name == "squared_error":
+            if name == 'squared_error':
                 return self.squared_error
-            if name == "mean_absolute_error":
+            if name == 'mean_absolute_error':
                 return self.mean_absolute_error
-            if name == "mean_squared_error":
+            if name == 'mean_squared_error':
                 return self.mean_squared_error
-            if name == "root_mean_squared_error":
+            if name == 'root_mean_squared_error':
                 return self.root_mean_squared_error
-            if name == "ks_p_value":
+            if name == 'ks_p_value':
                 return self.ks_p_value
-            if name == "covariance":
+            if name == 'covariance':
                 return self.covariance
-            if name == "pearson_correlation_coefficient":
+            if name == 'pearson_correlation_coefficient':
                 return self.pearson_correlation_coefficient
 
-            raise ValueError(f"there is no metrics with the name: {name}.")
+            raise ValueError(f'there is no metrics with the name: {name}.')
         else:
-            raise TypeError("name must be a string.")
+            raise TypeError('name must be a string.')
