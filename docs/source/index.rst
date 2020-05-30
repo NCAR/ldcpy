@@ -12,6 +12,7 @@ Documentation
    :maxdepth: 2
    :caption: Contents:
 
+   notebooks/Plot Comparisons.ipynb
 
 
 Indices and tables
