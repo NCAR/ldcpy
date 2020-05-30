@@ -28,4 +28,4 @@ For a development install, do the following in the repository directory:
 
     conda env update -f ci/environment.yml
     conda activate ldcpy_env
-    python -m pip install -e .
+    python -m pip install -e . [dev]
