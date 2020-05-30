@@ -12,7 +12,7 @@
 .. image:: https://img.shields.io/codecov/c/github/NCAR/ldcpy.svg?style=for-the-badge
     :target: https://codecov.io/gh/NCAR/ldcpy
 
-image:: https://img.shields.io/readthedocs/ldcpy/latest.svg?style=for-the-badge
+.. image:: https://img.shields.io/readthedocs/ldcpy/latest.svg?style=for-the-badge
     :target: https://ldcpy.readthedocs.io/en/latest/?badge=latest
     :alt: Documentation Status
 
