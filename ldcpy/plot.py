@@ -1,118 +1,20 @@
+import datetime
 import math
 
-# import matplotlib as mpl
 import cartopy
 import cartopy.crs as ccrs
 import cmocean
+import matplotlib as mpl
 import matplotlib.pyplot as plt
 import numpy as np
 import scipy.stats as ss
 import xarray as xr
 from cartopy.util import add_cyclic_point
 
-###############
+import ldcpy.metrics as lm
 
 
-def compare_mean(ds, varname, ens_o, ens_r, method_str, nlevs=24):
-    """
-    visualize mean value at each grid point for orig and compressed (time-series)
-    assuming FV data and put the weighted mean
-    """
-    mean_data_o = ds[varname].sel(ensemble=ens_o).mean(dim='time')
-    mean_data_r = ds[varname].sel(ensemble=ens_r).mean(dim='time')
-
-    # weighted mean
-    gw = ds['gw'].values
-    o_wt_mean = np.average(np.average(mean_data_o, axis=0, weights=gw))
-    r_wt_mean = np.average(np.average(mean_data_r, axis=0, weights=gw))
-
-    title_1 = f'mean = {o_wt_mean:.2f}'
-    title_2 = f'mean = {r_wt_mean:.2f}'
-    color = 'cmo.thermal'
-
-    compare_plot(mean_data_o, mean_data_r, varname, method_str, title_1, title_2, color, nlevs)
-
-
-###############
-
-
-def compare_std(ds, varname, ens_o, ens_r, method_str, nlevs=24):
-    """
-    TODO: visualize std dev at each grid point for orig and compressed (time-series)
-    assuming FV mean
-    """
-    std_data_o = ds[varname].sel(ensemble=ens_o).std(dim='time', ddof=1)
-    std_data_r = ds[varname].sel(ensemble=ens_r).std(dim='time', ddof=1)
-    title = 'std'
-    color = 'coolwarm'
-
-    compare_plot(std_data_o, std_data_r, varname, method_str, title, title, color, nlevs)
-
-
-###############
-
-
-def compare_con_var(ds, varname, ens_o, ens_r, method_str, nlevs=24, dir='NS'):
-    """
-    TODO: visualize contrast variance at each grid point for orig and compressed (time-series)
-    assuming FV mean
-    """
-
-    assert dir in ['NS', 'EW'], 'direction must be NS or EW'
-    if dir == 'NS':
-        lat_length = ds[varname].sel(ensemble=ens_o).sizes['lat']
-        o_1, o_2 = xr.align(
-            ds[varname].sel(ensemble=ens_o).head({'lat': lat_length - 1}),
-            ds[varname].sel(ensemble=ens_o).tail({'lat': lat_length - 1}),
-            join='override',
-        )
-        r_1, r_2 = xr.align(
-            ds[varname].sel(ensemble=ens_r).head({'lat': lat_length - 1}),
-            ds[varname].sel(ensemble=ens_r).tail({'lat': lat_length - 1}),
-            join='override',
-        )
-    else:
-        lon_length = ds[varname].sel(ensemble=ens_o).sizes['lon']
-        ds[varname].sel(ensemble=ens_o).head({'lon': lon_length - 1})
-        o_1, o_2 = xr.align(
-            ds[varname].sel(ensemble=ens_o),
-            xr.concat(
-                [
-                    ds[varname].sel(ensemble=ens_o).tail({'lon': lon_length - 1}),
-                    ds[varname].sel(ensemble=ens_o).head({'lon': 1}),
-                ],
-                dim='lon',
-            ),
-            join='override',
-        )
-        r_1, r_2 = xr.align(
-            ds[varname].sel(ensemble=ens_r),
-            xr.concat(
-                [
-                    ds[varname].sel(ensemble=ens_r).tail({'lon': lon_length - 1}),
-                    ds[varname].sel(ensemble=ens_r).head({'lon': 1}),
-                ],
-                dim='lon',
-            ),
-            join='override',
-        )
-
-    con_var_o = xr.ufuncs.square((o_1 - o_2)).mean(dim='time')
-    con_var_r = xr.ufuncs.square((r_1 - r_2)).mean(dim='time')
-    log_con_var_data_o = xr.ufuncs.log10(con_var_o)
-    log_con_var_data_r = xr.ufuncs.log10(con_var_r)
-
-    title = f'{dir} con_var'
-    color = 'binary_r'
-    compare_plot(
-        log_con_var_data_o, log_con_var_data_r, varname, method_str, title, title, color, nlevs
-    )
-
-
-###############
-
-
-def _odds_rain(ds, ens_o, ens_r, method_str, nlevs=24):
+def _odds_rain(ds, ens_o, ens_r, method_str):
     data_o = ds['PRECT'].sel(ensemble=ens_o)
     data_r = ds['PRECT'].sel(ensemble=ens_r)
 
@@ -128,45 +30,6 @@ def _odds_rain(ds, ens_o, ens_r, method_str, nlevs=24):
     odds_rain_r = prob_rain_r / (1 - prob_rain_r)
     log_odds_r = xr.ufuncs.log10(odds_rain_r)
     return log_odds_o, log_odds_r
-
-
-def odds_rain_ratio(ds, ens_o, ens_r, method_str, nlevs=24):
-    log_odds_o, log_odds_r = _odds_rain(ds, ens_o, ens_r, method_str, nlevs=24)
-    odds_ratio = log_odds_r / log_odds_o
-    plot_error('log10(odds ratio)', odds_ratio, 'PRECT', method_str)
-
-
-def compare_odds_rain(ds, ens_o, ens_r, method_str, nlevs=24):
-    log_odds_o, log_odds_r = _odds_rain(ds, ens_o, ens_r, method_str, nlevs=24)
-    compare_plot(
-        log_odds_o,
-        log_odds_r,
-        'PRECT',
-        method_str,
-        'log10(odds rain)',
-        'log10(odds rain)',
-        'coolwarm',
-    )
-
-
-def compare_neg_rain(ds, ens_o, ens_r, method_str, nlevs=24):
-    data_o = ds['PRECT'].sel(ensemble=ens_o)
-    data_r = ds['PRECT'].sel(ensemble=ens_r)
-
-    neg_rain_days_o = data_o < 0
-    prob_neg_rain_o = (neg_rain_days_o.sum(dim='time')) / (neg_rain_days_o.sizes['time'])
-
-    neg_rain_days_r = data_r < 0
-    prob_neg_rain_r = (neg_rain_days_r.sum(dim='time')) / (neg_rain_days_r.sizes['time'])
-    compare_plot(
-        prob_neg_rain_o,
-        prob_neg_rain_r,
-        'PRECT',
-        method_str,
-        'P(neg rainfall)',
-        'P(neg rainfall)',
-        'binary',
-    )
 
 
 def neg_rain_error(ds, ens_o, ens_r, method_str, nlevs=24):
@@ -305,11 +168,62 @@ def plot_error(name, ds, varname, method_str):
 ###############
 
 
-def error_time_series(ds, varname, ens_o, ens_r):
+def error_time_series(
+    ds, varname, ens_o, ens_r, method_str, resolution='dayofyear', plot_type='normal', data='mean'
+):
     """
     error time series
     """
-    pass
+    group_string = 'time.year'
+    if resolution == 'dayofyear':
+        group_string = 'time.dayofyear'
+        tick_interval = 20
+        xlabel = 'day of year'
+    elif resolution == 'month':
+        group_string = 'time.month'
+        tick_interval = 1
+        xlabel = 'month'
+    elif resolution == 'year':
+        group_string = 'time.year'
+        tick_interval = 1
+        xlabel = 'year'
+
+    if data == 'mean':
+        e = ds[varname].sel(ensemble=ens_o) - ds[varname].sel(ensemble=ens_r)
+        mean_by_day = e.mean(dim='lat').mean(dim='lon')
+        grouped_data_by_day = mean_by_day.groupby(group_string)
+        plot_me = grouped_data_by_day.mean(dim='time')
+    elif data == 'prob_positive':
+        data_r = ds['PRECT'].sel(ensemble=ens_r)
+        rain_days_r = data_r > 0
+        percent_rain_by_day = rain_days_r.mean(['lat', 'lon'])
+        grouped_rain_by_day = percent_rain_by_day.groupby(group_string)
+        plot_me = grouped_rain_by_day.mean(dim='time')
+    elif data == 'oddsratio':
+        data_o = ds['PRECT'].sel(ensemble=ens_o)
+        data_r = ds['PRECT'].sel(ensemble=ens_r)
+        rain_days_o = data_o > 0
+        rain_days_r = data_r > 0
+        percent_rain_by_day_o = rain_days_o.mean(['lat', 'lon'])
+        percent_rain_by_day_r = rain_days_r.mean(['lat', 'lon'])
+        grouped_rain_by_day_o = percent_rain_by_day_o.groupby(group_string)
+        grouped_rain_by_day_r = percent_rain_by_day_r.groupby(group_string)
+        plot_me = grouped_rain_by_day_r.mean(dim='time') / grouped_rain_by_day_o.mean(dim='time')
+
+    if plot_type == 'normal':
+        plot_data = plot_me
+        plot_ylabel = 'error'
+    elif plot_type == 'log':
+        plot_data = xr.ufuncs.log10(plot_me)
+        plot_ylabel = 'log10(error)'
+
+    mpl.pyplot.plot(plot_data[resolution].data, plot_data)
+    mpl.pyplot.ylabel(plot_ylabel)
+    mpl.pyplot.xlabel(xlabel)
+    mpl.pyplot.xticks(
+        np.arange(min(plot_data[resolution]), max(plot_data[resolution]) + 1, tick_interval)
+    )
+    mpl.pyplot.title(f'{varname} ({method_str}): Mean Absolute Error by {xlabel.capitalize()}')
 
 
 ###############
