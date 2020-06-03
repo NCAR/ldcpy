@@ -1,4 +1,5 @@
 import numpy as np
+import scipy.stats as ss
 import xarray as xr
 
 
@@ -9,10 +10,10 @@ class DatasetMetrics(object):
             self._ds = ds
 
             # Variables
-            self._ns_con_var = None
-            self._ew_con_var = None
-            self._is_positive = None
-            self._is_negative = None
+            self._ns_con_var_full = None
+            self._ew_con_var_full = None
+            self._is_positive_full = None
+            self._is_negative_full = None
 
         else:
             raise TypeError(
@@ -23,32 +24,32 @@ class DatasetMetrics(object):
         return hasattr(self, metric_name) and (self.__getattribute__(metric_name) is not None)
 
     @property
-    def ns_con_var(self) -> np.ndarray:
-        if not self._is_memoized('_ns_con_var'):
-            self._ns_con_var = self._con_var('ns', self._ds)
+    def ns_con_var_full(self) -> np.ndarray:
+        if not self._is_memoized('_ns_con_var_full'):
+            self._ns_con_var_full = self._con_var('ns', self._ds)
 
-        return self._ns_con_var
-
-    @property
-    def ew_con_var(self) -> np.ndarray:
-        if not self._is_memoized('_ew_con_var'):
-            self._ew_con_var = self._con_var('ew', self._ds)
-
-        return self._ew_con_var
+        return self._ns_con_var_full
 
     @property
-    def is_positive(self) -> np.ndarray:
-        if not self._is_memoized('_is_positive'):
-            self._is_positive = self._ds > 0
+    def ew_con_var_full(self) -> np.ndarray:
+        if not self._is_memoized('_ew_con_var_full'):
+            self._ew_con_var_full = self._con_var('ew', self._ds)
 
-        return self._is_positive
+        return self._ew_con_var_full
 
     @property
-    def is_negative(self) -> np.ndarray:
-        if not self._is_memoized('_is_negative'):
-            self._is_negative = self._ds < 0
+    def is_positive_full(self) -> np.ndarray:
+        if not self._is_memoized('_is_positive_full'):
+            self._is_positive_full = self._ds > 0
 
-        return self._is_negative
+        return self._is_positive_full
+
+    @property
+    def is_negative_full(self) -> np.ndarray:
+        if not self._is_memoized('_is_negative_full'):
+            self._is_negative_full = self._ds < 0
+
+        return self._is_negative_full
 
     def _con_var(self, dir, dataset) -> np.ndarray:
         if dir == 'ns':
@@ -70,33 +71,33 @@ class DatasetMetrics(object):
         con_var = xr.ufuncs.square((o_1 - o_2))
         return con_var
 
-    def get_metric(self, name: str):
+    def get_full_metric(self, name: str):
         if isinstance(name, str):
-            if name == 'ns_con_var':
-                return self.ns_con_var
-            if name == 'ew_con_var':
-                return self.ew_con_var
-            if name == 'is_positive':
-                return self._is_positive
-            if name == 'is_negative':
-                return self._is_negative
+            if name == 'ns_con_var_full':
+                return self.ns_con_var_full
+            if name == 'ew_con_var_full':
+                return self.ew_con_var_full
+            if name == 'is_positive_full':
+                return self._is_positive_full
+            if name == 'is_negative_full':
+                return self._is_negative_full
             raise ValueError(f'there are no metrics with the name: {name}.')
         else:
             raise TypeError('name must be a string.')
 
 
-class SpatialMetrics(DatasetMetrics):
+class AggregateMetrics(DatasetMetrics):
     def __init__(self, ds: xr.DataArray, aggregate_dims: list):
         DatasetMetrics.__init__(self, ds)
 
-        self._ns_con_var_spatial = None
-        self._ew_con_var_spatial = None
-        self._mean_spatial = None
-        self._std_spatial = None
-        self._prob_positive_spatial = None
-        self._odds_positive_spatial = None
-        self._prob_negative_spatial = None
-        self._zscore_spatial = None
+        self._ns_con_var = None
+        self._ew_con_var = None
+        self._mean = None
+        self._std = None
+        self._prob_positive = None
+        self._odds_positive = None
+        self._prob_negative = None
+        self._zscore = None
         self._agg_dims = aggregate_dims
 
         self._frame_size = 1
@@ -104,97 +105,127 @@ class SpatialMetrics(DatasetMetrics):
             self._frame_size *= int(self._ds.sizes[dim])
 
     @property
-    def ns_con_var_spatial(self) -> np.ndarray:
+    def ns_con_var(self) -> np.ndarray:
         if not self._is_memoized('_ns_con_var'):
-            self._ns_con_var_spatial = self._con_var('ns', self._ds).mean(self._agg_dims)
+            self._ns_con_var = self._con_var('ns', self._ds).mean(self._agg_dims)
 
-        return self._ns_con_var_spatial
+        return self._ns_con_var
 
     @property
-    def ew_con_var_spatial(self) -> np.ndarray:
+    def ew_con_var(self) -> np.ndarray:
         if not self._is_memoized('_ew_con_var'):
-            self._ew_con_var_spatial = self._con_var('ew', self._ds).mean(self._agg_dims)
+            self._ew_con_var = self._con_var('ew', self._ds).mean(self._agg_dims)
 
-        return self._ew_con_var_spatial
-
-    @property
-    def mean_spatial(self) -> np.ndarray:
-        if not self._is_memoized('_mean_spatial'):
-            self._mean_spatial = self._ds.mean(self._agg_dims)
-
-        return self._mean_spatial
+        return self._ew_con_var
 
     @property
-    def std_spatial(self) -> np.ndarray:
-        if not self._is_memoized('_std_spatial'):
-            self._std_spatial = self._ds.std(self._agg_dims, ddof=1)
+    def mean(self) -> np.ndarray:
+        if not self._is_memoized('_mean'):
+            self._mean = self._ds.mean(self._agg_dims)
 
-        return self._std_spatial
-
-    @property
-    def prob_positive_spatial(self) -> np.ndarray:
-        if not self._is_memoized('_prob_positive_orig_spatial'):
-            self._prob_positive_spatial = (self.is_positive.sum(self._agg_dims)) / (
-                self._frame_size
-            )
-        return self._prob_positive_spatial
+        return self._mean
 
     @property
-    def prob_negative_spatial(self) -> np.ndarray:
-        if not self._is_memoized('_prob_negative_spatial'):
-            self._prob_negative_spatial = (
-                self.is_negative.sum(self._agg_dims) / self.is_negative.sizes['time']
-            )
-        return self._prob_negative_spatial
+    def std(self) -> np.ndarray:
+        if not self._is_memoized('_std'):
+            self._std = self._ds.std(self._agg_dims, ddof=1)
+
+        return self._std
 
     @property
-    def odds_positive_spatial(self) -> np.ndarray:
-        if not self._is_memoized('_odds_positive_spatial'):
-            self._odds_positive_spatial = self.prob_positive_spatial / (
-                1 - self.prob_positive_spatial
-            )
-        return self._odds_positive_spatial
+    def prob_positive(self) -> np.ndarray:
+        if not self._is_memoized('_prob_positive_orig'):
+            self._prob_positive = (self.is_positive_full.sum(self._agg_dims)) / (self._frame_size)
+        return self._prob_positive
 
     @property
-    def zscore_spatial(self) -> np.ndarray:
-        if not self._is_memoized('_zscore_spatial'):
-            self._zscore_spatial = np.divide(
-                self.mean_spatial, self.std_spatial / np.sqrt(self._ds.sizes['time'])
-            )
+    def prob_negative(self) -> np.ndarray:
+        if not self._is_memoized('_prob_negative'):
+            self._prob_negative = self.is_negative_full.sum(self._agg_dims) / self._frame_size
+        return self._prob_negative
 
-        return self._zscore_spatial
+    @property
+    def odds_positive(self) -> np.ndarray:
+        if not self._is_memoized('_odds_positive'):
+            self._odds_positive = self.prob_positive / (1 - self.prob_positive)
+        return self._odds_positive
 
-    def get_spatial_metric(self, name: str):
+    @property
+    def zscore(self) -> np.ndarray:
+        if not self._is_memoized('_zscore'):
+            self._zscore = np.divide(self.mean, self.std / np.sqrt(self._ds.sizes['time']))
+
+        return self._zscore
+
+    def get_metric(self, name: str):
         if isinstance(name, str):
-            if name == 'ns_con_var_spatial':
-                return self.ns_con_var_spatial
-            if name == 'ew_con_var_spatial':
-                return self.ew_con_var_spatial
-            if name == 'mean_spatial':
-                return self.mean_spatial
-            if name == 'std_spatial':
-                return self.mean_spatial
-            if name == 'prob_positive_spatial':
-                return self.prob_positive_spatial
-            if name == 'prob_negative_spatial':
-                return self.prob_negative_spatial
-            if name == 'odds_positive_spatial':
-                return self.odds_positive_spatial
-            if name == 'zscore_spatial':
-                return self.zscore_spatial
+            if name == 'ns_con_var':
+                return self.ns_con_var
+            if name == 'ew_con_var':
+                return self.ew_con_var
+            if name == 'mean':
+                return self.mean
+            if name == 'std':
+                return self.mean
+            if name == 'prob_positive':
+                return self.prob_positive
+            if name == 'prob_negative':
+                return self.prob_negative
+            if name == 'odds_positive':
+                return self.odds_positive
+            if name == 'zscore':
+                return self.zscore
             raise ValueError(f'there is no metrics with the name: {name}.')
         else:
             raise TypeError('name must be a string.')
 
 
-class TimeSeriesMetrics(DatasetMetrics):
-    def __init__(self, ds: xr.DataArray):
-        DatasetMetrics.__init__(self, ds)
-        self._ns_con_var_time = None
-        self._ew_con_var_time = None
-        self._mean_time = None
-        self._std_time = None
-        self._prob_positive_time = None
-        self._odds_positive_time = None
-        self._prob_negative_time = None
-        self._zscore_time = None
+class OverallMetrics(AggregateMetrics):
+    def __init__(self, ds: xr.DataArray, aggregate_dims: list):
+        AggregateMetrics.__init__(self, ds, aggregate_dims)
+
+        self._zscore_cutoff = None
+        self._zscore_percent_significant = None
+
+    @property
+    def zscore_cutoff(self) -> np.ndarray:
+        if not self._is_memoized('_zscore_cutoff'):
+            pvals = 2 * (1 - ss.norm.cdf(np.abs(self.zscore)))
+            sorted_pvals = np.sort(pvals).flatten()
+            fdr_zscore = 0.01
+            p = np.argwhere(sorted_pvals <= fdr_zscore * np.arange(1, pvals.size + 1) / pvals.size)
+            pval_cutoff = sorted_pvals[p[len(p) - 1]]
+            if not (pval_cutoff.size == 0):
+                zscore_cutoff = ss.norm.ppf(1 - pval_cutoff)
+            else:
+                zscore_cutoff = 'na'
+            self._zscore_cutoff = zscore_cutoff
+
+            return self._zscore_cutoff
+
+    @property
+    def zscore_percent_significant(self) -> np.ndarray:
+        if not self._is_memoized('_zscore_percent_significant'):
+            pvals = 2 * (1 - ss.norm.cdf(np.abs(self.zscore)))
+            sorted_pvals = np.sort(pvals).flatten()
+            fdr_zscore = 0.01
+            p = np.argwhere(sorted_pvals <= fdr_zscore * np.arange(1, pvals.size + 1) / pvals.size)
+            pval_cutoff = sorted_pvals[p[len(p) - 1]]
+            if not (pval_cutoff.size == 0):
+                sig_locs = np.argwhere(pvals <= pval_cutoff)
+                percent_sig = 100 * np.size(sig_locs, 0) / pvals.size
+            else:
+                percent_sig = 0
+            self._zscore_percent_significant = percent_sig
+
+            return self._zscore_percent_significant
+
+    def get_overall_metric(self, name: str):
+        if isinstance(name, str):
+            if name == 'zscore_cutoff':
+                return self.zscore_cutoff
+            if name == 'zscore_percent_significant':
+                return self.zscore_percent_significant
+            raise ValueError(f'there is no metrics with the name: {name}.')
+        else:
+            raise TypeError('name must be a string.')

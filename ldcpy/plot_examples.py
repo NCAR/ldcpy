@@ -1,3 +1,4 @@
+import matplotlib as mpl
 import numpy as np
 import scipy.stats as ss
 import xarray as xr
@@ -6,240 +7,132 @@ import ldcpy.metrics as lm
 import ldcpy.plot as lp
 
 
-def compare_con_var(ds, varname, ens_o, ens_r, method_str, nlevs=24, dir='NS'):
-    """
-    TODO: visualize contrast variance at each grid point for orig and compressed (time-series)
-    assuming FV mean
-    """
-    metrics_o = lm.SpatialMetrics(ds[varname].sel(ensemble=ens_o), ['time'])
-    metrics_r = lm.SpatialMetrics(ds[varname].sel(ensemble=ens_r), ['time'])
-    lp.compare_plot(
-        xr.ufuncs.log10(metrics_o.get_spatial_metric('ns_con_var_spatial')),
-        xr.ufuncs.log10(metrics_r.get_spatial_metric('ns_con_var_spatial')),
-        varname,
-        method_str,
-        f'{dir} con_var',
-        f'{dir} con_var',
-        'binary_r',
-        nlevs,
-    )
-
-
-def compare_mean(ds, varname, ens_o, ens_r, method_str, nlevs=24):
-    """
-    visualize mean value at each grid point for orig and compressed (time-series)
-    assuming FV data and put the weighted mean
-    """
-    metrics_o = lm.SpatialMetrics(ds[varname].sel(ensemble=ens_o), ['time'])
-    metrics_r = lm.SpatialMetrics(ds[varname].sel(ensemble=ens_r), ['time'])
-    mean_data_o = metrics_o.get_spatial_metric('mean_spatial')
-    mean_data_r = metrics_r.get_spatial_metric('mean_spatial')
-
-    # weighted mean
-    gw = ds['gw'].values
-    o_wt_mean = np.average(np.average(mean_data_o, axis=0, weights=gw))
-    r_wt_mean = np.average(np.average(mean_data_r, axis=0, weights=gw))
-    lp.compare_plot(
-        mean_data_o,
-        mean_data_r,
-        varname,
-        method_str,
-        f'mean = {o_wt_mean:.2f}',
-        f'mean = {r_wt_mean:.2f}',
-        'cmo.thermal',
-        nlevs,
-    )
-
-
-def compare_std(ds, varname, ens_o, ens_r, method_str, nlevs=24):
-    """
-    TODO: visualize std dev at each grid point for orig and compressed (time-series)
-    assuming FV mean
-    """
-    metrics_o = lm.SpatialMetrics(ds[varname].sel(ensemble=ens_o), ['time'])
-    metrics_r = lm.SpatialMetrics(ds[varname].sel(ensemble=ens_r), ['time'])
-
-    lp.compare_plot(
-        metrics_o.get_spatial_metric('std_spatial'),
-        metrics_r.get_spatial_metric('std_spatial'),
-        varname,
-        method_str,
-        'std',
-        'std',
-        'coolwarm',
-        nlevs,
-    )
-
-
-def odds_positive_ratio(ds, varname, ens_o, ens_r, method_str):
-    metrics_o = lm.SpatialMetrics(ds[varname].sel(ensemble=ens_o), ['time'])
-    metrics_r = lm.SpatialMetrics(ds[varname].sel(ensemble=ens_r), ['time'])
-
-    log_odds_ratio = xr.ufuncs.log10(
-        metrics_r.get_spatial_metric('odds_positive_spatial')
-        / metrics_o.get_spatial_metric('odds_positive_spatial')
-    )
-    lp.plot('log10(odds ratio)', log_odds_ratio, 'PRECT', method_str)
-
-
-def compare_odds_positive(ds, varname, ens_o, ens_r, method_str):
-    metrics_o = lm.SpatialMetrics(ds[varname].sel(ensemble=ens_o), ['time'])
-    metrics_r = lm.SpatialMetrics(ds[varname].sel(ensemble=ens_r), ['time'])
-    lp.compare_plot(
-        xr.ufuncs.log10(metrics_o.get_spatial_metric('odds_positive_spatial')),
-        xr.ufuncs.log10(metrics_r.get_spatial_metric('odds_positive_spatial')),
-        'PRECT',
-        method_str,
-        'log10(odds rain)',
-        'log10(odds rain)',
-        'coolwarm',
-    )
-
-
-def compare_prob_negative(ds, varname, ens_o, ens_r, method_str):
-    metrics_o = lm.SpatialMetrics(ds[varname].sel(ensemble=ens_o), ['time'])
-    metrics_r = lm.SpatialMetrics(ds[varname].sel(ensemble=ens_r), ['time'])
-    lp.compare_plot(
-        metrics_o.get_spatial_metric('prob_negative_spatial'),
-        metrics_r.get_spatial_metric('prob_negative_spatial'),
-        'PRECT',
-        method_str,
-        'P(neg rainfall)',
-        'P(neg rainfall)',
-        'binary',
-    )
-
-
-def diff_mean(ds, varname, ens_o, ens_r, method_str):
-    metrics_d = lm.SpatialMetrics(
-        ds[varname].sel(ensemble=ens_o) - ds[varname].sel(ensemble=ens_r), ['time']
-    )
-    lp.plot('mean error', metrics_d.get_spatial_metric('mean_spatial'), varname, method_str)
-
-
-def diff_std(ds, varname, ens_o, ens_r, method_str):
-    std_o = lm.SpatialMetrics(ds[varname].sel(ensemble=ens_o), ['time']).get_spatial_metric(
-        'std_spatial'
-    )
-    std_r = lm.SpatialMetrics(ds[varname].sel(ensemble=ens_r), ['time']).get_spatial_metric(
-        'std_spatial'
-    )
-    lp.plot('std error', std_o - std_r, varname, method_str)
-
-
-def diff_negative_rain(ds, varname, ens_o, ens_r, method_str):
-    prob_neg_rain_o = lm.SpatialMetrics(
-        ds[varname].sel(ensemble=ens_o), ['time']
-    ).get_spatial_metric('prob_negative_spatial')
-    prob_neg_rain_r = lm.SpatialMetrics(
-        ds[varname].sel(ensemble=ens_r), ['time']
-    ).get_spatial_metric('prob_negative_spatial')
-
-    lp.plot('P(neg rain) error', prob_neg_rain_o - prob_neg_rain_r, 'PRECT', method_str)
-
-
-def diff_con_var(ds, varname, ens_o, ens_r, method_str, dir='NS'):
-    con_var_ns_o = lm.SpatialMetrics(ds[varname].sel(ensemble=ens_o), ['time']).get_spatial_metric(
-        'ns_con_var_spatial'
-    )
-    con_var_ns_r = lm.SpatialMetrics(ds[varname].sel(ensemble=ens_r), ['time']).get_spatial_metric(
-        'ns_con_var_spatial'
-    )
-    lp.plot(f'{dir} con_var error', con_var_ns_o - con_var_ns_r, varname, method_str)
-
-
-def diff_zscore(ds, varname, ens_o, ens_r, method_str):
-    z_score_d = lm.SpatialMetrics(
-        ds[varname].sel(ensemble=ens_o) - ds[varname].sel(ensemble=ens_r), ['time']
-    ).get_spatial_metric('zscore_spatial')
-
-    pvals = 2 * (1 - ss.norm.cdf(np.abs(z_score_d)))
-    sorted_pvals = np.sort(pvals).flatten()
-    fdr_zscore = 0.01
-    p = np.argwhere(sorted_pvals <= fdr_zscore * np.arange(1, pvals.size + 1) / pvals.size)
-    pval_cutoff = sorted_pvals[p[len(p) - 1]]
-    if not (pval_cutoff.size == 0):
-        zscore_cutoff = ss.norm.ppf(1 - pval_cutoff)
-        sig_locs = np.argwhere(pvals <= pval_cutoff)
-        percent_sig = 100 * np.size(sig_locs, 0) / pvals.size
-    else:
-        zscore_cutoff = 'na'
-        percent_sig = 0
-
-    title = f'z-score error: cutoff {zscore_cutoff[0]:.2f}, % sig: {percent_sig:.2f}'
-
-    lp.plot(title, z_score_d, varname, method_str)
-
-
-def time_series_diff(
-    ds,
-    varname,
-    ens_o,
-    ens_r,
-    method_str,
-    resolution='dayofyear',
-    plot_type='normal',
-    data='mean_spatial',
+def compare_plot(
+    ds, varname, method_str, ens_o, ens_r, data='mean', color='cmo.thermal', transform='none'
 ):
-    group_string = 'time.year'
-    if resolution == 'dayofyear':
-        group_string = 'time.dayofyear'
-    elif resolution == 'month':
-        group_string = 'time.month'
-    elif resolution == 'year':
-        group_string = 'time.year'
+    metrics_o = lm.AggregateMetrics(ds[varname].sel(ensemble=ens_o), ['time']).get_metric(data)
+    metrics_r = lm.AggregateMetrics(ds[varname].sel(ensemble=ens_r), ['time']).get_metric(data)
+    title_1 = f'{data}'
+    title_2 = f'{data}'
+    if data == 'mean':
+        gw = ds['gw'].values
+        o_wt_mean = np.average(np.average(metrics_o, axis=0, weights=gw))
+        r_wt_mean = np.average(np.average(metrics_r, axis=0, weights=gw))
+        title_1 = f'mean = {o_wt_mean:.2f}'
+        title_2 = f'mean = {r_wt_mean:.2f}'
 
-    time_series_metrics_e = lm.SpatialMetrics(
-        ds[varname].sel(ensemble=ens_o) - ds[varname].sel(ensemble=ens_r), ['lat', 'lon']
+    if transform == 'log':
+        metrics_o = xr.ufuncs.log10(metrics_o)
+        metrics_r = xr.ufuncs.log10(metrics_r)
+        title_1 = f'log10({data})'
+        title_2 = f'log10({data})'
+
+    lp.spatial_comparison_plot(
+        metrics_o, metrics_r, varname, method_str, title_1, title_2, color,
     )
-    grouped_metrics_e = time_series_metrics_e.get_spatial_metric(data).groupby(group_string)
-    plot_data = grouped_metrics_e.mean(dim='time')
 
-    lp.time_series_plot(plot_data, varname, method_str, resolution, plot_type)
+
+def single_plot(
+    ds, varname, method_str, ens_o, ens_r=None, data='mean', plot_type='diff', transform='none'
+):
+    metric_o = lm.AggregateMetrics(ds[varname].sel(ensemble=ens_o), ['time']).get_metric(data)
+
+    if plot_type == 'diff':
+        metric_r = lm.AggregateMetrics(ds[varname].sel(ensemble=ens_r), ['time']).get_metric(data)
+        title = f'{varname} ({method_str}): {data} diff'
+        plot_data = metric_o - metric_r
+    elif plot_type == 'ratio':
+        metric_r = lm.AggregateMetrics(ds[varname].sel(ensemble=ens_r), ['time']).get_metric(data)
+        title = f'{varname} ({method_str}): {data} ratio'
+        plot_data = metric_r / metric_o
+    elif plot_type == 'diff_metric':
+        metric_e = lm.AggregateMetrics(
+            ds[varname].sel(ensemble=ens_o) - ds[varname].sel(ensemble=ens_r), ['time']
+        ).get_metric(data)
+        title = f'{data}'
+        plot_data = metric_e
+    else:
+        title = f'{data}'
+        plot_data = metric_o
+
+    if transform == 'log':
+        plot_data = xr.ufuncs.log10(plot_data)
+        title = f'{varname} ({method_str}): {transform}({data}) ratio'
+
+    if data == 'zscore':
+        zscore_cutoff = lm.OverallMetrics(
+            (ds[varname].sel(ensemble=ens_o) - ds[varname].sel(ensemble=ens_r)), ['time']
+        ).get_overall_metric('zscore_cutoff')
+        percent_sig = lm.OverallMetrics(
+            (ds[varname].sel(ensemble=ens_o) - ds[varname].sel(ensemble=ens_r)), ['time']
+        ).get_overall_metric('zscore_percent_significant')
+        name = f'{data}: cutoff {zscore_cutoff[0]:.2f}, % sig: {percent_sig:.2f}'
+        title = f'{varname} ({method_str}): {name}'
+
+    lp.spatial_plot(title, plot_data)
 
 
 def time_series_plot(
-    ds, varname, ens, method_str, resolution='dayofyear', plot_type='normal', data='mean_spatial'
-):
-    group_string = 'time.year'
-    if resolution == 'dayofyear':
-        group_string = 'time.dayofyear'
-    elif resolution == 'month':
-        group_string = 'time.month'
-    elif resolution == 'year':
-        group_string = 'time.year'
-
-    time_series_metrics = lm.SpatialMetrics(ds[varname].sel(ensemble=ens), ['lat', 'lon'])
-    grouped_metrics = time_series_metrics.get_spatial_metric(data).groupby(group_string)
-    plot_data = grouped_metrics.mean(dim='time')
-
-    lp.time_series_plot(plot_data, varname, method_str, resolution, plot_type)
-
-
-def time_series_ratio(
     ds,
     varname,
-    ens_o,
-    ens_r,
     method_str,
-    resolution='dayofyear',
-    plot_type='normal',
-    data='mean_spatial',
+    ens_o,
+    ens_r=None,
+    res='dayofyear',
+    scale='linear',
+    data='mean',
+    plot_type='n',
+    transform='none',
 ):
+    """
+    time series plot
+    """
     group_string = 'time.year'
-    if resolution == 'dayofyear':
+    if res == 'dayofyear':
         group_string = 'time.dayofyear'
-    elif resolution == 'month':
+        xlabel = 'Day of Year'
+        tick_interval = 20
+    elif res == 'month':
         group_string = 'time.month'
-    elif resolution == 'year':
+        xlabel = 'Month'
+        tick_interval = 1
+    elif res == 'year':
         group_string = 'time.year'
+        xlabel = 'Year'
+        tick_interval = 1
 
-    time_series_metrics_o = lm.SpatialMetrics(ds[varname].sel(ensemble=ens_o), ['lat', 'lon'])
-    grouped_metrics_o = time_series_metrics_o.get_spatial_metric(data).groupby(group_string)
+    time_series_metrics_o = lm.AggregateMetrics(ds[varname].sel(ensemble=ens_o), ['lat', 'lon'])
+    if plot_type == 'diff':
+        time_series_metrics_r = lm.AggregateMetrics(ds[varname].sel(ensemble=ens_r), ['lat', 'lon'])
+        grouped_metric = (
+            time_series_metrics_o.get_metric(data) - time_series_metrics_r.get_metric(data)
+        ).groupby(group_string)
+        ylabel = f'{data} error'
+    elif plot_type == 'ratio':
+        time_series_metrics_r = lm.AggregateMetrics(ds[varname].sel(ensemble=ens_r), ['lat', 'lon'])
+        grouped_metric = (
+            time_series_metrics_r.get_metric(data) / time_series_metrics_o.get_metric(data)
+        ).groupby(group_string)
+        ylabel = f'ratio {ens_r}/{ens_o} {data}'
+    else:
+        grouped_metric = (time_series_metrics_o.get_metric(data)).groupby(group_string)
+        ylabel = f'{data}'
 
-    time_series_metrics_r = lm.SpatialMetrics(ds[varname].sel(ensemble=ens_r), ['lat', 'lon'])
-    grouped_metrics_r = time_series_metrics_r.get_spatial_metric(data).groupby(group_string)
+    plot_data = grouped_metric.mean(dim='time')
+    if transform == 'log':
+        plot_data = xr.ufuncs.log10(plot_data)
 
-    plot_data = grouped_metrics_r.mean(dim='time') / grouped_metrics_o.mean(dim='time')
+    title = f'{varname} ({method_str}): {data} by {xlabel}'
 
-    lp.time_series_plot(plot_data, varname, method_str, resolution, plot_type)
+    if transform == 'none':
+        plot_ylabel = ylabel
+    elif transform == 'log':
+        plot_ylabel = f'log10({ylabel})'
+
+    mpl.pyplot.plot(plot_data[res].data, plot_data)
+
+    mpl.pyplot.ylabel(plot_ylabel)
+    mpl.pyplot.yscale(scale)
+    mpl.pyplot.xlabel(xlabel)
+    mpl.pyplot.xticks(np.arange(min(plot_data[res]), max(plot_data[res]) + 1, tick_interval))
+    mpl.pyplot.title(title)

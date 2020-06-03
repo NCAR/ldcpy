@@ -14,7 +14,7 @@ from cartopy.util import add_cyclic_point
 import ldcpy.metrics as lm
 
 
-def compare_plot(ds_o, ds_r, varname, method_str, title_1, title_2, color, nlevs=24):
+def spatial_comparison_plot(ds_o, ds_r, varname, method_str, title_1, title_2, color, nlevs=24):
     lat_o = ds_o['lat']
     lat_r = ds_r['lat']
     cy_data_o, lon_o = add_cyclic_point(ds_o, coord=ds_o['lon'])
@@ -49,7 +49,7 @@ def compare_plot(ds_o, ds_r, varname, method_str, title_1, title_2, color, nlevs
     cbar.ax.tick_params(labelsize=8, rotation=30)
 
 
-def plot(name, ds, varname, method_str):
+def spatial_plot(title, ds):
     """
     visualize the mean error
     want to be able to input multiple?
@@ -68,41 +68,7 @@ def plot(name, ds, varname, method_str):
 
     ax.set_global()
     ax.coastlines()
-    title = f'{varname} ({method_str}): {name}'
     ax.set_title(title)
-
-
-###############
-
-
-def time_series_plot(ds, varname, method_str, resolution='dayofyear', plot_type='normal'):
-    """
-    error time series
-    """
-    if resolution == 'dayofyear':
-        tick_interval = 20
-        xlabel = 'day of year'
-    elif resolution == 'month':
-        tick_interval = 1
-        xlabel = 'month'
-    elif resolution == 'year':
-        tick_interval = 1
-        xlabel = 'year'
-
-    if plot_type == 'normal':
-        plot_data = ds
-        plot_ylabel = 'error'
-    elif plot_type == 'log':
-        plot_data = xr.ufuncs.log10(ds)
-        plot_ylabel = 'log10(error)'
-
-    mpl.pyplot.plot(plot_data[resolution].data, plot_data)
-    mpl.pyplot.ylabel(plot_ylabel)
-    mpl.pyplot.xlabel(xlabel)
-    mpl.pyplot.xticks(
-        np.arange(min(plot_data[resolution]), max(plot_data[resolution]) + 1, tick_interval)
-    )
-    mpl.pyplot.title(f'{varname} ({method_str}): Mean Absolute Error by {xlabel.capitalize()}')
 
 
 ###############
