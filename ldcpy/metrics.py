@@ -2,88 +2,53 @@ import numpy as np
 import xarray as xr
 
 
-class Metrics(object):
-    def __init__(self, orig: xr.DataArray, compressed: xr.DataArray) -> None:
-        if isinstance(orig, xr.DataArray) and isinstance(compressed, xr.DataArray):
-            if orig.shape != compressed.shape:
-                raise ValueError('both observed and modelled must have the same shape')
+class DatasetMetrics(object):
+    def __init__(self, ds: xr.DataArray) -> None:
+        if isinstance(ds, xr.DataArray):
             # Datasets
-            self._orig = orig
-            self._compressed = compressed
+            self._ds = ds
 
             # Variables
-            self._ns_con_var_orig = None
-            self._ns_con_var_compressed = None
-            self._ew_con_var_orig = None
-            self._ew_con_var_compressed = None
-            self._is_positive_orig = None
-            self._is_positive_compressed = None
-            self._is_negative_orig = None
-            self._is_negative_compressed = None
+            self._ns_con_var = None
+            self._ew_con_var = None
+            self._is_positive = None
+            self._is_negative = None
 
         else:
             raise TypeError(
-                f'both measured and observed must be of type numpy.ndarray. Type(observed): {str(type(orig))}, type(modelled): {str(type(compressed))}'
+                f'dataset must be of type xarray.DataArray. Type(observed): {str(type(ds))}'
             )
 
     def _is_memoized(self, metric_name: str) -> bool:
         return hasattr(self, metric_name) and (self.__getattribute__(metric_name) is not None)
 
     @property
-    def ns_con_var_orig(self) -> np.ndarray:
+    def ns_con_var(self) -> np.ndarray:
         if not self._is_memoized('_ns_con_var'):
-            self._ns_con_var_orig = self._con_var('ns', self._orig)
+            self._ns_con_var = self._con_var('ns', self._ds)
 
-        return self._ns_con_var_orig
+        return self._ns_con_var
 
     @property
-    def ew_con_var_orig(self) -> np.ndarray:
+    def ew_con_var(self) -> np.ndarray:
         if not self._is_memoized('_ew_con_var'):
-            self._ew_con_var_orig = self._con_var('ew', self._orig)
+            self._ew_con_var = self._con_var('ew', self._ds)
 
-        return self._ew_con_var_orig
-
-    @property
-    def ns_con_var_compressed(self) -> np.ndarray:
-        if not self._is_memoized('_ns_con_var'):
-            self._ns_con_var_compressed = self._con_var('ns', self._compressed)
-
-        return self._ns_con_var_compressed
+        return self._ew_con_var
 
     @property
-    def ew_con_var_compressed(self) -> np.ndarray:
-        if not self._is_memoized('_ew_con_var'):
-            self._ew_con_var_compressed = self._con_var('ew', self._compressed)
+    def is_positive(self) -> np.ndarray:
+        if not self._is_memoized('_is_positive'):
+            self._is_positive = self._ds > 0
 
-        return self._ew_con_var_compressed
-
-    @property
-    def is_positive_orig(self) -> np.ndarray:
-        if not self._is_memoized('_is_positive_orig'):
-            self._is_positive_orig = self._orig > 0
-
-        return self._is_positive_orig
+        return self._is_positive
 
     @property
-    def is_positive_compressed(self) -> np.ndarray:
-        if not self._is_memoized('_is_positive_compressed'):
-            self._is_positive_compressed = self._compressed > 0
+    def is_negative(self) -> np.ndarray:
+        if not self._is_memoized('_is_negative'):
+            self._is_negative = self._ds < 0
 
-        return self._is_positive_compressed
-
-    @property
-    def is_negative_orig(self) -> np.ndarray:
-        if not self._is_memoized('_is_negative_orig'):
-            self._is_negative_orig = self._orig < 0
-
-        return self._is_negative_orig
-
-    @property
-    def is_negative_compressed(self) -> np.ndarray:
-        if not self._is_memoized('_is_negative_compressed'):
-            self._is_negative_compressed = self._compressed < 0
-
-        return self._is_negative_compressed
+        return self._is_negative
 
     def _con_var(self, dir, dataset) -> np.ndarray:
         if dir == 'ns':
@@ -105,186 +70,131 @@ class Metrics(object):
         con_var = xr.ufuncs.square((o_1 - o_2))
         return con_var
 
-    def get_metrics_by_name(self, name: str):
+    def get_metric(self, name: str):
         if isinstance(name, str):
-            if name == 'ns_con_var_orig':
-                return self.ns_con_var_orig
-            if name == 'ns_con_var_compressed':
-                return self.ns_con_var_compressed
-            if name == 'ew_con_var_orig':
-                return self.ew_con_var_orig
-            if name == 'ew_con_var_compressed':
-                return self.ew_con_var_compressed
-            if name == 'is_positive_orig':
-                return self._is_positive_orig
-            if name == 'is_positive_compressed':
-                return self._is_positive_compressed
+            if name == 'ns_con_var':
+                return self.ns_con_var
+            if name == 'ew_con_var':
+                return self.ew_con_var
+            if name == 'is_positive':
+                return self._is_positive
+            if name == 'is_negative':
+                return self._is_negative
             raise ValueError(f'there are no metrics with the name: {name}.')
         else:
             raise TypeError('name must be a string.')
 
 
-class SpatialMetrics(Metrics):
-    def __init__(self, orig: xr.DataArray, compressed: xr.DataArray):
-        Metrics.__init__(self, orig, compressed)
+class SpatialMetrics(DatasetMetrics):
+    def __init__(self, ds: xr.DataArray, aggregate_dims: list):
+        DatasetMetrics.__init__(self, ds)
 
-        self._ns_con_var_orig_spatial = None
-        self._ns_con_var_compressed_spatial = None
-        self._ew_con_var_orig_spatial = None
-        self._ew_con_var_compressed_spatial = None
-        self._mean_orig_spatial = None
-        self._mean_compressed_spatial = None
-        self._std_orig_spatial = None
-        self._std_compressed_spatial = None
-        self._prob_positive_orig_spatial = None
-        self._prob_positive_compressed_spatial = None
-        self._odds_positive_orig_spatial = None
-        self._odds_positive_compressed_spatial = None
+        self._ns_con_var_spatial = None
+        self._ew_con_var_spatial = None
+        self._mean_spatial = None
+        self._std_spatial = None
+        self._prob_positive_spatial = None
+        self._odds_positive_spatial = None
+        self._prob_negative_spatial = None
+        self._zscore_spatial = None
+        self._agg_dims = aggregate_dims
+
+        self._frame_size = 1
+        for dim in aggregate_dims:
+            self._frame_size *= int(self._ds.sizes[dim])
 
     @property
-    def ns_con_var_orig_spatial(self) -> np.ndarray:
+    def ns_con_var_spatial(self) -> np.ndarray:
         if not self._is_memoized('_ns_con_var'):
-            self._ns_con_var_orig_spatial = self._con_var('ns', self._orig).mean(dim='time')
+            self._ns_con_var_spatial = self._con_var('ns', self._ds).mean(self._agg_dims)
 
-        return self._ns_con_var_orig_spatial
+        return self._ns_con_var_spatial
 
     @property
-    def ew_con_var_orig_spatial(self) -> np.ndarray:
+    def ew_con_var_spatial(self) -> np.ndarray:
         if not self._is_memoized('_ew_con_var'):
-            self._ew_con_var_orig_spatial = self._con_var('ew', self._orig).mean(dim='time')
+            self._ew_con_var_spatial = self._con_var('ew', self._ds).mean(self._agg_dims)
 
-        return self._ew_con_var_orig_spatial
-
-    @property
-    def ns_con_var_compressed_spatial(self) -> np.ndarray:
-        if not self._is_memoized('_ns_con_var'):
-            self._ns_con_var_compressed_spatial = self._con_var('ns', self._compressed).mean(
-                dim='time'
-            )
-
-        return self._ns_con_var_compressed_spatial
+        return self._ew_con_var_spatial
 
     @property
-    def ew_con_var_compressed_spatial(self) -> np.ndarray:
-        if not self._is_memoized('_ew_con_var'):
-            self._ew_con_var_compressed_spatial = self._con_var('ew', self._compressed).mean(
-                dim='time'
-            )
+    def mean_spatial(self) -> np.ndarray:
+        if not self._is_memoized('_mean_spatial'):
+            self._mean_spatial = self._ds.mean(self._agg_dims)
 
-        return self._ew_con_var_compressed_spatial
+        return self._mean_spatial
 
     @property
-    def mean_orig_spatial(self) -> np.ndarray:
-        if not self._is_memoized('_mean_orig_spatial'):
-            self._mean_orig_spatial = self._orig.mean(dim='time')
+    def std_spatial(self) -> np.ndarray:
+        if not self._is_memoized('_std_spatial'):
+            self._std_spatial = self._ds.std(self._agg_dims, ddof=1)
 
-        return self._mean_orig_spatial
-
-    @property
-    def mean_compressed_spatial(self) -> np.ndarray:
-        if not self._is_memoized('_mean_compressed_spatial'):
-            self._mean_compressed_spatial = self._compressed.mean(dim='time')
-
-        return self._mean_compressed_spatial
+        return self._std_spatial
 
     @property
-    def std_orig_spatial(self) -> np.ndarray:
-        if not self._is_memoized('_std_orig_spatial'):
-            self._std_orig_spatial = self._orig.std(dim='time', ddof=1)
-
-        return self._std_orig_spatial
-
-    @property
-    def std_compressed_spatial(self) -> np.ndarray:
-        if not self._is_memoized('_std_compressed_spatial'):
-            self._std_compressed_spatial = self._compressed.std(dim='time', ddof=1)
-
-        return self._std_compressed_spatial
-
-    @property
-    def prob_positive_orig_spatial(self) -> np.ndarray:
+    def prob_positive_spatial(self) -> np.ndarray:
         if not self._is_memoized('_prob_positive_orig_spatial'):
-            self._prob_positive_orig_spatial = (self.is_positive_orig.sum(dim='time')) / (
-                self.is_positive_orig.sizes['time']
+            self._prob_positive_spatial = (self.is_positive.sum(self._agg_dims)) / (
+                self._frame_size
             )
-        return self._prob_positive_orig_spatial
+        return self._prob_positive_spatial
 
     @property
-    def prob_positive_compressed_spatial(self) -> np.ndarray:
-        if not self._is_memoized('_prob_positive_compressed_spatial'):
-            self._prob_positive_compressed_spatial = (
-                self.is_positive_compressed.sum(dim='time')
-            ) / (self.is_positive_compressed.sizes['time'])
-        return self._prob_positive_compressed_spatial
+    def prob_negative_spatial(self) -> np.ndarray:
+        if not self._is_memoized('_prob_negative_spatial'):
+            self._prob_negative_spatial = (
+                self.is_negative.sum(self._agg_dims) / self.is_negative.sizes['time']
+            )
+        return self._prob_negative_spatial
 
     @property
-    def prob_negative_orig_spatial(self) -> np.ndarray:
-        if not self._is_memoized('_prob_negative_orig_spatial'):
-            self._prob_negative_orig_spatial = (
-                self.is_negative_orig.sum(dim='time') / self.is_negative_orig.sizes['time']
+    def odds_positive_spatial(self) -> np.ndarray:
+        if not self._is_memoized('_odds_positive_spatial'):
+            self._odds_positive_spatial = self.prob_positive_spatial / (
+                1 - self.prob_positive_spatial
             )
-        return self._prob_negative_orig_spatial
+        return self._odds_positive_spatial
 
     @property
-    def prob_negative_compressed_spatial(self) -> np.ndarray:
-        if not self._is_memoized('_prob_negative_compressed_spatial'):
-            self._prob_negative_compressed_spatial = (
-                self.is_negative_compressed.sum(dim='time')
-                / self.is_negative_compressed.sizes['time']
+    def zscore_spatial(self) -> np.ndarray:
+        if not self._is_memoized('_zscore_spatial'):
+            self._zscore_spatial = np.divide(
+                self.mean_spatial, self.std_spatial / np.sqrt(self._ds.sizes['time'])
             )
-        return self._prob_negative_compressed_spatial
 
-    @property
-    def odds_positive_orig_spatial(self) -> np.ndarray:
-        if not self._is_memoized('_odds_positive_orig_spatial'):
-            self._odds_positive_orig_spatial = self.prob_positive_orig_spatial / (
-                1 - self.prob_positive_orig_spatial
-            )
-        return self._odds_positive_orig_spatial
+        return self._zscore_spatial
 
-    @property
-    def odds_positive_compressed_spatial(self) -> np.ndarray:
-        if not self._is_memoized('_odds_positive_compressed_spatial'):
-            self._odds_positive_compressed_spatial = self.prob_positive_compressed_spatial / (
-                1 - self.prob_positive_compressed_spatial
-            )
-        return self._odds_positive_compressed_spatial
-
-    def get_spatial_metrics_by_name(self, name: str):
+    def get_spatial_metric(self, name: str):
         if isinstance(name, str):
-            if name == 'ns_con_var_orig_spatial':
-                return self.ns_con_var_orig_spatial
-            if name == 'ns_con_var_compressed_spatial':
-                return self.ns_con_var_compressed_spatial
-            if name == 'ew_con_var_orig_spatial':
-                return self.ew_con_var_orig_spatial
-            if name == 'ew_con_var_compressed_spatial':
-                return self.ew_con_var_compressed_spatial
-            if name == 'mean_orig_spatial':
-                return self.mean_orig_spatial
-            if name == 'mean_compressed_spatial':
-                return self.mean_compressed_spatial
-            if name == 'std_orig_spatial':
-                return self.mean_orig_spatial
-            if name == 'std_compressed_spatial':
-                return self.mean_compressed_spatial
-            if name == 'prob_positive_orig_spatial':
-                return self.prob_positive_orig_spatial
-            if name == 'prob_positive_compressed_spatial':
-                return self.prob_positive_compressed_spatial
-            if name == 'prob_negative_orig_spatial':
-                return self.prob_negative_orig_spatial
-            if name == 'prob_negative_compressed_spatial':
-                return self.prob_negative_compressed_spatial
-            if name == 'odds_positive_compressed_spatial':
-                return self.odds_positive_orig_spatial
-            if name == 'odds_positive_compressed_spatial':
-                return self.prob_positive_compressed_spatial
+            if name == 'ns_con_var_spatial':
+                return self.ns_con_var_spatial
+            if name == 'ew_con_var_spatial':
+                return self.ew_con_var_spatial
+            if name == 'mean_spatial':
+                return self.mean_spatial
+            if name == 'std_spatial':
+                return self.mean_spatial
+            if name == 'prob_positive_spatial':
+                return self.prob_positive_spatial
+            if name == 'prob_negative_spatial':
+                return self.prob_negative_spatial
+            if name == 'odds_positive_spatial':
+                return self.odds_positive_spatial
+            if name == 'zscore_spatial':
+                return self.zscore_spatial
             raise ValueError(f'there is no metrics with the name: {name}.')
         else:
             raise TypeError('name must be a string.')
 
 
-class TimeSeriesMetrics(Metrics):
-    def __init__(self, orig: xr.DataArray, compressed: xr.DataArray):
-        Metrics.__init__(orig, compressed)
+class TimeSeriesMetrics(DatasetMetrics):
+    def __init__(self, ds: xr.DataArray):
+        DatasetMetrics.__init__(self, ds)
+        self._ns_con_var_time = None
+        self._ew_con_var_time = None
+        self._mean_time = None
+        self._std_time = None
+        self._prob_positive_time = None
+        self._odds_positive_time = None
+        self._prob_negative_time = None
+        self._zscore_time = None
