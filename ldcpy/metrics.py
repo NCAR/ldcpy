@@ -1,3 +1,5 @@
+from typing import Optional
+
 import numpy as np
 import scipy.stats as ss
 import xarray as xr
@@ -87,7 +89,7 @@ class DatasetMetrics(object):
 
 
 class AggregateMetrics(DatasetMetrics):
-    def __init__(self, ds: xr.DataArray, aggregate_dims: list):
+    def __init__(self, ds: xr.DataArray, aggregate_dims: list, grouping: Optional[str] = None):
         DatasetMetrics.__init__(self, ds)
 
         self._ns_con_var = None
@@ -98,7 +100,11 @@ class AggregateMetrics(DatasetMetrics):
         self._odds_positive = None
         self._prob_negative = None
         self._zscore = None
+        self._mae_max = None
+        self._corr_lag1 = None
+        self._lag1 = None
         self._agg_dims = aggregate_dims
+        self._grouping = grouping
 
         self._frame_size = 1
         for dim in aggregate_dims:
@@ -124,6 +130,13 @@ class AggregateMetrics(DatasetMetrics):
             self._mean = self._ds.mean(self._agg_dims)
 
         return self._mean
+
+    @property
+    def mean_abs(self) -> np.ndarray:
+        if not self._is_memoized('_mean_abs'):
+            self._mean_abs = abs(self.mean)
+
+        return self._mean_abs
 
     @property
     def std(self) -> np.ndarray:
@@ -157,6 +170,71 @@ class AggregateMetrics(DatasetMetrics):
 
         return self._zscore
 
+    @property
+    def mae_max(self) -> xr.DataArray:
+        if not self._is_memoized('_mae_day_max'):
+            self._test = abs(self._ds.groupby(self._grouping).mean(dim=self._agg_dims))
+            # Would be great to replace the code below with a single call to _test.idxmax() once idxmax is in a stable release
+            if self._grouping == 'time.dayofyear':
+                self._mae_max = xr.DataArray(
+                    self._test.isel(dayofyear=self._test.argmax(dim='dayofyear'))
+                    .coords.variables.mapping['dayofyear']
+                    .data,
+                    dims=['lat', 'lon'],
+                )
+            if self._grouping == 'time.month':
+                self._mae_max = xr.DataArray(
+                    self._test.isel(month=self._test.argmax(dim='month'))
+                    .coords.variables.mapping['month']
+                    .data,
+                    dims=['lat', 'lon'],
+                )
+            if self._grouping == 'time.year':
+                self._mae_max = xr.DataArray(
+                    self._test.isel(year=self._test.argmax(dim='year'))
+                    .coords.variables.mapping['year']
+                    .data,
+                    dims=['lat', 'lon'],
+                )
+
+        return self._mae_max
+
+    @property
+    def lag1(self) -> xr.DataArray:
+        if not self._is_memoized('_lag1'):
+            self._deseas_resid = self._ds.groupby('time.dayofyear') - self._ds.groupby(
+                'time.dayofyear'
+            ).mean(dim='time')
+            if self._deseas_resid.equals(xr.zeros_like(self._deseas_resid)):
+                raise ValueError(
+                    'deseasonalized residuals are zero (requires more than one year of data)'
+                )
+
+            time_length = self._ds.sizes['time']
+            o_1, o_2 = xr.align(
+                self._deseas_resid.head({'time': time_length - 1}),
+                self._deseas_resid.tail({'time': time_length - 1}),
+                join='override',
+            )
+            self._lag1 = xr.ufuncs.square((o_1 - o_2))
+
+        return self._lag1
+
+    @property
+    def corr_lag1(self) -> xr.DataArray:
+        if not self._is_memoized('_corr_lag1'):
+            time_length = self._ds.sizes['time']
+            l_1, l_2 = xr.align(
+                self.lag1.head({'time': time_length - 2}),
+                self.lag1.tail({'time': time_length - 2}),
+                join='override',
+            )
+            self._corr_lag1 = np.multiply(l_1, l_2).sum(dim='time') / np.multiply(
+                self._lag1, self._lag1
+            ).sum(dim='time')
+
+        return self._corr_lag1
+
     def get_metric(self, name: str):
         if isinstance(name, str):
             if name == 'ns_con_var':
@@ -166,7 +244,7 @@ class AggregateMetrics(DatasetMetrics):
             if name == 'mean':
                 return self.mean
             if name == 'std':
-                return self.mean
+                return self.std
             if name == 'prob_positive':
                 return self.prob_positive
             if name == 'prob_negative':
@@ -175,6 +253,12 @@ class AggregateMetrics(DatasetMetrics):
                 return self.odds_positive
             if name == 'zscore':
                 return self.zscore
+            if name == 'mae_max':
+                return self.mae_max
+            if name == 'mean_abs':
+                return self.mean_abs
+            if name == 'corr_lag1':
+                return self.corr_lag1
             raise ValueError(f'there is no metrics with the name: {name}.')
         else:
             raise TypeError('name must be a string.')
