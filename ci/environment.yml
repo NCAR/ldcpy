@@ -10,3 +10,5 @@ dependencies:
   - pytest-cov
   - xarray
   - zfpy
+  - xrft
+  - cmocean
