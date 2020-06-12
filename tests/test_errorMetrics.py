@@ -66,7 +66,7 @@ class TestErrorMetrics(TestCase):
         import xarray as xr
         import zfpy
 
-        ds = xr.open_dataset('data/orig.TS.100days.nc')
+        ds = xr.open_dataset('data/cam-fv/orig.TS.100days.nc')
         TS = ds.TS.values
         TS_compressed = zfpy.compress_numpy(TS, tolerance=0.01)
         TS_decompressed = zfpy.decompress_numpy(TS_compressed)
@@ -81,7 +81,7 @@ class TestErrorMetrics(TestCase):
         import xarray as xr
         import zfpy
 
-        ds = xr.open_dataset('data/orig.TS.100days.nc')
+        ds = xr.open_dataset('data/cam-fv/orig.TS.100days.nc')
 
         TS = ds.TS
 

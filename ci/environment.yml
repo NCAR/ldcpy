@@ -1,4 +1,4 @@
-name: ldcpy_env
+name: ldcpy
 channels:
   - conda-forge
 dependencies:
