@@ -1,6 +1,7 @@
 import math
 
 import cartopy.crs as ccrs
+import cmocean
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 import numpy as np
@@ -50,7 +51,7 @@ def _get_raw_data(da1, metric, plot_type, metric_type, group_by, da2=None):
 
 
 def _get_plot_data(
-    raw_data_1, metric_type, transform, grouping, raw_data_2=None, standardized_err=False
+    raw_data_1, metric_type, transform, grouping, raw_data_2=None, standardized_err=False,
 ):
     if metric_type == 'diff':
         plot_data = raw_data_1 - raw_data_2
@@ -92,10 +93,15 @@ def _get_title(
     lon=None,
     subset=None,
 ):
-    if transform == 'log':
-        title = f'{ens_o}: {varname}: log10({metric_name}) {metric_type}'
+    if ens_r is not None:
+        das = f'{ens_o}, {ens_r}'
     else:
-        title = f'{ens_o}: {varname}: {metric_name} {metric_type}'
+        das = f'{ens_o}'
+
+    if transform == 'log':
+        title = f'{das}: {varname}: log10({metric_name}) {metric_type}'
+    else:
+        title = f'{das}: {varname}: {metric_name} {metric_type}'
 
     if group_by is not None:
         title = f'{title} by {group_by}'
@@ -188,7 +194,7 @@ def spatial_comparison_plot(da_o, title_o, da_r, title_r, color='cmo.thermal'):
     cax = fig.add_axes([0.1, 0, 0.8, 0.05])
     cbar = fig.colorbar(pc1, cax=cax, orientation='horizontal')
     cbar.ax.tick_params(labelsize=8, rotation=30)
-    cbar.ax.set_xticklabels(['{:.2f}'.format(i) for i in cbar.get_ticks()])
+    # cbar.ax.set_xticklabels(['{:.2f}'.format(i) for i in cbar.get_ticks()])
 
 
 def spatial_plot(da, title, color='coolwarm'):
@@ -205,7 +211,7 @@ def spatial_plot(da, title, color='coolwarm'):
     ax = plt.subplot(1, 1, 1, projection=ccrs.Robinson(central_longitude=0.0))
     # pc = ax.pcolormesh(lon, lat, cy_data, transform=ccrs.PlateCarree(), cmap=mymap)
     pc = ax.contourf(
-        lon, lat, cy_data, transform=ccrs.PlateCarree(), cmap=mymap, levels=24, extend='both'
+        lon, lat, cy_data, transform=ccrs.PlateCarree(), cmap=mymap, levels=24, extend='both',
     )
     cb = plt.colorbar(pc, orientation='horizontal', shrink=0.95)
     # set_over = white?
@@ -235,7 +241,7 @@ def periodogram_plot(plot_data, title, color='red'):
 def time_series_plot(
     da,
     title,
-    grouping='None',
+    grouping=None,
     scale='linear',
     metric='mean',
     metric_type='n',
@@ -317,6 +323,9 @@ def plot(
     color='coolwarm',
     standardized_err=False,
 ):
+    """
+    Plots the data given an xarray dataset (ds), dataset variable (varname), ensemble (ens_o) and desired metric (metric)
+    """
     # Subset data
     if subset is not None:
         data_o = _subset_data(ds[varname].sel(ensemble=ens_o), subset, lat, lon)
@@ -419,6 +428,7 @@ def plot(
             lat=lat,
             lon=lon,
             subset=subset,
+            ens_r=ens_r,
         )
 
     # Call plot functions
