@@ -28,7 +28,7 @@ jobs:
           key: ${{ runner.os }}-conda-${{ env.CACHE_NUMBER }}-${{ hashFiles('ci/environment.yml') }}
       - uses: goanpeca/setup-miniconda@v1
         with:
-          activate-environment: ldcpy_env # Defined in ci/environment.yml
+          activate-environment: ldcpy # Defined in ci/environment.yml
           auto-update-conda: false
           python-version: ${{ matrix.python-version }}
           environment-file: ci/environment.yml
