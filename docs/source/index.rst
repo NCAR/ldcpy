@@ -12,7 +12,9 @@ Documentation
    :maxdepth: 2
    :caption: Contents:
 
-   notebooks/Plot Comparisons.ipynb
+   installation.rst
+   api.rst
+   examples.rst
 
 
 Indices and tables
