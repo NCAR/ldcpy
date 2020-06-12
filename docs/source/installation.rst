@@ -10,4 +10,9 @@ ldcpy can be set up for development using the following commands (in the ldcpy r
         conda env create --file environment.yml
         $CONDA_PREFIX/envs/ldcpy/bin/pip install .
 
-For usage examples, see Jupyter notebooks.
+For usage examples, see Jupyter notebooks. To activate the environment and start Jupyter, do the following:
+
+.. code-block:: bash
+
+        conda activate ldcpy
+        jupyter notebook
