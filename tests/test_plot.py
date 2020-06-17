@@ -36,7 +36,7 @@ class TestPlot(TestCase):
         self.assertTrue(True is True)
 
     def test_prob_neg(self):
-        ldcpy.plot_examples.single_plot(ds2, 'PRECT', 'zfpA1.0', 'orig', 'recon', 'prob_negative')
+        lp.plot(ds2, 'PRECT', 'orig', ens_r='recon', metric='prob_negative')
         self.assertTrue(True is True)
 
     def test_std_dev_compare(self):
@@ -102,6 +102,7 @@ class TestPlot(TestCase):
             group_by='dayofyear',
             metric='mean_abs',
             metric_type='diff',
+            plot_type='time_series',
         )
         self.assertTrue(True is True)
 
