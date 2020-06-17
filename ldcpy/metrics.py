@@ -147,7 +147,7 @@ class AggregateMetrics(DatasetMetrics):
 
     @property
     def prob_positive(self) -> np.ndarray:
-        if not self._is_memoized('_prob_positive_orig'):
+        if not self._is_memoized('_prob_positive'):
             self._prob_positive = (self.is_positive_full.sum(self._agg_dims)) / (self._frame_size)
         return self._prob_positive
 
@@ -205,10 +205,6 @@ class AggregateMetrics(DatasetMetrics):
             self._deseas_resid = self._ds.groupby('time.dayofyear') - self._ds.groupby(
                 'time.dayofyear'
             ).mean(dim='time')
-            if self._deseas_resid.equals(xr.zeros_like(self._deseas_resid)):
-                raise ValueError(
-                    'deseasonalized residuals are zero (requires more than one year of data)'
-                )
 
             time_length = self._ds.sizes['time']
             o_1, o_2 = xr.align(

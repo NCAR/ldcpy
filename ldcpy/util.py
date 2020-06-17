@@ -3,7 +3,7 @@ import xarray as xr
 from .error_metrics import ErrorMetrics
 
 
-def open_datasets(list_of_files, ensemble_names, pot_var_names=['TS', 'PRECT']):
+def open_datasets(list_of_files, ensemble_names, pot_var_names=['TS', 'PRECT', 'T']):
     """
     Open several different netCDF files, concatenate across
     a new 'ensemble' dimension. Stores them in an xarray dataset.
