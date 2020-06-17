@@ -22,7 +22,7 @@ ds2 = ldcpy.open_datasets(
     ],
     ['orig', 'recon', 'recon_2'],
 )
-ds3 = ldcpy.open_datasets(['data/cam-fv/cam-fv.T.6months.c'], ['orig'])
+ds3 = ldcpy.open_datasets(['data/cam-fv/cam-fv.T.6months.nc'], ['orig'])
 
 
 class TestPlot(TestCase):
