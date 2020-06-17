@@ -43,12 +43,12 @@ def _get_raw_data(da1, metric, plot_type, metric_type, group_by, mae_group_by, d
     if plot_type == 'spatial':
         if group_by is not None and metric != 'mae_max':
             raise ValueError(f'cannot group by time in a spatial plot of {metric}.')
-        if metric_type == 'diff_metric':
+        if metric_type == 'metric_of_diff':
             metrics_da1 = lm.AggregateMetrics(da1 - da2, ['time'], mae_group_by)
         else:
             metrics_da1 = lm.AggregateMetrics(da1, ['time'], mae_group_by)
     elif plot_type == 'time_series' or plot_type == 'periodogram' or plot_type == 'histogram':
-        if metric_type == 'diff_metric':
+        if metric_type == 'metric_of_diff':
             metrics_da1 = lm.AggregateMetrics(da1 - da2, ['lat', 'lon'], group_by)
         else:
             metrics_da1 = lm.AggregateMetrics(da1, ['lat', 'lon'], group_by)
@@ -67,7 +67,7 @@ def _get_plot_data(
         plot_data = raw_data_1 - raw_data_2
     elif metric_type == 'ratio':
         plot_data = raw_data_2 / raw_data_1
-    elif metric_type == 'raw' or metric_type == 'diff_metric':
+    elif metric_type == 'raw' or metric_type == 'metric_of_diff':
         plot_data = raw_data_1
     else:
         raise ValueError(f'metric_type {metric_type} not supported')
