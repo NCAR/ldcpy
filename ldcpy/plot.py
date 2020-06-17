@@ -452,8 +452,96 @@ def plot(
     standardized_err=False,
 ):
     """
-    Plots the data given an xarray dataset (ds), dataset variable (varname), ensemble (ens_o) and desired metric (metric)
+    Plots the data given an xarray dataset
+
+
+    Parameters:
+    ===========
+    ds -- xarray.Dataset
+        the dataset
+    varname -- string
+        the name of the variable to be plotted
+    ens_o -- string
+        the ensemble name of the dataset to gather metrics from
+    metric -- string
+        the name of the metric to be plotted (must match a property name in the AggregateMetrics class in ldcpy.plot)
+
+    Keyword Arguments:
+    ==================
+    ens_r -- string
+        the name of the second dataset to gather metrics from (needed if metric_type is diff, ratio, or metric_of_diff, or if plot_type is spatial_comparison)
+    group_by -- string
+        how to group the data in time series plots. Valid groupings:
+            "time.day"
+
+            "time.dayofyear"
+
+            "time.month"
+
+            "time.year"
+
+    scale -- string (default "linear")
+        time-series y-axis plot transformation. Valid options:
+            'linear'
+
+            'log'
+
+    metric_type -- string (default 'raw')
+        The type of operation to be performed on the metrics in the two ensembles. Valid options:
+
+            'raw': the unaltered metric values
+
+            'diff': the difference between the metric values in ens_o and ens_r
+
+            'ratio': the ratio of the metric values in (ens_r/ens_o)
+
+            'metric_of_diff': the metric value computed on the difference between ens_o and ens_r
+
+    plot_type -- string (default 'spatial')
+        The type of plot to be created. Valid options:
+
+            'spatial': a plot of the world with values at each lat and lon point (takes the mean across the time dimension)
+
+            'spatial_comparison': two side-by-side spatial plots, one of the raw metric from ens_o and the other of the raw metric from ens_r
+
+            'time-series': A time-series plot of the data (computed by taking the mean across the lat and lon dimensions)
+
+            'histogram': A histogram of the time-series data
+
+    transform -- string (default 'linear')
+        data transformation. Valid options:
+
+            'linear'
+
+            'log'
+
+    subset -- string (default None)
+        subset of the data to gather metrics on. Valid options:
+
+            'first50': the first 50 days of data
+
+            'winter': data from the months December, January, February
+
+    lat -- float (default None)
+        the latitude of the data to gather metrics on.
+
+    lon -- float (default None)
+        the longitude of the data to gather metrics on.
+
+    lev -- float (default 0)
+        the level of the data to gather metrics on (used if plotting from a 3d data set).
+
+    color -- string (default 'coolwarm')
+        the color scheme for spatial plots (see https://matplotlib.org/3.1.1/gallery/color/colormap_reference.html)
+
+    standardized_err -- bool (default False)
+        whether or not to standardize the error in a plot of metric_type="diff"
+
+    Returns
+    =======
+    out -- None
     """
+
     # Subset data
     data_r = None
     data_o = _subset_data(ds[varname].sel(ensemble=ens_o), subset, lat, lon, lev)

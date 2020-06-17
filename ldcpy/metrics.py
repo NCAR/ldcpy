@@ -6,6 +6,10 @@ import xarray as xr
 
 
 class DatasetMetrics(object):
+    """
+    This class contains metrics for each point of a dataset, and a method to access these metrics.
+    """
+
     def __init__(self, ds: xr.DataArray) -> None:
         if isinstance(ds, xr.DataArray):
             # Datasets
@@ -27,6 +31,9 @@ class DatasetMetrics(object):
 
     @property
     def ns_con_var_full(self) -> np.ndarray:
+        """
+        The North-South contrast variance at each point in the dataset
+        """
         if not self._is_memoized('_ns_con_var_full'):
             self._ns_con_var_full = self._con_var('ns', self._ds)
 
@@ -34,6 +41,9 @@ class DatasetMetrics(object):
 
     @property
     def ew_con_var_full(self) -> np.ndarray:
+        """
+        The East-West contrast variance at each point in the dataset
+        """
         if not self._is_memoized('_ew_con_var_full'):
             self._ew_con_var_full = self._con_var('ew', self._ds)
 
@@ -41,6 +51,9 @@ class DatasetMetrics(object):
 
     @property
     def is_positive_full(self) -> np.ndarray:
+        """
+        returns 1 if the data point is positive, 0 if negative
+        """
         if not self._is_memoized('_is_positive_full'):
             self._is_positive_full = self._ds > 0
 
@@ -48,6 +61,9 @@ class DatasetMetrics(object):
 
     @property
     def is_negative_full(self) -> np.ndarray:
+        """
+        returns 1 if the data point is negative, 0 if positive
+        """
         if not self._is_memoized('_is_negative_full'):
             self._is_negative_full = self._ds < 0
 
@@ -74,6 +90,19 @@ class DatasetMetrics(object):
         return con_var
 
     def get_full_metric(self, name: str):
+        """
+        Gets a metric at every data point of the dataset
+
+        Parameters:
+        ===========
+        name -- string
+            the name of the metric (must be identical to a property name)
+
+        Returns
+        =======
+        out -- xarray.DataArray
+            a DataArray of the same size and dimensions the original dataarray, with metrics at each data point
+        """
         if isinstance(name, str):
             if name == 'ns_con_var_full':
                 return self.ns_con_var_full
@@ -89,6 +118,10 @@ class DatasetMetrics(object):
 
 
 class AggregateMetrics(DatasetMetrics):
+    """
+    This class contains metrics for each point of a dataset after aggregating across one or more dimensions, and a method to access these metrics.
+    """
+
     def __init__(self, ds: xr.DataArray, aggregate_dims: list, grouping: Optional[str] = None):
         DatasetMetrics.__init__(self, ds)
 
@@ -112,6 +145,9 @@ class AggregateMetrics(DatasetMetrics):
 
     @property
     def ns_con_var(self) -> np.ndarray:
+        """
+        The North-South Contrast Variance averaged along the aggregate dimensions
+        """
         if not self._is_memoized('_ns_con_var'):
             self._ns_con_var = self._con_var('ns', self._ds).mean(self._agg_dims)
 
@@ -119,6 +155,9 @@ class AggregateMetrics(DatasetMetrics):
 
     @property
     def ew_con_var(self) -> np.ndarray:
+        """
+        The East-West Contrast Variance averaged along the aggregate dimensions
+        """
         if not self._is_memoized('_ew_con_var'):
             self._ew_con_var = self._con_var('ew', self._ds).mean(self._agg_dims)
 
@@ -126,6 +165,9 @@ class AggregateMetrics(DatasetMetrics):
 
     @property
     def mean(self) -> np.ndarray:
+        """
+        The mean along the aggregate dimensions
+        """
         if not self._is_memoized('_mean'):
             self._mean = self._ds.mean(self._agg_dims)
 
@@ -133,6 +175,9 @@ class AggregateMetrics(DatasetMetrics):
 
     @property
     def mean_abs(self) -> np.ndarray:
+        """
+        The absolute value of the mean along the aggregate dimensions
+        """
         if not self._is_memoized('_mean_abs'):
             self._mean_abs = abs(self.mean)
 
@@ -140,6 +185,9 @@ class AggregateMetrics(DatasetMetrics):
 
     @property
     def std(self) -> np.ndarray:
+        """
+        The standard deviation averaged along the aggregate dimensions
+        """
         if not self._is_memoized('_std'):
             self._std = self._ds.std(self._agg_dims, ddof=1)
 
@@ -147,24 +195,36 @@ class AggregateMetrics(DatasetMetrics):
 
     @property
     def prob_positive(self) -> np.ndarray:
+        """
+        The probability that a point is positive
+        """
         if not self._is_memoized('_prob_positive'):
             self._prob_positive = (self.is_positive_full.sum(self._agg_dims)) / (self._frame_size)
         return self._prob_positive
 
     @property
     def prob_negative(self) -> np.ndarray:
+        """
+        The probability that a point is negative
+        """
         if not self._is_memoized('_prob_negative'):
             self._prob_negative = self.is_negative_full.sum(self._agg_dims) / self._frame_size
         return self._prob_negative
 
     @property
     def odds_positive(self) -> np.ndarray:
+        """
+        The odds that a point is positive: prob_positive/(1-prob_positive)
+        """
         if not self._is_memoized('_odds_positive'):
             self._odds_positive = self.prob_positive / (1 - self.prob_positive)
         return self._odds_positive
 
     @property
     def zscore(self) -> np.ndarray:
+        """
+        The z-score of a point averaged along the aggregate dimensions under the null hypothesis that the true mean is zero.
+        """
         if not self._is_memoized('_zscore'):
             self._zscore = np.divide(self.mean, self.std / np.sqrt(self._ds.sizes['time']))
 
@@ -172,6 +232,9 @@ class AggregateMetrics(DatasetMetrics):
 
     @property
     def mae_max(self) -> xr.DataArray:
+        """
+        The maximum mean absolute error at the point averaged along the aggregate dimensions.
+        """
         if not self._is_memoized('_mae_day_max'):
             self._test = abs(self._ds.groupby(self._grouping).mean(dim=self._agg_dims))
             # Would be great to replace the code below with a single call to _test.idxmax() once idxmax is in a stable release
@@ -201,6 +264,9 @@ class AggregateMetrics(DatasetMetrics):
 
     @property
     def lag1(self) -> xr.DataArray:
+        """
+        The deseasonalized lag-1 value by day of year
+        """
         if not self._is_memoized('_lag1'):
             self._deseas_resid = self._ds.groupby('time.dayofyear') - self._ds.groupby(
                 'time.dayofyear'
@@ -218,6 +284,9 @@ class AggregateMetrics(DatasetMetrics):
 
     @property
     def corr_lag1(self) -> xr.DataArray:
+        """
+        The deseasonalized lag-1 correlation at each point by day of year
+        """
         if not self._is_memoized('_corr_lag1'):
             time_length = self._ds.sizes['time']
             l_1, l_2 = xr.align(
@@ -232,6 +301,19 @@ class AggregateMetrics(DatasetMetrics):
         return self._corr_lag1
 
     def get_metric(self, name: str):
+        """
+        Gets a metric aggregated across one or more dimensions of the dataset
+
+        Parameters:
+        ===========
+        name -- string
+            the name of the metric (must be identical to a property name)
+
+        Returns
+        =======
+        out -- xarray.DataArray
+            a DataArray of the same size and dimensions the original dataarray, minus those dimensions that were aggregated across.
+        """
         if isinstance(name, str):
             if name == 'ns_con_var':
                 return self.ns_con_var
@@ -261,6 +343,10 @@ class AggregateMetrics(DatasetMetrics):
 
 
 class OverallMetrics(AggregateMetrics):
+    """
+    This class contains metrics on the overall dataset
+    """
+
     def __init__(self, ds: xr.DataArray, aggregate_dims: list):
         AggregateMetrics.__init__(self, ds, aggregate_dims)
 
@@ -269,6 +355,9 @@ class OverallMetrics(AggregateMetrics):
 
     @property
     def zscore_cutoff(self) -> np.ndarray:
+        """
+        The Z-Score cutoff for a point to be considered significant
+        """
         if not self._is_memoized('_zscore_cutoff'):
             pvals = 2 * (1 - ss.norm.cdf(np.abs(self.zscore)))
             sorted_pvals = np.sort(pvals).flatten()
@@ -285,6 +374,9 @@ class OverallMetrics(AggregateMetrics):
 
     @property
     def zscore_percent_significant(self) -> np.ndarray:
+        """
+        The percent of points where the zscore is considered significant
+        """
         if not self._is_memoized('_zscore_percent_significant'):
             pvals = 2 * (1 - ss.norm.cdf(np.abs(self.zscore)))
             sorted_pvals = np.sort(pvals).flatten()
@@ -301,6 +393,18 @@ class OverallMetrics(AggregateMetrics):
             return self._zscore_percent_significant
 
     def get_overall_metric(self, name: str):
+        """
+        Gets a single metric on the dataset
+
+        Parameters:
+        ===========
+        name -- string
+            the name of the metric (must be identical to a property name)
+
+        Returns
+        =======
+        out -- float32
+        """
         if isinstance(name, str):
             if name == 'zscore_cutoff':
                 return self.zscore_cutoff

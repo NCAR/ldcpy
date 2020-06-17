@@ -7,6 +7,23 @@ def open_datasets(list_of_files, ensemble_names, pot_var_names=['TS', 'PRECT', '
     """
     Open several different netCDF files, concatenate across
     a new 'ensemble' dimension. Stores them in an xarray dataset.
+
+    Parameters:
+    ===========
+    list_of_files -- list <string>
+        the path of the netCDF file(s) to be opened
+    ensemble_names -- list <string>
+        the respective ensemble names of each netCDF file
+
+    Keyword Arguments:
+    ==================
+    pot_var_names -- list <string>
+        the variables to load data from in each netCDF file
+
+    Returns
+    =======
+    out -- xarray.Dataset
+        contains data variables matching each pot_var_name found in the netCDF file
     """
 
     # Error checking:
@@ -30,6 +47,30 @@ def open_datasets(list_of_files, ensemble_names, pot_var_names=['TS', 'PRECT', '
 
 
 def print_stats(ds, varname, ens_o, ens_r, time=0):
+    """
+    Print error summary statistics of two DataArrays
+
+    Parameters:
+    ===========
+    ds -- xarray.Dataset
+        an xarray dataset containing multiple netCDF files concatenated across an 'ensemble' dimension
+    varname -- string
+        the variable of interest in the dataset
+    ens_o -- string
+        the ensemble label of the original data
+    ens_r -- string
+        the ensemble label of the reconstructed data
+
+    Keywork Arguments:
+    ==================
+    time -- int
+        the time index used to compare the two netCDF files (default 0)
+
+    Returns
+    =======
+    out -- None
+
+    """
     print('Comparing {} data to {} data'.format(ens_o, ens_r))
     orig_val = ds[varname].sel(ensemble=ens_o).isel(time=time)
     recon_val = ds[varname].sel(ensemble=ens_r).isel(time=time)
