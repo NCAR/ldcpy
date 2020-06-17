@@ -99,7 +99,7 @@ class TestPlot(TestCase):
             'TS',
             'orig',
             ens_r='recon',
-            group_by='dayofyear',
+            group_by='time.dayofyear',
             metric='mean_abs',
             metric_type='diff',
             plot_type='time_series',
