@@ -343,9 +343,11 @@ def spatial_plot(da, title, color='coolwarm'):
     ax.set_title(title)
 
 
-def hist_plot(plot_data, title, color='red'):
+def hist_plot(plot_data, title, metric, color='red'):
     fig, axs = mpl.pyplot.subplots(1, 1, sharey=True, tight_layout=True)
     axs.hist(plot_data)
+    mpl.pyplot.xlabel(metric)
+    mpl.pyplot.title(f'time-series histogram: {title}')
 
 
 def periodogram_plot(plot_data, title, color='red'):
@@ -404,13 +406,13 @@ def time_series_plot(
         plot_ylabel = f'log10({ylabel})'
 
     if grouping is not None:
-        mpl.pyplot.plot(da[group_string].data, da)
+        mpl.pyplot.plot(da[group_string].data, da, 'bo')
     else:
         plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%m-%d-%Y'))
         plt.gca().xaxis.set_major_locator(mdates.DayLocator())
         dtindex = da.indexes['time'].to_datetimeindex()
         da['time'] = dtindex
-        mpl.pyplot.plot_date(da.time.data, da)
+        mpl.pyplot.plot_date(da.time.data, da, 'bo')
 
     mpl.pyplot.ylabel(plot_ylabel)
     mpl.pyplot.yscale(scale)
@@ -664,6 +666,6 @@ def plot(
     elif plot_type == 'time_series':
         time_series_plot(plot_data, title, group_by, metric_type=metric_type)
     elif plot_type == 'histogram':
-        hist_plot(plot_data, title)
+        hist_plot(plot_data, title, metric)
     elif plot_type == 'periodogram':
         periodogram_plot(plot_data, title)

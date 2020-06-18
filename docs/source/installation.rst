@@ -16,3 +16,5 @@ For usage examples, see Jupyter notebooks. To activate the environment and start
 
         conda activate ldcpy
         jupyter notebook
+
+The sample notebook can be found in docs/source/notebooks/SampleNotebook.ipynb, feel free to gather your own metrics or create your own plots in this notebook!
