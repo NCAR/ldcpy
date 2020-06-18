@@ -1,3 +1,3 @@
-from . import plot
+from . import plotting
 from .error_metrics import ErrorMetrics
 from .util import open_datasets, print_stats
