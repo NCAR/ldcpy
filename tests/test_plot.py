@@ -3,7 +3,7 @@ from unittest import TestCase
 import numpy as np
 
 import ldcpy
-import ldcpy.plot as lp
+import ldcpy.plotting as lp
 from ldcpy.error_metrics import ErrorMetrics
 
 ds = ldcpy.open_datasets(
@@ -28,7 +28,7 @@ ds3 = ldcpy.open_datasets(['data/cam-fv/cam-fv.T.6months.nc'], ['orig'])
 class TestPlot(TestCase):
     """
     Note: The tests in this class currently only test the plot() function in ldcpy.plot for a variety of different
-    parameters. Tests still need to be written for the methods in the plot.py class.
+    parameters. Tests still need to be written for the methods in the plotting.py class.
     """
 
     def test_mean(self):
