@@ -6,15 +6,15 @@
 import os
 import sys
 
+sys.path.insert(0, os.path.abspath('.'))
+sys.path.insert(0, os.path.abspath('../'))
+sys.path.insert(0, os.path.abspath('../../'))
 # -- Path setup --------------------------------------------------------------
 
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 #
-cwd = os.getcwd()
-parent = os.path.dirname(cwd)
-sys.path.insert(0, parent)
 
 
 # -- Project information -----------------------------------------------------
