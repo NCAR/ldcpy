@@ -33,7 +33,7 @@ release = '0.1'
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 extensions = ['nbsphinx', 'sphinx.ext.autodoc']
-autodoc_mock_imports = ['cartopy', 'tlz']
+autodoc_mock_imports = ['cartopy', 'tlz', 'freetype']
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
 
