@@ -7,3 +7,5 @@ matplotlib
 cmocean
 jupyterlab
 xrft
+cartopy
+pip

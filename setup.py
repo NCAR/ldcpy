@@ -9,8 +9,8 @@ from setuptools import find_packages, setup
 with open('requirements.txt') as f:
     install_requires = f.read().strip().split('\n')
 
-with open('requirements_dev.txt') as f:
-    dev_requires = f.read().strip().split('\n')
+# with open('requirements-dev.txt') as f:
+#    dev_requires = f.read().strip().split('\n')
 
 if exists('README.rst'):
     with open('README.rst') as f:
@@ -47,7 +47,7 @@ setup(
     package_dir={'ldcpy': 'ldcpy'},
     include_package_data=True,
     install_requires=install_requires,
-    extras_require={'dev': dev_requires},
+    #    extras_require={'dev': dev_requires},
     license='Apache 2.0',
     zip_safe=False,
     keywords='compression, xarray',

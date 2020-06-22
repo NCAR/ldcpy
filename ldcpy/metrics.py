@@ -122,7 +122,13 @@ class AggregateMetrics(DatasetMetrics):
     This class contains metrics for each point of a dataset after aggregating across one or more dimensions, and a method to access these metrics.
     """
 
-    def __init__(self, ds: xr.DataArray, aggregate_dims: list, grouping: Optional[str] = None):
+    def __init__(
+        self,
+        ds: xr.DataArray,
+        aggregate_dims: list,
+        grouping: Optional[str] = None,
+        quantile: Optional[int] = 0.5,
+    ):
         DatasetMetrics.__init__(self, ds)
 
         self._ns_con_var = None
@@ -138,6 +144,8 @@ class AggregateMetrics(DatasetMetrics):
         self._lag1 = None
         self._agg_dims = aggregate_dims
         self._grouping = grouping
+        self._quantile = None
+        self._q = quantile
 
         self._frame_size = 1
         for dim in aggregate_dims:
@@ -263,6 +271,16 @@ class AggregateMetrics(DatasetMetrics):
         return self._mae_max
 
     @property
+    def quantile(self) -> xr.DataArray:
+        """
+        The value of the data quantile over the aggregate dimensions
+        """
+        if not self._is_memoized('_quantile'):
+            self._quantile = self._ds.quantile(self._q, dim=self._agg_dims)
+
+        return self._quantile
+
+    @property
     def lag1(self) -> xr.DataArray:
         """
         The deseasonalized lag-1 value by day of year
@@ -337,6 +355,8 @@ class AggregateMetrics(DatasetMetrics):
                 return self.mean_abs
             if name == 'corr_lag1':
                 return self.corr_lag1
+            if name == 'quantile':
+                return self.quantile
             raise ValueError(f'there is no metrics with the name: {name}.')
         else:
             raise TypeError('name must be a string.')
