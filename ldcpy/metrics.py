@@ -377,6 +377,7 @@ class OverallMetrics(AggregateMetrics):
         self._zscore_percent_significant = None
         self._overall_mean = None
         self._overall_std = None
+        self._overall_variance = None
 
     @property
     def zscore_cutoff(self) -> np.ndarray:
@@ -437,6 +438,16 @@ class OverallMetrics(AggregateMetrics):
 
         return self._overall_std
 
+    @property
+    def overall_variance(self) -> float:
+        """
+        overall dataset standard deviation
+        """
+        if not self._is_memoized('_overall_std'):
+            self._overall_variance = np.float32(self._ds.var().values)
+
+        return self._overall_variance
+
     def get_overall_metric(self, name: str):
         """
         Gets a single metric on the dataset
@@ -459,6 +470,8 @@ class OverallMetrics(AggregateMetrics):
                 return self.overall_mean
             if name == 'overall_std':
                 return self.overall_std
+            if name == 'overall_variance':
+                return self.overall_variance
             raise ValueError(f'there is no metrics with the name: {name}.')
         else:
             raise TypeError('name must be a string.')
