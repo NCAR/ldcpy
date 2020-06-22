@@ -112,6 +112,8 @@ class DatasetMetrics(object):
                 return self._is_positive_full
             if name == 'is_negative_full':
                 return self._is_negative_full
+            if name == 'ds':
+                return self._ds
             raise ValueError(f'there are no metrics with the name: {name}.')
         else:
             raise TypeError('name must be a string.')
@@ -148,8 +150,9 @@ class AggregateMetrics(DatasetMetrics):
         self._q = quantile
 
         self._frame_size = 1
-        for dim in aggregate_dims:
-            self._frame_size *= int(self._ds.sizes[dim])
+        if aggregate_dims is not None:
+            for dim in aggregate_dims:
+                self._frame_size *= int(self._ds.sizes[dim])
 
     @property
     def ns_con_var(self) -> np.ndarray:
@@ -367,11 +370,13 @@ class OverallMetrics(AggregateMetrics):
     This class contains metrics on the overall dataset
     """
 
-    def __init__(self, ds: xr.DataArray, aggregate_dims: list):
+    def __init__(self, ds: xr.DataArray, aggregate_dims: Optional[list] = None):
         AggregateMetrics.__init__(self, ds, aggregate_dims)
 
         self._zscore_cutoff = None
         self._zscore_percent_significant = None
+        self._overall_mean = None
+        self._overall_std = None
 
     @property
     def zscore_cutoff(self) -> np.ndarray:
@@ -412,6 +417,26 @@ class OverallMetrics(AggregateMetrics):
 
             return self._zscore_percent_significant
 
+    @property
+    def overall_mean(self) -> float:
+        """
+        overall dataset mean
+        """
+        if not self._is_memoized('_overall_mean'):
+            self._overall_mean = np.float32(self._ds.mean().values)
+
+        return self._overall_mean
+
+    @property
+    def overall_std(self) -> float:
+        """
+        overall dataset standard deviation
+        """
+        if not self._is_memoized('_overall_std'):
+            self._overall_std = np.float32(self._ds.std().values)
+
+        return self._overall_std
+
     def get_overall_metric(self, name: str):
         """
         Gets a single metric on the dataset
@@ -430,6 +455,93 @@ class OverallMetrics(AggregateMetrics):
                 return self.zscore_cutoff
             if name == 'zscore_percent_significant':
                 return self.zscore_percent_significant
+            if name == 'overall_mean':
+                return self.overall_mean
+            if name == 'overall_std':
+                return self.overall_std
+            raise ValueError(f'there is no metrics with the name: {name}.')
+        else:
+            raise TypeError('name must be a string.')
+
+
+class DiffMetrics(object):
+    """
+    This class contains metrics on the overall dataset that require more than one input dataset to compute
+    """
+
+    def __init__(
+        self, ds1: xr.DataArray, ds2: xr.DataArray, aggregate_dims: Optional[list] = None
+    ) -> None:
+        if isinstance(ds1, xr.DataArray):
+            # Datasets
+            self._ds1 = ds1
+
+        if isinstance(ds2, xr.DataArray):
+            # Datasets
+            self._ds2 = ds2
+
+        else:
+            raise TypeError(
+                f'ds must be of type xarray.DataArray. Type(s): {str(type(ds1))} {str(type(ds2))}'
+            )
+
+        self._metrics1 = OverallMetrics(self._ds1, aggregate_dims)
+        self._metrics2 = OverallMetrics(self._ds2, aggregate_dims)
+        self._pcc = None
+        self._covariance = None
+
+    def _is_memoized(self, metric_name: str) -> bool:
+        return hasattr(self, metric_name) and (self.__getattribute__(metric_name) is not None)
+
+    @property
+    def covariance(self) -> np.ndarray:
+        """
+        The covariance between the two datasets
+        """
+        if not self._is_memoized('_covariance'):
+            self._covariance = (
+                (
+                    self._metrics2.get_full_metric('ds')
+                    - self._metrics2.get_overall_metric('overall_mean')
+                )
+                * (
+                    self._metrics1.get_full_metric('ds')
+                    - self._metrics1.get_overall_metric('overall_mean')
+                )
+            ).mean()
+
+        return self._covariance
+
+    @property
+    def pearson_correlation_coefficient(self) -> xr.DataArray:
+        """
+        returns the pearson correlation coefficient between the two datasets
+        """
+        if not self._is_memoized('_pearson_correlation_coefficient'):
+            self._pcc = (
+                self.covariance
+                / self._metrics1.get_overall_metric('overall_std')
+                / self._metrics2.get_overall_metric('overall_std')
+            )
+
+        return self._pcc
+
+    def get_diff_metric(self, name: str):
+        """
+        Gets a metric on the dataset that requires more than one input dataset
+
+        Parameters:
+        ===========
+        name -- string
+            the name of the metric (must be identical to a property name)
+
+        Returns
+        =======
+        out -- float32
+        """
+        if isinstance(name, str):
+            if name == 'pearson_correlation_coefficient':
+                return self.pearson_correlation_coefficient
             raise ValueError(f'there is no metrics with the name: {name}.')
         else:
             raise TypeError('name must be a string.')

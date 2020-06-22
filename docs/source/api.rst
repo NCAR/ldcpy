@@ -49,6 +49,7 @@ ldcpy Metrics (ldcpy.metrics)
    .. autoproperty:: mean_abs
    .. autoproperty:: prob_positive
    .. autoproperty:: prob_negative
+   .. autoproperty:: quantile
 
 .. autoclass:: OverallMetrics
 
@@ -56,6 +57,8 @@ ldcpy Metrics (ldcpy.metrics)
 
    .. autoproperty:: zscore_cutoff
    .. autoproperty:: zscore_percent_significant
+   .. autoproperty:: overall_mean
+   .. autoproperty:: overall_std
 
 
 .. module:: ldcpy.error_metrics
@@ -81,5 +84,12 @@ ldcpy Metrics (ldcpy.metrics)
    .. autoproperty:: mean_squared_error
    .. autoproperty:: root_mean_squared_error
    .. autoproperty:: ks_p_value
+   .. autoproperty:: covariance
+   .. autoproperty:: pearson_correlation_coefficient
+
+.. autoclass:: DiffMetrics
+
+   .. automethod:: get_diff_metric
+
    .. autoproperty:: covariance
    .. autoproperty:: pearson_correlation_coefficient
