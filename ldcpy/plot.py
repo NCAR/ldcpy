@@ -39,19 +39,23 @@ def _subset_data(ds, cond, lat=None, lon=None, lev=1):
     return ds_subset
 
 
-def _get_raw_data(da1, metric, plot_type, metric_type, group_by, mae_group_by, da2=None):
+def _get_raw_data(
+    da1, metric, plot_type, metric_type, group_by, mae_group_by, da2=None, quantile=None
+):
     if plot_type == 'spatial':
         if group_by is not None and metric != 'mae_max':
             raise ValueError(f'cannot group by time in a spatial plot of {metric}.')
         if metric_type == 'metric_of_diff':
-            metrics_da1 = lm.AggregateMetrics(da1 - da2, ['time'], mae_group_by)
+            metrics_da1 = lm.AggregateMetrics(da1 - da2, ['time'], mae_group_by, quantile=quantile)
         else:
-            metrics_da1 = lm.AggregateMetrics(da1, ['time'], mae_group_by)
+            metrics_da1 = lm.AggregateMetrics(da1, ['time'], mae_group_by, quantile=quantile)
     elif plot_type == 'time_series' or plot_type == 'periodogram' or plot_type == 'histogram':
         if metric_type == 'metric_of_diff':
-            metrics_da1 = lm.AggregateMetrics(da1 - da2, ['lat', 'lon'], group_by)
+            metrics_da1 = lm.AggregateMetrics(
+                da1 - da2, ['lat', 'lon'], group_by, quantile=quantile
+            )
         else:
-            metrics_da1 = lm.AggregateMetrics(da1, ['lat', 'lon'], group_by)
+            metrics_da1 = lm.AggregateMetrics(da1, ['lat', 'lon'], group_by, quantile=quantile)
     else:
         raise ValueError(f'plot type {plot_type} not supported')
 
@@ -102,16 +106,22 @@ def _get_title(
     lat=None,
     lon=None,
     subset=None,
+    quantile=None,
 ):
     if ens_r is not None:
         das = f'{ens_o}, {ens_r}'
     else:
         das = f'{ens_o}'
 
-    if transform == 'log':
-        title = f'{das}: {varname}: log10({metric_name}) {metric_type}'
+    if quantile is not None and metric_name == 'quantile':
+        metric_full_name = f'{metric_name} {quantile}'
     else:
-        title = f'{das}: {varname}: {metric_name} {metric_type}'
+        metric_full_name = metric_name
+
+    if transform == 'log':
+        title = f'{das}: {varname}: log10({metric_full_name}) {metric_type}'
+    else:
+        title = f'{das}: {varname}: {metric_full_name} {metric_type}'
 
     if group_by is not None:
         title = f'{title} by {group_by}'
@@ -452,6 +462,7 @@ def plot(
     lev=0,
     color='coolwarm',
     standardized_err=False,
+    quantile=0.5,
 ):
     """
     Plots the data given an xarray dataset
@@ -539,6 +550,9 @@ def plot(
     standardized_err -- bool (default False)
         whether or not to standardize the error in a plot of metric_type="diff"
 
+    quantile -- float (default 0.5)
+        a value between 0 and 1 required if metric="quantile", corresponding to the desired quantile to gather
+
     Returns
     =======
     out -- None
@@ -553,19 +567,42 @@ def plot(
     # Acquire raw data
     if plot_type == 'spatial_comparison':
         raw_data_o = _get_raw_data(
-            data_o, metric, 'spatial', metric_type, group_by, mae_group_by, da2=data_r
+            data_o,
+            metric,
+            'spatial',
+            metric_type,
+            group_by,
+            mae_group_by,
+            da2=data_r,
+            quantile=quantile,
         )
     else:
         raw_data_o = _get_raw_data(
-            data_o, metric, plot_type, metric_type, group_by, mae_group_by, da2=data_r
+            data_o,
+            metric,
+            plot_type,
+            metric_type,
+            group_by,
+            mae_group_by,
+            da2=data_r,
+            quantile=quantile,
         )
     if ens_r is not None:
         if plot_type == 'spatial_comparison':
             raw_data_r = _get_raw_data(
-                data_r, metric, 'spatial', metric_type, group_by, mae_group_by, da2=data_r
+                data_r,
+                metric,
+                'spatial',
+                metric_type,
+                group_by,
+                mae_group_by,
+                da2=data_r,
+                quantile=quantile,
             )
         else:
-            raw_data_r = _get_raw_data(data_r, metric, plot_type, 'raw', group_by, mae_group_by)
+            raw_data_r = _get_raw_data(
+                data_r, metric, plot_type, 'raw', group_by, mae_group_by, quantile=quantile
+            )
     else:
         raw_data_r = None
 
@@ -584,14 +621,18 @@ def plot(
         gw = ds['gw'].values
         o_wt_mean = np.average(
             np.average(
-                lm.AggregateMetrics(data_o, ['time'], group_by).get_metric(metric),
+                lm.AggregateMetrics(data_o, ['time'], group_by, quantile=quantile).get_metric(
+                    metric
+                ),
                 axis=0,
                 weights=gw,
             )
         )
         r_wt_mean = np.average(
             np.average(
-                lm.AggregateMetrics(data_r, ['time'], group_by).get_metric(metric),
+                lm.AggregateMetrics(data_r, ['time'], group_by, quantile=quantile).get_metric(
+                    metric
+                ),
                 axis=0,
                 weights=gw,
             )
@@ -624,6 +665,7 @@ def plot(
             lat=title_lat,
             lon=title_lon,
             subset=subset,
+            quantile=quantile,
         )
         title_r = _get_title(
             metric_name_r,
@@ -635,6 +677,7 @@ def plot(
             lat=title_lat,
             lon=title_lon,
             subset=subset,
+            quantile=quantile,
         )
     else:
         plot_data = _get_plot_data(
@@ -656,6 +699,7 @@ def plot(
             lon=title_lon,
             subset=subset,
             ens_r=ens_r,
+            quantile=quantile,
         )
 
     # Call plot functions

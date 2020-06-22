@@ -1,4 +1,4 @@
-name: ldcpy
+name: ldcpy_dev
 channels:
   - conda-forge
 dependencies:
@@ -14,3 +14,10 @@ dependencies:
   - matplotlib
   - pip:
       - cartopy
+  - pre-commit
+  - setuptools
+  - jupyterlab
+  - codecov
+  - pytest
+  - pytest-cov
+  - zfpy
