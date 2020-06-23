@@ -401,7 +401,7 @@ class DatasetMetrics(object):
             if name == 'zscore_cutoff':
                 return self.zscore_cutoff
             if name == 'zscore_percent_significant':
-                return self._zscore_percent_significant
+                return self.zscore_percent_significant
             raise ValueError(f'there is no metrics with the name: {name}.')
         else:
             raise TypeError('name must be a string.')
