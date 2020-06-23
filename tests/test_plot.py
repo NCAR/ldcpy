@@ -4,7 +4,6 @@ import numpy as np
 
 import ldcpy
 import ldcpy.plot as lp
-from ldcpy.error_metrics import ErrorMetrics
 
 ds = ldcpy.open_datasets(
     [
