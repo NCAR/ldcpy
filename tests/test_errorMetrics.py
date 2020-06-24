@@ -1,6 +1,7 @@
 from unittest import TestCase
 
 import numpy as np
+import xarray as xr
 
 from ldcpy.metrics import DatasetMetrics, DiffMetrics
 
@@ -17,25 +18,38 @@ class TestErrorMetrics(TestCase):
         ]
 
     def test_creation_01(self):
-        DiffMetrics(self._samples[0]['observed'], self._samples[0]['measured'])
+        DiffMetrics(
+            xr.DataArray(self._samples[0]['observed']),
+            xr.DataArray(self._samples[0]['measured']),
+            [],
+        )
 
     def test_error_01(self):
-        em = DatasetMetrics(self._samples[0]['observed'] - self._samples[0]['measured'])
+        em = DatasetMetrics(
+            xr.DataArray(self._samples[0]['observed']) - xr.DataArray(self._samples[0]['measured']),
+            [],
+        )
 
         self.assertTrue(all(self._samples[0]['expected_error'] == em.sum))
 
     def test_mean_error_01(self):
-        em = DatasetMetrics(self._samples[0]['observed'] - self._samples[0]['measured'])
-        self.assertTrue(em.mean == 0.0)
+        em = DatasetMetrics(
+            xr.DataArray(self._samples[0]['observed']) - xr.DataArray(self._samples[0]['measured']),
+            [],
+        )
+        self.assertTrue(em.mean.all() == 0.0)
 
     def test_mean_error_02(self):
-        em = DatasetMetrics(self._samples[0]['observed'] - self._samples[0]['measured'])
+        em = DatasetMetrics(
+            xr.DataArray(self._samples[0]['observed'] - xr.DataArray(self._samples[0]['measured'])),
+            [],
+        )
 
-        self.assertTrue(em.mean == 0.0)
+        self.assertTrue(em.mean.all() == 0.0)
 
         em.mean_error = 42.0
 
-        self.assertTrue(em.mean == 0.0)
+        self.assertTrue(em.mean.all() == 0.0)
 
     # def test_get_all_metrics(self):
     #     em = ErrorMetrics(
@@ -74,7 +88,7 @@ class TestErrorMetrics(TestCase):
         import xarray as xr
         import zfpy
 
-        ds = xr.open_dataset('data/cam-fv/orig.TS.100days.nc')
+        ds = xr.open_dataset('../data/cam-fv/orig.TS.100days.nc')
 
         TS = ds.TS
 
