@@ -7,67 +7,50 @@ import xarray as xr
 
 class DatasetMetrics(object):
     """
-    This class contains metrics for each point of a dataset, and a method to access these metrics.
+    This class contains metrics for each point of a dataset after aggregating across one or more dimensions, and a method to access these metrics.
     """
 
-    def __init__(self, ds: xr.DataArray) -> None:
-        if isinstance(ds, xr.DataArray):
-            # Datasets
-            self._ds = ds
+    def __init__(
+        self,
+        ds: xr.DataArray,
+        aggregate_dims: list,
+        grouping: Optional[str] = None,
+        quantile: Optional[int] = 0.5,
+    ):
+        self._ds = ds
+        self._q = quantile
 
-            # Variables
-            self._ns_con_var_full = None
-            self._ew_con_var_full = None
-            self._is_positive_full = None
-            self._is_negative_full = None
+        # array metrics
+        self._ns_con_var = None
+        self._ew_con_var = None
+        self._mean = None
+        self._std = None
+        self._prob_positive = None
+        self._odds_positive = None
+        self._prob_negative = None
+        self._zscore = None
+        self._mae_max = None
+        self._corr_lag1 = None
+        self._lag1 = None
+        self._agg_dims = aggregate_dims
+        self._grouping = grouping
+        self._quantile = None
+        self._mean_squared = None
+        self._root_mean_squared = None
+        self._sum = None
+        self._sum_squared = None
 
-        else:
-            raise TypeError(
-                f'dataset must be of type xarray.DataArray. Type(observed): {str(type(ds))}'
-            )
+        # single value metrics
+        self._zscore_cutoff = None
+        self._zscore_percent_significant = None
+
+        self._frame_size = 1
+        if aggregate_dims is not None:
+            for dim in aggregate_dims:
+                self._frame_size *= int(self._ds.sizes[dim])
 
     def _is_memoized(self, metric_name: str) -> bool:
         return hasattr(self, metric_name) and (self.__getattribute__(metric_name) is not None)
-
-    @property
-    def ns_con_var_full(self) -> np.ndarray:
-        """
-        The North-South contrast variance at each point in the dataset
-        """
-        if not self._is_memoized('_ns_con_var_full'):
-            self._ns_con_var_full = self._con_var('ns', self._ds)
-
-        return self._ns_con_var_full
-
-    @property
-    def ew_con_var_full(self) -> np.ndarray:
-        """
-        The East-West contrast variance at each point in the dataset
-        """
-        if not self._is_memoized('_ew_con_var_full'):
-            self._ew_con_var_full = self._con_var('ew', self._ds)
-
-        return self._ew_con_var_full
-
-    @property
-    def is_positive_full(self) -> np.ndarray:
-        """
-        returns 1 if the data point is positive, 0 if negative
-        """
-        if not self._is_memoized('_is_positive_full'):
-            self._is_positive_full = self._ds > 0
-
-        return self._is_positive_full
-
-    @property
-    def is_negative_full(self) -> np.ndarray:
-        """
-        returns 1 if the data point is negative, 0 if positive
-        """
-        if not self._is_memoized('_is_negative_full'):
-            self._is_negative_full = self._ds < 0
-
-        return self._is_negative_full
 
     def _con_var(self, dir, dataset) -> np.ndarray:
         if dir == 'ns':
@@ -88,68 +71,6 @@ class DatasetMetrics(object):
             )
         con_var = xr.ufuncs.square((o_1 - o_2))
         return con_var
-
-    def get_full_metric(self, name: str):
-        """
-        Gets a metric at every data point of the dataset
-
-        Parameters:
-        ===========
-        name -- string
-            the name of the metric (must be identical to a property name)
-
-        Returns
-        =======
-        out -- xarray.DataArray
-            a DataArray of the same size and dimensions the original dataarray, with metrics at each data point
-        """
-        if isinstance(name, str):
-            if name == 'ns_con_var_full':
-                return self.ns_con_var_full
-            if name == 'ew_con_var_full':
-                return self.ew_con_var_full
-            if name == 'is_positive_full':
-                return self._is_positive_full
-            if name == 'is_negative_full':
-                return self._is_negative_full
-            raise ValueError(f'there are no metrics with the name: {name}.')
-        else:
-            raise TypeError('name must be a string.')
-
-
-class AggregateMetrics(DatasetMetrics):
-    """
-    This class contains metrics for each point of a dataset after aggregating across one or more dimensions, and a method to access these metrics.
-    """
-
-    def __init__(
-        self,
-        ds: xr.DataArray,
-        aggregate_dims: list,
-        grouping: Optional[str] = None,
-        quantile: Optional[int] = 0.5,
-    ):
-        DatasetMetrics.__init__(self, ds)
-
-        self._ns_con_var = None
-        self._ew_con_var = None
-        self._mean = None
-        self._std = None
-        self._prob_positive = None
-        self._odds_positive = None
-        self._prob_negative = None
-        self._zscore = None
-        self._mae_max = None
-        self._corr_lag1 = None
-        self._lag1 = None
-        self._agg_dims = aggregate_dims
-        self._grouping = grouping
-        self._quantile = None
-        self._q = quantile
-
-        self._frame_size = 1
-        for dim in aggregate_dims:
-            self._frame_size *= int(self._ds.sizes[dim])
 
     @property
     def ns_con_var(self) -> np.ndarray:
@@ -192,6 +113,42 @@ class AggregateMetrics(DatasetMetrics):
         return self._mean_abs
 
     @property
+    def mean_squared(self) -> np.ndarray:
+        """
+        The absolute value of the mean along the aggregate dimensions
+        """
+        if not self._is_memoized('_mean_squared'):
+            self._mean_squared = xr.ufuncs.square(self.mean)
+
+        return self._mean_squared
+
+    @property
+    def root_mean_squared(self) -> np.ndarray:
+        """
+        The absolute value of the mean along the aggregate dimensions
+        """
+        if not self._is_memoized('_root_mean_squared'):
+            self._root_mean_squared = xr.ufuncs.sqrt(
+                xr.ufuncs.square(self._ds).mean(dim=self._agg_dims)
+            )
+
+        return self._root_mean_squared
+
+    @property
+    def sum(self) -> np.ndarray:
+        if not self._is_memoized('_sum'):
+            self._sum = self._ds.sum(dim=self._agg_dims)
+
+        return self._sum
+
+    @property
+    def sum_squared(self) -> np.ndarray:
+        if not self._is_memoized('_sum_squared'):
+            self._sum_squared = xr.ufuncs.square(self._sum_squared)
+
+        return self._sum_squared
+
+    @property
     def std(self) -> np.ndarray:
         """
         The standard deviation averaged along the aggregate dimensions
@@ -207,7 +164,7 @@ class AggregateMetrics(DatasetMetrics):
         The probability that a point is positive
         """
         if not self._is_memoized('_prob_positive'):
-            self._prob_positive = (self.is_positive_full.sum(self._agg_dims)) / (self._frame_size)
+            self._prob_positive = (self._ds > 0).sum(self._agg_dims) / self._frame_size
         return self._prob_positive
 
     @property
@@ -216,7 +173,7 @@ class AggregateMetrics(DatasetMetrics):
         The probability that a point is negative
         """
         if not self._is_memoized('_prob_negative'):
-            self._prob_negative = self.is_negative_full.sum(self._agg_dims) / self._frame_size
+            self._prob_negative = (self._ds < 0).sum(self._agg_dims) / self._frame_size
         return self._prob_negative
 
     @property
@@ -318,6 +275,59 @@ class AggregateMetrics(DatasetMetrics):
 
         return self._corr_lag1
 
+    @property
+    def zscore_cutoff(self) -> np.ndarray:
+        """
+        The Z-Score cutoff for a point to be considered significant
+        """
+        if not self._is_memoized('_zscore_cutoff'):
+            pvals = 2 * (1 - ss.norm.cdf(np.abs(self.zscore)))
+            if isinstance(pvals, np.float64):
+                pvals_array = np.array(pvals)
+                sorted_pvals = pvals_array
+            else:
+                pvals_array = pvals
+                sorted_pvals = np.sort(pvals_array).flatten()
+            fdr_zscore = 0.01
+            p = np.argwhere(
+                sorted_pvals <= fdr_zscore * np.arange(1, pvals_array.size + 1) / pvals_array.size
+            )
+            pval_cutoff = np.empty(0)
+            if not len(p) == 0:
+                pval_cutoff = sorted_pvals[p[len(p) - 1]]
+            if not (pval_cutoff.size == 0):
+                zscore_cutoff = ss.norm.ppf(1 - pval_cutoff)
+            else:
+                zscore_cutoff = 'na'
+            self._zscore_cutoff = zscore_cutoff
+
+            return self._zscore_cutoff
+
+    @property
+    def zscore_percent_significant(self) -> np.ndarray:
+        """
+        The percent of points where the zscore is considered significant
+        """
+        if not self._is_memoized('_zscore_percent_significant'):
+            pvals = 2 * (1 - ss.norm.cdf(np.abs(self.zscore)))
+            if isinstance(pvals, np.float64):
+                pvals_array = np.array(pvals)
+                sorted_pvals = pvals_array
+            else:
+                pvals_array = pvals
+                sorted_pvals = np.sort(pvals_array).flatten()
+            fdr_zscore = 0.01
+            p = np.argwhere(sorted_pvals <= fdr_zscore * np.arange(1, pvals.size + 1) / pvals.size)
+            pval_cutoff = sorted_pvals[p[len(p) - 1]]
+            if not (pval_cutoff.size == 0):
+                sig_locs = np.argwhere(pvals <= pval_cutoff)
+                percent_sig = 100 * np.size(sig_locs, 0) / pvals.size
+            else:
+                percent_sig = 0
+            self._zscore_percent_significant = percent_sig
+
+            return self._zscore_percent_significant
+
     def get_metric(self, name: str):
         """
         Gets a metric aggregated across one or more dimensions of the dataset
@@ -353,68 +363,125 @@ class AggregateMetrics(DatasetMetrics):
                 return self.mae_max
             if name == 'mean_abs':
                 return self.mean_abs
+            if name == 'mean_squared':
+                return self.mean_squared
+            if name == 'rmse':
+                return self.root_mean_squared
+            if name == 'sum':
+                return self.sum
+            if name == 'sum_squared':
+                return self.sum_squared
             if name == 'corr_lag1':
                 return self.corr_lag1
             if name == 'quantile':
                 return self.quantile
+            if name == 'lag1':
+                return self.lag1
+            if name == 'none':
+                return self._ds
+            raise ValueError(f'there is no metrics with the name: {name}.')
+        else:
+            raise TypeError('name must be a string.')
+
+    def get_single_metric(self, name: str):
+        """
+        Gets a metric consisting of a single float value
+
+        Parameters:
+        ===========
+        name -- string
+            the name of the metric (must be identical to a property name)
+
+        Returns
+        =======
+        out -- float
+            the metric value
+        """
+        if isinstance(name, str):
+            if name == 'zscore_cutoff':
+                return self.zscore_cutoff
+            if name == 'zscore_percent_significant':
+                return self.zscore_percent_significant
             raise ValueError(f'there is no metrics with the name: {name}.')
         else:
             raise TypeError('name must be a string.')
 
 
-class OverallMetrics(AggregateMetrics):
+class DiffMetrics(object):
     """
-    This class contains metrics on the overall dataset
+    This class contains metrics on the overall dataset that require more than one input dataset to compute
     """
 
-    def __init__(self, ds: xr.DataArray, aggregate_dims: list):
-        AggregateMetrics.__init__(self, ds, aggregate_dims)
+    def __init__(
+        self, ds1: xr.DataArray, ds2: xr.DataArray, aggregate_dims: Optional[list] = None
+    ) -> None:
+        if isinstance(ds1, xr.DataArray):
+            # Datasets
+            self._ds1 = ds1
 
-        self._zscore_cutoff = None
-        self._zscore_percent_significant = None
+        if isinstance(ds2, xr.DataArray):
+            # Datasets
+            self._ds2 = ds2
+
+        else:
+            raise TypeError(
+                f'ds must be of type xarray.DataArray. Type(s): {str(type(ds1))} {str(type(ds2))}'
+            )
+
+        self._metrics1 = DatasetMetrics(self._ds1, aggregate_dims)
+        self._metrics2 = DatasetMetrics(self._ds2, aggregate_dims)
+        self._pcc = None
+        self._covariance = None
+        self._ks_p_value = None
+
+    def _is_memoized(self, metric_name: str) -> bool:
+        return hasattr(self, metric_name) and (self.__getattribute__(metric_name) is not None)
 
     @property
-    def zscore_cutoff(self) -> np.ndarray:
+    def covariance(self) -> np.ndarray:
         """
-        The Z-Score cutoff for a point to be considered significant
+        The covariance between the two datasets
         """
-        if not self._is_memoized('_zscore_cutoff'):
-            pvals = 2 * (1 - ss.norm.cdf(np.abs(self.zscore)))
-            sorted_pvals = np.sort(pvals).flatten()
-            fdr_zscore = 0.01
-            p = np.argwhere(sorted_pvals <= fdr_zscore * np.arange(1, pvals.size + 1) / pvals.size)
-            pval_cutoff = sorted_pvals[p[len(p) - 1]]
-            if not (pval_cutoff.size == 0):
-                zscore_cutoff = ss.norm.ppf(1 - pval_cutoff)
-            else:
-                zscore_cutoff = 'na'
-            self._zscore_cutoff = zscore_cutoff
+        if not self._is_memoized('_covariance'):
+            self._covariance = (
+                (
+                    self._metrics2.get_metric('none')
+                    - self._metrics2.get_single_metric('overall_mean')
+                )
+                * (
+                    self._metrics1.get_metric('none')
+                    - self._metrics1.get_single_metric('overall_mean')
+                )
+            ).mean()
 
-            return self._zscore_cutoff
+        return self._covariance
 
     @property
-    def zscore_percent_significant(self) -> np.ndarray:
+    def ks_p_value(self):
         """
-        The percent of points where the zscore is considered significant
+        The Kolmogorov-Smirnov p-value
         """
-        if not self._is_memoized('_zscore_percent_significant'):
-            pvals = 2 * (1 - ss.norm.cdf(np.abs(self.zscore)))
-            sorted_pvals = np.sort(pvals).flatten()
-            fdr_zscore = 0.01
-            p = np.argwhere(sorted_pvals <= fdr_zscore * np.arange(1, pvals.size + 1) / pvals.size)
-            pval_cutoff = sorted_pvals[p[len(p) - 1]]
-            if not (pval_cutoff.size == 0):
-                sig_locs = np.argwhere(pvals <= pval_cutoff)
-                percent_sig = 100 * np.size(sig_locs, 0) / pvals.size
-            else:
-                percent_sig = 0
-            self._zscore_percent_significant = percent_sig
+        if not self._is_memoized('_ks_p_value'):
+            self._ks_p_value = np.asanyarray(ss.pearsonr(np.ravel(self._ds1), np.ravel(self._ds2)))
+        return self._ks_p_value
 
-            return self._zscore_percent_significant
-
-    def get_overall_metric(self, name: str):
+    @property
+    def pearson_correlation_coefficient(self) -> xr.DataArray:
         """
-        Gets a single metric on the dataset
+        returns the pearson correlation coefficient between the two datasets
+        """
+        if not self._is_memoized('_pearson_correlation_coefficient'):
+            self._pcc = (
+                self.covariance
+                / self._metrics1.get_single_metric('overall_std')
+                / self._metrics2.get_single_metric('overall_std')
+            )
+
+        return self._pcc
+
+    def get_diff_metric(self, name: str):
+        """
+        Gets a metric on the dataset that requires more than one input dataset
 
         Parameters:
         ===========
@@ -426,10 +493,12 @@ class OverallMetrics(AggregateMetrics):
         out -- float32
         """
         if isinstance(name, str):
-            if name == 'zscore_cutoff':
-                return self.zscore_cutoff
-            if name == 'zscore_percent_significant':
-                return self.zscore_percent_significant
+            if name == 'pearson_correlation_coefficient':
+                return self.pearson_correlation_coefficient
+            if name == 'covariance':
+                return self.covariance
+            if name == 'ks_p_value':
+                return self.ks_p_value
             raise ValueError(f'there is no metrics with the name: {name}.')
         else:
             raise TypeError('name must be a string.')

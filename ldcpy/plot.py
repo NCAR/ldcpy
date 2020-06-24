@@ -46,16 +46,14 @@ def _get_raw_data(
         if group_by is not None and metric != 'mae_max':
             raise ValueError(f'cannot group by time in a spatial plot of {metric}.')
         if metric_type == 'metric_of_diff':
-            metrics_da1 = lm.AggregateMetrics(da1 - da2, ['time'], mae_group_by, quantile=quantile)
+            metrics_da1 = lm.DatasetMetrics(da1 - da2, ['time'], mae_group_by, quantile=quantile)
         else:
-            metrics_da1 = lm.AggregateMetrics(da1, ['time'], mae_group_by, quantile=quantile)
+            metrics_da1 = lm.DatasetMetrics(da1, ['time'], mae_group_by, quantile=quantile)
     elif plot_type == 'time_series' or plot_type == 'periodogram' or plot_type == 'histogram':
         if metric_type == 'metric_of_diff':
-            metrics_da1 = lm.AggregateMetrics(
-                da1 - da2, ['lat', 'lon'], group_by, quantile=quantile
-            )
+            metrics_da1 = lm.DatasetMetrics(da1 - da2, ['lat', 'lon'], group_by, quantile=quantile)
         else:
-            metrics_da1 = lm.AggregateMetrics(da1, ['lat', 'lon'], group_by, quantile=quantile)
+            metrics_da1 = lm.DatasetMetrics(da1, ['lat', 'lon'], group_by, quantile=quantile)
     else:
         raise ValueError(f'plot type {plot_type} not supported')
 
@@ -608,10 +606,10 @@ def plot(
 
     # Get special metric names
     if metric == 'zscore':
-        zscore_cutoff = lm.OverallMetrics((data_o - data_r), ['time']).get_overall_metric(
+        zscore_cutoff = lm.DatasetMetrics((data_o - data_r), ['time']).get_single_metric(
             'zscore_cutoff'
         )
-        percent_sig = lm.OverallMetrics((data_o - data_r), ['time']).get_overall_metric(
+        percent_sig = lm.DatasetMetrics((data_o - data_r), ['time']).get_single_metric(
             'zscore_percent_significant'
         )
         metric_name = f'{metric}: cutoff {zscore_cutoff[0]:.2f}, % sig: {percent_sig:.2f}'
@@ -621,18 +619,14 @@ def plot(
         gw = ds['gw'].values
         o_wt_mean = np.average(
             np.average(
-                lm.AggregateMetrics(data_o, ['time'], group_by, quantile=quantile).get_metric(
-                    metric
-                ),
+                lm.DatasetMetrics(data_o, ['time'], group_by, quantile=quantile).get_metric(metric),
                 axis=0,
                 weights=gw,
             )
         )
         r_wt_mean = np.average(
             np.average(
-                lm.AggregateMetrics(data_r, ['time'], group_by, quantile=quantile).get_metric(
-                    metric
-                ),
+                lm.DatasetMetrics(data_r, ['time'], group_by, quantile=quantile).get_metric(metric),
                 axis=0,
                 weights=gw,
             )
