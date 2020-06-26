@@ -37,8 +37,8 @@ class MetricsPlot(object):
         plot_type='spatial',
         transform='linear',
         subset=None,
-        lat=None,
-        lon=None,
+        approx_lat=None,
+        approx_lon=None,
         lev=0,
         color='coolwarm',
         standardized_err=False,
@@ -58,24 +58,22 @@ class MetricsPlot(object):
         self._plot_type = plot_type
         self._transform = transform
         self._subset = subset
-        self._lat = lat
-        self._lon = lon
+        self._true_lat = approx_lat
+        self._true_lon = approx_lon
         self._lev = lev
         self._color = color
         self._standardized_err = standardized_err
         self._quantile = quantile
         self._contour_levs = contour_levs
 
+        self._metric_name = None
+
     def get_raw_data(self, da):
-        if self._plot_type == 'spatial':
+        if self._plot_type in ['spatial', 'spatial_comparison']:
             metrics_da = lm.DatasetMetrics(
                 da, ['time'], self._mae_group_by, quantile=self._quantile
             )
-        elif (
-            self._plot_type == 'time_series'
-            or self._plot_type == 'periodogram'
-            or self._plot_type == 'histogram'
-        ):
+        elif self._plot_type in ['time_series', 'periodogram', 'histogram']:
             metrics_da = lm.DatasetMetrics(
                 da, ['lat', 'lon'], self._group_by, quantile=self._quantile
             )
@@ -116,17 +114,17 @@ class MetricsPlot(object):
 
         return plot_data
 
-    def get_title(self):
+    def get_title(self, metric_name, lat=None, lon=None):
 
         if self._ens_r is not None:
             das = f'{self._ens_o}, {self._ens_r}'
         else:
             das = f'{self._ens_o}'
 
-        if self._quantile is not None and self._metric_name == 'quantile':
-            metric_full_name = f'{self._metric_name} {self._quantile}'
+        if self._quantile is not None and metric_name == 'quantile':
+            metric_full_name = f'{metric_name} {self._quantile}'
         else:
-            metric_full_name = self._metric_name
+            metric_full_name = metric_name
 
         if self._transform == 'log':
             title = f'{das}: {self._varname}: log10({metric_full_name}) {self._metric_type}'
@@ -136,13 +134,13 @@ class MetricsPlot(object):
         if self._group_by is not None:
             title = f'{title} by {self._group_by}'
 
-        if self._lat is not None:
-            if self._lon is not None:
-                title = f'{title} at lat={self._lat:.2f}, lon={self._lon:.2f}'
+        if lat is not None:
+            if lon is not None:
+                title = f'{title} at lat={lat:.2f}, lon={lon:.2f}'
             else:
-                title = f'{title} at lat={self._lat:.2f}'
-        elif self._lon is not None:
-            title = f'{title} at lat={self._lon:.2f}'
+                title = f'{title} at lat={lat:.2f}'
+        elif lon is not None:
+            title = f'{title} at lat={lon:.2f}'
 
         if self._subset is not None:
             title = f'{title} subset:{self._subset}'
@@ -441,6 +439,48 @@ class MetricsPlot(object):
 
         mpl.pyplot.title(title)
 
+    def get_metric_label(self, metric, data_o, data_r):
+        # Get special metric names
+        if metric == 'zscore':
+            zscore_cutoff = lm.DatasetMetrics((data_o - data_r), ['time']).get_single_metric(
+                'zscore_cutoff'
+            )
+            percent_sig = lm.DatasetMetrics((data_o - data_r), ['time']).get_single_metric(
+                'zscore_percent_significant'
+            )
+            metric_name = f'{metric}: cutoff {zscore_cutoff[0]:.2f}, % sig: {percent_sig:.2f}'
+            metric_name_o = metric_name
+            metric_name_r = metric_name
+        elif metric == 'mean' and self._plot_type == 'spatial_comparison':
+            gw = self._ds['gw'].values
+            o_wt_mean = np.average(
+                np.average(
+                    lm.DatasetMetrics(
+                        data_o, ['time'], self._group_by, quantile=self._quantile
+                    ).get_metric(metric),
+                    axis=0,
+                    weights=gw,
+                )
+            )
+            r_wt_mean = np.average(
+                np.average(
+                    lm.DatasetMetrics(
+                        data_r, ['time'], self._group_by, quantile=self._quantile
+                    ).get_metric(metric),
+                    axis=0,
+                    weights=gw,
+                )
+            )
+            metric_name_o = f'{metric} = {o_wt_mean:.2f}'
+            metric_name_r = f'{metric} = {r_wt_mean:.2f}'
+        else:
+            metric_name = metric
+            metric_name_o = metric
+            metric_name_r = metric
+
+        return metric_name_o
+        return metric_name_r
+
 
 def plot(
     ds,
@@ -566,93 +606,45 @@ def plot(
     out -- None
     """
 
-    # Subset data
     mp = MetricsPlot(
         ds,
         varname,
         ens_o,
         metric,
-        ens_r=None,
-        mae_group_by=None,
-        group_by=None,
-        scale='linear',
-        metric_type='raw',
-        plot_type='spatial',
-        transform='linear',
-        subset=None,
-        lat=None,
-        lon=None,
-        lev=0,
-        color='coolwarm',
-        standardized_err=False,
-        quantile=0.5,
+        ens_r,
+        mae_group_by,
+        group_by,
+        scale,
+        metric_type,
+        plot_type,
+        transform,
+        subset,
+        lat,
+        lon,
+        lev,
+        color,
+        standardized_err,
+        quantile,
     )
-    data_r = None
+
+    # Subset data
     data_o = lu._subset_data(ds[varname].sel(ensemble=ens_o), subset, lat, lon, lev, start, end)
     if ens_r is not None:
         data_r = lu._subset_data(ds[varname].sel(ensemble=ens_r), subset, lat, lon, lev, start, end)
 
-    if metric_type == 'metric_of_diff':
+    # Acquire raw data
+    if metric_type in ['metric_of_diff']:
         data = data_o - data_r
     else:
         data = data_o
-    # Acquire raw data
     raw_data_o = mp._get_raw_data(data)
+    if plot_type in ['spatial_comparison'] or metric_type in ['diff', 'ratio']:
+        raw_data_r = mp._get_raw_data(data_r)
 
-    if ens_r is not None:
-        if plot_type == 'spatial_comparison':
-            raw_data_r = mp._get_raw_data(
-                data_r,
-                metric,
-                'spatial',
-                metric_type,
-                group_by,
-                mae_group_by,
-                da2=data_r,
-                quantile=quantile,
-            )
-        else:
-            raw_data_r = mp._get_raw_data(
-                data_r, metric, plot_type, 'raw', group_by, mae_group_by, quantile=quantile
-            )
-    else:
-        raw_data_r = None
+    metric_name_o = mp.get_metric_label(metric, data_o, data_r)
+    metric_name_r = mp.get_metric_label(metric, data_o, data_r)
 
-    # Get special metric names
-    if metric == 'zscore':
-        zscore_cutoff = lm.DatasetMetrics((data_o - data_r), ['time']).get_single_metric(
-            'zscore_cutoff'
-        )
-        percent_sig = lm.DatasetMetrics((data_o - data_r), ['time']).get_single_metric(
-            'zscore_percent_significant'
-        )
-        metric_name = f'{metric}: cutoff {zscore_cutoff[0]:.2f}, % sig: {percent_sig:.2f}'
-        metric_name_o = metric_name
-        metric_name_r = metric_name
-    elif metric == 'mean' and plot_type == 'spatial_comparison':
-        gw = ds['gw'].values
-        o_wt_mean = np.average(
-            np.average(
-                lm.DatasetMetrics(data_o, ['time'], group_by, quantile=quantile).get_metric(metric),
-                axis=0,
-                weights=gw,
-            )
-        )
-        r_wt_mean = np.average(
-            np.average(
-                lm.DatasetMetrics(data_r, ['time'], group_by, quantile=quantile).get_metric(metric),
-                axis=0,
-                weights=gw,
-            )
-        )
-        metric_name_o = f'{metric} = {o_wt_mean:.2f}'
-        metric_name_r = f'{metric} = {r_wt_mean:.2f}'
-    else:
-        metric_name = metric
-        metric_name_o = metric
-        metric_name_r = metric
-
-    # Get plot data and title based on plot_type
+    # Get plot data and title
     if lat is not None:
         title_lat = data_o['lat'].data[0]
         title_lon = data_o['lon'].data[0] - 180
@@ -661,54 +653,13 @@ def plot(
         title_lon = lon
 
     if plot_type == 'spatial_comparison':
-        plot_data_o = mp._get_plot_data(raw_data_o, metric_type, transform, group_by)
-        plot_data_r = mp._get_plot_data(raw_data_r, metric_type, transform, group_by)
-        title_o = mp._get_title(
-            metric_name_o,
-            ens_o,
-            varname,
-            metric_type,
-            transform,
-            group_by,
-            lat=title_lat,
-            lon=title_lon,
-            subset=subset,
-            quantile=quantile,
-        )
-        title_r = mp._get_title(
-            metric_name_r,
-            ens_r,
-            varname,
-            metric_type,
-            transform,
-            group_by,
-            lat=title_lat,
-            lon=title_lon,
-            subset=subset,
-            quantile=quantile,
-        )
+        plot_data_o = mp._get_plot_data(raw_data_o)
+        plot_data_r = mp._get_plot_data(raw_data_r)
+        title_o = mp._get_title(metric_name_o, lat=title_lat, lon=title_lon)
+        title_r = mp._get_title(metric_name_r, lat=title_lat, lon=title_lon)
     else:
-        plot_data = mp._get_plot_data(
-            raw_data_o,
-            metric_type,
-            transform,
-            group_by,
-            raw_data_2=raw_data_r,
-            standardized_err=standardized_err,
-        )
-        title = mp._get_title(
-            metric_name,
-            ens_o,
-            varname,
-            metric_type,
-            transform,
-            group_by,
-            lat=title_lat,
-            lon=title_lon,
-            subset=subset,
-            ens_r=ens_r,
-            quantile=quantile,
-        )
+        plot_data = mp._get_plot_data(raw_data_o, raw_data_2=raw_data_r)
+        title = mp._get_title(metric_name_o, lat=title_lat, lon=title_lon)
 
     # Call plot functions
     if plot_type == 'spatial_comparison':
