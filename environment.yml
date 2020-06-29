@@ -12,6 +12,5 @@ dependencies:
   - numpy
   - scipy
   - matplotlib
-  - jupyterlab
   - pip:
       - cartopy
