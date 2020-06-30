@@ -72,13 +72,9 @@ class MetricsPlot(object):
 
     def get_metrics(self, da):
         if self._plot_type in ['spatial', 'spatial_comparison']:
-            metrics_da = lm.DatasetMetrics(
-                da, ['time'], self._mae_group_by, quantile=self._quantile
-            )
+            metrics_da = lm.DatasetMetrics(da, ['time'])
         elif self._plot_type in ['time_series', 'periodogram', 'histogram']:
-            metrics_da = lm.DatasetMetrics(
-                da, ['lat', 'lon'], self._group_by, quantile=self._quantile
-            )
+            metrics_da = lm.DatasetMetrics(da, ['lat', 'lon'])
         else:
             raise ValueError(f'plot type {self._plot_type} not supported')
 
@@ -455,11 +451,7 @@ class MetricsPlot(object):
         elif metric == 'mean' and self._plot_type == 'spatial_comparison':
             o_wt_mean = np.average(
                 np.average(
-                    lm.DatasetMetrics(
-                        data, ['time'], self._group_by, quantile=self._quantile
-                    ).get_metric(metric),
-                    axis=0,
-                    weights=weights,
+                    lm.DatasetMetrics(data, ['time']).get_metric(metric), axis=0, weights=weights,
                 )
             )
             metric_name = f'{metric} = {o_wt_mean:.2f}'

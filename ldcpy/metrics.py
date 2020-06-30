@@ -387,6 +387,7 @@ class DatasetMetrics(object):
             if name == 'corr_lag1':
                 return self.corr_lag1
             if name == 'quantile':
+                self.quantile = q
                 return self.quantile_value
             if name == 'lag1':
                 return self.lag1
