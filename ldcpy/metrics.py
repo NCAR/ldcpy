@@ -104,7 +104,7 @@ class DatasetMetrics(object):
         The mean of the absolute errors along the aggregate dimensions
         """
         if not self._is_memoized('_mean_abs'):
-            self._mean_abs = abs(self._ds).mean()
+            self._mean_abs = abs(self._ds).mean(self._agg_dims)
 
         return self._mean_abs
 
