@@ -87,28 +87,29 @@ def print_stats(ds, varname, ens_o, ens_r, time=0):
         )
     )
 
-    def subset_data(ds, subset, lat=None, lon=None, lev=0, start=None, end=None):
-        """
-        Get a
-        """
-        ds_subset = ds
 
-        ds_subset = ds_subset.isel(time=slice(start, end))
+def subset_data(ds, subset, lat=None, lon=None, lev=0, start=None, end=None):
+    """
+    Get a
+    """
+    ds_subset = ds
 
-        if subset == 'winter':
-            ds_subset = ds_subset.where(ds.time.dt.season == 'DJF', drop=True)
-        elif subset == 'first50':
-            ds_subset = ds_subset.isel(time=slice(None, 50))
+    ds_subset = ds_subset.isel(time=slice(start, end))
 
-        if 'lev' in ds_subset.dims:
-            ds_subset = ds_subset.sel(lev=lev, method='nearest')
+    if subset == 'winter':
+        ds_subset = ds_subset.where(ds.time.dt.season == 'DJF', drop=True)
+    elif subset == 'first50':
+        ds_subset = ds_subset.isel(time=slice(None, 50))
 
-        if lat is not None:
-            ds_subset = ds_subset.sel(lat=lat, method='nearest')
-            ds_subset = ds_subset.expand_dims('lat')
+    if 'lev' in ds_subset.dims:
+        ds_subset = ds_subset.sel(lev=lev, method='nearest')
 
-        if lon is not None:
-            ds_subset = ds_subset.sel(lon=lon + 180, method='nearest')
-            ds_subset = ds_subset.expand_dims('lon')
+    if lat is not None:
+        ds_subset = ds_subset.sel(lat=lat, method='nearest')
+        ds_subset = ds_subset.expand_dims('lat')
 
-        return ds_subset
+    if lon is not None:
+        ds_subset = ds_subset.sel(lon=lon + 180, method='nearest')
+        ds_subset = ds_subset.expand_dims('lon')
+
+    return ds_subset

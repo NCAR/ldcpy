@@ -26,8 +26,8 @@ For a development install, do the following in the repository directory:
 
 .. code-block:: bash
 
-    conda env update -f ci/environment.yml
-    conda activate ldcpy_env
-    python -m pip install -e . [dev]
+    conda env update -f environment_dev.yml
+    conda activate ldcpy
+    python -m pip install -e .
 
 Documentation and usage examples is available `here <http://ldcpy.readthedocs.io>`_.

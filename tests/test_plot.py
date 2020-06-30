@@ -7,21 +7,21 @@ import ldcpy.plot as lp
 
 ds = ldcpy.open_datasets(
     [
-        'data/cam-fv/orig.TS.100days.nc',
-        'data/cam-fv/zfp1.0.TS.100days.nc',
-        'data/cam-fv/zfp1e-1.TS.100days.nc',
+        '../data/cam-fv/orig.TS.100days.nc',
+        '../data/cam-fv/zfp1.0.TS.100days.nc',
+        '../data/cam-fv/zfp1e-1.TS.100days.nc',
     ],
     ['orig', 'recon', 'recon2'],
 )
 ds2 = ldcpy.open_datasets(
     [
-        'data/cam-fv/orig.PRECT.100days.nc',
-        'data/cam-fv/zfp1e-7.PRECT.100days.nc',
-        'data/cam-fv/zfp1e-11.PRECT.100days.nc',
+        '../data/cam-fv/orig.PRECT.100days.nc',
+        '../data/cam-fv/zfp1e-7.PRECT.100days.nc',
+        '../data/cam-fv/zfp1e-11.PRECT.100days.nc',
     ],
     ['orig', 'recon', 'recon_2'],
 )
-ds3 = ldcpy.open_datasets(['data/cam-fv/cam-fv.T.6months.nc'], ['orig'])
+ds3 = ldcpy.open_datasets(['../data/cam-fv/cam-fv.T.6months.nc'], ['orig'])
 
 
 class TestPlot(TestCase):
@@ -32,11 +32,15 @@ class TestPlot(TestCase):
 
     def test_mean(self):
         lp.plot(ds, 'TS', 'orig', ens_r='recon', metric='mean')
-        self.assertTrue(True is True)
+        self.assertTrue(True)
 
     def test_prob_neg(self):
         lp.plot(ds2, 'PRECT', 'orig', ens_r='recon', metric='prob_negative')
-        self.assertTrue(True is True)
+        self.assertTrue(True)
+
+    def test_mean_compare(self):
+        lp.plot(ds, 'TS', 'orig', 'mean', ens_r='recon', plot_type='spatial_comparison')
+        self.assertTrue(True)
 
     def test_std_dev_compare(self):
         lp.plot(
@@ -48,11 +52,11 @@ class TestPlot(TestCase):
             color='cmo.thermal',
             plot_type='spatial_comparison',
         )
-        self.assertTrue(True is True)
+        self.assertTrue(True)
 
     def test_mean_diff(self):
         lp.plot(ds, 'TS', 'orig', ens_r='recon', metric='mean', metric_type='diff')
-        self.assertTrue(True is True)
+        self.assertTrue(True)
 
     def test_prob_negative_log_compare(self):
         lp.plot(

@@ -35,7 +35,7 @@ class MetricsPlot(object):
         scale='linear',
         metric_type='raw',
         plot_type='spatial',
-        transform='linear',
+        transform='none',
         subset=None,
         approx_lat=None,
         approx_lon=None,
@@ -46,12 +46,15 @@ class MetricsPlot(object):
         contour_levs=24,
     ):
 
+        # Dataset settings
         self._ds = ds
         self._varname = varname
         self._ens_o = ens_o
         self._metric = metric
         self._ens_r = ens_r
         self._mae_group_by = mae_group_by
+
+        # Plot Settings
         self._group_by = group_by
         self._scale = scale
         self._metric_type = metric_type
@@ -102,13 +105,13 @@ class MetricsPlot(object):
                     'Standard deviation of error data is 0. Cannot standardize errors.'
                 )
 
-        if self._grouping is not None:
-            plot_data = plot_data.groupby(self._grouping).mean(dim='time')
+        if self._group_by is not None:
+            plot_data = plot_data.groupby(self._group_by).mean(dim='time')
 
-        if self._transform == 'linear':
+        if self._transform == 'none':
             pass
         elif self._transform == 'log':
-            plot_data = xr.ufuncs.log10(plot_data)
+            plot_data = np.log10(plot_data)
         else:
             raise ValueError(f'metric transformation {self._transform} not supported')
 
@@ -127,9 +130,12 @@ class MetricsPlot(object):
             metric_full_name = metric_name
 
         if self._transform == 'log':
-            title = f'{das}: {self._varname}: log10({metric_full_name}) {self._metric_type}'
+            title = f'{das}: {self._varname}: log10({metric_full_name})'
         else:
-            title = f'{das}: {self._varname}: {metric_full_name} {self._metric_type}'
+            title = f'{das}: {self._varname}: {metric_full_name}'
+
+        if self._metric_type != 'raw':
+            title = f'{title} {self._metric_type}'
 
         if self._group_by is not None:
             title = f'{title} by {self._group_by}'
@@ -223,7 +229,7 @@ class MetricsPlot(object):
         mymap.set_bad(alpha=0)
 
         # both plots use same contour levels
-        levels = self.__calc_contour_levels(da_o, da_r)
+        levels = self._calc_contour_levels(da_o, da_r)
 
         ax1 = plt.subplot(1, 2, 1, projection=ccrs.Robinson(central_longitude=0.0))
         ax1.set_title(title_o)
@@ -297,7 +303,7 @@ class MetricsPlot(object):
         want to be able to input multiple?
         """
 
-        levels = self._calc_contour_levels(da, nlevs=24)
+        levels = self._calc_contour_levels(da)
 
         lat = da['lat']
         if (da == inf).all():
@@ -357,16 +363,16 @@ class MetricsPlot(object):
         ax.coastlines()
         ax.set_title(title)
 
-    def hist_plot(self, plot_data, title, metric):
+    def hist_plot(self, plot_data, title):
         fig, axs = mpl.pyplot.subplots(1, 1, sharey=True, tight_layout=True)
         axs.hist(plot_data)
-        mpl.pyplot.xlabel(metric)
+        mpl.pyplot.xlabel(self._metric)
         mpl.pyplot.title(f'time-series histogram: {title}')
 
     def periodogram_plot(self, plot_data, title):
         dat = xrft.dft(plot_data - plot_data.mean())
         i = (np.multiply(dat, np.conj(dat)) / dat.size).real
-        i = xr.ufuncs.log10(i[2 : int(dat.size / 2) + 1])
+        i = np.log10(i[2 : int(dat.size / 2) + 1])
         freqs = np.array(range(1, int(dat.size / 2))) / dat.size
 
         mpl.pyplot.subplots(1, 1, sharey=True, tight_layout=True)
@@ -382,19 +388,19 @@ class MetricsPlot(object):
         group_string = 'time.year'
         xlabel = 'date'
         tick_interval = 28
-        if self._grouping == 'time.dayofyear':
+        if self._group_by == 'time.dayofyear':
             group_string = 'dayofyear'
             xlabel = 'Day of Year'
             tick_interval = 20
-        elif self._grouping == 'time.month':
+        elif self._group_by == 'time.month':
             group_string = 'month'
             xlabel = 'Month'
             tick_interval = 1
-        elif self._grouping == 'time.year':
+        elif self._group_by == 'time.year':
             group_string = 'year'
             xlabel = 'Year'
             tick_interval = 1
-        elif self._grouping == 'time.day':
+        elif self._group_by == 'time.day':
             group_string = 'day'
             xlabel = 'Day'
             tick_interval = 20
@@ -406,12 +412,12 @@ class MetricsPlot(object):
         else:
             ylabel = f'{self._metric}'
 
-        if self._transform == 'none':
-            plot_ylabel = ylabel
-        elif self._transform == 'log':
+        if self._transform == 'log':
             plot_ylabel = f'log10({ylabel})'
+        else:
+            plot_ylabel = ylabel
 
-        if self._grouping is not None:
+        if self._group_by is not None:
             mpl.pyplot.plot(da[group_string].data, da, 'bo')
         else:
             plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%m-%d-%Y'))
@@ -424,7 +430,7 @@ class MetricsPlot(object):
         mpl.pyplot.yscale(self._scale)
         mpl.pyplot.xlabel(xlabel)
 
-        if self._grouping is not None:
+        if self._group_by is not None:
             mpl.pyplot.xticks(
                 np.arange(min(da[group_string]), max(da[group_string]) + 1, tick_interval)
             )
@@ -439,47 +445,30 @@ class MetricsPlot(object):
 
         mpl.pyplot.title(title)
 
-    def get_metric_label(self, metric, data_o, data_r):
+    def get_metric_label(self, metric, data):
         # Get special metric names
         if metric == 'zscore':
-            zscore_cutoff = lm.DatasetMetrics((data_o - data_r), ['time']).get_single_metric(
-                'zscore_cutoff'
-            )
-            percent_sig = lm.DatasetMetrics((data_o - data_r), ['time']).get_single_metric(
+            zscore_cutoff = lm.DatasetMetrics((data), ['time']).get_single_metric('zscore_cutoff')
+            percent_sig = lm.DatasetMetrics((data), ['time']).get_single_metric(
                 'zscore_percent_significant'
             )
             metric_name = f'{metric}: cutoff {zscore_cutoff[0]:.2f}, % sig: {percent_sig:.2f}'
-            metric_name_o = metric_name
-            metric_name_r = metric_name
         elif metric == 'mean' and self._plot_type == 'spatial_comparison':
             gw = self._ds['gw'].values
             o_wt_mean = np.average(
                 np.average(
                     lm.DatasetMetrics(
-                        data_o, ['time'], self._group_by, quantile=self._quantile
+                        data, ['time'], self._group_by, quantile=self._quantile
                     ).get_metric(metric),
                     axis=0,
                     weights=gw,
                 )
             )
-            r_wt_mean = np.average(
-                np.average(
-                    lm.DatasetMetrics(
-                        data_r, ['time'], self._group_by, quantile=self._quantile
-                    ).get_metric(metric),
-                    axis=0,
-                    weights=gw,
-                )
-            )
-            metric_name_o = f'{metric} = {o_wt_mean:.2f}'
-            metric_name_r = f'{metric} = {r_wt_mean:.2f}'
+            metric_name = f'{metric} = {o_wt_mean:.2f}'
         else:
             metric_name = metric
-            metric_name_o = metric
-            metric_name_r = metric
 
-        return metric_name_o
-        return metric_name_r
+        return metric_name
 
 
 def plot(
@@ -493,7 +482,7 @@ def plot(
     scale='linear',
     metric_type='raw',
     plot_type='spatial',
-    transform='linear',
+    transform='none',
     subset=None,
     lat=None,
     lon=None,
@@ -561,10 +550,10 @@ def plot(
 
             'histogram': A histogram of the time-series data
 
-    transform -- string (default 'linear')
+    transform -- string (default 'none')
         data transformation. Valid options:
 
-            'linear'
+            'none'
 
             'log'
 
@@ -628,47 +617,56 @@ def plot(
     )
 
     # Subset data
-    data_o = lu._subset_data(ds[varname].sel(ensemble=ens_o), subset, lat, lon, lev, start, end)
+    subset_o = lu.subset_data(ds[varname].sel(ensemble=ens_o), subset, lat, lon, lev, start, end)
     if ens_r is not None:
-        data_r = lu._subset_data(ds[varname].sel(ensemble=ens_r), subset, lat, lon, lev, start, end)
+        subset_r = lu.subset_data(
+            ds[varname].sel(ensemble=ens_r), subset, lat, lon, lev, start, end
+        )
 
-    # Acquire raw data
+    # Acquire raw metric values
     if metric_type in ['metric_of_diff']:
-        data = data_o - data_r
+        data = subset_o - subset_r
     else:
-        data = data_o
-    raw_data_o = mp._get_raw_data(data)
-    if plot_type in ['spatial_comparison'] or metric_type in ['diff', 'ratio']:
-        raw_data_r = mp._get_raw_data(data_r)
+        data = subset_o
 
-    metric_name_o = mp.get_metric_label(metric, data_o, data_r)
-    metric_name_r = mp.get_metric_label(metric, data_o, data_r)
+    raw_metric_o = mp.get_raw_data(data)
+    # TODO: This will plot a second plot even if metric_type is metric_of diff in spatial comparison case
+    if plot_type in ['spatial_comparison'] or metric_type in ['diff', 'ratio']:
+        raw_metric_r = mp.get_raw_data(subset_r)
+
+    # Get metric names/values for plot title
+    # if metric == 'zscore':
+    metric_name_o = mp.get_metric_label(metric, data)
+    if metric == 'mean' and plot_type == 'spatial_comparison':
+        metric_name_r = mp.get_metric_label(metric, subset_r)
 
     # Get plot data and title
-    if lat is not None:
-        title_lat = data_o['lat'].data[0]
-        title_lon = data_o['lon'].data[0] - 180
+    if lat is not None and lon is not None:
+        title_lat = subset_o['lat'].data[0]
+        title_lon = subset_o['lon'].data[0] - 180
     else:
         title_lat = lat
         title_lon = lon
 
-    if plot_type == 'spatial_comparison':
-        plot_data_o = mp._get_plot_data(raw_data_o)
-        plot_data_r = mp._get_plot_data(raw_data_r)
-        title_o = mp._get_title(metric_name_o, lat=title_lat, lon=title_lon)
-        title_r = mp._get_title(metric_name_r, lat=title_lat, lon=title_lon)
+    if metric_type in ['diff', 'ratio']:
+        plot_data_o = mp.get_plot_data(raw_metric_o, raw_metric_r)
     else:
-        plot_data = mp._get_plot_data(raw_data_o, raw_data_2=raw_data_r)
-        title = mp._get_title(metric_name_o, lat=title_lat, lon=title_lon)
+        plot_data_o = mp.get_plot_data(raw_metric_o)
+    title_o = mp.get_title(metric_name_o, lat=title_lat, lon=title_lon)
+    if plot_type == 'spatial_comparison':
+        plot_data_r = mp.get_plot_data(raw_metric_r)
+        title_r = mp.get_title(metric_name_o, lat=title_lat, lon=title_lon)
+        if metric == 'mean':
+            title_r = mp.get_title(metric_name_r, lat=title_lat, lon=title_lon)
 
     # Call plot functions
     if plot_type == 'spatial_comparison':
-        mp.spatial_comparison_plot(plot_data_o, title_o, plot_data_r, title_r, color)
+        mp.spatial_comparison_plot(plot_data_o, title_o, plot_data_r, title_r)
     elif plot_type == 'spatial':
-        mp.spatial_plot(plot_data, title, color)
+        mp.spatial_plot(plot_data_o, title_o)
     elif plot_type == 'time_series':
-        mp.time_series_plot(plot_data, title, group_by, metric_type=metric_type)
+        mp.time_series_plot(plot_data_o, title_o)
     elif plot_type == 'histogram':
-        mp.hist_plot(plot_data, title, metric)
+        mp.hist_plot(plot_data_o, title_o)
     elif plot_type == 'periodogram':
-        mp.periodogram_plot(plot_data, title)
+        mp.periodogram_plot(plot_data_o, title_o)
