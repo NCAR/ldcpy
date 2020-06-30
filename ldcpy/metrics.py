@@ -11,11 +11,7 @@ class DatasetMetrics(object):
     """
 
     def __init__(
-        self,
-        ds: xr.DataArray,
-        aggregate_dims: list,
-        grouping: Optional[str] = None,
-        quantile: Optional[int] = 0.5,
+        self, ds: xr.DataArray, aggregate_dims: list, quantile: Optional[int] = 0.5,
     ):
         self._ds = ds
         self._q = quantile
@@ -33,7 +29,6 @@ class DatasetMetrics(object):
         self._corr_lag1 = None
         self._lag1 = None
         self._agg_dims = aggregate_dims
-        self._grouping = grouping
         self._quantile = None
         self._mean_squared = None
         self._root_mean_squared = None
@@ -201,29 +196,30 @@ class DatasetMetrics(object):
         The maximum mean absolute error at the point averaged along the aggregate dimensions.
         """
         if not self._is_memoized('_mae_day_max'):
-            self._test = abs(self._ds.groupby(self._grouping).mean(dim=self._agg_dims))
-            # Would be great to replace the code below with a single call to _test.idxmax() once idxmax is in a stable release
-            if self._grouping == 'time.dayofyear':
-                self._mae_max = xr.DataArray(
-                    self._test.isel(dayofyear=self._test.argmax(dim='dayofyear'))
-                    .coords.variables.mapping['dayofyear']
-                    .data,
-                    dims=['lat', 'lon'],
-                )
-            if self._grouping == 'time.month':
-                self._mae_max = xr.DataArray(
-                    self._test.isel(month=self._test.argmax(dim='month'))
-                    .coords.variables.mapping['month']
-                    .data,
-                    dims=['lat', 'lon'],
-                )
-            if self._grouping == 'time.year':
-                self._mae_max = xr.DataArray(
-                    self._test.isel(year=self._test.argmax(dim='year'))
-                    .coords.variables.mapping['year']
-                    .data,
-                    dims=['lat', 'lon'],
-                )
+            self._mae_max = 0
+            # self._test = abs(self._ds.groupby(self._grouping).mean(dim=self._agg_dims))
+            # # Would be great to replace the code below with a single call to _test.idxmax() once idxmax is in a stable release
+            # if self._grouping == 'time.dayofyear':
+            #     self._mae_max = xr.DataArray(
+            #         self._test.isel(dayofyear=self._test.argmax(dim='dayofyear'))
+            #         .coords.variables.mapping['dayofyear']
+            #         .data,
+            #         dims=['lat', 'lon'],
+            #     )
+            # if self._grouping == 'time.month':
+            #     self._mae_max = xr.DataArray(
+            #         self._test.isel(month=self._test.argmax(dim='month'))
+            #         .coords.variables.mapping['month']
+            #         .data,
+            #         dims=['lat', 'lon'],
+            #     )
+            # if self._grouping == 'time.year':
+            #     self._mae_max = xr.DataArray(
+            #         self._test.isel(year=self._test.argmax(dim='year'))
+            #         .coords.variables.mapping['year']
+            #         .data,
+            #         dims=['lat', 'lon'],
+            #     )
 
         return self._mae_max
 

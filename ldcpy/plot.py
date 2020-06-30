@@ -30,7 +30,6 @@ class MetricsPlot(object):
         ens_o,
         metric,
         ens_r=None,
-        mae_group_by=None,
         group_by=None,
         scale='linear',
         metric_type='raw',
@@ -46,16 +45,18 @@ class MetricsPlot(object):
         contour_levs=24,
     ):
 
-        # Data settings
         self._ds = ds
+
+        # Metric settings used in plot titles
         self._varname = varname
-        self._ens_o = ens_o
-        self._metric = metric
-        self._ens_r = ens_r
-        self._mae_group_by = mae_group_by
-        self._group_by = group_by
+        self._ens_o_name = ens_o
+        self._ens_r_name = ens_r
+        self._title_lat = None
+        self._title_lon = None
 
         # Plot settings
+        self._metric = metric
+        self._group_by = group_by
         self._scale = scale
         self._metric_type = metric_type
         self._plot_type = plot_type
@@ -68,12 +69,8 @@ class MetricsPlot(object):
         self._standardized_err = standardized_err
         self._quantile = quantile
         self._contour_levs = contour_levs
-        self._title_lat = None
-        self._title_lon = None
 
-        self._metric_name = None
-
-    def get_raw_data(self, da):
+    def get_metrics(self, da):
         if self._plot_type in ['spatial', 'spatial_comparison']:
             metrics_da = lm.DatasetMetrics(
                 da, ['time'], self._mae_group_by, quantile=self._quantile
@@ -121,10 +118,10 @@ class MetricsPlot(object):
 
     def get_title(self, metric_name):
 
-        if self._ens_r is not None:
-            das = f'{self._ens_o}, {self._ens_r}'
+        if self._ens_r_name is not None:
+            das = f'{self._ens_o_name}, {self._ens_r_name}'
         else:
-            das = f'{self._ens_o}'
+            das = f'{self._ens_o_name}'
 
         if self._quantile is not None and metric_name == 'quantile':
             metric_full_name = f'{metric_name} {self._quantile}'
@@ -447,7 +444,7 @@ class MetricsPlot(object):
 
         mpl.pyplot.title(title)
 
-    def get_metric_label(self, metric, data):
+    def get_metric_label(self, metric, data, weights=None):
         # Get special metric names
         if metric == 'zscore':
             zscore_cutoff = lm.DatasetMetrics((data), ['time']).get_single_metric('zscore_cutoff')
@@ -456,14 +453,13 @@ class MetricsPlot(object):
             )
             metric_name = f'{metric}: cutoff {zscore_cutoff[0]:.2f}, % sig: {percent_sig:.2f}'
         elif metric == 'mean' and self._plot_type == 'spatial_comparison':
-            gw = self._ds['gw'].values
             o_wt_mean = np.average(
                 np.average(
                     lm.DatasetMetrics(
                         data, ['time'], self._group_by, quantile=self._quantile
                     ).get_metric(metric),
                     axis=0,
-                    weights=gw,
+                    weights=weights,
                 )
             )
             metric_name = f'{metric} = {o_wt_mean:.2f}'
@@ -479,7 +475,6 @@ def plot(
     ens_o,
     metric,
     ens_r=None,
-    mae_group_by=None,
     group_by=None,
     scale='linear',
     metric_type='raw',
@@ -514,6 +509,7 @@ def plot(
     ==================
     ens_r -- string
         the name of the second dataset to gather metrics from (needed if metric_type is diff, ratio, or metric_of_diff, or if plot_type is spatial_comparison)
+
     group_by -- string
         how to group the data in time series plots. Valid groupings:
             "time.day"
@@ -603,7 +599,6 @@ def plot(
         ens_o,
         metric,
         ens_r,
-        mae_group_by,
         group_by,
         scale,
         metric_type,
@@ -631,16 +626,16 @@ def plot(
     else:
         data = subset_o
 
-    raw_metric_o = mp.get_raw_data(data)
+    raw_metric_o = mp.get_metrics(data)
     # TODO: This will plot a second plot even if metric_type is metric_of diff in spatial comparison case
     if plot_type in ['spatial_comparison'] or metric_type in ['diff', 'ratio']:
-        raw_metric_r = mp.get_raw_data(subset_r)
+        raw_metric_r = mp.get_metrics(subset_r)
 
     # Get metric names/values for plot title
     # if metric == 'zscore':
-    metric_name_o = mp.get_metric_label(metric, data)
+    metric_name_o = mp.get_metric_label(metric, data, ds['gw'].values)
     if metric == 'mean' and plot_type == 'spatial_comparison':
-        metric_name_r = mp.get_metric_label(metric, subset_r)
+        metric_name_r = mp.get_metric_label(metric, subset_r, ds['gw'].values)
 
     # Get plot data and title
     if lat is not None and lon is not None:
