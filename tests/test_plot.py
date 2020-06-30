@@ -160,3 +160,7 @@ class TestPlot(TestCase):
     def test_zscore_plot(self):
         lp.plot(ds, 'TS', 'orig', ens_r='recon', metric_type='metric_of_diff', metric='zscore')
         self.assertTrue(True is True)
+
+    def test_mean_3d(self):
+        lp.plot(ds3, 'T', 'orig', 'mean', lev='300')
+        self.assertTrue(True)

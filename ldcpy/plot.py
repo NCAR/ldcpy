@@ -46,28 +46,30 @@ class MetricsPlot(object):
         contour_levs=24,
     ):
 
-        # Dataset settings
+        # Data settings
         self._ds = ds
         self._varname = varname
         self._ens_o = ens_o
         self._metric = metric
         self._ens_r = ens_r
         self._mae_group_by = mae_group_by
-
-        # Plot Settings
         self._group_by = group_by
+
+        # Plot settings
         self._scale = scale
         self._metric_type = metric_type
         self._plot_type = plot_type
-        self._transform = transform
         self._subset = subset
         self._true_lat = approx_lat
         self._true_lon = approx_lon
+        self._transform = transform
         self._lev = lev
         self._color = color
         self._standardized_err = standardized_err
         self._quantile = quantile
         self._contour_levs = contour_levs
+        self._title_lat = None
+        self._title_lon = None
 
         self._metric_name = None
 
@@ -117,7 +119,7 @@ class MetricsPlot(object):
 
         return plot_data
 
-    def get_title(self, metric_name, lat=None, lon=None):
+    def get_title(self, metric_name):
 
         if self._ens_r is not None:
             das = f'{self._ens_o}, {self._ens_r}'
@@ -140,13 +142,13 @@ class MetricsPlot(object):
         if self._group_by is not None:
             title = f'{title} by {self._group_by}'
 
-        if lat is not None:
-            if lon is not None:
-                title = f'{title} at lat={lat:.2f}, lon={lon:.2f}'
+        if self.title_lat is not None:
+            if self.title_lon is not None:
+                title = f'{title} at lat={self.title_lat:.2f}, lon={self.title_lon:.2f}'
             else:
-                title = f'{title} at lat={lat:.2f}'
-        elif lon is not None:
-            title = f'{title} at lat={lon:.2f}'
+                title = f'{title} at lat={self.title_lat:.2f}'
+        elif self.title_lon is not None:
+            title = f'{title} at lat={self.title_lon:.2f}'
 
         if self._subset is not None:
             title = f'{title} subset:{self._subset}'
@@ -642,22 +644,22 @@ def plot(
 
     # Get plot data and title
     if lat is not None and lon is not None:
-        title_lat = subset_o['lat'].data[0]
-        title_lon = subset_o['lon'].data[0] - 180
+        mp.title_lat = subset_o['lat'].data[0]
+        mp.title_lon = subset_o['lon'].data[0] - 180
     else:
-        title_lat = lat
-        title_lon = lon
+        mp.title_lat = lat
+        mp.title_lon = lon
 
     if metric_type in ['diff', 'ratio']:
         plot_data_o = mp.get_plot_data(raw_metric_o, raw_metric_r)
     else:
         plot_data_o = mp.get_plot_data(raw_metric_o)
-    title_o = mp.get_title(metric_name_o, lat=title_lat, lon=title_lon)
+    title_o = mp.get_title(metric_name_o)
     if plot_type == 'spatial_comparison':
         plot_data_r = mp.get_plot_data(raw_metric_r)
-        title_r = mp.get_title(metric_name_o, lat=title_lat, lon=title_lon)
+        title_r = mp.get_title(metric_name_o)
         if metric == 'mean':
-            title_r = mp.get_title(metric_name_r, lat=title_lat, lon=title_lon)
+            title_r = mp.get_title(metric_name_r)
 
     # Call plot functions
     if plot_type == 'spatial_comparison':
