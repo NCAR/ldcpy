@@ -14,432 +14,451 @@ from cartopy.util import add_cyclic_point
 from numpy import inf
 
 import ldcpy.metrics as lm
+import ldcpy.util as lu
 
 
-def _subset_data(ds, cond, lat=None, lon=None, lev=1):
-
-    ds_subset = ds
-
-    if cond == 'winter':
-        ds_subset = ds_subset.where(ds.time.dt.season == 'DJF', drop=True)
-    elif cond == 'first50':
-        ds_subset = ds_subset.isel(time=slice(None, 50))
-
-    if 'lev' in ds_subset.dims:
-        ds_subset = ds_subset.sel(lev=0, method='nearest')
-
-    if lat is not None:
-        ds_subset = ds_subset.sel(lat=lat, method='nearest')
-        ds_subset = ds_subset.expand_dims('lat')
-
-    if lon is not None:
-        ds_subset = ds_subset.sel(lon=lon + 180, method='nearest')
-        ds_subset = ds_subset.expand_dims('lon')
-
-    return ds_subset
-
-
-def _get_raw_data(
-    da1, metric, plot_type, metric_type, group_by, mae_group_by, da2=None, quantile=None
-):
-    if plot_type == 'spatial':
-        if group_by is not None and metric != 'mae_max':
-            raise ValueError(f'cannot group by time in a spatial plot of {metric}.')
-        if metric_type == 'metric_of_diff':
-            metrics_da1 = lm.DatasetMetrics(da1 - da2, ['time'], mae_group_by, quantile=quantile)
-        else:
-            metrics_da1 = lm.DatasetMetrics(da1, ['time'], mae_group_by, quantile=quantile)
-    elif plot_type == 'time_series' or plot_type == 'periodogram' or plot_type == 'histogram':
-        if metric_type == 'metric_of_diff':
-            metrics_da1 = lm.DatasetMetrics(da1 - da2, ['lat', 'lon'], group_by, quantile=quantile)
-        else:
-            metrics_da1 = lm.DatasetMetrics(da1, ['lat', 'lon'], group_by, quantile=quantile)
-    else:
-        raise ValueError(f'plot type {plot_type} not supported')
-
-    raw_data = metrics_da1.get_metric(metric)
-
-    return raw_data
-
-
-def _get_plot_data(
-    raw_data_1, metric_type, transform, grouping, raw_data_2=None, standardized_err=False,
-):
-    if metric_type == 'diff':
-        plot_data = raw_data_1 - raw_data_2
-    elif metric_type == 'ratio':
-        plot_data = raw_data_2 / raw_data_1
-    elif metric_type == 'raw' or metric_type == 'metric_of_diff':
-        plot_data = raw_data_1
-    else:
-        raise ValueError(f'metric_type {metric_type} not supported')
-
-    if metric_type == 'diff' and standardized_err is True:
-        if plot_data.std(dim='time') != 0:
-            plot_data = (plot_data - plot_data.mean(dim='time')) / plot_data.std(dim='time')
-        else:
-            raise ValueError('Standard deviation of error data is 0. Cannot standardize errors.')
-
-    if grouping is not None:
-        plot_data = plot_data.groupby(grouping).mean(dim='time')
-
-    if transform == 'linear':
-        pass
-    elif transform == 'log':
-        plot_data = xr.ufuncs.log10(plot_data)
-    else:
-        raise ValueError(f'metric transformation {transform} not supported')
-
-    return plot_data
-
-
-def _get_title(
-    metric_name,
-    ens_o,
-    varname,
-    metric_type,
-    transform,
-    group_by=None,
-    ens_r=None,
-    lat=None,
-    lon=None,
-    subset=None,
-    quantile=None,
-):
-    if ens_r is not None:
-        das = f'{ens_o}, {ens_r}'
-    else:
-        das = f'{ens_o}'
-
-    if quantile is not None and metric_name == 'quantile':
-        metric_full_name = f'{metric_name} {quantile}'
-    else:
-        metric_full_name = metric_name
-
-    if transform == 'log':
-        title = f'{das}: {varname}: log10({metric_full_name}) {metric_type}'
-    else:
-        title = f'{das}: {varname}: {metric_full_name} {metric_type}'
-
-    if group_by is not None:
-        title = f'{title} by {group_by}'
-
-    if lat is not None:
-        if lon is not None:
-            title = f'{title} at lat={lat:.2f}, lon={lon:.2f}'
-        else:
-            title = f'{title} at lat={lat:.2f}'
-    elif lon is not None:
-        title = f'{title} at lat={lon:.2f}'
-
-    if subset is not None:
-        title = f'{title} subset:{subset}'
-
-    return title
-
-
-def _calc_contour_levels(dat_1, dat_2=None, nlevs=None):
+class MetricsPlot(object):
     """
-    TODO: minval returns the smallest value not equal to -inf, is there a more elegant solution to plotting -inf values
-    (for EW contrast variance in particular)?
+    This class contains code to plot metrics in an xarray Dataset that has either 'lat' and 'lon' dimensions, or a
+    'time' dimension.
     """
-    # both plots use same contour levels
-    if dat_2 is not None:
-        minval = np.nanmin(np.minimum(dat_1, dat_2))
-        maxval = np.nanmax(np.maximum(dat_1, dat_2))
-        if minval == -math.inf:
-            if np.isfinite(dat_1).any() or np.isfinite(dat_2).any():
-                minval = np.minimum(
-                    dat_1.where(dat_1 != -inf).min(), dat_2.where(dat_2 != -inf).min()
-                ).data
+
+    def __init__(
+        self,
+        ds,
+        varname,
+        ens_o,
+        metric,
+        ens_r=None,
+        group_by=None,
+        scale='linear',
+        metric_type='raw',
+        plot_type='spatial',
+        transform='none',
+        subset=None,
+        approx_lat=None,
+        approx_lon=None,
+        lev=0,
+        color='coolwarm',
+        standardized_err=False,
+        quantile=0.5,
+        contour_levs=24,
+    ):
+
+        self._ds = ds
+
+        # Metric settings used in plot titles
+        self._varname = varname
+        self._ens_o_name = ens_o
+        self._ens_r_name = ens_r
+        self._title_lat = None
+        self._title_lon = None
+
+        # Plot settings
+        self._metric = metric
+        self._group_by = group_by
+        self._scale = scale
+        self._metric_type = metric_type
+        self._plot_type = plot_type
+        self._subset = subset
+        self._true_lat = approx_lat
+        self._true_lon = approx_lon
+        self._transform = transform
+        self._lev = lev
+        self._color = color
+        self._standardized_err = standardized_err
+        self._quantile = quantile
+        self._contour_levs = contour_levs
+
+    def get_metrics(self, da):
+        if self._plot_type in ['spatial', 'spatial_comparison']:
+            metrics_da = lm.DatasetMetrics(da, ['time'])
+        elif self._plot_type in ['time_series', 'periodogram', 'histogram']:
+            metrics_da = lm.DatasetMetrics(da, ['lat', 'lon'])
+        else:
+            raise ValueError(f'plot type {self._plot_type} not supported')
+
+        raw_data = metrics_da.get_metric(self._metric)
+
+        return raw_data
+
+    def get_plot_data(self, raw_data_1, raw_data_2=None):
+        if self._metric_type == 'diff':
+            plot_data = raw_data_1 - raw_data_2
+        elif self._metric_type == 'ratio':
+            plot_data = raw_data_2 / raw_data_1
+        elif self._metric_type == 'raw' or self._metric_type == 'metric_of_diff':
+            plot_data = raw_data_1
+        else:
+            raise ValueError(f'metric_type {self._metric_type} not supported')
+
+        if self._metric_type == 'diff' and self._standardized_err is True:
+            if plot_data.std(dim='time') != 0:
+                plot_data = (plot_data - plot_data.mean(dim='time')) / plot_data.std(dim='time')
             else:
-                return np.array([0, 0.00000001])
-        if maxval == math.inf:
-            if np.isfinite(dat_1).any() or np.isfinite(dat_2).any():
-                maxval = np.maximum(
-                    dat_1.where(dat_1 != -inf).max(), dat_2.where(dat_2 != -inf).max()
-                ).data
+                raise ValueError(
+                    'Standard deviation of error data is 0. Cannot standardize errors.'
+                )
+
+        if self._group_by is not None:
+            plot_data = plot_data.groupby(self._group_by).mean(dim='time')
+
+        if self._transform == 'none':
+            pass
+        elif self._transform == 'log':
+            plot_data = np.log10(plot_data)
+        else:
+            raise ValueError(f'metric transformation {self._transform} not supported')
+
+        return plot_data
+
+    def get_title(self, metric_name):
+
+        if self._ens_r_name is not None:
+            das = f'{self._ens_o_name}, {self._ens_r_name}'
+        else:
+            das = f'{self._ens_o_name}'
+
+        if self._quantile is not None and metric_name == 'quantile':
+            metric_full_name = f'{metric_name} {self._quantile}'
+        else:
+            metric_full_name = metric_name
+
+        if self._transform == 'log':
+            title = f'{das}: {self._varname}: log10({metric_full_name})'
+        else:
+            title = f'{das}: {self._varname}: {metric_full_name}'
+
+        if self._metric_type != 'raw':
+            title = f'{title} {self._metric_type}'
+
+        if self._group_by is not None:
+            title = f'{title} by {self._group_by}'
+
+        if self.title_lat is not None:
+            if self.title_lon is not None:
+                title = f'{title} at lat={self.title_lat:.2f}, lon={self.title_lon:.2f}'
             else:
-                return np.array([0, 0.00000001])
-    else:
-        minval = np.nanmin(dat_1)
-        maxval = np.nanmax(dat_1)
-        if minval == -math.inf:
-            if np.isfinite(dat_1).any():
-                minval = dat_1.where(dat_1 != -inf).min().data
+                title = f'{title} at lat={self.title_lat:.2f}'
+        elif self.title_lon is not None:
+            title = f'{title} at lat={self.title_lon:.2f}'
+
+        if self._subset is not None:
+            title = f'{title} subset:{self._subset}'
+
+        return title
+
+    def _calc_contour_levels(self, dat_1, dat_2=None):
+        """
+        TODO: minval returns the smallest value not equal to -inf, is there a more elegant solution to plotting -inf values
+        (for EW contrast variance in particular)?
+        """
+        # both plots use same contour levels
+        if dat_2 is not None:
+            minval = np.nanmin(np.minimum(dat_1, dat_2))
+            maxval = np.nanmax(np.maximum(dat_1, dat_2))
+            if minval == -math.inf:
+                if np.isfinite(dat_1).any() or np.isfinite(dat_2).any():
+                    minval = np.minimum(
+                        dat_1.where(dat_1 != -inf).min(), dat_2.where(dat_2 != -inf).min()
+                    ).data
+                else:
+                    return np.array([0, 0.00000001])
+            if maxval == math.inf:
+                if np.isfinite(dat_1).any() or np.isfinite(dat_2).any():
+                    maxval = np.maximum(
+                        dat_1.where(dat_1 != -inf).max(), dat_2.where(dat_2 != -inf).max()
+                    ).data
+                else:
+                    return np.array([0, 0.00000001])
+        else:
+            minval = np.nanmin(dat_1)
+            maxval = np.nanmax(dat_1)
+            if minval == -math.inf:
+                if np.isfinite(dat_1).any():
+                    minval = dat_1.where(dat_1 != -inf).min().data
+                else:
+                    return np.array([0, 0.00000001])
+            if maxval == math.inf:
+                if np.isfinite(dat_1).any():
+                    maxval = dat_1.where(dat_1 != inf).max().data
+                else:
+                    return np.array([0, 0.00000001])
+        levels = minval + np.arange(self._contour_levs + 1) * (maxval - minval) / self._contour_levs
+        # print('Min value: {}\nMax value: {}'.format(minval, maxval))
+        return levels
+
+    def spatial_comparison_plot(self, da_o, title_o, da_r, title_r):
+        lat_o = da_o['lat']
+        lat_r = da_r['lat']
+        if (da_o == inf).all():
+            cy_data_o, lon_o = add_cyclic_point(da_o.where(da_o != inf, 1), coord=da_o['lon'])
+        elif (da_o == -inf).all():
+            cy_data_o, lon_o = add_cyclic_point(da_o.where(da_o != -inf, -1), coord=da_o['lon'])
+        else:
+            cy_data_o, lon_o = add_cyclic_point(
+                da_o.where(da_o != inf, da_o.where(da_o != inf).max() + 1).where(
+                    da_o != -inf, da_o.where(da_o != -inf).min() - 1
+                ),
+                coord=da_o['lon'],
+            )
+
+        if (da_r == inf).all():
+            cy_data_r, lon_r = add_cyclic_point(da_r.where(da_r != inf, 1), coord=da_r['lon'])
+        elif (da_r == -inf).all():
+            cy_data_r, lon_r = add_cyclic_point(da_r.where(da_r != -inf, -1), coord=da_r['lon'])
+        else:
+            cy_data_r, lon_r = add_cyclic_point(
+                da_r.where(da_r != inf, da_r.where(da_r != inf).max() + 1).where(
+                    da_r != -inf, da_r.where(da_r != -inf).min() - 1
+                ),
+                coord=da_r['lon'],
+            )
+
+        # cy_data_r, lon_r = add_cyclic_point(da_r.where(da_r!=-inf, -sys.float_info.max).where(da_r!=inf, sys.float_info.max), coord=da_r['lon'])
+        fig = plt.figure(dpi=300, figsize=(9, 2.5))
+
+        mymap = plt.get_cmap(f'{self._color}')
+        mymap.set_under(color='black')
+        mymap.set_over(color='white')
+        mymap.set_bad(alpha=0)
+
+        # both plots use same contour levels
+        levels = self._calc_contour_levels(da_o, da_r)
+
+        ax1 = plt.subplot(1, 2, 1, projection=ccrs.Robinson(central_longitude=0.0))
+        ax1.set_title(title_o)
+
+        if (levels == levels[0]).all():
+            pc1 = ax1.pcolormesh(lon_o, lat_o, cy_data_o, transform=ccrs.PlateCarree(), cmap=mymap)
+        else:
+            if np.isfinite(da_o).all() and np.isfinite(da_r).all():
+                pc1 = ax1.contourf(
+                    lon_o,
+                    lat_o,
+                    cy_data_o,
+                    transform=ccrs.PlateCarree(),
+                    cmap=mymap,
+                    levels=levels,
+                    extend='neither',
+                )
             else:
-                return np.array([0, 0.00000001])
-        if maxval == math.inf:
-            if np.isfinite(dat_1).any():
-                maxval = dat_1.where(dat_1 != inf).max().data
+                pc1 = ax1.contourf(
+                    lon_o,
+                    lat_o,
+                    cy_data_o,
+                    transform=ccrs.PlateCarree(),
+                    cmap=mymap,
+                    levels=levels,
+                    extend='both',
+                )
+        ax1.set_global()
+        ax1.coastlines()
+
+        ax2 = plt.subplot(1, 2, 2, projection=ccrs.Robinson(central_longitude=0.0))
+        ax2.set_title(title_r)
+        if (levels == levels[0]).all():
+            pc2 = ax2.pcolormesh(lon_r, lat_r, cy_data_r, transform=ccrs.PlateCarree(), cmap=mymap)
+        else:
+            if np.isfinite(da_o).all() and np.isfinite(da_r).all():
+                pc2 = ax2.contourf(
+                    lon_r,
+                    lat_r,
+                    cy_data_r,
+                    transform=ccrs.PlateCarree(),
+                    cmap=mymap,
+                    levels=levels,
+                    extend='neither',
+                )
             else:
-                return np.array([0, 0.00000001])
-    levels = minval + np.arange(nlevs + 1) * (maxval - minval) / nlevs
-    # print('Min value: {}\nMax value: {}'.format(minval, maxval))
-    return levels
+                pc2 = ax1.contourf(
+                    lon_o,
+                    lat_o,
+                    cy_data_o,
+                    transform=ccrs.PlateCarree(),
+                    cmap=mymap,
+                    levels=levels,
+                    extend='both',
+                )
+        ax2.set_global()
+        ax2.coastlines()
 
+        # add colorbar
+        fig.subplots_adjust(left=0.1, right=0.9, bottom=0.05, top=0.95)
+        cax = fig.add_axes([0.1, 0, 0.8, 0.05])
+        if not (np.isnan(pc1.levels).all() and np.isnan(pc2.levels).all()):
+            cbar = fig.colorbar(pc1, cax=cax, orientation='horizontal')
+            cbar = fig.colorbar(pc2, cax=cax, orientation='horizontal')
+            cbar.ax.tick_params(labelsize=8, rotation=30)
+        # cbar.ax.set_xticklabels(['{:.2f}'.format(i) for i in cbar.get_ticks()])
 
-def spatial_comparison_plot(da_o, title_o, da_r, title_r, color='cmo.thermal'):
-    lat_o = da_o['lat']
-    lat_r = da_r['lat']
-    if (da_o == inf).all():
-        cy_data_o, lon_o = add_cyclic_point(da_o.where(da_o != inf, 1), coord=da_o['lon'])
-    elif (da_o == -inf).all():
-        cy_data_o, lon_o = add_cyclic_point(da_o.where(da_o != -inf, -1), coord=da_o['lon'])
-    else:
-        cy_data_o, lon_o = add_cyclic_point(
-            da_o.where(da_o != inf, da_o.where(da_o != inf).max() + 1).where(
-                da_o != -inf, da_o.where(da_o != -inf).min() - 1
-            ),
-            coord=da_o['lon'],
-        )
+    def spatial_plot(self, da, title):
+        """
+        visualize the mean error
+        want to be able to input multiple?
+        """
 
-    if (da_r == inf).all():
-        cy_data_r, lon_r = add_cyclic_point(da_r.where(da_r != inf, 1), coord=da_r['lon'])
-    elif (da_r == -inf).all():
-        cy_data_r, lon_r = add_cyclic_point(da_r.where(da_r != -inf, -1), coord=da_r['lon'])
-    else:
-        cy_data_r, lon_r = add_cyclic_point(
-            da_r.where(da_r != inf, da_r.where(da_r != inf).max() + 1).where(
-                da_r != -inf, da_r.where(da_r != -inf).min() - 1
-            ),
-            coord=da_r['lon'],
-        )
+        levels = self._calc_contour_levels(da)
 
-    # cy_data_r, lon_r = add_cyclic_point(da_r.where(da_r!=-inf, -sys.float_info.max).where(da_r!=inf, sys.float_info.max), coord=da_r['lon'])
-    fig = plt.figure(dpi=300, figsize=(9, 2.5))
+        lat = da['lat']
+        if (da == inf).all():
+            cy_data, lon = add_cyclic_point(da.where(da != inf, 1), coord=da['lon'])
+        elif (da == -inf).all():
+            cy_data, lon = add_cyclic_point(da.where(da != inf, -1), coord=da['lon'])
+        else:
+            cy_data, lon = add_cyclic_point(
+                da.where(da != inf, da.where(da != inf).max() + 1).where(
+                    da != -inf, da.where(da != -inf).min() - 1
+                ),
+                coord=da['lon'],
+            )
 
-    mymap = plt.get_cmap(f'{color}')
-    mymap.set_under(color='black')
-    mymap.set_over(color='white')
-    mymap.set_bad(alpha=0)
+        mymap = plt.get_cmap(self._color)
+        mymap.set_under(color='black')
+        mymap.set_over(color='white')
+        mymap.set_bad(alpha=0)
+        # cy_data = np.ma.masked_invalid(cy_data)
+        ax = plt.subplot(1, 1, 1, projection=ccrs.Robinson(central_longitude=0.0))
+        # pc = ax.pcolormesh(lon, lat, cy_data, transform=ccrs.PlateCarree(), cmap=mymap)
 
-    # both plots use same contour levels
-    levels = _calc_contour_levels(da_o, da_r, nlevs=24)
+        # if xr.ufuncs.isnan(cy_data).any():
+        ax.set_facecolor('gray')
 
-    ax1 = plt.subplot(1, 2, 1, projection=ccrs.Robinson(central_longitude=0.0))
-    ax1.set_title(title_o)
+        if (levels == levels[0]).all():
+            pc = ax.pcolormesh(lon, lat, cy_data, transform=ccrs.PlateCarree(), cmap=mymap)
+        else:
+            if np.isfinite(da).all():
+                pc = ax.contourf(
+                    lon,
+                    lat,
+                    cy_data,
+                    transform=ccrs.PlateCarree(),
+                    cmap=mymap,
+                    levels=levels,
+                    extend='neither',
+                )
+            else:
+                pc = ax.contourf(
+                    lon,
+                    lat,
+                    cy_data,
+                    transform=ccrs.PlateCarree(),
+                    cmap=mymap,
+                    levels=levels,
+                    extend='both',
+                )
+        if not np.isnan(pc.levels).all():
+            cb = plt.colorbar(pc, orientation='horizontal', shrink=0.95)
+            cb.ax.tick_params(labelsize=8, rotation=30)
+        else:
+            proxy = [plt.Rectangle((0, 0), 1, 1, fc='gray')]
+            plt.legend(proxy, ['NaN'])
 
-    if (levels == levels[0]).all():
-        pc1 = ax1.pcolormesh(lon_o, lat_o, cy_data_o, transform=ccrs.PlateCarree(), cmap=mymap)
-    else:
-        if np.isfinite(da_o).all() and np.isfinite(da_r).all():
-            pc1 = ax1.contourf(
-                lon_o,
-                lat_o,
-                cy_data_o,
-                transform=ccrs.PlateCarree(),
-                cmap=mymap,
-                levels=levels,
-                extend='neither',
+        ax.set_global()
+        ax.coastlines()
+        ax.set_title(title)
+
+    def hist_plot(self, plot_data, title):
+        fig, axs = mpl.pyplot.subplots(1, 1, sharey=True, tight_layout=True)
+        axs.hist(plot_data)
+        mpl.pyplot.xlabel(self._metric)
+        mpl.pyplot.title(f'time-series histogram: {title}')
+
+    def periodogram_plot(self, plot_data, title):
+        dat = xrft.dft(plot_data - plot_data.mean())
+        i = (np.multiply(dat, np.conj(dat)) / dat.size).real
+        i = np.log10(i[2 : int(dat.size / 2) + 1])
+        freqs = np.array(range(1, int(dat.size / 2))) / dat.size
+
+        mpl.pyplot.subplots(1, 1, sharey=True, tight_layout=True)
+        mpl.pyplot.plot(freqs, i)
+        mpl.pyplot.title(f'periodogram: {title}')
+
+    def time_series_plot(
+        self, da, title,
+    ):
+        """
+        time series plot
+        """
+        group_string = 'time.year'
+        xlabel = 'date'
+        tick_interval = 28
+        if self._group_by == 'time.dayofyear':
+            group_string = 'dayofyear'
+            xlabel = 'Day of Year'
+            tick_interval = 20
+        elif self._group_by == 'time.month':
+            group_string = 'month'
+            xlabel = 'Month'
+            tick_interval = 1
+        elif self._group_by == 'time.year':
+            group_string = 'year'
+            xlabel = 'Year'
+            tick_interval = 1
+        elif self._group_by == 'time.day':
+            group_string = 'day'
+            xlabel = 'Day'
+            tick_interval = 20
+
+        if self._metric_type == 'diff':
+            ylabel = f'{self._metric} error'
+        elif self._metric_type == 'ratio':
+            ylabel = f'ratio {self._metric}'
+        else:
+            ylabel = f'{self._metric}'
+
+        if self._transform == 'log':
+            plot_ylabel = f'log10({ylabel})'
+        else:
+            plot_ylabel = ylabel
+
+        if self._group_by is not None:
+            mpl.pyplot.plot(da[group_string].data, da, 'bo')
+        else:
+            plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%m-%d-%Y'))
+            plt.gca().xaxis.set_major_locator(mdates.DayLocator())
+            dtindex = da.indexes['time'].to_datetimeindex()
+            da['time'] = dtindex
+            mpl.pyplot.plot_date(da.time.data, da, 'bo')
+
+        mpl.pyplot.ylabel(plot_ylabel)
+        mpl.pyplot.yscale(self._scale)
+        mpl.pyplot.xlabel(xlabel)
+
+        if self._group_by is not None:
+            mpl.pyplot.xticks(
+                np.arange(min(da[group_string]), max(da[group_string]) + 1, tick_interval)
             )
         else:
-            pc1 = ax1.contourf(
-                lon_o,
-                lat_o,
-                cy_data_o,
-                transform=ccrs.PlateCarree(),
-                cmap=mymap,
-                levels=levels,
-                extend='both',
+            mpl.pyplot.xticks(
+                pd.date_range(
+                    np.datetime64(da['time'][0].data),
+                    np.datetime64(da['time'][-1].data),
+                    periods=int(da['time'].size / tick_interval) + 1,
+                )
             )
-    ax1.set_global()
-    ax1.coastlines()
 
-    ax2 = plt.subplot(1, 2, 2, projection=ccrs.Robinson(central_longitude=0.0))
-    ax2.set_title(title_r)
-    if (levels == levels[0]).all():
-        pc2 = ax2.pcolormesh(lon_r, lat_r, cy_data_r, transform=ccrs.PlateCarree(), cmap=mymap)
-    else:
-        if np.isfinite(da_o).all() and np.isfinite(da_r).all():
-            pc2 = ax2.contourf(
-                lon_r,
-                lat_r,
-                cy_data_r,
-                transform=ccrs.PlateCarree(),
-                cmap=mymap,
-                levels=levels,
-                extend='neither',
+        mpl.pyplot.title(title)
+
+    def get_metric_label(self, metric, data, weights=None):
+        # Get special metric names
+        if metric == 'zscore':
+            zscore_cutoff = lm.DatasetMetrics((data), ['time']).get_single_metric('zscore_cutoff')
+            percent_sig = lm.DatasetMetrics((data), ['time']).get_single_metric(
+                'zscore_percent_significant'
             )
+            metric_name = f'{metric}: cutoff {zscore_cutoff[0]:.2f}, % sig: {percent_sig:.2f}'
+        elif metric == 'mean' and self._plot_type == 'spatial_comparison':
+            o_wt_mean = np.average(
+                np.average(
+                    lm.DatasetMetrics(data, ['time']).get_metric(metric), axis=0, weights=weights,
+                )
+            )
+            metric_name = f'{metric} = {o_wt_mean:.2f}'
         else:
-            pc2 = ax1.contourf(
-                lon_o,
-                lat_o,
-                cy_data_o,
-                transform=ccrs.PlateCarree(),
-                cmap=mymap,
-                levels=levels,
-                extend='both',
-            )
-    ax2.set_global()
-    ax2.coastlines()
+            metric_name = metric
 
-    # add colorbar
-    fig.subplots_adjust(left=0.1, right=0.9, bottom=0.05, top=0.95)
-    cax = fig.add_axes([0.1, 0, 0.8, 0.05])
-    if not (np.isnan(pc1.levels).all() and np.isnan(pc2.levels).all()):
-        cbar = fig.colorbar(pc1, cax=cax, orientation='horizontal')
-        cbar = fig.colorbar(pc2, cax=cax, orientation='horizontal')
-        cbar.ax.tick_params(labelsize=8, rotation=30)
-    # cbar.ax.set_xticklabels(['{:.2f}'.format(i) for i in cbar.get_ticks()])
-
-
-def spatial_plot(da, title, color='coolwarm'):
-    """
-    visualize the mean error
-    want to be able to input multiple?
-    """
-
-    levels = _calc_contour_levels(da, nlevs=24)
-
-    lat = da['lat']
-    if (da == inf).all():
-        cy_data, lon = add_cyclic_point(da.where(da != inf, 1), coord=da['lon'])
-    elif (da == -inf).all():
-        cy_data, lon = add_cyclic_point(da.where(da != inf, -1), coord=da['lon'])
-    else:
-        cy_data, lon = add_cyclic_point(
-            da.where(da != inf, da.where(da != inf).max() + 1).where(
-                da != -inf, da.where(da != -inf).min() - 1
-            ),
-            coord=da['lon'],
-        )
-
-    mymap = plt.get_cmap(color)
-    mymap.set_under(color='black')
-    mymap.set_over(color='white')
-    mymap.set_bad(alpha=0)
-    # cy_data = np.ma.masked_invalid(cy_data)
-    ax = plt.subplot(1, 1, 1, projection=ccrs.Robinson(central_longitude=0.0))
-    # pc = ax.pcolormesh(lon, lat, cy_data, transform=ccrs.PlateCarree(), cmap=mymap)
-
-    # if xr.ufuncs.isnan(cy_data).any():
-    ax.set_facecolor('gray')
-
-    if (levels == levels[0]).all():
-        pc = ax.pcolormesh(lon, lat, cy_data, transform=ccrs.PlateCarree(), cmap=mymap)
-    else:
-        if np.isfinite(da).all() and np.isfinite(da).all():
-            pc = ax.contourf(
-                lon,
-                lat,
-                cy_data,
-                transform=ccrs.PlateCarree(),
-                cmap=mymap,
-                levels=levels,
-                extend='neither',
-            )
-        else:
-            pc = ax.contourf(
-                lon,
-                lat,
-                cy_data,
-                transform=ccrs.PlateCarree(),
-                cmap=mymap,
-                levels=levels,
-                extend='both',
-            )
-    if not np.isnan(pc.levels).all():
-        cb = plt.colorbar(pc, orientation='horizontal', shrink=0.95)
-        cb.ax.tick_params(labelsize=8, rotation=30)
-    else:
-        proxy = [plt.Rectangle((0, 0), 1, 1, fc='gray')]
-        plt.legend(proxy, ['NaN'])
-
-    ax.set_global()
-    ax.coastlines()
-    ax.set_title(title)
-
-
-def hist_plot(plot_data, title, metric, color='red'):
-    fig, axs = mpl.pyplot.subplots(1, 1, sharey=True, tight_layout=True)
-    axs.hist(plot_data)
-    mpl.pyplot.xlabel(metric)
-    mpl.pyplot.title(f'time-series histogram: {title}')
-
-
-def periodogram_plot(plot_data, title, color='red'):
-    dat = xrft.dft(plot_data - plot_data.mean())
-    i = (np.multiply(dat, np.conj(dat)) / dat.size).real
-    i = xr.ufuncs.log10(i[2 : int(dat.size / 2) + 1])
-    freqs = np.array(range(1, int(dat.size / 2))) / dat.size
-
-    mpl.pyplot.subplots(1, 1, sharey=True, tight_layout=True)
-    mpl.pyplot.plot(freqs, i)
-
-
-def time_series_plot(
-    da,
-    title,
-    grouping=None,
-    scale='linear',
-    metric='mean',
-    metric_type='n',
-    plot_type='timeseries',
-    transform='none',
-):
-    """
-    time series plot
-    """
-    group_string = 'time.year'
-    xlabel = 'date'
-    tick_interval = 28
-    if grouping == 'time.dayofyear':
-        group_string = 'dayofyear'
-        xlabel = 'Day of Year'
-        tick_interval = 20
-    elif grouping == 'time.month':
-        group_string = 'month'
-        xlabel = 'Month'
-        tick_interval = 1
-    elif grouping == 'time.year':
-        group_string = 'year'
-        xlabel = 'Year'
-        tick_interval = 1
-    elif grouping == 'time.day':
-        group_string = 'day'
-        xlabel = 'Day'
-        tick_interval = 20
-
-    if metric_type == 'diff':
-        ylabel = f'{metric} error'
-    elif metric_type == 'ratio':
-        ylabel = f'ratio {metric}'
-    else:
-        ylabel = f'{metric}'
-
-    if transform == 'none':
-        plot_ylabel = ylabel
-    elif transform == 'log':
-        plot_ylabel = f'log10({ylabel})'
-
-    if grouping is not None:
-        mpl.pyplot.plot(da[group_string].data, da, 'bo')
-    else:
-        plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%m-%d-%Y'))
-        plt.gca().xaxis.set_major_locator(mdates.DayLocator())
-        dtindex = da.indexes['time'].to_datetimeindex()
-        da['time'] = dtindex
-        mpl.pyplot.plot_date(da.time.data, da, 'bo')
-
-    mpl.pyplot.ylabel(plot_ylabel)
-    mpl.pyplot.yscale(scale)
-    mpl.pyplot.xlabel(xlabel)
-
-    if grouping is not None:
-        mpl.pyplot.xticks(
-            np.arange(min(da[group_string]), max(da[group_string]) + 1, tick_interval)
-        )
-    else:
-        mpl.pyplot.xticks(
-            pd.date_range(
-                np.datetime64(da['time'][0].data),
-                np.datetime64(da['time'][-1].data),
-                periods=int(da['time'].size / tick_interval) + 1,
-            )
-        )
-
-    mpl.pyplot.title(title)
+        return metric_name
 
 
 def plot(
@@ -448,12 +467,11 @@ def plot(
     ens_o,
     metric,
     ens_r=None,
-    mae_group_by=None,
     group_by=None,
     scale='linear',
     metric_type='raw',
     plot_type='spatial',
-    transform='linear',
+    transform='none',
     subset=None,
     lat=None,
     lon=None,
@@ -461,6 +479,8 @@ def plot(
     color='coolwarm',
     standardized_err=False,
     quantile=0.5,
+    start=None,
+    end=None,
 ):
     """
     Plots the data given an xarray dataset
@@ -481,6 +501,7 @@ def plot(
     ==================
     ens_r -- string
         the name of the second dataset to gather metrics from (needed if metric_type is diff, ratio, or metric_of_diff, or if plot_type is spatial_comparison)
+
     group_by -- string
         how to group the data in time series plots. Valid groupings:
             "time.day"
@@ -519,10 +540,10 @@ def plot(
 
             'histogram': A histogram of the time-series data
 
-    transform -- string (default 'linear')
+    transform -- string (default 'none')
         data transformation. Valid options:
 
-            'linear'
+            'none'
 
             'log'
 
@@ -551,159 +572,90 @@ def plot(
     quantile -- float (default 0.5)
         a value between 0 and 1 required if metric="quantile", corresponding to the desired quantile to gather
 
+
+    start -- int (default None)
+        a value between 0 and the number of time slices indicating the start time of a subset
+
+
+    end -- int (default None)
+        a value between 0 and the number of time slices indicating the end time of a subset
+
     Returns
     =======
     out -- None
     """
 
+    mp = MetricsPlot(
+        ds,
+        varname,
+        ens_o,
+        metric,
+        ens_r,
+        group_by,
+        scale,
+        metric_type,
+        plot_type,
+        transform,
+        subset,
+        lat,
+        lon,
+        lev,
+        color,
+        standardized_err,
+        quantile,
+    )
+
     # Subset data
-    data_r = None
-    data_o = _subset_data(ds[varname].sel(ensemble=ens_o), subset, lat, lon, lev)
+    subset_o = lu.subset_data(ds[varname].sel(ensemble=ens_o), subset, lat, lon, lev, start, end)
     if ens_r is not None:
-        data_r = _subset_data(ds[varname].sel(ensemble=ens_r), subset, lat, lon, lev)
+        subset_r = lu.subset_data(
+            ds[varname].sel(ensemble=ens_r), subset, lat, lon, lev, start, end
+        )
 
-    # Acquire raw data
+    # Acquire raw metric values
+    if metric_type in ['metric_of_diff']:
+        data = subset_o - subset_r
+    else:
+        data = subset_o
+
+    raw_metric_o = mp.get_metrics(data)
+    # TODO: This will plot a second plot even if metric_type is metric_of diff in spatial comparison case
+    if plot_type in ['spatial_comparison'] or metric_type in ['diff', 'ratio']:
+        raw_metric_r = mp.get_metrics(subset_r)
+
+    # Get metric names/values for plot title
+    # if metric == 'zscore':
+    metric_name_o = mp.get_metric_label(metric, data, ds['gw'].values)
+    if metric == 'mean' and plot_type == 'spatial_comparison':
+        metric_name_r = mp.get_metric_label(metric, subset_r, ds['gw'].values)
+
+    # Get plot data and title
+    if lat is not None and lon is not None:
+        mp.title_lat = subset_o['lat'].data[0]
+        mp.title_lon = subset_o['lon'].data[0] - 180
+    else:
+        mp.title_lat = lat
+        mp.title_lon = lon
+
+    if metric_type in ['diff', 'ratio']:
+        plot_data_o = mp.get_plot_data(raw_metric_o, raw_metric_r)
+    else:
+        plot_data_o = mp.get_plot_data(raw_metric_o)
+    title_o = mp.get_title(metric_name_o)
     if plot_type == 'spatial_comparison':
-        raw_data_o = _get_raw_data(
-            data_o,
-            metric,
-            'spatial',
-            metric_type,
-            group_by,
-            mae_group_by,
-            da2=data_r,
-            quantile=quantile,
-        )
-    else:
-        raw_data_o = _get_raw_data(
-            data_o,
-            metric,
-            plot_type,
-            metric_type,
-            group_by,
-            mae_group_by,
-            da2=data_r,
-            quantile=quantile,
-        )
-    if ens_r is not None:
-        if plot_type == 'spatial_comparison':
-            raw_data_r = _get_raw_data(
-                data_r,
-                metric,
-                'spatial',
-                metric_type,
-                group_by,
-                mae_group_by,
-                da2=data_r,
-                quantile=quantile,
-            )
-        else:
-            raw_data_r = _get_raw_data(
-                data_r, metric, plot_type, 'raw', group_by, mae_group_by, quantile=quantile
-            )
-    else:
-        raw_data_r = None
-
-    # Get special metric names
-    if metric == 'zscore':
-        zscore_cutoff = lm.DatasetMetrics((data_o - data_r), ['time']).get_single_metric(
-            'zscore_cutoff'
-        )
-        percent_sig = lm.DatasetMetrics((data_o - data_r), ['time']).get_single_metric(
-            'zscore_percent_significant'
-        )
-        metric_name = f'{metric}: cutoff {zscore_cutoff[0]:.2f}, % sig: {percent_sig:.2f}'
-        metric_name_o = metric_name
-        metric_name_r = metric_name
-    elif metric == 'mean' and plot_type == 'spatial_comparison':
-        gw = ds['gw'].values
-        o_wt_mean = np.average(
-            np.average(
-                lm.DatasetMetrics(data_o, ['time'], group_by, quantile=quantile).get_metric(metric),
-                axis=0,
-                weights=gw,
-            )
-        )
-        r_wt_mean = np.average(
-            np.average(
-                lm.DatasetMetrics(data_r, ['time'], group_by, quantile=quantile).get_metric(metric),
-                axis=0,
-                weights=gw,
-            )
-        )
-        metric_name_o = f'{metric} = {o_wt_mean:.2f}'
-        metric_name_r = f'{metric} = {r_wt_mean:.2f}'
-    else:
-        metric_name = metric
-        metric_name_o = metric
-        metric_name_r = metric
-
-    # Get plot data and title based on plot_type
-    if lat is not None:
-        title_lat = data_o['lat'].data[0]
-        title_lon = data_o['lon'].data[0] - 180
-    else:
-        title_lat = lat
-        title_lon = lon
-
-    if plot_type == 'spatial_comparison':
-        plot_data_o = _get_plot_data(raw_data_o, metric_type, transform, group_by)
-        plot_data_r = _get_plot_data(raw_data_r, metric_type, transform, group_by)
-        title_o = _get_title(
-            metric_name_o,
-            ens_o,
-            varname,
-            metric_type,
-            transform,
-            group_by,
-            lat=title_lat,
-            lon=title_lon,
-            subset=subset,
-            quantile=quantile,
-        )
-        title_r = _get_title(
-            metric_name_r,
-            ens_r,
-            varname,
-            metric_type,
-            transform,
-            group_by,
-            lat=title_lat,
-            lon=title_lon,
-            subset=subset,
-            quantile=quantile,
-        )
-    else:
-        plot_data = _get_plot_data(
-            raw_data_o,
-            metric_type,
-            transform,
-            group_by,
-            raw_data_2=raw_data_r,
-            standardized_err=standardized_err,
-        )
-        title = _get_title(
-            metric_name,
-            ens_o,
-            varname,
-            metric_type,
-            transform,
-            group_by,
-            lat=title_lat,
-            lon=title_lon,
-            subset=subset,
-            ens_r=ens_r,
-            quantile=quantile,
-        )
+        plot_data_r = mp.get_plot_data(raw_metric_r)
+        title_r = mp.get_title(metric_name_o)
+        if metric == 'mean':
+            title_r = mp.get_title(metric_name_r)
 
     # Call plot functions
     if plot_type == 'spatial_comparison':
-        spatial_comparison_plot(plot_data_o, title_o, plot_data_r, title_r, color)
+        mp.spatial_comparison_plot(plot_data_o, title_o, plot_data_r, title_r)
     elif plot_type == 'spatial':
-        spatial_plot(plot_data, title, color)
+        mp.spatial_plot(plot_data_o, title_o)
     elif plot_type == 'time_series':
-        time_series_plot(plot_data, title, group_by, metric_type=metric_type)
+        mp.time_series_plot(plot_data_o, title_o)
     elif plot_type == 'histogram':
-        hist_plot(plot_data, title, metric)
+        mp.hist_plot(plot_data_o, title_o)
     elif plot_type == 'periodogram':
-        periodogram_plot(plot_data, title)
+        mp.periodogram_plot(plot_data_o, title_o)

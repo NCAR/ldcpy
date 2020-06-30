@@ -32,11 +32,15 @@ class TestPlot(TestCase):
 
     def test_mean(self):
         lp.plot(ds, 'TS', 'orig', ens_r='recon', metric='mean')
-        self.assertTrue(True is True)
+        self.assertTrue(True)
 
     def test_prob_neg(self):
         lp.plot(ds2, 'PRECT', 'orig', ens_r='recon', metric='prob_negative')
-        self.assertTrue(True is True)
+        self.assertTrue(True)
+
+    def test_mean_compare(self):
+        lp.plot(ds, 'TS', 'orig', 'mean', ens_r='recon', plot_type='spatial_comparison')
+        self.assertTrue(True)
 
     def test_std_dev_compare(self):
         lp.plot(
@@ -48,11 +52,11 @@ class TestPlot(TestCase):
             color='cmo.thermal',
             plot_type='spatial_comparison',
         )
-        self.assertTrue(True is True)
+        self.assertTrue(True)
 
     def test_mean_diff(self):
         lp.plot(ds, 'TS', 'orig', ens_r='recon', metric='mean', metric_type='diff')
-        self.assertTrue(True is True)
+        self.assertTrue(True)
 
     def test_prob_negative_log_compare(self):
         lp.plot(
@@ -156,3 +160,7 @@ class TestPlot(TestCase):
     def test_zscore_plot(self):
         lp.plot(ds, 'TS', 'orig', ens_r='recon', metric_type='metric_of_diff', metric='zscore')
         self.assertTrue(True is True)
+
+    def test_mean_3d(self):
+        lp.plot(ds3, 'T', 'orig', 'mean', lev='300')
+        self.assertTrue(True)

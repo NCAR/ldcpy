@@ -1,6 +1,6 @@
 import xarray as xr
 
-from .error_metrics import ErrorMetrics
+from .metrics import DatasetMetrics, DiffMetrics
 
 
 def open_datasets(list_of_files, ensemble_names, pot_var_names=['TS', 'PRECT', 'T']):
@@ -61,7 +61,7 @@ def print_stats(ds, varname, ens_o, ens_r, time=0):
     ens_r -- string
         the ensemble label of the reconstructed data
 
-    Keywork Arguments:
+    Keyword Arguments:
     ==================
     time -- int
         the time index used to compare the two netCDF files (default 0)
@@ -72,17 +72,71 @@ def print_stats(ds, varname, ens_o, ens_r, time=0):
 
     """
     print('Comparing {} data to {} data'.format(ens_o, ens_r))
-    orig_val = ds[varname].sel(ensemble=ens_o).isel(time=time)
-    recon_val = ds[varname].sel(ensemble=ens_r).isel(time=time)
-
-    em = ErrorMetrics(orig_val.values, recon_val.values)
 
     import json
 
-    print(
-        json.dumps(
-            em.get_all_metrics({'error', 'squared_error', 'absolute_error'}),
-            indent=4,
-            separators=(',', ': '),
-        )
+    ds1_metrics = DatasetMetrics(ds[varname].sel(ensemble=ens_o).isel(time=time), ['lat', 'lon'])
+    ds2_metrics = DatasetMetrics(ds[varname].sel(ensemble=ens_r).isel(time=time), ['lat', 'lon'])
+    d_metrics = DatasetMetrics(
+        ds[varname].sel(ensemble=ens_o).isel(time=time)
+        - ds[varname].sel(ensemble=ens_r).isel(time=time),
+        ['lat', 'lon'],
     )
+    diff_metrics = DiffMetrics(
+        ds[varname].sel(ensemble=ens_o).isel(time=time),
+        ds[varname].sel(ensemble=ens_r).isel(time=time),
+        ['lat', 'lon'],
+    )
+
+    output = {}
+    output['mean_observed'] = ds1_metrics.get_metric('mean').item(0)
+    output['variance_observed'] = ds1_metrics.get_metric('variance').item(0)
+    output['standard deviation observed'] = ds1_metrics.get_metric('std').item(0)
+
+    output['mean modelled'] = ds2_metrics.get_metric('mean').item(0)
+    output['variance modelled'] = ds2_metrics.get_metric('variance').item(0)
+    output['standard deviation modelled'] = ds2_metrics.get_metric('std').item(0)
+
+    d_metrics.quantile = 1
+    output['max diff'] = d_metrics.get_metric('quantile').item(0)
+    d_metrics.quantile = 0
+    output['min diff'] = d_metrics.get_metric('quantile').item(0)
+    output['mean squared diff'] = d_metrics.get_metric('mean_squared').item(0)
+    output['mean diff'] = d_metrics.get_metric('mean').item(0)
+    output['mean abs diff'] = d_metrics.get_metric('mean_abs').item(0)
+    output['root mean squared diff'] = d_metrics.get_metric('rms').item(0)
+
+    output['pearson correlation coefficient'] = diff_metrics.get_diff_metric(
+        'pearson_correlation_coefficient'
+    ).item(0)
+    output['covariance'] = diff_metrics.get_diff_metric('covariance').item(0)
+    output['ks p value'] = diff_metrics.get_diff_metric('ks_p_value').item(0)
+
+    print(json.dumps(output, indent=4, separators=(',', ': '),))
+
+
+def subset_data(ds, subset, lat=None, lon=None, lev=0, start=None, end=None):
+    """
+    Get a
+    """
+    ds_subset = ds
+
+    ds_subset = ds_subset.isel(time=slice(start, end))
+
+    if subset == 'winter':
+        ds_subset = ds_subset.where(ds.time.dt.season == 'DJF', drop=True)
+    elif subset == 'first50':
+        ds_subset = ds_subset.isel(time=slice(None, 50))
+
+    if 'lev' in ds_subset.dims:
+        ds_subset = ds_subset.sel(lev=lev, method='nearest')
+
+    if lat is not None:
+        ds_subset = ds_subset.sel(lat=lat, method='nearest')
+        ds_subset = ds_subset.expand_dims('lat')
+
+    if lon is not None:
+        ds_subset = ds_subset.sel(lon=lon + 180, method='nearest')
+        ds_subset = ds_subset.expand_dims('lon')
+
+    return ds_subset
