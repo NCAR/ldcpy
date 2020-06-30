@@ -11,10 +11,9 @@ class DatasetMetrics(object):
     """
 
     def __init__(
-        self, ds: xr.DataArray, aggregate_dims: list, quantile: Optional[int] = 0.5,
+        self, ds: xr.DataArray, aggregate_dims: list,
     ):
-        self._ds = ds
-        self._q = quantile
+        self._ds = ds if (ds.dtype == np.float64) else ds.astype(np.float64)
 
         # array metrics
         self._ns_con_var = None
@@ -29,11 +28,13 @@ class DatasetMetrics(object):
         self._corr_lag1 = None
         self._lag1 = None
         self._agg_dims = aggregate_dims
-        self._quantile = None
+        self._quantile_value = None
         self._mean_squared = None
         self._root_mean_squared = None
         self._sum = None
         self._sum_squared = None
+        self._variance = None
+        self._quantile = 0.5
 
         # single value metrics
         self._zscore_cutoff = None
@@ -100,10 +101,10 @@ class DatasetMetrics(object):
     @property
     def mean_abs(self) -> np.ndarray:
         """
-        The absolute value of the mean along the aggregate dimensions
+        The mean of the absolute errors along the aggregate dimensions
         """
         if not self._is_memoized('_mean_abs'):
-            self._mean_abs = abs(self.mean)
+            self._mean_abs = abs(self._ds).mean()
 
         return self._mean_abs
 
@@ -146,12 +147,22 @@ class DatasetMetrics(object):
     @property
     def std(self) -> np.ndarray:
         """
-        The standard deviation averaged along the aggregate dimensions
+        The standard deviation along the aggregate dimensions
         """
         if not self._is_memoized('_std'):
-            self._std = self._ds.std(self._agg_dims, ddof=1)
+            self._std = self._ds.std(self._agg_dims)
 
         return self._std
+
+    @property
+    def variance(self) -> np.ndarray:
+        """
+        The variance along the aggregate dimensions
+        """
+        if not self._is_memoized('_variance'):
+            self._variance = self._ds.var(self._agg_dims)
+
+        return self._variance
 
     @property
     def prob_positive(self) -> np.ndarray:
@@ -224,14 +235,18 @@ class DatasetMetrics(object):
         return self._mae_max
 
     @property
-    def quantile(self) -> xr.DataArray:
-        """
-        The value of the data quantile over the aggregate dimensions
-        """
-        if not self._is_memoized('_quantile'):
-            self._quantile = self._ds.quantile(self._q, dim=self._agg_dims)
-
+    def quantile(self):
         return self._quantile
+
+    @quantile.setter
+    def quantile(self, q):
+        self._quantile = q
+
+    @property
+    def quantile_value(self) -> xr.DataArray:
+        self._quantile_value = self._ds.quantile(self.quantile, dim=self._agg_dims)
+
+        return self._quantile_value
 
     @property
     def lag1(self) -> xr.DataArray:
@@ -324,7 +339,7 @@ class DatasetMetrics(object):
 
             return self._zscore_percent_significant
 
-    def get_metric(self, name: str):
+    def get_metric(self, name: str, q: Optional[int] = 0.5):
         """
         Gets a metric aggregated across one or more dimensions of the dataset
 
@@ -347,6 +362,8 @@ class DatasetMetrics(object):
                 return self.mean
             if name == 'std':
                 return self.std
+            if name == 'variance':
+                return self.variance
             if name == 'prob_positive':
                 return self.prob_positive
             if name == 'prob_negative':
@@ -361,7 +378,7 @@ class DatasetMetrics(object):
                 return self.mean_abs
             if name == 'mean_squared':
                 return self.mean_squared
-            if name == 'rmse':
+            if name == 'rms':
                 return self.root_mean_squared
             if name == 'sum':
                 return self.sum
@@ -370,7 +387,7 @@ class DatasetMetrics(object):
             if name == 'corr_lag1':
                 return self.corr_lag1
             if name == 'quantile':
-                return self.quantile
+                return self.quantile_value
             if name == 'lag1':
                 return self.lag1
             if name == 'none':
@@ -440,14 +457,8 @@ class DiffMetrics(object):
         """
         if not self._is_memoized('_covariance'):
             self._covariance = (
-                (
-                    self._metrics2.get_metric('none')
-                    - self._metrics2.get_single_metric('overall_mean')
-                )
-                * (
-                    self._metrics1.get_metric('none')
-                    - self._metrics1.get_single_metric('overall_mean')
-                )
+                (self._metrics2.get_metric('none') - self._metrics2.get_metric('mean'))
+                * (self._metrics1.get_metric('none') - self._metrics1.get_metric('mean'))
             ).mean()
 
         return self._covariance
@@ -469,8 +480,8 @@ class DiffMetrics(object):
         if not self._is_memoized('_pearson_correlation_coefficient'):
             self._pcc = (
                 self.covariance
-                / self._metrics1.get_single_metric('overall_std')
-                / self._metrics2.get_single_metric('overall_std')
+                / self._metrics1.get_metric('std')
+                / self._metrics2.get_metric('std')
             )
 
         return self._pcc
