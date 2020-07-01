@@ -205,6 +205,7 @@ class DatasetMetrics(object):
     def mae_max(self) -> xr.DataArray:
         """
         The maximum mean absolute error at the point averaged along the aggregate dimensions.
+        TODO: There is a bug hiding in this code, plotting the values does not work correctly. Waiting on xarray 0.15.2 when ds.idxmax() will available (use self._test.idxmax())
         """
         if not self._is_memoized('_mae_day_max'):
             self._mae_max = 0
@@ -252,6 +253,7 @@ class DatasetMetrics(object):
     def lag1(self) -> xr.DataArray:
         """
         The deseasonalized lag-1 value by day of year
+        TODO: This metric currently returns a lat-lon array regardless of aggregate dimensions, so can only be used in a spatial plot.
         """
         if not self._is_memoized('_lag1'):
             self._deseas_resid = self._ds.groupby('time.dayofyear') - self._ds.groupby(
@@ -272,6 +274,7 @@ class DatasetMetrics(object):
     def corr_lag1(self) -> xr.DataArray:
         """
         The deseasonalized lag-1 correlation at each point by day of year
+        TODO: This metric currently returns a lat-lon array regardless of aggregate dimensions, so can only be used in a spatial plot.
         """
         if not self._is_memoized('_corr_lag1'):
             time_length = self._ds.sizes['time']
@@ -290,6 +293,7 @@ class DatasetMetrics(object):
     def zscore_cutoff(self) -> np.ndarray:
         """
         The Z-Score cutoff for a point to be considered significant
+        TODO: Some single-value properties (liek this one) cannot be used in either spatial or time-series plots, there needs to be a way to specify which these are.
         """
         if not self._is_memoized('_zscore_cutoff'):
             pvals = 2 * (1 - ss.norm.cdf(np.abs(self.zscore)))
@@ -318,6 +322,7 @@ class DatasetMetrics(object):
     def zscore_percent_significant(self) -> np.ndarray:
         """
         The percent of points where the zscore is considered significant
+        TODO: Some single-value properties (liek this one) cannot be used in either spatial or time-series plots, there needs to be a way to specify which these are.
         """
         if not self._is_memoized('_zscore_percent_significant'):
             pvals = 2 * (1 - ss.norm.cdf(np.abs(self.zscore)))

@@ -30,4 +30,4 @@ For a development install, do the following in the repository directory:
     conda activate ldcpy
     python -m pip install -e .
 
-Documentation and usage examples is available `here <http://ldcpy.readthedocs.io>`_.
+Documentation and usage examples are available `here <http://ldcpy.readthedocs.io>`_.
