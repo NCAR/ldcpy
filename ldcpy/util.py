@@ -46,7 +46,7 @@ def orig_open_datasets(list_of_files, ensemble_names, pot_var_names=['TS', 'PREC
 
     return full_ds
 
-def open_datasets(list_of_files, labels, **kwargs):
+def open_datasets(varnames, list_of_files, labels, **kwargs):
     """
     Open several different netCDF files, concatenate across
     a new 'collection' dimension, which can be accessed with labels. 
@@ -54,6 +54,9 @@ def open_datasets(list_of_files, labels, **kwargs):
 
     Parameters:
     ===========
+    varnames -- list <string>
+           the variable(s) of interest to combine across input files (usually just one)
+
     list_of_files -- list <string>
         the path of the netCDF file(s) to be opened
 
@@ -77,14 +80,15 @@ def open_datasets(list_of_files, labels, **kwargs):
         print("chucks set to {'time', 50}")
         kwargs['chunks'] = {'time': 50}
 
-
-    if len(list_of_files) > 1:
-        full_ds = xr.open_mfdataset(list_of_files, concat_dim = 'collection', combine = 'nested', data_vars = 'different', **kwargs)
-    else:
-        pre_list = []
-        pre_list.append(xr.open_dataset(list_of_files[0]))
-        full_ds = xr.concat(pre_list, 'collection', data_vars = '  ')
-        del pre_list
+    #check that varname exists in each file
+    for filename in list_of_files:
+        ds_check = (xr.open_dataset(filename))
+        for thisvar in varnames:
+            if not thisvar in ds_check.variables:
+                print(f"We have a problem. Variable '{thisvar}' is not in the file {filename}")
+        ds_check.close()
+        
+    full_ds = xr.open_mfdataset(list_of_files, concat_dim = 'collection', combine = 'nested', data_vars = varnames, **kwargs)
         
     full_ds['collection'] = xr.DataArray(labels, dims='collection')
 
