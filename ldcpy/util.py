@@ -11,7 +11,7 @@ def open_datasets(list_of_files, ensemble_names, pot_var_names=['TS', 'PRECT', '
     Parameters:
     ===========
     list_of_files -- list <string>
-        the path of the netCDF file(s) to be opened
+        the path of the net CDF file(s) to be opened
     ensemble_names -- list <string>
         the respective ensemble names of each netCDF file
 

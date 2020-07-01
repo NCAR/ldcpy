@@ -17,6 +17,7 @@ dependencies:
   - pre-commit
   - setuptools
   - jupyterlab
+  - jupyter_contrib_nbextensions
   - codecov
   - pytest
   - pytest-cov
