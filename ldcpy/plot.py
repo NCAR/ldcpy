@@ -1,18 +1,17 @@
 import math
 
-import cartopy.crs as ccrs
-import cmocean
 import matplotlib as mpl
-import matplotlib.dates as mdates
-import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import xrft
+from cartopy import crs as ccrs
 from cartopy.util import add_cyclic_point
+from matplotlib import dates as mdates
+from matplotlib import pyplot as plt
 from numpy import inf
 
-import ldcpy.metrics as lm
-import ldcpy.util as lu
+from ldcpy import metrics as lm
+from ldcpy import util as lu
 
 
 class MetricsPlot(object):

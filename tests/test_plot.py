@@ -1,9 +1,6 @@
 from unittest import TestCase
 
-import numpy as np
-
 import ldcpy
-import ldcpy.plot as lp
 
 ds = ldcpy.open_datasets(
     [
