@@ -1,5 +1,4 @@
 import math
-import sys
 
 import cartopy.crs as ccrs
 import cmocean
