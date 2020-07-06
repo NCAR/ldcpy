@@ -1,8 +1,8 @@
 from typing import Optional
 
 import numpy as np
-import scipy.stats as ss
 import xarray as xr
+from scipy import stats as ss
 
 
 class DatasetMetrics(object):

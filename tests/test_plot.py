@@ -1,9 +1,6 @@
 from unittest import TestCase
 
-import numpy as np
-
 import ldcpy
-import ldcpy.plot as lp
 
 ds = ldcpy.open_datasets(
     ['TS'],
@@ -33,21 +30,21 @@ class TestPlot(TestCase):
     """
 
     def test_mean(self):
-        lp.plot(ds, 'TS', c0='orig', c1='recon', metric='mean')
+        ldcpy.plot(ds, 'TS', c0='orig', c1='recon', metric='mean')
         self.assertTrue(True)
 
     def test_prob_neg(self):
-        lp.plot(ds2, 'PRECT', c0='orig', c1='recon', metric='prob_negative')
+        ldcpy.plot(ds2, 'PRECT', c0='orig', c1='recon', metric='prob_negative')
         self.assertTrue(True)
 
     def test_mean_compare(self):
-        lp.plot(
+        ldcpy.plot(
             ds, 'TS', c0='orig', metric='mean', c1='recon', plot_type='spatial_comparison',
         )
         self.assertTrue(True)
 
     def test_std_dev_compare(self):
-        lp.plot(
+        ldcpy.plot(
             ds,
             'TS',
             c0='orig',
@@ -59,11 +56,11 @@ class TestPlot(TestCase):
         self.assertTrue(True)
 
     def test_mean_diff(self):
-        lp.plot(ds, 'TS', c0='orig', c1='recon', metric='mean', metric_type='diff')
+        ldcpy.plot(ds, 'TS', c0='orig', c1='recon', metric='mean', metric_type='diff')
         self.assertTrue(True)
 
     def test_prob_negative_log_compare(self):
-        lp.plot(
+        ldcpy.plot(
             ds,
             'TS',
             c0='orig',
@@ -76,7 +73,7 @@ class TestPlot(TestCase):
         self.assertTrue(True is True)
 
     def test_log_odds_positive_compare(self):
-        lp.plot(
+        ldcpy.plot(
             ds2,
             'PRECT',
             c0='orig',
@@ -89,7 +86,7 @@ class TestPlot(TestCase):
         self.assertTrue(True is True)
 
     def test_prob_neg_compare(self):
-        lp.plot(
+        ldcpy.plot(
             ds2,
             'PRECT',
             c0='orig',
@@ -101,7 +98,7 @@ class TestPlot(TestCase):
         self.assertTrue(True is True)
 
     def test_mean_abs_diff_time_series(self):
-        lp.plot(
+        ldcpy.plot(
             ds,
             'TS',
             c0='orig',
@@ -114,7 +111,7 @@ class TestPlot(TestCase):
         self.assertTrue(True is True)
 
     def test_subset_lat_lon_ratio_time_series(self):
-        lp.plot(
+        ldcpy.plot(
             ds2,
             'PRECT',
             c0='orig',
@@ -130,7 +127,7 @@ class TestPlot(TestCase):
         self.assertTrue(True is True)
 
     def test_periodogram_grouped(self):
-        lp.plot(
+        ldcpy.plot(
             ds2,
             'PRECT',
             c0='orig',
@@ -144,7 +141,7 @@ class TestPlot(TestCase):
         self.assertTrue(True is True)
 
     def test_winter_histogram(self):
-        lp.plot(
+        ldcpy.plot(
             ds2,
             'PRECT',
             c0='orig',
@@ -158,17 +155,17 @@ class TestPlot(TestCase):
         self.assertTrue(True is True)
 
     def test_time_series_single_point_3d_data(self):
-        lp.plot(
+        ldcpy.plot(
             ds3, 'T', c0='orig', metric='mean', plot_type='time_series', group_by='time.day',
         )
         self.assertTrue(True is True)
 
     def test_zscore_plot(self):
-        lp.plot(
+        ldcpy.plot(
             ds, 'TS', c0='orig', c1='recon', metric_type='metric_of_diff', metric='zscore',
         )
         self.assertTrue(True is True)
 
     def test_mean_3d(self):
-        lp.plot(ds3, 'T', c0='orig', metric='mean', lev='300')
+        ldcpy.plot(ds3, 'T', c0='orig', metric='mean', lev='300')
         self.assertTrue(True)

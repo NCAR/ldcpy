@@ -2,9 +2,9 @@
 Example Usage
 ============
 
-`Sample Notebook`_
+`Tutorial Notebook`_
 
 `Plot Comparisons`_
 
 .. _Plot Comparisons: notebooks/PlotComparisons.ipynb
-.. _Sample Notebook: notebooks/SampleNotebook.ipynb
+.. _Tutorial Notebook: notebooks/TutorialNotebook.ipynb
