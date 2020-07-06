@@ -432,7 +432,7 @@ class DiffMetrics(object):
     """
 
     def __init__(
-        self, ds1: xr.DataArray, ds2: xr.DataArray, aggregate_dims: Optional[list] = None
+        self, ds1: xr.DataArray, ds2: xr.DataArray, aggregate_dims: Optional[list] = None,
     ) -> None:
         if isinstance(ds1, xr.DataArray):
             # Datasets
