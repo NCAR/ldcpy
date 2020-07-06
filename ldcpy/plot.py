@@ -160,14 +160,14 @@ class MetricsPlot(object):
             if minval == -math.inf:
                 if np.isfinite(dat_1).any() or np.isfinite(dat_2).any():
                     minval = np.minimum(
-                        dat_1.where(dat_1 != -inf).min(), dat_2.where(dat_2 != -inf).min()
+                        dat_1.where(dat_1 != -inf).min(), dat_2.where(dat_2 != -inf).min(),
                     ).data
                 else:
                     return np.array([0, 0.00000001])
             if maxval == math.inf:
                 if np.isfinite(dat_1).any() or np.isfinite(dat_2).any():
                     maxval = np.maximum(
-                        dat_1.where(dat_1 != -inf).max(), dat_2.where(dat_2 != -inf).max()
+                        dat_1.where(dat_1 != -inf).max(), dat_2.where(dat_2 != -inf).max(),
                     ).data
                 else:
                     return np.array([0, 0.00000001])
@@ -194,7 +194,9 @@ class MetricsPlot(object):
         if (da_c0 == inf).all():
             cy_data_c0, lon_c0 = add_cyclic_point(da_c0.where(da_c0 != inf, 1), coord=da_c0['lon'])
         elif (da_c0 == -inf).all():
-            cy_data_c0, lon_c0 = add_cyclic_point(da_c0.where(da_c0 != -inf, -1), coord=da_c0['lon'])
+            cy_data_c0, lon_c0 = add_cyclic_point(
+                da_c0.where(da_c0 != -inf, -1), coord=da_c0['lon']
+            )
         else:
             cy_data_c0, lon_c0 = add_cyclic_point(
                 da_c0.where(da_c0 != inf, da_c0.where(da_c0 != inf).max() + 1).where(
@@ -206,7 +208,9 @@ class MetricsPlot(object):
         if (da_c1 == inf).all():
             cy_data_c1, lon_c1 = add_cyclic_point(da_c1.where(da_c1 != inf, 1), coord=da_c1['lon'])
         elif (da_c1 == -inf).all():
-            cy_data_c1, lon_c1 = add_cyclic_point(da_c1.where(da_c1 != -inf, -1), coord=da_c1['lon'])
+            cy_data_c1, lon_c1 = add_cyclic_point(
+                da_c1.where(da_c1 != -inf, -1), coord=da_c1['lon']
+            )
         else:
             cy_data_c1, lon_c1 = add_cyclic_point(
                 da_c1.where(da_c1 != inf, da_c1.where(da_c1 != inf).max() + 1).where(
@@ -230,7 +234,9 @@ class MetricsPlot(object):
         ax1.set_title(title_c0)
 
         if (levels == levels[0]).all():
-            pc1 = ax1.pcolormesh(lon_c0, lat_c0, cy_data_c0, transform=ccrs.PlateCarree(), cmap=mymap)
+            pc1 = ax1.pcolormesh(
+                lon_c0, lat_c0, cy_data_c0, transform=ccrs.PlateCarree(), cmap=mymap
+            )
         else:
             if np.isfinite(da_c0).all() and np.isfinite(da_c1).all():
                 pc1 = ax1.contourf(
@@ -258,7 +264,9 @@ class MetricsPlot(object):
         ax2 = plt.subplot(1, 2, 2, projection=ccrs.Robinson(central_longitude=0.0))
         ax2.set_title(title_c1)
         if (levels == levels[0]).all():
-            pc2 = ax2.pcolormesh(lon_c1, lat_c1, cy_data_c1, transform=ccrs.PlateCarree(), cmap=mymap)
+            pc2 = ax2.pcolormesh(
+                lon_c1, lat_c1, cy_data_c1, transform=ccrs.PlateCarree(), cmap=mymap
+            )
         else:
             if np.isfinite(da_c0).all() and np.isfinite(da_c1).all():
                 pc2 = ax2.contourf(
@@ -365,7 +373,7 @@ class MetricsPlot(object):
         mpl.pyplot.title(f'time-series histogram: {title}')
 
     def periodogram_plot(self, plot_data, title):
-        dat = xrft.dft(plot_data - plot_data.mean())
+        dat = xrft.dft((plot_data - plot_data.mean()).chunk((plot_data - plot_data.mean()).size))
         i = (np.multiply(dat, np.conj(dat)) / dat.size).real
         i = np.log10(i[2 : int(dat.size / 2) + 1])
         freqs = np.array(range(1, int(dat.size / 2))) / dat.size

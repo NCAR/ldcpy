@@ -46,10 +46,11 @@ def orig_open_datasets(list_of_files, ensemble_names, pot_var_names=['TS', 'PREC
 
     return full_ds
 
+
 def open_datasets(varnames, list_of_files, labels, **kwargs):
     """
     Open several different netCDF files, concatenate across
-    a new 'collection' dimension, which can be accessed with labels. 
+    a new 'collection' dimension, which can be accessed with labels.
     Stores them in an xarray dataset.
 
     Parameters:
@@ -73,23 +74,27 @@ def open_datasets(varnames, list_of_files, labels, **kwargs):
 
     # Error checking:
     # list_of_files and ensemble_names must be same length
-    assert len(list_of_files) == len(labels), 'open_dataset file list and labels arguments must be the same length'
-    
-    #check whether we need to set chunks or the user has already done so
-    if not 'chunks' in kwargs:
+    assert len(list_of_files) == len(
+        labels
+    ), 'open_dataset file list and labels arguments must be the same length'
+
+    # check whether we need to set chunks or the user has already done so
+    if 'chunks' not in kwargs:
         print("chucks set to {'time', 50}")
         kwargs['chunks'] = {'time': 50}
 
-    #check that varname exists in each file
+    # check that varname exists in each file
     for filename in list_of_files:
-        ds_check = (xr.open_dataset(filename))
+        ds_check = xr.open_dataset(filename)
         for thisvar in varnames:
-            if not thisvar in ds_check.variables:
+            if thisvar not in ds_check.variables:
                 print(f"We have a problem. Variable '{thisvar}' is not in the file {filename}")
         ds_check.close()
-        
-    full_ds = xr.open_mfdataset(list_of_files, concat_dim = 'collection', combine = 'nested', data_vars = varnames, **kwargs)
-        
+
+    full_ds = xr.open_mfdataset(
+        list_of_files, concat_dim='collection', combine='nested', data_vars=varnames, **kwargs,
+    )
+
     full_ds['collection'] = xr.DataArray(labels, dims='collection')
 
     print('dataset size in GB {:0.2f}\n'.format(full_ds.nbytes / 1e9))
@@ -163,7 +168,8 @@ def print_stats(ds, varname, c0, c1, time=0):
     output['covariance'] = diff_metrics.get_diff_metric('covariance').values
     output['ks p value'] = diff_metrics.get_diff_metric('ks_p_value')[1]
 
-    [print("          ", key, ": ", value) for key, value in output.items()]
+    [print('          ', key, ': ', value) for key, value in output.items()]
+
 
 #    print(json.dumps(output, indent=4, separators=(',', ': '),))
 
