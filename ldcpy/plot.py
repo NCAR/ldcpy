@@ -495,7 +495,7 @@ def plot(
     ens_o -- string
         the ensemble name of the dataset to gather metrics from
     metric -- string
-        the name of the metric to be plotted (must match a property name in the AggregateMetrics class in ldcpy.plot)
+        the name of the metric to be plotted (must match a property name in the DatasetMetrics class in ldcpy.plot)
 
     Keyword Arguments:
     ==================
