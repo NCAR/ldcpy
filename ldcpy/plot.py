@@ -7,7 +7,6 @@ import matplotlib.dates as mdates
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-import xarray as xr
 import xrft
 from cartopy.util import add_cyclic_point
 from numpy import inf
