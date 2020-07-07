@@ -110,6 +110,21 @@ class TestPlot(TestCase):
         )
         self.assertTrue(True is True)
 
+    def test_thing(self):
+        ldcpy.plot(
+            ds2,
+            'PRECT',
+            c0='recon',
+            c1='orig',
+            metric_type='diff',
+            metric='mean',
+            plot_type='time_series',
+            subset='first50',
+            lat=44.56,
+            lon=-123.26,
+        )
+        self.assertTrue(True)
+
     def test_subset_lat_lon_ratio_time_series(self):
         ldcpy.plot(
             ds2,
