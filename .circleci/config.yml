@@ -116,7 +116,7 @@ jobs:
           name: init .pypirc
           command: |
             echo -e "[pypi]" >> ~/.pypirc
-            echo -e "username = __token__" >> ~/.pypirc
+            echo -e "username = "apinard" >> ~/.pypirc
             echo -e "password = $PYPI_PASSWORD" >> ~/.pypirc
       - run:
           name: create packages
