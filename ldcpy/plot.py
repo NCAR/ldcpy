@@ -446,20 +446,20 @@ class MetricsPlot(object):
             plot_ylabel = ylabel
 
         if self._group_by is not None:
-            p = mpl.pyplot.plot(da[group_string].data, da, 'bo')
-            ax = p[0].axes
+            mpl.pyplot.plot(da[group_string].data, da, 'bo')
+            ax = mpl.pyplot.gca()
         else:
             plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%m-%d-%Y'))
             plt.gca().xaxis.set_major_locator(mdates.DayLocator())
             dtindex = da.indexes['time'].to_datetimeindex()
             da['time'] = dtindex
 
-            p = mpl.pyplot.plot_date(da.time.data, da, 'bo')
-            ax = p[0].axes
+            mpl.pyplot.plot_date(da.time.data, da, 'bo')
+            ax = mpl.pyplot.gca()
 
-        self._label_offset(ax)
         mpl.pyplot.ylabel(plot_ylabel)
         mpl.pyplot.yscale(self._scale)
+        self._label_offset(ax)
         mpl.pyplot.xlabel(xlabel)
 
         if self._group_by is not None:
