@@ -31,6 +31,7 @@ CLASSIFIERS = [
 
 setup(
     name='ldcpy',
+    version='0.0.1',
     description='A library for lossy compression of netCDF files using xarray',
     long_description=long_description,
     python_requires='>=3.6',
