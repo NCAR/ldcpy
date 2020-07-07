@@ -2,9 +2,14 @@
 
 """The setup script."""
 
+import os
+import sys
 from os.path import exists
 
 from setuptools import find_packages, setup
+from setuptools.command.install import install
+
+VERSION = '0.3'
 
 with open('requirements.txt') as f:
     install_requires = f.read().strip().split('\n')
@@ -29,9 +34,23 @@ CLASSIFIERS = [
     'Topic :: Scientific/Engineering',
 ]
 
+
+class VerifyVersionCommand(install):
+    """Custom command to verify that the git tag matches our version"""
+
+    description = 'verify that the git tag matches our version'
+
+    def run(self):
+        tag = os.getenv('CIRCLE_TAG')
+
+        if tag != VERSION:
+            info = 'Git tag: {0} does not match the version of this app: {1}'.format(tag, VERSION)
+            sys.exit(info)
+
+
 setup(
     name='ldcpy',
-    version='0.0.1',
+    version=VERSION,
     description='A library for lossy compression of netCDF files using xarray',
     long_description=long_description,
     python_requires='>=3.6',
@@ -54,4 +73,5 @@ setup(
     keywords='compression, xarray',
     use_scm_version={'version_scheme': 'post-release', 'local_scheme': 'dirty-tag'},
     setup_requires=['setuptools_scm', 'setuptools>=30.3.0'],
+    cmdclass={'verify': VerifyVersionCommand},
 )
