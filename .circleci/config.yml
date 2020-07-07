@@ -1,7 +1,6 @@
 version: 2
 # Tell CircleCI to use this workflow
 workflows:
-  version: 2
   build_and_deploy:
     - jobs:
       - "python-3.6"
