@@ -87,24 +87,12 @@ jobs:
       ENV_FILE: "./ci/environment.yml"
 
   deploy:
+    <<: *shared
     docker:
-      - image: circleci/python:3.7
+      - image: ncarxdev/miniconda:3.6
+    environment:
+      ENV_FILE: "./ci/environment.yml"
     steps:
-      - checkout
-      - restore_cache:
-          key: v1-dependency-cache-{{ checksum "setup.py" }}-{{ checksum "Makefile" }}
-      - run:
-          name: install python dependencies
-          command: |
-            python3 -m venv venv
-            . venv/bin/activate
-            conda env update -f environment_dev.yml
-            conda activate ldcpy
-            python -m pip install -e .
-      - save_cache:
-          key: v1-dependency-cache-{{ checksum "setup.py" }}-{{ checksum "Makefile" }}
-          paths:
-            - "venv"
       - run:
           name: verify git tag vs. version
           command: |
@@ -120,7 +108,8 @@ jobs:
       - run:
           name: create packages
           command: |
-            make package
+            python setup.py sdist
+            python setup.py bdist_wheel
       - run:
           name: upload to pypi
           command: |
