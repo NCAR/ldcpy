@@ -2,7 +2,7 @@ name: ldcpy
 channels:
   - conda-forge
 dependencies:
-  - cartopy
+  - cartopy=0.18
   - codecov
   - netcdf4
   - pip

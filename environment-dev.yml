@@ -2,7 +2,7 @@ name: ldcpy_dev
 channels:
   - conda-forge
 dependencies:
-  - cartopy
+  - cartopy=0.18
   - netcdf4
   - pip
   - xarray
