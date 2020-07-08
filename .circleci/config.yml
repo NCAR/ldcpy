@@ -114,8 +114,7 @@ jobs:
       - run:
           name: upload to pypi
           command: |
-            source activate base
-            twine upload dist/*
+            /opt/conda/bin/twine upload dist/*
       - save_cache:
               key: deps-{{ checksum "./ci/environment.yml" }}
               paths:
