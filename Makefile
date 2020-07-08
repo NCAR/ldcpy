@@ -37,9 +37,9 @@ coverage:
 	open htmlcov/index.html
 
 dev:
-    conda env update -f environment_dev.yml
-    conda activate ldcpy
-    python -m pip install -e .
+	conda env update -f environment_dev.yml
+	conda activate ldcpy
+	python -m pip install -e .
 
 docs:
 	$(MAKE) -C docs clean
