@@ -114,6 +114,7 @@ jobs:
       - run:
           name: upload to pypi
           command: |
+            conda init bash
             conda activate base
             twine upload dist/*
       - save_cache:
