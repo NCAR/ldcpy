@@ -9,7 +9,7 @@ from os.path import exists
 from setuptools import find_packages, setup
 from setuptools.command.install import install
 
-VERSION = 'v0.14'
+VERSION = 'v0.15'
 
 with open('requirements.txt') as f:
     install_requires = f.read().strip().split('\n')
