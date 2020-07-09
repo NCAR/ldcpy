@@ -2,6 +2,7 @@ import xarray as xr
 
 from .metrics import DatasetMetrics, DiffMetrics
 
+
 def open_datasets(varnames, list_of_files, labels, **kwargs):
     """
     Open several different netCDF files, concatenate across
@@ -38,8 +39,8 @@ def open_datasets(varnames, list_of_files, labels, **kwargs):
         print("chucks set to (default) {'time', 50}")
         kwargs['chunks'] = {'time': 50}
     else:
-        print("chunks set to (by user) ", kwargs['chunks'])
-        
+        print('chunks set to (by user) ', kwargs['chunks'])
+
     # check that varname exists in each file
     for filename in list_of_files:
         ds_check = xr.open_dataset(filename)
