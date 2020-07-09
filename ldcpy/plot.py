@@ -186,6 +186,33 @@ class MetricsPlot(object):
         # print('Min value: {}\nMax value: {}'.format(minval, maxval))
         return levels
 
+    def _label_offset(self, ax, axis='y'):
+        if axis == 'y':
+            fmt = ax.yaxis.get_major_formatter()
+            ax.yaxis.offsetText.set_visible(False)
+            set_label = ax.set_ylabel
+            label = ax.get_ylabel()
+
+        elif axis == 'x':
+            fmt = ax.xaxis.get_major_formatter()
+            ax.xaxis.offsetText.set_visible(False)
+            set_label = ax.set_xlabel
+            label = ax.get_xlabel()
+
+        def update_label(event_axes):
+            offset = fmt.get_offset()
+            if offset == '':
+                set_label('{}'.format(label))
+            else:
+                set_label('{} ({})'.format(label, offset))
+            return
+
+        ax.callbacks.connect('ylim_changed', update_label)
+        ax.callbacks.connect('xlim_changed', update_label)
+        ax.figure.canvas.draw()
+        update_label(None)
+        return
+
     def spatial_comparison_plot(self, da_c0, title_c0, da_c1, title_c1):
         lat_c0 = da_c0['lat']
         lat_c1 = da_c1['lat']
@@ -407,7 +434,7 @@ class MetricsPlot(object):
             tick_interval = 20
 
         if self._metric_type == 'diff':
-            ylabel = f'{self._metric} error'
+            ylabel = f'{self._metric} diff'
         elif self._metric_type == 'ratio':
             ylabel = f'ratio {self._metric}'
         else:
@@ -420,15 +447,19 @@ class MetricsPlot(object):
 
         if self._group_by is not None:
             mpl.pyplot.plot(da[group_string].data, da, 'bo')
+            ax = mpl.pyplot.gca()
         else:
             plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%m-%d-%Y'))
             plt.gca().xaxis.set_major_locator(mdates.DayLocator())
             dtindex = da.indexes['time'].to_datetimeindex()
             da['time'] = dtindex
+
             mpl.pyplot.plot_date(da.time.data, da, 'bo')
+            ax = mpl.pyplot.gca()
 
         mpl.pyplot.ylabel(plot_ylabel)
         mpl.pyplot.yscale(self._scale)
+        self._label_offset(ax)
         mpl.pyplot.xlabel(xlabel)
 
         if self._group_by is not None:

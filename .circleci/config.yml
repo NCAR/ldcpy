@@ -2,6 +2,14 @@ version: 2
 # Tell CircleCI to use this workflow
 workflows:
   version: 2
+  build_and_deploy:
+    jobs:
+      - deploy:
+          filters:
+            tags:
+              only: /v[0-9]+(\.[0-9]+)*/
+            branches:
+              ignore: /.*/
   nightly:
     triggers:
       - schedule:
@@ -77,3 +85,38 @@ jobs:
       - image: ncarxdev/miniconda:3.8
     environment:
       ENV_FILE: "./ci/environment.yml"
+
+  deploy:
+    <<: *shared
+    docker:
+      - image: ncarxdev/miniconda:3.6
+    environment:
+      ENV_FILE: "./ci/environment.yml"
+    steps:
+      - checkout
+      - restore_cache:
+          key: deps-{{ checksum "./ci/environment.yml" }}
+      - run:
+          name: verify git tag vs. version
+          command: |
+            python setup.py verify
+      - run:
+          name: init .pypirc
+          command: |
+            echo -e "[pypi]" >> ~/.pypirc
+            echo -e "username = apinard" >> ~/.pypirc
+            echo -e "password = $PYPI_PASSWORD" >> ~/.pypirc
+      - run:
+          name: create packages
+          command: |
+            python setup.py sdist
+            python setup.py bdist_wheel
+      - run:
+          name: upload to pypi
+          command: |
+            pip install twine
+            /opt/conda/bin/twine upload dist/*
+      - save_cache:
+              key: deps-{{ checksum "./ci/environment.yml" }}
+              paths:
+                - "/opt/conda/pkgs"

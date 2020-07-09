@@ -40,3 +40,7 @@ docs:
 	$(MAKE) -C docs clean
 	$(MAKE) -C docs html
 	open docs/_build/html/index.htm
+
+package:
+	python setup.py sdist
+	python setup.py bdist_wheel
