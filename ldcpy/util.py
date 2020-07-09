@@ -2,51 +2,6 @@ import xarray as xr
 
 from .metrics import DatasetMetrics, DiffMetrics
 
-
-def orig_open_datasets(list_of_files, ensemble_names, pot_var_names=['TS', 'PRECT', 'T']):
-    """
-    Open several different netCDF files, concatenate across
-    a new 'ensemble' dimension. Stores them in an xarray dataset.
-    (Assuming timeseries files)
-
-    Parameters:
-    ===========
-    list_of_files -- list <string>
-        the path of the net CDF file(s) to be opened
-    ensemble_names -- list <string>
-        the respective ensemble names of each netCDF file
-
-    Keyword Arguments:
-    ==================
-    pot_var_names -- list <string>
-        the variables to load data from in each netCDF file
-
-    Returns
-    =======
-    out -- xarray.Dataset
-        contains data variables matching each pot_var_name found in the netCDF file
-    """
-
-    # Error checking:
-    # list_of_files and ensemble_names must be same length
-    assert len(list_of_files) == len(ensemble_names), 'open_dataset arguments must be same length'
-
-    ds_list = []
-    for filename in list_of_files:
-        ds_list.append(xr.open_dataset(filename))
-
-    data_vars = []
-    for varname in pot_var_names:
-        if varname in ds_list[0]:
-            data_vars.append(varname)
-    assert data_vars != [], 'can not find any of {} in dataset'.format(pot_var_names)
-    full_ds = xr.concat(ds_list, 'ensemble', data_vars=data_vars)
-    full_ds['ensemble'] = xr.DataArray(ensemble_names, dims='ensemble')
-    del ds_list
-
-    return full_ds
-
-
 def open_datasets(varnames, list_of_files, labels, **kwargs):
     """
     Open several different netCDF files, concatenate across
@@ -80,9 +35,11 @@ def open_datasets(varnames, list_of_files, labels, **kwargs):
 
     # check whether we need to set chunks or the user has already done so
     if 'chunks' not in kwargs:
-        print("chucks set to {'time', 50}")
+        print("chucks set to (default) {'time', 50}")
         kwargs['chunks'] = {'time': 50}
-
+    else:
+        print("chunks set to (by user) ", kwargs['chunks'])
+        
     # check that varname exists in each file
     for filename in list_of_files:
         ds_check = xr.open_dataset(filename)
@@ -145,9 +102,9 @@ def print_stats(ds, varname, c0, c1, time=0):
     )
 
     output = {}
-    output['mean_control'] = ds0_metrics.get_metric('mean').values
-    output['variance_control'] = ds0_metrics.get_metric('variance').values
-    output['standard deviation control'] = ds0_metrics.get_metric('std').values
+    output['mean c0'] = ds0_metrics.get_metric('mean').values
+    output['variance c0'] = ds0_metrics.get_metric('variance').values
+    output['standard deviation c0'] = ds0_metrics.get_metric('std').values
 
     output['mean c1'] = ds1_metrics.get_metric('mean').values
     output['variance c1'] = ds1_metrics.get_metric('variance').values
