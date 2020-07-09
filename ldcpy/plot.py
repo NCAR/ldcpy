@@ -110,10 +110,12 @@ class MetricsPlot(object):
 
         return plot_data
 
-    def get_title(self, metric_name):
+    def get_title(self, metric_name, c_name=None):
 
-        if self._c1_name is not None:
+        if self._c1_name is not None and self._plot_type != 'spatial_comparison':
             das = f'{self._c0_name}, {self._c1_name}'
+        elif c_name is not None:
+            das = f'{c_name}'
         else:
             das = f'{self._c0_name}'
 
@@ -570,12 +572,12 @@ def plot(
         plot_data_c0 = mp.get_plot_data(raw_metric_c0, raw_metric_c1)
     else:
         plot_data_c0 = mp.get_plot_data(raw_metric_c0)
-    title_c0 = mp.get_title(metric_name_c0)
+    title_c0 = mp.get_title(metric_name_c0, c0)
     if plot_type == 'spatial_comparison':
         plot_data_c1 = mp.get_plot_data(raw_metric_c1)
-        title_c1 = mp.get_title(metric_name_c0)
+        title_c1 = mp.get_title(metric_name_c0, c1)
         if metric == 'mean':
-            title_c1 = mp.get_title(metric_name_c1)
+            title_c1 = mp.get_title(metric_name_c1, c1)
 
     # Call plot functions
     if plot_type == 'spatial_comparison':
