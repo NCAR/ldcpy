@@ -146,46 +146,6 @@ class MetricsPlot(object):
 
         return title
 
-    def _calc_contour_levels(self, dat_1, dat_2=None):
-        """
-        TODO: minval returns the smallest value not equal to -inf, is there a more elegant solution to plotting -inf values
-        (for EW contrast variance in particular)?
-        """
-        # both plots use same contour levels
-        if dat_2 is not None:
-            minval = np.nanmin(np.minimum(dat_1, dat_2))
-            maxval = np.nanmax(np.maximum(dat_1, dat_2))
-            if minval == -math.inf:
-                if np.isfinite(dat_1).any() or np.isfinite(dat_2).any():
-                    minval = np.minimum(
-                        dat_1.where(dat_1 != -inf).min(), dat_2.where(dat_2 != -inf).min(),
-                    ).data
-                else:
-                    return np.array([0, 0.00000001])
-            if maxval == math.inf:
-                if np.isfinite(dat_1).any() or np.isfinite(dat_2).any():
-                    maxval = np.maximum(
-                        dat_1.where(dat_1 != -inf).max(), dat_2.where(dat_2 != -inf).max(),
-                    ).data
-                else:
-                    return np.array([0, 0.00000001])
-        else:
-            minval = np.nanmin(dat_1)
-            maxval = np.nanmax(dat_1)
-            if minval == -math.inf:
-                if np.isfinite(dat_1).any():
-                    minval = dat_1.where(dat_1 != -inf).min().data
-                else:
-                    return np.array([0, 0.00000001])
-            if maxval == math.inf:
-                if np.isfinite(dat_1).any():
-                    maxval = dat_1.where(dat_1 != inf).max().data
-                else:
-                    return np.array([0, 0.00000001])
-        levels = minval + np.arange(self._contour_levs + 1) * (maxval - minval) / self._contour_levs
-        # print('Min value: {}\nMax value: {}'.format(minval, maxval))
-        return levels
-
     def _label_offset(self, ax, axis='y'):
         if axis == 'y':
             fmt = ax.yaxis.get_major_formatter()
@@ -216,35 +176,9 @@ class MetricsPlot(object):
     def spatial_comparison_plot(self, da_c0, title_c0, da_c1, title_c1):
         lat_c0 = da_c0['lat']
         lat_c1 = da_c1['lat']
-        if (da_c0 == inf).all():
-            cy_data_c0, lon_c0 = add_cyclic_point(da_c0.where(da_c0 != inf, 1), coord=da_c0['lon'])
-        elif (da_c0 == -inf).all():
-            cy_data_c0, lon_c0 = add_cyclic_point(
-                da_c0.where(da_c0 != -inf, -1), coord=da_c0['lon']
-            )
-        else:
-            cy_data_c0, lon_c0 = add_cyclic_point(
-                da_c0.where(da_c0 != inf, da_c0.where(da_c0 != inf).max() + 1).where(
-                    da_c0 != -inf, da_c0.where(da_c0 != -inf).min() - 1
-                ),
-                coord=da_c0['lon'],
-            )
+        cy_data_c0, lon_c0 = add_cyclic_point(da_c0, coord=da_c0['lon'])
+        cy_data_c1, lon_c1 = add_cyclic_point(da_c1, coord=da_c1['lon'])
 
-        if (da_c1 == inf).all():
-            cy_data_c1, lon_c1 = add_cyclic_point(da_c1.where(da_c1 != inf, 1), coord=da_c1['lon'])
-        elif (da_c1 == -inf).all():
-            cy_data_c1, lon_c1 = add_cyclic_point(
-                da_c1.where(da_c1 != -inf, -1), coord=da_c1['lon']
-            )
-        else:
-            cy_data_c1, lon_c1 = add_cyclic_point(
-                da_c1.where(da_c1 != inf, da_c1.where(da_c1 != inf).max() + 1).where(
-                    da_c1 != -inf, da_c1.where(da_c1 != -inf).min() - 1
-                ),
-                coord=da_c1['lon'],
-            )
-
-        # cy_data_c1, lon_c1 = add_cyclic_point(da_c1.where(da_c1!=-inf, -sys.float_info.max).where(da_c1!=inf, sys.float_info.max), coord=da_c1['lon'])
         fig = plt.figure(dpi=300, figsize=(9, 2.5))
 
         mymap = plt.get_cmap(f'{self._color}')
@@ -252,136 +186,95 @@ class MetricsPlot(object):
         mymap.set_over(color='white')
         mymap.set_bad(alpha=0)
 
-        # both plots use same contour levels
-        levels = self._calc_contour_levels(da_c0, da_c1)
-
         ax1 = plt.subplot(1, 2, 1, projection=ccrs.Robinson(central_longitude=0.0))
         ax1.set_title(title_c0)
 
-        if (levels == levels[0]).all():
-            pc1 = ax1.pcolormesh(
-                lon_c0, lat_c0, cy_data_c0, transform=ccrs.PlateCarree(), cmap=mymap
-            )
-        else:
-            if np.isfinite(da_c0).all() and np.isfinite(da_c1).all():
-                pc1 = ax1.contourf(
-                    lon_c0,
-                    lat_c0,
-                    cy_data_c0,
-                    transform=ccrs.PlateCarree(),
-                    cmap=mymap,
-                    levels=levels,
-                    extend='neither',
-                )
-            else:
-                pc1 = ax1.contourf(
-                    lon_c0,
-                    lat_c0,
-                    cy_data_c0,
-                    transform=ccrs.PlateCarree(),
-                    cmap=mymap,
-                    levels=levels,
-                    extend='both',
-                )
+        no_inf_data_c0 = np.nan_to_num(cy_data_c0, nan=np.nan)
+        color_min = min(
+            np.min(da_c0.where(da_c0 != -inf)).values.min(),
+            np.min(da_c1.where(da_c1 != -inf)).values.min(),
+        )
+        color_max = max(
+            np.max(da_c0.where(da_c0 != inf)).values.max(),
+            np.max(da_c1.where(da_c1 != inf)).values.max(),
+        )
+        pc1 = ax1.pcolormesh(
+            lon_c0,
+            lat_c0,
+            no_inf_data_c0,
+            transform=ccrs.PlateCarree(),
+            cmap=mymap,
+            vmin=color_min,
+            vmax=color_max,
+        )
         ax1.set_global()
         ax1.coastlines()
 
         ax2 = plt.subplot(1, 2, 2, projection=ccrs.Robinson(central_longitude=0.0))
         ax2.set_title(title_c1)
-        if (levels == levels[0]).all():
-            pc2 = ax2.pcolormesh(
-                lon_c1, lat_c1, cy_data_c1, transform=ccrs.PlateCarree(), cmap=mymap
-            )
-        else:
-            if np.isfinite(da_c0).all() and np.isfinite(da_c1).all():
-                pc2 = ax2.contourf(
-                    lon_c1,
-                    lat_c1,
-                    cy_data_c1,
-                    transform=ccrs.PlateCarree(),
-                    cmap=mymap,
-                    levels=levels,
-                    extend='neither',
-                )
-            else:
-                pc2 = ax1.contourf(
-                    lon_c0,
-                    lat_c0,
-                    cy_data_c0,
-                    transform=ccrs.PlateCarree(),
-                    cmap=mymap,
-                    levels=levels,
-                    extend='both',
-                )
+
+        no_inf_data_c1 = np.nan_to_num(cy_data_c1, nan=np.nan)
+        pc2 = ax2.pcolormesh(
+            lon_c1,
+            lat_c1,
+            no_inf_data_c1,
+            transform=ccrs.PlateCarree(),
+            cmap=mymap,
+            vmin=color_min,
+            vmax=color_max,
+        )
+
         ax2.set_global()
         ax2.coastlines()
 
         # add colorbar
         fig.subplots_adjust(left=0.1, right=0.9, bottom=0.05, top=0.95)
         cax = fig.add_axes([0.1, 0, 0.8, 0.05])
-        if not (np.isnan(pc1.levels).all() and np.isnan(pc2.levels).all()):
-            cbar = fig.colorbar(pc1, cax=cax, orientation='horizontal')
-            cbar = fig.colorbar(pc2, cax=cax, orientation='horizontal')
-            cbar.ax.tick_params(labelsize=8, rotation=30)
-        # cbar.ax.set_xticklabels(['{:.2f}'.format(i) for i in cbar.get_ticks()])
+
+        if not (np.isnan(cy_data_c0).all() and np.isnan(cy_data_c1).all()):
+            if np.isinf(cy_data_c0).any() or np.isinf(cy_data_c1).any():
+                fig.colorbar(pc1, cax=cax, orientation='horizontal', shrink=0.95, extend='both')
+                cb = fig.colorbar(
+                    pc2, cax=cax, orientation='horizontal', shrink=0.95, extend='both'
+                )
+            else:
+                fig.colorbar(pc1, cax=cax, orientation='horizontal', shrink=0.95)
+                cb = fig.colorbar(pc2, cax=cax, orientation='horizontal', shrink=0.95)
+            cb.ax.tick_params(labelsize=8, rotation=30)
+        else:
+            proxy = [plt.Rectangle((0, 0), 1, 1, fc='gray')]
+            plt.legend(proxy, ['NaN'])
 
     def spatial_plot(self, da, title):
-        """
-        visualize the mean error
-        want to be able to input multiple?
-        """
-
-        levels = self._calc_contour_levels(da)
 
         lat = da['lat']
-        if (da == inf).all():
-            cy_data, lon = add_cyclic_point(da.where(da != inf, 1), coord=da['lon'])
-        elif (da == -inf).all():
-            cy_data, lon = add_cyclic_point(da.where(da != inf, -1), coord=da['lon'])
-        else:
-            cy_data, lon = add_cyclic_point(
-                da.where(da != inf, da.where(da != inf).max() + 1).where(
-                    da != -inf, da.where(da != -inf).min() - 1
-                ),
-                coord=da['lon'],
-            )
+        cy_data, lon = add_cyclic_point(da, coord=da['lon'],)
 
         mymap = plt.get_cmap(self._color)
         mymap.set_under(color='black')
         mymap.set_over(color='white')
-        mymap.set_bad(alpha=0)
-        # cy_data = np.ma.masked_invalid(cy_data)
+        mymap.set_bad(alpha=0.0)
         ax = plt.subplot(1, 1, 1, projection=ccrs.Robinson(central_longitude=0.0))
-        # pc = ax.pcolormesh(lon, lat, cy_data, transform=ccrs.PlateCarree(), cmap=mymap)
 
-        # if xr.ufuncs.isnan(cy_data).any():
         ax.set_facecolor('gray')
 
-        if (levels == levels[0]).all():
-            pc = ax.pcolormesh(lon, lat, cy_data, transform=ccrs.PlateCarree(), cmap=mymap)
-        else:
-            if np.isfinite(da).all():
-                pc = ax.contourf(
-                    lon,
-                    lat,
-                    cy_data,
-                    transform=ccrs.PlateCarree(),
-                    cmap=mymap,
-                    levels=levels,
-                    extend='neither',
-                )
+        masked_data = np.nan_to_num(cy_data, nan=np.nan)
+        color_min = np.min(da.where(da != -inf))
+        color_max = np.max(da.where(da != inf))
+        pc = ax.pcolormesh(
+            lon,
+            lat,
+            masked_data,
+            transform=ccrs.PlateCarree(),
+            cmap=mymap,
+            vmin=color_min.values.min(),
+            vmax=color_max.values.max(),
+        )
+        if not np.isnan(cy_data).all():
+            if np.isinf(cy_data).any():
+                cb = plt.colorbar(pc, orientation='horizontal', shrink=0.95, extend='both')
             else:
-                pc = ax.contourf(
-                    lon,
-                    lat,
-                    cy_data,
-                    transform=ccrs.PlateCarree(),
-                    cmap=mymap,
-                    levels=levels,
-                    extend='both',
-                )
-        if not np.isnan(pc.levels).all():
-            cb = plt.colorbar(pc, orientation='horizontal', shrink=0.95)
+                cb = plt.colorbar(pc, orientation='horizontal', shrink=0.95)
             cb.ax.tick_params(labelsize=8, rotation=30)
         else:
             proxy = [plt.Rectangle((0, 0), 1, 1, fc='gray')]
