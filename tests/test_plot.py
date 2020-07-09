@@ -5,22 +5,22 @@ import ldcpy
 ds = ldcpy.open_datasets(
     ['TS'],
     [
-        'data/cam-fv/orig.TS.100days.nc',
-        'data/cam-fv/zfp1.0.TS.100days.nc',
-        'data/cam-fv/zfp1e-1.TS.100days.nc',
+        'data/cam-fv/orig.TS.10days.nc',
+        'data/cam-fv/zfp1.0.TS.10days.nc',
+        'data/cam-fv/zfp1e-1.TS.10days.nc',
     ],
     ['orig', 'recon', 'recon2'],
 )
 ds2 = ldcpy.open_datasets(
     ['PRECT'],
     [
-        'data/cam-fv/orig.PRECT.100days.nc',
-        'data/cam-fv/zfp1e-7.PRECT.100days.nc',
-        'data/cam-fv/zfp1e-11.PRECT.100days.nc',
+        'data/cam-fv/orig.PRECT.10days.nc',
+        'data/cam-fv/zfp1e-7.PRECT.10days.nc',
+        'data/cam-fv/zfp1e-11.PRECT.10days.nc',
     ],
     ['orig', 'recon', 'recon_2'],
 )
-ds3 = ldcpy.open_datasets(['T'], ['data/cam-fv/cam-fv.T.6months.nc'], ['orig'])
+ds3 = ldcpy.open_datasets(['T'], ['data/cam-fv/cam-fv.T.3months.nc'], ['orig'])
 
 
 class TestPlot(TestCase):
