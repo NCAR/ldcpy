@@ -88,7 +88,7 @@ class TestErrorMetrics(TestCase):
         import xarray as xr
         import zfpy
 
-        ds = xr.open_dataset('data/cam-fv/orig.TS.100days.nc')
+        ds = xr.open_dataset('data/cam-fv/orig.TS.10days.nc')
 
         TS = ds.TS
 
