@@ -8,5 +8,4 @@ cmocean
 jupyterlab
 xrft
 pip
-cartopy
 dask
