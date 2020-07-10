@@ -67,7 +67,7 @@ def print_stats(ds, varname, c0, c1, time=0):
     Parameters:
     ===========
     ds -- xarray.Dataset
-        an xarray dataset containing multiple netCDF files concatenated across an 'ensemble' dimension
+        an xarray dataset containing multiple netCDF files concatenated across a 'collection' dimension
     varname -- string
         the variable of interest in the dataset
     c0 -- string
@@ -134,7 +134,7 @@ def print_stats(ds, varname, c0, c1, time=0):
 
 def subset_data(ds, subset, lat=None, lon=None, lev=0, start=None, end=None):
     """
-    Get a
+    Get a subset of the given dataArray, returns a dataArray
     """
     ds_subset = ds
 
