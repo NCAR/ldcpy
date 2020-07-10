@@ -12,8 +12,6 @@ dependencies:
   - numpy
   - scipy
   - matplotlib
-  - pip:
-      - cartopy
   - pre-commit
   - setuptools
   - jupyterlab
