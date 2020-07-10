@@ -93,5 +93,3 @@ pre-commit should automatically run black, flake8, and isort to enforce style gu
     black --skip-string-normalization --line-length=100 .
     flake8 .
     isort .
-
-Documentation and usage examples are available `here <http://ldcpy.readthedocs.io>`_.

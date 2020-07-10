@@ -21,6 +21,8 @@ Lossy Data Compression for Python
 
 ldcpy is a utility for gathering and plotting metrics from NetCDF files using the Pangeo stack.
 
+Documentation and usage examples are available `here <http://ldcpy.readthedocs.io>`_.
+
 Installation for Users
 ______________________
 
