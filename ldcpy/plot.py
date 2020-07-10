@@ -310,23 +310,21 @@ class MetricsPlot(object):
         """
         group_string = 'time.year'
         xlabel = 'date'
-        tick_interval = 28
+        tick_interval = int(da.size / 5)
+        if da.size == 1:
+            tick_interval = 1
         if self._group_by == 'time.dayofyear':
             group_string = 'dayofyear'
             xlabel = 'Day of Year'
-            tick_interval = 20
         elif self._group_by == 'time.month':
             group_string = 'month'
             xlabel = 'Month'
-            tick_interval = 1
         elif self._group_by == 'time.year':
             group_string = 'year'
             xlabel = 'Year'
-            tick_interval = 1
         elif self._group_by == 'time.day':
             group_string = 'day'
             xlabel = 'Day'
-            tick_interval = 20
 
         if self._metric_type == 'diff':
             ylabel = f'{self._metric} diff'
@@ -425,7 +423,43 @@ def plot(
     varname -- string
         the name of the variable to be plotted
     metric -- string
-        the name of the metric to be plotted (must match a property name in the AggregateMetrics class in ldcpy.plot)
+        the name of the metric to be plotted (must match a property name in the DatasetMetrics class in ldcpy.plot, for more information about the available metrics see ldcpy.DatasetMetrics)
+
+            'ns_con_var'
+
+            'ew_con_var'
+
+            'mean'
+
+            'std'
+
+            'variance'
+
+            'prob_positive'
+
+            'prob_negative'
+
+            'odds_positive'
+
+            'zscore'
+
+            'mean_abs'
+
+            'mean_squared'
+
+            'rms'
+
+            'sum'
+
+            'sum_squared'
+
+            'corr_lag1'
+
+            'quantile'
+
+            'lag1'
+
+
     c0 -- string
         the collection label of the dataset to gather metrics from
     Keyword Arguments:
@@ -481,7 +515,7 @@ def plot(
     subset -- string (default None)
         subset of the data to gather metrics on. Valid options:
 
-            'first50': the first 50 days of data
+            'first5': the first 5 days of data
 
             'winter': data from the months December, January, February
 

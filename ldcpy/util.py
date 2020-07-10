@@ -142,8 +142,8 @@ def subset_data(ds, subset, lat=None, lon=None, lev=0, start=None, end=None):
 
     if subset == 'winter':
         ds_subset = ds_subset.where(ds.time.dt.season == 'DJF', drop=True)
-    elif subset == 'first50':
-        ds_subset = ds_subset.isel(time=slice(None, 50))
+    elif subset == 'first5':
+        ds_subset = ds_subset.isel(time=slice(None, 5))
 
     if 'lev' in ds_subset.dims:
         ds_subset = ds_subset.sel(lev=lev, method='nearest')
