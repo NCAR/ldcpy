@@ -4,7 +4,7 @@ Installation
 
 
 Installation for Users
-___________
+______________________
 
 Ensure conda and pip are up to date, and your version of python is at least 3.6:
 
@@ -34,7 +34,7 @@ Then install ldcpy:
     pip install ldcpy
 
 Accessing the tutorial (for users)
-___________
+__________________________________
 
 If you want access to the tutorial notebook, clone the repository (this will create a local repository in the current directory):
 
@@ -54,7 +54,7 @@ The tutorial notebook can be found in docs/source/notebooks/SampleNotebook.ipynb
 
 
 Installation for Developers
-------------
+___________________________
 
 For a development install, do the following in the ldcpy repository directory:
 

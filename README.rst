@@ -22,7 +22,7 @@ Lossy Data Compression for Python
 ldcpy is a utility for gathering and plotting metrics from NetCDF files using the Pangeo stack.
 
 Installation for Users
-___________
+______________________
 
 Ensure conda and pip are up to date, and your version of python is at least 3.6:
 
@@ -52,7 +52,7 @@ Then install ldcpy:
     pip install ldcpy
 
 Accessing the tutorial
-___________
+______________________
 
 If you want access to the tutorial notebook, clone the repository (this will create a local repository in the current directory):
 
