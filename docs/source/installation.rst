@@ -3,19 +3,72 @@ Installation
 ============
 
 
-ldcpy can be set up for development using the following commands (in the ldcpy repo):
+Installation for Users
+___________
+
+Activate the base cartopy environment:
 
 .. code-block:: bash
 
-        conda env create --file environment-dev.yml
+    conda activate
 
-For usage examples, see Jupyter notebooks. To activate the environment and start Jupyter, do the following:
+Install cartopy (must install using conda):
 
 .. code-block:: bash
 
-        conda activate ldcpy_dev
-        jupyter nbextension enable hinterland/hinterland
-        jupyter nbextension enable skip-traceback/main
-        jupyter notebook
+    conda install cartopy
 
-The sample notebook can be found in docs/source/notebooks/SampleNotebook.ipynb, feel free to gather your own metrics or create your own plots in this notebook!
+Then install ldcpy:
+
+.. code-block:: bash
+
+    pip install ldcpy
+
+Start by enabling Hinterland for code completion in Jupyter Notebook and then opening the tutorial notebook:
+
+.. code-block:: bash
+
+    jupyter nbextension enable hinterland/hinterland
+    jupyter notebook
+
+The tutorial notebook can be found in docs/source/notebooks/SampleNotebook.ipynb, feel free to gather your own metrics or create your own plots in this notebook!
+
+
+Installation for Developers
+------------
+
+For a development install, do the following in the ldcpy repository directory:
+
+.. code-block:: bash
+
+    conda env update -f environment_dev.yml
+    conda activate ldcpy
+    python -m pip install -e .
+
+Optional extensions for code completion and minimizing tracebacks:
+
+.. code-block:: bash
+    jupyter nbextension enable hinterland/hinterland
+    jupyter nbextension enable skip-traceback/main
+
+For viewing changes to documentation in the repo, do the following:
+
+.. code-block:: bash
+    cd docs/
+    sphinx reload .
+
+Then start a local version of the documentation and keep it up to date with any changes made.
+
+Before committing your code, run the tests from the project root directory to ensure they are passing.
+
+.. code-block:: bash
+    pytest
+
+ pre-commit should automatically run blake, flake8, and isort to enforce style guidelines. If changes are made, the first commit will fail and you will need to stage the changes that have been made before committing again. If, for some reason, pre-commit fails to make changes to your files, you should be able to run the following to clean the files:
+
+.. code-block:: bash
+    black --skip-string-normalization --line-length=100 .
+    flake8 .
+    isort .
+
+Documentation and usage examples are available `here <http://ldcpy.readthedocs.io>`_.

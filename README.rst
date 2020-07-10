@@ -19,15 +19,34 @@
 Lossy Data Compression for Python
 =================================
 
-Development
-------------
+ldcpy is a utility for gathering and plotting metrics from NetCDF files using the Pangeo stack.
 
-For a development install, do the following in the repository directory:
+Installation for Users
+___________
+
+Activate the base cartopy environment:
 
 .. code-block:: bash
 
-    conda env update -f environment_dev.yml
-    conda activate ldcpy
-    python -m pip install -e .
+    conda activate
 
-Documentation and usage examples are available `here <http://ldcpy.readthedocs.io>`_.
+Install cartopy (must install using conda):
+
+.. code-block:: bash
+
+    conda install cartopy
+
+Then install ldcpy:
+
+.. code-block:: bash
+
+    pip install ldcpy
+
+Start by enabling Hinterland for code completion in Jupyter Notebook and then opening the tutorial notebook:
+
+.. code-block:: bash
+
+    jupyter nbextension enable hinterland/hinterland
+    jupyter notebook
+
+The tutorial notebook can be found in docs/source/notebooks/SampleNotebook.ipynb, feel free to gather your own metrics or create your own plots in this notebook!
