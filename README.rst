@@ -24,11 +24,20 @@ ldcpy is a utility for gathering and plotting metrics from NetCDF files using th
 Installation for Users
 ___________
 
-Activate the base cartopy environment:
+Ensure conda and pip are up to date, and your version of python is at least 3.6:
 
 .. code-block:: bash
 
-    conda activate
+    conda update conda
+    pip install --upgrade pip
+    python --version
+
+Create a clean conda environment:
+
+.. code-block:: bash
+
+    conda create --name ldcpy python
+    conda activate myenv
 
 Install cartopy (must install using conda):
 
@@ -42,11 +51,21 @@ Then install ldcpy:
 
     pip install ldcpy
 
-Start by enabling Hinterland for code completion in Jupyter Notebook and then opening the tutorial notebook:
+Accessing the tutorial
+___________
+
+If you want access to the tutorial notebook, clone the repository (this will create a local repository in the current directory):
+
+.. code-block:: bash
+
+    git clone https://github.com/NCAR/ldcpy.git
+
+Start by enabling Hinterland for code completion and code hinting in Jupyter Notebook and then opening the tutorial notebook:
 
 .. code-block:: bash
 
     jupyter nbextension enable hinterland/hinterland
     jupyter notebook
+
 
 The tutorial notebook can be found in docs/source/notebooks/SampleNotebook.ipynb, feel free to gather your own metrics or create your own plots in this notebook!
