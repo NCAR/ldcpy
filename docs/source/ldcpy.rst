@@ -4,14 +4,6 @@ ldcpy package
 Submodules
 ----------
 
-ldcpy.error\_metrics module
----------------------------
-
-.. automodule:: ldcpy.error_metrics
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 ldcpy.metrics module
 --------------------
 
