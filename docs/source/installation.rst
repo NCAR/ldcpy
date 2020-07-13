@@ -56,11 +56,19 @@ The tutorial notebook can be found in docs/source/notebooks/SampleNotebook.ipynb
 Installation for Developers
 ___________________________
 
+First, clone the repository and cd into the root of the repository:
+
+
+.. code-block:: bash
+
+    git clone https://github.com/NCAR/ldcpy.git
+    cd ldcpy
+
 For a development install, do the following in the ldcpy repository directory:
 
 .. code-block:: bash
 
-    conda env update -f environment_dev.yml
+    conda env update -f environment-dev.yml
     conda activate ldcpy
     python -m pip install -e .
 
@@ -75,8 +83,8 @@ For viewing changes to documentation in the repo, do the following:
 
 .. code-block:: bash
 
-    cd docs/
-    sphinx reload .
+    pip install sphinx-reload
+    sphinx-reload docs/
 
 Then start a local version of the documentation and keep it up to date with any changes made.
 
