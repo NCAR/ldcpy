@@ -145,7 +145,7 @@ def subset_data(ds, subset, lat=None, lon=None, lev=0, start=None, end=None):
         ds_subset = ds_subset.isel(time=slice(None, 5))
 
     if 'lev' in ds_subset.dims:
-        ds_subset = ds_subset.sel(lev=lev, method='nearest')
+        ds_subset = ds_subset.isel(lev=lev)
 
     if lat is not None:
         ds_subset = ds_subset.sel(lat=lat, method='nearest')
