@@ -103,16 +103,30 @@ def print_stats(ds, varname, set1, set2, time=0, sig_dig=4):
     )
 
     output = {}
+
+    output['skip1'] = 0
+
     output['mean set1'] = ds0_metrics.get_metric('mean').values
     output['mean set2'] = ds1_metrics.get_metric('mean').values
     output['mean diff'] = d_metrics.get_metric('mean').values
 
+    output['skip2'] = 0
+    
     output['variance set1'] = ds0_metrics.get_metric('variance').values
     output['variance set2'] = ds1_metrics.get_metric('variance').values
 
+    output['skip3'] = 0
+    
     output['standard deviation set1'] = ds0_metrics.get_metric('std').values
     output['standard deviation set2'] = ds1_metrics.get_metric('std').values
 
+    output['skip4'] = 0
+    
+    output['dynamic range set1'] = ds0_metrics.get_metric('range').values
+    output['dynamic range set2'] = ds1_metrics.get_metric('range').values
+
+    output['skip5'] = 0
+    
     output['max diff'] = d_metrics.get_metric('max_abs').values
     output['min diff'] = d_metrics.get_metric('min_abs').values
     output['mean abs diff'] = d_metrics.get_metric('mean_abs').values
@@ -120,14 +134,20 @@ def print_stats(ds, varname, set1, set2, time=0, sig_dig=4):
     output['mean squared diff'] = d_metrics.get_metric('mean_squared').values
     output['root mean squared diff'] = d_metrics.get_metric('rms').values
 
+    
+    output['normalized root mean squared diff'] = diff_metrics.get_diff_metric('nrms').values
     output['pearson correlation coefficient'] = diff_metrics.get_diff_metric(
         'pearson_correlation_coefficient'
     ).values
     output['ks p-value'] = diff_metrics.get_diff_metric('ks_p_value')[0]
 
-    [print(f'{key}: {value:.{sig_dig}e}') for key, value in output.items()]
-
-
+    for key, value in output.items():
+        if key[:4] != 'skip' :
+            print(f'{key}: {value:.{sig_dig}e}')
+        else:
+            print( ' ')
+                
+            
 #    print(json.dumps(output, indent=4, separators=(',', ': '),))
 
 

@@ -37,8 +37,9 @@ class DatasetMetrics(object):
         self._quantile = 0.5
         self._max_abs = None
         self._min_abs = None
-
-        # single value metrics
+        self._d_range = None
+        
+       # single value metrics
         self._zscore_cutoff = None
         self._zscore_percent_significant = None
 
@@ -266,6 +267,13 @@ class DatasetMetrics(object):
         return self._min_abs
 
     @property
+    def dyn_range(self) -> xr.DataArray:
+        if not self._is_memoized('_range'):
+            self._dyn_range = abs((self._ds).max() - (self._ds).min())
+
+        return self._dyn_range
+    
+    @property
     def lag1(self) -> xr.DataArray:
         """
         The deseasonalized lag-1 value by day of year
@@ -416,6 +424,8 @@ class DatasetMetrics(object):
                 return self.max_abs
             if name == 'min_abs':
                 return self.min_abs
+            if name == 'range':
+                return self.dyn_range
             if name == 'none':
                 return self._ds
             raise ValueError(f'there is no metrics with the name: {name}.')
@@ -472,7 +482,8 @@ class DiffMetrics(object):
         self._pcc = None
         self._covariance = None
         self._ks_p_value = None
-
+        self._nmrs = None
+        
     def _is_memoized(self, metric_name: str) -> bool:
         return hasattr(self, metric_name) and (self.__getattribute__(metric_name) is not None)
 
@@ -512,6 +523,21 @@ class DiffMetrics(object):
 
         return self._pcc
 
+    @property
+    def normalized_root_mean_squared(self) -> np.ndarray:
+        """
+        The absolute value of the mean along the aggregate dimensions, normalized
+        by the range of values for the first set
+        """
+        if not self._is_memoized('_normalized_root_mean_squared'):
+            self._normalized_root_mean_squared = (xr.ufuncs.square(self._metrics1.get_metric('None') - self._metrics2.get_metric('None')).mean(dim=self.agg_dims))/self._metrics1.get_metric('range') 
+        
+
+        return self._normalized_root_mean_squared
+    
+
+
+    
     def get_diff_metric(self, name: str):
         """
         Gets a metric on the dataset that requires more than one input dataset
@@ -532,6 +558,8 @@ class DiffMetrics(object):
                 return self.covariance
             if name == 'ks_p_value':
                 return self.ks_p_value
-            raise ValueError(f'there is no metrics with the name: {name}.')
+            if name == 'nrms':
+                return self.normalized_root_mean_squared
+            raise ValueError(f'there is no metric with the name: {name}.')
         else:
             raise TypeError('name must be a string.')
