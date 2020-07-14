@@ -184,3 +184,15 @@ class TestPlot(TestCase):
     def test_mean_3d(self):
         ldcpy.plot(ds3, 'T', set1='orig', metric='mean', lev='300')
         self.assertTrue(True)
+
+    def test_std_by_month(self):
+        ldcpy.plot(
+            ds, 'TS', set1='orig', metric='std', plot_type='time_series', group_by='time.month'
+        )
+        self.assertTrue(True)
+
+        # Time series plot of first seven TS mean data points for ds orig dataset
+
+    def test_mean_start_end(self):
+        ldcpy.plot(ds, 'TS', set1='orig', metric='mean', start=0, end=8, plot_type='time_series')
+        self.assertTrue(True)

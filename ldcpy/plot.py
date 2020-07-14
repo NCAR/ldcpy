@@ -1,3 +1,4 @@
+import calendar
 import math
 
 import cmocean
@@ -148,18 +149,13 @@ class MetricsPlot(object):
 
         return title
 
-    def _label_offset(self, ax, axis='y'):
-        if axis == 'y':
-            fmt = ax.yaxis.get_major_formatter()
-            ax.yaxis.offsetText.set_visible(False)
-            set_label = ax.set_ylabel
-            label = ax.get_ylabel()
-
-        elif axis == 'x':
-            fmt = ax.xaxis.get_major_formatter()
-            ax.xaxis.offsetText.set_visible(False)
-            set_label = ax.set_xlabel
-            label = ax.get_xlabel()
+    def _label_offset(
+        self, ax,
+    ):
+        fmt = ax.yaxis.get_major_formatter()
+        ax.yaxis.offsetText.set_visible(False)
+        set_label = ax.set_ylabel
+        label = ax.get_ylabel()
 
         def update_label(event_axes):
             offset = fmt.get_offset()
@@ -170,7 +166,6 @@ class MetricsPlot(object):
             return
 
         ax.callbacks.connect('ylim_changed', update_label)
-        ax.callbacks.connect('xlim_changed', update_label)
         ax.figure.canvas.draw()
         update_label(None)
         return
@@ -189,6 +184,8 @@ class MetricsPlot(object):
         mymap.set_bad(alpha=0)
 
         ax1 = plt.subplot(1, 2, 1, projection=ccrs.Robinson(central_longitude=0.0))
+
+        ax1.set_facecolor('#39ff14')
         ax1.set_title(title_set1)
 
         no_inf_data_set1 = np.nan_to_num(cy_data_set1, nan=np.nan)
@@ -213,6 +210,8 @@ class MetricsPlot(object):
         ax1.coastlines()
 
         ax2 = plt.subplot(1, 2, 2, projection=ccrs.Robinson(central_longitude=0.0))
+
+        ax2.set_facecolor('#39ff14')
         ax2.set_title(title_set2)
 
         no_inf_data_set2 = np.nan_to_num(cy_data_set2, nan=np.nan)
@@ -244,7 +243,7 @@ class MetricsPlot(object):
                 cb = fig.colorbar(pc2, cax=cax, orientation='horizontal', shrink=0.95)
             cb.ax.tick_params(labelsize=8, rotation=30)
         else:
-            proxy = [plt.Rectangle((0, 0), 1, 1, fc='gray')]
+            proxy = [plt.Rectangle((0, 0), 1, 1, fc='#39ff14')]
             plt.legend(proxy, ['NaN'])
 
     def spatial_plot(self, da, title):
@@ -258,7 +257,7 @@ class MetricsPlot(object):
         mymap.set_bad(alpha=0.0)
         ax = plt.subplot(1, 1, 1, projection=ccrs.Robinson(central_longitude=0.0))
 
-        ax.set_facecolor('gray')
+        ax.set_facecolor('#39ff14')
 
         masked_data = np.nan_to_num(cy_data, nan=np.nan)
         color_min = np.min(da.where(da != -inf))
@@ -279,7 +278,7 @@ class MetricsPlot(object):
                 cb = plt.colorbar(pc, orientation='horizontal', shrink=0.95)
             cb.ax.tick_params(labelsize=8, rotation=30)
         else:
-            proxy = [plt.Rectangle((0, 0), 1, 1, fc='gray')]
+            proxy = [plt.Rectangle((0, 0), 1, 1, fc='#39ff14')]
             plt.legend(proxy, ['NaN'])
 
         ax.set_global()
@@ -310,7 +309,7 @@ class MetricsPlot(object):
         """
         group_string = 'time.year'
         xlabel = 'date'
-        tick_interval = int(da.size / 5)
+        tick_interval = int(da.size / 5) + 1
         if da.size == 1:
             tick_interval = 1
         if self._group_by == 'time.dayofyear':
@@ -338,7 +337,10 @@ class MetricsPlot(object):
         else:
             plot_ylabel = ylabel
 
-        if self._group_by is not None:
+        if self._group_by is not None and self._group_by != 'time.month':
+            mpl.pyplot.plot(da[group_string].data, da, 'bo')
+            ax = mpl.pyplot.gca()
+        elif self._group_by == 'time.month':
             mpl.pyplot.plot(da[group_string].data, da, 'bo')
             ax = mpl.pyplot.gca()
         else:
@@ -355,7 +357,15 @@ class MetricsPlot(object):
         self._label_offset(ax)
         mpl.pyplot.xlabel(xlabel)
 
-        if self._group_by is not None:
+        if self._group_by == 'time.month':
+            month_fmt = mdates.DateFormatter('%B')
+            plt.gca().xaxis.set_major_formatter(month_fmt)
+
+        if self._group_by is not None and self._group_by != 'time.month':
+            mpl.pyplot.xticks(
+                np.arange(min(da[group_string]), max(da[group_string]) + 1, tick_interval)
+            )
+        elif self._group_by == 'time.month':
             mpl.pyplot.xticks(
                 np.arange(min(da[group_string]), max(da[group_string]) + 1, tick_interval)
             )
