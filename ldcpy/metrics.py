@@ -38,8 +38,8 @@ class DatasetMetrics(object):
         self._max_abs = None
         self._min_abs = None
         self._d_range = None
-        
-       # single value metrics
+
+        # single value metrics
         self._zscore_cutoff = None
         self._zscore_percent_significant = None
 
@@ -272,7 +272,7 @@ class DatasetMetrics(object):
             self._dyn_range = abs((self._ds).max() - (self._ds).min())
 
         return self._dyn_range
-    
+
     @property
     def lag1(self) -> xr.DataArray:
         """
@@ -426,7 +426,7 @@ class DatasetMetrics(object):
                 return self.min_abs
             if name == 'range':
                 return self.dyn_range
-            if name == 'none':
+            if name == 'ds':
                 return self._ds
             raise ValueError(f'there is no metrics with the name: {name}.')
         else:
@@ -479,11 +479,12 @@ class DiffMetrics(object):
 
         self._metrics1 = DatasetMetrics(self._ds1, aggregate_dims)
         self._metrics2 = DatasetMetrics(self._ds2, aggregate_dims)
+        self._aggregate_dims = aggregate_dims
         self._pcc = None
         self._covariance = None
         self._ks_p_value = None
         self._nmrs = None
-        
+
     def _is_memoized(self, metric_name: str) -> bool:
         return hasattr(self, metric_name) and (self.__getattribute__(metric_name) is not None)
 
@@ -494,8 +495,8 @@ class DiffMetrics(object):
         """
         if not self._is_memoized('_covariance'):
             self._covariance = (
-                (self._metrics2.get_metric('none') - self._metrics2.get_metric('mean'))
-                * (self._metrics1.get_metric('none') - self._metrics1.get_metric('mean'))
+                (self._metrics2.get_metric('ds') - self._metrics2.get_metric('mean'))
+                * (self._metrics1.get_metric('ds') - self._metrics1.get_metric('mean'))
             ).mean()
 
         return self._covariance
@@ -530,14 +531,14 @@ class DiffMetrics(object):
         by the range of values for the first set
         """
         if not self._is_memoized('_normalized_root_mean_squared'):
-            self._normalized_root_mean_squared = (xr.ufuncs.square(self._metrics1.get_metric('None') - self._metrics2.get_metric('None')).mean(dim=self.agg_dims))/self._metrics1.get_metric('range') 
-        
+            self._normalized_root_mean_squared = (
+                xr.ufuncs.square(
+                    self._metrics1.get_metric('ds') - self._metrics2.get_metric('ds')
+                ).mean(dim=self._aggregate_dims)
+            ) / self._metrics1.dyn_range
 
         return self._normalized_root_mean_squared
-    
 
-
-    
     def get_diff_metric(self, name: str):
         """
         Gets a metric on the dataset that requires more than one input dataset
