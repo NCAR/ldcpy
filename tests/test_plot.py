@@ -182,7 +182,7 @@ class TestPlot(TestCase):
         self.assertTrue(True is True)
 
     def test_mean_3d(self):
-        ldcpy.plot(ds3, 'T', set1='orig', metric='mean', lev='300')
+        ldcpy.plot(ds3, 'T', set1='orig', metric='mean', lev=29)
         self.assertTrue(True)
 
     def test_std_by_month(self):
