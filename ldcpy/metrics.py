@@ -35,6 +35,8 @@ class DatasetMetrics(object):
         self._sum_squared = None
         self._variance = None
         self._quantile = 0.5
+        self._max_abs = None
+        self._min_abs = None
 
         # single value metrics
         self._zscore_cutoff = None
@@ -250,6 +252,20 @@ class DatasetMetrics(object):
         return self._quantile_value
 
     @property
+    def max_abs(self) -> xr.DataArray:
+        if not self._is_memoized('_max_abs'):
+            self._max_abs = abs(self._ds).max()
+
+        return self._max_abs
+
+    @property
+    def min_abs(self) -> xr.DataArray:
+        if not self._is_memoized('_min_abs'):
+            self._min_abs = abs(self._ds).min()
+
+        return self._min_abs
+
+    @property
     def lag1(self) -> xr.DataArray:
         """
         The deseasonalized lag-1 value by day of year
@@ -396,6 +412,10 @@ class DatasetMetrics(object):
                 return self.quantile_value
             if name == 'lag1':
                 return self.lag1
+            if name == 'max_abs':
+                return self.max_abs
+            if name == 'min_abs':
+                return self.min_abs
             if name == 'none':
                 return self._ds
             raise ValueError(f'there is no metrics with the name: {name}.')
@@ -475,7 +495,7 @@ class DiffMetrics(object):
         The Kolmogorov-Smirnov p-value
         """
         if not self._is_memoized('_ks_p_value'):
-            self._ks_p_value = np.asanyarray(ss.pearsonr(np.ravel(self._ds1), np.ravel(self._ds2)))
+            self._ks_p_value = np.asanyarray(ss.ks_2samp(np.ravel(self._ds2), np.ravel(self._ds1)))
         return self._ks_p_value
 
     @property

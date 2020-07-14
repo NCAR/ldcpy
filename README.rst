@@ -39,7 +39,7 @@ Create a clean conda environment:
 .. code-block:: bash
 
     conda create --name ldcpy python
-    conda activate myenv
+    conda activate ldcpy
 
 Install cartopy (must install using conda):
 

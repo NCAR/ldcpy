@@ -15,7 +15,7 @@ def open_datasets(varnames, list_of_files, labels, **kwargs):
            the variable(s) of interest to combine across input files (usually just one)
 
     list_of_files -- list <string>
-        the path of the netCDF file(s) to be opened
+        the file paths for the netCDF file(s) to be opened
 
     labels -- list <string>
         the respective label to access data from each netCDF file (also used in plotting fcns)
@@ -60,7 +60,7 @@ def open_datasets(varnames, list_of_files, labels, **kwargs):
     return full_ds
 
 
-def print_stats(ds, varname, c0, c1, time=0):
+def print_stats(ds, varname, set1, set2, time=0, sig_dig=4):
     """
     Print error summary statistics of two DataArrays
 
@@ -70,9 +70,9 @@ def print_stats(ds, varname, c0, c1, time=0):
         an xarray dataset containing multiple netCDF files concatenated across a 'collection' dimension
     varname -- string
         the variable of interest in the dataset
-    c0 -- string
+    set1 -- string
         the collection label of the "control" data
-    c1 -- string
+    set2 -- string
         the collection label of the (1st) data to compare
 
     Keyword Arguments:
@@ -85,48 +85,47 @@ def print_stats(ds, varname, c0, c1, time=0):
     out -- None
 
     """
-    print('Comparing {} data (c0) to {} data (c1)'.format(c0, c1))
+    print('Comparing {} data (set1) to {} data (set2)'.format(set1, set2))
 
     import json
 
-    ds0_metrics = DatasetMetrics(ds[varname].sel(collection=c0).isel(time=time), ['lat', 'lon'])
-    ds1_metrics = DatasetMetrics(ds[varname].sel(collection=c1).isel(time=time), ['lat', 'lon'])
+    ds0_metrics = DatasetMetrics(ds[varname].sel(collection=set1).isel(time=time), ['lat', 'lon'])
+    ds1_metrics = DatasetMetrics(ds[varname].sel(collection=set2).isel(time=time), ['lat', 'lon'])
     d_metrics = DatasetMetrics(
-        ds[varname].sel(collection=c0).isel(time=time)
-        - ds[varname].sel(collection=c1).isel(time=time),
+        ds[varname].sel(collection=set1).isel(time=time)
+        - ds[varname].sel(collection=set2).isel(time=time),
         ['lat', 'lon'],
     )
     diff_metrics = DiffMetrics(
-        ds[varname].sel(collection=c0).isel(time=time),
-        ds[varname].sel(collection=c1).isel(time=time),
+        ds[varname].sel(collection=set1).isel(time=time),
+        ds[varname].sel(collection=set2).isel(time=time),
         ['lat', 'lon'],
     )
 
     output = {}
-    output['mean c0'] = ds0_metrics.get_metric('mean').values
-    output['variance c0'] = ds0_metrics.get_metric('variance').values
-    output['standard deviation c0'] = ds0_metrics.get_metric('std').values
-
-    output['mean c1'] = ds1_metrics.get_metric('mean').values
-    output['variance c1'] = ds1_metrics.get_metric('variance').values
-    output['standard deviation c1'] = ds1_metrics.get_metric('std').values
-
-    d_metrics.quantile = 1
-    output['max diff'] = d_metrics.get_metric('quantile').values
-    d_metrics.quantile = 0
-    output['min diff'] = d_metrics.get_metric('quantile').values
-    output['mean squared diff'] = d_metrics.get_metric('mean_squared').values
+    output['mean set1'] = ds0_metrics.get_metric('mean').values
+    output['mean set2'] = ds1_metrics.get_metric('mean').values
     output['mean diff'] = d_metrics.get_metric('mean').values
+
+    output['variance set1'] = ds0_metrics.get_metric('variance').values
+    output['variance set2'] = ds1_metrics.get_metric('variance').values
+
+    output['standard deviation set1'] = ds0_metrics.get_metric('std').values
+    output['standard deviation set2'] = ds1_metrics.get_metric('std').values
+
+    output['max diff'] = d_metrics.get_metric('max_abs').values
+    output['min diff'] = d_metrics.get_metric('min_abs').values
     output['mean abs diff'] = d_metrics.get_metric('mean_abs').values
+
+    output['mean squared diff'] = d_metrics.get_metric('mean_squared').values
     output['root mean squared diff'] = d_metrics.get_metric('rms').values
 
     output['pearson correlation coefficient'] = diff_metrics.get_diff_metric(
         'pearson_correlation_coefficient'
     ).values
-    output['covariance'] = diff_metrics.get_diff_metric('covariance').values
-    output['ks p value'] = diff_metrics.get_diff_metric('ks_p_value')[1]
+    output['ks p value'] = diff_metrics.get_diff_metric('ks_p_value')[0]
 
-    [print('          ', key, ': ', value) for key, value in output.items()]
+    [print(f'{key}: {value:.{sig_dig}e}') for key, value in output.items()]
 
 
 #    print(json.dumps(output, indent=4, separators=(',', ': '),))
