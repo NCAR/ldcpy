@@ -277,6 +277,7 @@ class MetricsPlot(object):
             else:
                 cb = plt.colorbar(pc, orientation='horizontal', shrink=0.95)
             cb.ax.tick_params(labelsize=8, rotation=30)
+            cb.ax.set_title(f'{da.long_name} ({da.units})')
         else:
             proxy = [plt.Rectangle((0, 0), 1, 1, fc='#39ff14')]
             plt.legend(proxy, ['NaN'])

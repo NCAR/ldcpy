@@ -14,6 +14,8 @@ class DatasetMetrics(object):
         self, ds: xr.DataArray, aggregate_dims: list,
     ):
         self._ds = ds if (ds.dtype == np.float64) else ds.astype(np.float64)
+        # For some reason, casting to float64 removes all attrs from the dataset
+        self._ds.attrs = ds.attrs
 
         # array metrics
         self._ns_con_var = None
@@ -40,7 +42,7 @@ class DatasetMetrics(object):
         self._d_range = None
         self._min_val = None
         self._max_val = None
-        
+
         # single value metrics
         self._zscore_cutoff = None
         self._zscore_percent_significant = None
@@ -100,6 +102,7 @@ class DatasetMetrics(object):
         """
         if not self._is_memoized('_mean'):
             self._mean = self._ds.mean(self._agg_dims)
+            self._mean.attrs = self._ds.attrs
 
         return self._mean
 
@@ -166,6 +169,8 @@ class DatasetMetrics(object):
         """
         if not self._is_memoized('_variance'):
             self._variance = self._ds.var(self._agg_dims)
+            self._variance.attrs = self._ds.attrs
+            self._variance.attrs['units'] = f'{self._ds.units}^2'
 
         return self._variance
 
@@ -281,7 +286,7 @@ class DatasetMetrics(object):
             self._min_val = self._ds.min()
 
         return self._min_val
-    
+
     @property
     def dyn_range(self) -> xr.DataArray:
         if not self._is_memoized('_range'):
@@ -505,7 +510,7 @@ class DiffMetrics(object):
         self._ks_p_value = None
         self._n_rms = None
         self._n_emax = None
-        
+
     def _is_memoized(self, metric_name: str) -> bool:
         return hasattr(self, metric_name) and (self.__getattribute__(metric_name) is not None)
 
@@ -551,13 +556,12 @@ class DiffMetrics(object):
         The absolute value of the maximum pointwise difference, normalized
         by the range of values for the first set
         """
-        if not self._is_memoized('_normalized_max_pointwise_error'):        
-            tt = abs((self._metrics1.get_metric('ds')
-                                     - self._metrics2.get_metric('ds')).max())
-            self._n_emax =  tt/self._metrics1.dyn_range
-            
+        if not self._is_memoized('_normalized_max_pointwise_error'):
+            tt = abs((self._metrics1.get_metric('ds') - self._metrics2.get_metric('ds')).max())
+            self._n_emax = tt / self._metrics1.dyn_range
+
         return self._n_emax
-        
+
     @property
     def normalized_root_mean_squared(self):
         """
@@ -566,10 +570,11 @@ class DiffMetrics(object):
         """
         if not self._is_memoized('_normalized_root_mean_squared'):
             tt = xr.ufuncs.sqrt(
-                xr.ufuncs.square(self._metrics1.get_metric('ds')
-                                     - self._metrics2.get_metric('ds')
-                ).mean(dim=self._aggregate_dims))
-            self._n_rms = tt/self._metrics1.dyn_range
+                xr.ufuncs.square(
+                    self._metrics1.get_metric('ds') - self._metrics2.get_metric('ds')
+                ).mean(dim=self._aggregate_dims)
+            )
+            self._n_rms = tt / self._metrics1.dyn_range
 
         return self._n_rms
 
