@@ -17,7 +17,6 @@ dependencies:
   - jupyterlab
   - jupyter_contrib_nbextensions
   - codecov
-  - sphinx
   - pytest
   - pytest-cov
   - zfpy

@@ -72,21 +72,24 @@ For a development install, do the following in the ldcpy repository directory:
     conda activate ldcpy
     python -m pip install -e .
 
-Install optional extensions for code completion, code hinting and minimizing tracebacks in Jupyter:
+This code block enables optional extensions for code completion, code hinting and minimizing tracebacks in Jupyter. Then start the jupyter notebook server in your browser (at localhost:8888):
 
 .. code-block:: bash
 
     jupyter nbextension enable hinterland/hinterland
     jupyter nbextension enable skip-traceback/main
 
+    conda activate ldcpy
+    jupyter notebook
+
 For viewing changes to documentation in the repo, do the following:
 
 .. code-block:: bash
 
-    pip install sphinx-reload
+    pip install -r docs/requirements.txt
     sphinx-reload docs/
 
-Then start a local version of the documentation and keep it up to date with any changes made.
+This starts and opens a local version of the documentation in your browser (at localhost:5500/index.html) and keeps it up to date with any changes made. Note that changes to docstrings in the code will not trigger an update, only changes to the .rst files in the docs/ folder.
 
 Before committing changes to the code, run the tests from the project root directory to ensure they are passing.
 
