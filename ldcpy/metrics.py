@@ -38,7 +38,9 @@ class DatasetMetrics(object):
         self._max_abs = None
         self._min_abs = None
         self._d_range = None
-
+        self._min_val = None
+        self._max_val = None
+        
         # single value metrics
         self._zscore_cutoff = None
         self._zscore_percent_significant = None
@@ -267,6 +269,20 @@ class DatasetMetrics(object):
         return self._min_abs
 
     @property
+    def max_val(self) -> xr.DataArray:
+        if not self._is_memoized('_max_val'):
+            self._max_val = self._ds.max()
+
+        return self._max_val
+
+    @property
+    def min_val(self) -> xr.DataArray:
+        if not self._is_memoized('_min_val'):
+            self._min_val = self._ds.min()
+
+        return self._min_val
+    
+    @property
     def dyn_range(self) -> xr.DataArray:
         if not self._is_memoized('_range'):
             self._dyn_range = abs((self._ds).max() - (self._ds).min())
@@ -424,11 +440,15 @@ class DatasetMetrics(object):
                 return self.max_abs
             if name == 'min_abs':
                 return self.min_abs
+            if name == 'max_val':
+                return self.max_val
+            if name == 'min_val':
+                return self.min_val
             if name == 'range':
                 return self.dyn_range
             if name == 'ds':
                 return self._ds
-            raise ValueError(f'there is no metrics with the name: {name}.')
+            raise ValueError(f'there is no metric with the name: {name}.')
         else:
             raise TypeError('name must be a string.')
 
@@ -483,8 +503,9 @@ class DiffMetrics(object):
         self._pcc = None
         self._covariance = None
         self._ks_p_value = None
-        self._nmrs = None
-
+        self._n_rms = None
+        self._n_emax = None
+        
     def _is_memoized(self, metric_name: str) -> bool:
         return hasattr(self, metric_name) and (self.__getattribute__(metric_name) is not None)
 
@@ -511,7 +532,7 @@ class DiffMetrics(object):
         return self._ks_p_value
 
     @property
-    def pearson_correlation_coefficient(self) -> xr.DataArray:
+    def pearson_correlation_coefficient(self):
         """
         returns the pearson correlation coefficient between the two datasets
         """
@@ -525,19 +546,32 @@ class DiffMetrics(object):
         return self._pcc
 
     @property
-    def normalized_root_mean_squared(self) -> np.ndarray:
+    def normalized_max_pointwise_error(self):
+        """
+        The absolute value of the maximum pointwise difference, normalized
+        by the range of values for the first set
+        """
+        if not self._is_memoized('_normalized_max_pointwise_error'):        
+            tt = abs((self._metrics1.get_metric('ds')
+                                     - self._metrics2.get_metric('ds')).max())
+            self._n_emax =  tt/self._metrics1.dyn_range
+            
+        return self._n_emax
+        
+    @property
+    def normalized_root_mean_squared(self):
         """
         The absolute value of the mean along the aggregate dimensions, normalized
         by the range of values for the first set
         """
         if not self._is_memoized('_normalized_root_mean_squared'):
-            self._normalized_root_mean_squared = (
-                xr.ufuncs.square(
-                    self._metrics1.get_metric('ds') - self._metrics2.get_metric('ds')
-                ).mean(dim=self._aggregate_dims)
-            ) / self._metrics1.dyn_range
+            tt = xr.ufuncs.sqrt(
+                xr.ufuncs.square(self._metrics1.get_metric('ds')
+                                     - self._metrics2.get_metric('ds')
+                ).mean(dim=self._aggregate_dims))
+            self._n_rms = tt/self._metrics1.dyn_range
 
-        return self._normalized_root_mean_squared
+        return self._n_rms
 
     def get_diff_metric(self, name: str):
         """
@@ -559,8 +593,10 @@ class DiffMetrics(object):
                 return self.covariance
             if name == 'ks_p_value':
                 return self.ks_p_value
-            if name == 'nrms':
+            if name == 'n_rms':
                 return self.normalized_root_mean_squared
+            if name == 'n_emax':
+                return self.normalized_max_pointwise_error
             raise ValueError(f'there is no metric with the name: {name}.')
         else:
             raise TypeError('name must be a string.')

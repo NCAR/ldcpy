@@ -122,20 +122,28 @@ def print_stats(ds, varname, set1, set2, time=0, sig_dig=4):
 
     output['skip4'] = 0
     
-    output['dynamic range set1'] = ds0_metrics.get_metric('range').values
-    output['dynamic range set2'] = ds1_metrics.get_metric('range').values
+    #output['dynamic range set1'] = ds0_metrics.get_metric('range').values
+    #output['dynamic range set2'] = ds1_metrics.get_metric('range').values
 
-    output['skip5'] = 0
+    #output['skip5'] = 0
+
+    output['max value set1'] = ds0_metrics.get_metric('max_val').values
+    output['max value set2'] = ds1_metrics.get_metric('max_val').values
+    output['min value set1'] = ds0_metrics.get_metric('min_val').values
+    output['min value set2'] = ds1_metrics.get_metric('min_val').values
+
+    output['skip55'] = 0
     
-    output['max diff'] = d_metrics.get_metric('max_abs').values
-    output['min diff'] = d_metrics.get_metric('min_abs').values
+    output['max abs diff'] = d_metrics.get_metric('max_abs').values
+    output['min abs diff'] = d_metrics.get_metric('min_abs').values
     output['mean abs diff'] = d_metrics.get_metric('mean_abs').values
 
     output['mean squared diff'] = d_metrics.get_metric('mean_squared').values
     output['root mean squared diff'] = d_metrics.get_metric('rms').values
 
     
-    output['normalized root mean squared diff'] = diff_metrics.get_diff_metric('nrms').values
+    output['normalized root mean squared diff'] = diff_metrics.get_diff_metric('n_rms').values
+    output['normalized max pointwise error'] = diff_metrics.get_diff_metric('n_emax').values
     output['pearson correlation coefficient'] = diff_metrics.get_diff_metric(
         'pearson_correlation_coefficient'
     ).values
