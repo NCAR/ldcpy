@@ -12,6 +12,7 @@ dependencies:
   - numpy
   - scipy
   - matplotlib
+  - regex
   - pre-commit
   - setuptools
   - jupyterlab
