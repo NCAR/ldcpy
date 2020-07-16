@@ -134,6 +134,7 @@ class MetricsPlot(object):
             title = f'{title} {self._metric_type}'
 
         if self._group_by is not None:
+
             title = f'{title} by {self._group_by}'
 
         if self.title_lat is not None:
