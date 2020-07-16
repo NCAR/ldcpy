@@ -1,6 +1,7 @@
 from unittest import TestCase
 
 import numpy as np
+import pytest
 import xarray as xr
 
 from ldcpy.metrics import DatasetMetrics, DiffMetrics
@@ -17,6 +18,7 @@ class TestErrorMetrics(TestCase):
             }
         ]
 
+    @pytest.mark.nonsequential
     def test_creation_01(self):
         DiffMetrics(
             xr.DataArray(self._samples[0]['observed']),
@@ -24,6 +26,7 @@ class TestErrorMetrics(TestCase):
             [],
         )
 
+    @pytest.mark.nonsequential
     def test_error_01(self):
         em = DatasetMetrics(
             xr.DataArray(self._samples[0]['observed']) - xr.DataArray(self._samples[0]['measured']),
@@ -32,6 +35,7 @@ class TestErrorMetrics(TestCase):
 
         self.assertTrue(all(self._samples[0]['expected_error'] == em.sum))
 
+    @pytest.mark.nonsequential
     def test_mean_error_01(self):
         em = DatasetMetrics(
             xr.DataArray(self._samples[0]['observed']) - xr.DataArray(self._samples[0]['measured']),
@@ -39,6 +43,7 @@ class TestErrorMetrics(TestCase):
         )
         self.assertTrue(em.mean.all() == 0.0)
 
+    @pytest.mark.nonsequential
     def test_mean_error_02(self):
         em = DatasetMetrics(
             xr.DataArray(self._samples[0]['observed'] - xr.DataArray(self._samples[0]['measured'])),
@@ -84,6 +89,7 @@ class TestErrorMetrics(TestCase):
     #     em.get_all_metrics()
     #     print(em.get_all_metrics(exclude={'error', 'squared_error', 'absolute_error'}))
 
+    @pytest.mark.nonsequential
     def test_TS_02(self):
         import xarray as xr
         import zfpy

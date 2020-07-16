@@ -95,7 +95,7 @@ Before committing changes to the code, run the tests from the project root direc
 
 .. code-block:: bash
 
-    pytest
+    pytest -n 4
 
 pre-commit should automatically run black, flake8, and isort to enforce style guidelines. If changes are made, the first commit will fail and you will need to stage the changes that have been made before committing again. If, for some reason, pre-commit fails to make changes to your files, you should be able to run the following to clean the files manually:
 
