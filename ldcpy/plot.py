@@ -6,6 +6,7 @@ import cmocean
 import matplotlib as mpl
 import numpy as np
 import pandas as pd
+import regex as re
 import xrft
 from cartopy import crs as ccrs
 from cartopy.util import add_cyclic_point
@@ -360,7 +361,7 @@ class MetricsPlot(object):
             int_labels = [item.get_text() for item in ax.get_xticklabels()]
             month_labels = []
             for i in range(0, len(int_labels)):
-                int_labels[i] = int(float(int_labels[i]))
+                int_labels[i] = int(float(re.sub('−', '-', int_labels[i])))
             for i in range(0, len(int_labels)):
                 if calendar.month_name[int_labels[i]] != '':
                     month_labels.append(calendar.month_name[int_labels[i]])
