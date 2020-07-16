@@ -169,6 +169,13 @@ def subset_data(ds, subset, lat=None, lon=None, lev=0, start=None, end=None):
 
     if subset == 'winter':
         ds_subset = ds_subset.where(ds.time.dt.season == 'DJF', drop=True)
+    elif subset == 'spring':
+        ds_subset = ds_subset.where(ds.time.dt.season == 'MAM', drop=True)
+    elif subset == 'summer':
+        ds_subset = ds_subset.where(ds.time.dt.season == 'JJA', drop=True)
+    elif subset == 'autumn':
+        ds_subset = ds_subset.where(ds.time.dt.season == 'SON', drop=True)
+
     elif subset == 'first5':
         ds_subset = ds_subset.isel(time=slice(None, 5))
 

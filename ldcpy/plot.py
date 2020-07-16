@@ -72,42 +72,54 @@ class MetricsPlot(object):
         self._contour_levs = contour_levs
 
     def get_metrics(self, da):
-        if self._plot_type in ['spatial', 'spatial_comparison']:
-            metrics_da = lm.DatasetMetrics(da, ['time'])
-        elif self._plot_type in ['time_series', 'periodogram', 'histogram']:
-            metrics_da = lm.DatasetMetrics(da, ['lat', 'lon'])
-        else:
-            raise ValueError(f'plot type {self._plot_type} not supported')
-
-        raw_data = metrics_da.get_metric(self._metric)
-
-        return raw_data
-
-    def get_plot_data(self, raw_data_1, raw_data_2=None):
-        if self._metric_type == 'diff':
-            plot_data = raw_data_1 - raw_data_2
-        elif self._metric_type == 'ratio':
-            plot_data = raw_data_2 / raw_data_1
-        elif self._metric_type == 'raw' or self._metric_type == 'metric_of_diff':
-            plot_data = raw_data_1
-        else:
-            raise ValueError(f'metric_type {self._metric_type} not supported')
-
+        da_data = da
+        da_data.attrs = da.attrs
         if self._metric_type == 'diff' and self._standardized_err is True:
-            if plot_data.std(dim='time') != 0:
-                plot_data = (plot_data - plot_data.mean(dim='time')) / plot_data.std(dim='time')
+            if da.std(dim='time').all() == 0:
+                da_attrs = da.attrs
+                da_data = (da - da.mean(dim='time')) / da.std(dim='time')
+                da_data.attrs = da_attrs
             else:
                 raise ValueError(
                     'Standard deviation of error data is 0. Cannot standardize errors.'
                 )
 
+        if self._plot_type in ['spatial', 'spatial_comparison']:
+            metrics_da = lm.DatasetMetrics(da_data, ['time'])
+        elif self._plot_type in ['time_series', 'periodogram', 'histogram']:
+            metrics_da = lm.DatasetMetrics(da_data, ['lat', 'lon'])
+        else:
+            raise ValueError(f'plot type {self._plot_type} not supported')
+
+        raw_data = metrics_da.get_metric(self._metric)
+        return raw_data
+
+    def get_plot_data(self, raw_data_1, raw_data_2=None):
+        if self._metric_type == 'diff':
+            plot_data = raw_data_1 - raw_data_2
+            plot_data.attrs = raw_data_1.attrs
+        elif self._metric_type == 'ratio':
+            plot_data = raw_data_2 / raw_data_1
+            plot_data.attrs = raw_data_1.attrs
+            if hasattr(self._ds, 'units'):
+                self._odds_positive.attrs['units'] = ''
+
+        elif self._metric_type == 'raw' or self._metric_type == 'metric_of_diff':
+            plot_data = raw_data_1
+        else:
+            raise ValueError(f'metric_type {self._metric_type} not supported')
+
         if self._group_by is not None:
+            plot_attrs = plot_data.attrs
             plot_data = plot_data.groupby(self._group_by).mean(dim='time')
+            plot_data.attrs = plot_attrs
 
         if self._transform == 'none':
             pass
         elif self._transform == 'log':
+            plot_attrs = plot_data.attrs
             plot_data = np.log10(plot_data)
+            plot_data.attrs = plot_attrs
         else:
             raise ValueError(f'metric transformation {self._transform} not supported')
 
@@ -241,9 +253,11 @@ class MetricsPlot(object):
                 cb = fig.colorbar(
                     pc2, cax=cax, orientation='horizontal', shrink=0.95, extend='both'
                 )
+                cb.ax.set_title(f'{da_set1.units}')
             else:
                 fig.colorbar(pset2, cax=cax, orientation='horizontal', shrink=0.95)
                 cb = fig.colorbar(pc2, cax=cax, orientation='horizontal', shrink=0.95)
+                cb.ax.set_title(f'{da_set1.units}')
             cb.ax.tick_params(labelsize=8, rotation=30)
         else:
             proxy = [plt.Rectangle((0, 0), 1, 1, fc='#39ff14')]
@@ -280,6 +294,7 @@ class MetricsPlot(object):
             else:
                 cb = plt.colorbar(pc, orientation='horizontal', shrink=0.95)
             cb.ax.tick_params(labelsize=8, rotation=30)
+            cb.ax.set_title(f'{da.units}')
         else:
             proxy = [plt.Rectangle((0, 0), 1, 1, fc='#39ff14')]
             plt.legend(proxy, ['NaN'])
@@ -291,7 +306,10 @@ class MetricsPlot(object):
     def hist_plot(self, plot_data, title):
         fig, axs = mpl.pyplot.subplots(1, 1, sharey=True, tight_layout=True)
         axs.hist(plot_data)
-        mpl.pyplot.xlabel(self._metric)
+        if plot_data.units != '':
+            mpl.pyplot.xlabel(f'{self._metric} ({plot_data.units})')
+        else:
+            mpl.pyplot.xlabel(f'{self._metric}')
         mpl.pyplot.title(f'time-series histogram: {title}')
 
     def periodogram_plot(self, plot_data, title):
@@ -329,11 +347,17 @@ class MetricsPlot(object):
             xlabel = 'Day'
 
         if self._metric_type == 'diff':
-            ylabel = f'{self._metric} diff'
+            if da.units != '':
+                ylabel = f'{self._metric} ({da.units}) diff'
+            else:
+                ylabel = f'{self._metric} diff'
         elif self._metric_type == 'ratio':
             ylabel = f'ratio {self._metric}'
         else:
-            ylabel = f'{self._metric}'
+            if da.units != '':
+                ylabel = f'{self._metric} ({da.units})'
+            else:
+                ylabel = f'{self._metric} diff'
 
         if self._transform == 'log':
             plot_ylabel = f'log10({ylabel})'
@@ -533,6 +557,12 @@ def plot(
 
             'winter': data from the months December, January, February
 
+            'spring': data from the months March, April, May
+
+            'summer': data from the months June, July, August
+
+            'autumn': data from the months September, October, November
+
     lat -- float (default None)
         the latitude of the data to gather metrics on.
 
@@ -596,6 +626,7 @@ def plot(
     # Acquire raw metric values
     if metric_type in ['metric_of_diff']:
         data = subset_set1 - subset_set2
+        data.attrs = subset_set1.attrs
     else:
         data = subset_set1
 

@@ -1,5 +1,7 @@
 from unittest import TestCase
 
+import pytest
+
 import ldcpy
 
 ds = ldcpy.open_datasets(
@@ -57,6 +59,19 @@ class TestPlot(TestCase):
 
     def test_mean_diff(self):
         ldcpy.plot(ds, 'TS', set1='orig', set2='recon', metric='mean', metric_type='diff')
+        self.assertTrue(True)
+
+    def test_mean_diff_standardized(self):
+        with pytest.raises(ValueError):
+            ldcpy.plot(
+                ds,
+                'TS',
+                set1='orig',
+                set2='recon',
+                metric='mean',
+                metric_type='diff',
+                standardized_err=True,
+            )
         self.assertTrue(True)
 
     def test_prob_negative_log_compare(self):
