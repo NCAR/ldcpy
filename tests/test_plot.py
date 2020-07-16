@@ -206,8 +206,7 @@ class TestPlot(TestCase):
         )
         self.assertTrue(True)
 
-        # Time series plot of first seven TS mean data points for ds orig dataset
-
+    # Time series plot of first seven TS mean data points for ds orig dataset
     def test_mean_start_end(self):
         ldcpy.plot(ds, 'TS', set1='orig', metric='mean', start=0, end=8, plot_type='time_series')
         self.assertTrue(True)
