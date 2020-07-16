@@ -70,7 +70,8 @@ class DatasetMetrics(object):
                 ),
                 join='override',
             )
-        con_var = xr.ufuncs.square((o_1 - o_2))
+        # con_var = xr.ufuncs.square((o_1 - o_2))
+        con_var = np.square((o_1 - o_2))
         return con_var
 
     @property
@@ -119,7 +120,7 @@ class DatasetMetrics(object):
         The absolute value of the mean along the aggregate dimensions
         """
         if not self._is_memoized('_mean_squared'):
-            self._mean_squared = xr.ufuncs.square(self.mean)
+            self._mean_squared = np.square(self.mean)
 
         return self._mean_squared
 
@@ -129,9 +130,7 @@ class DatasetMetrics(object):
         The absolute value of the mean along the aggregate dimensions
         """
         if not self._is_memoized('_root_mean_squared'):
-            self._root_mean_squared = xr.ufuncs.sqrt(
-                xr.ufuncs.square(self._ds).mean(dim=self._agg_dims)
-            )
+            self._root_mean_squared = np.sqrt(np.square(self._ds).mean(dim=self._agg_dims))
 
         return self._root_mean_squared
 
@@ -145,7 +144,7 @@ class DatasetMetrics(object):
     @property
     def sum_squared(self) -> np.ndarray:
         if not self._is_memoized('_sum_squared'):
-            self._sum_squared = xr.ufuncs.square(self._sum_squared)
+            self._sum_squared = np.square(self._sum_squared)
 
         return self._sum_squared
 
@@ -306,7 +305,7 @@ class DatasetMetrics(object):
                 self._deseas_resid.tail({'time': time_length - 1}),
                 join='override',
             )
-            self._lag1 = xr.ufuncs.square((o_1 - o_2))
+            self._lag1 = np.square((o_1 - o_2))
 
         return self._lag1
 
@@ -564,10 +563,10 @@ class DiffMetrics(object):
         by the range of values for the first set
         """
         if not self._is_memoized('_normalized_root_mean_squared'):
-            tt = xr.ufuncs.sqrt(
-                xr.ufuncs.square(
-                    self._metrics1.get_metric('ds') - self._metrics2.get_metric('ds')
-                ).mean(dim=self._aggregate_dims)
+            tt = np.sqrt(
+                np.square(self._metrics1.get_metric('ds') - self._metrics2.get_metric('ds')).mean(
+                    dim=self._aggregate_dims
+                )
             )
             self._n_rms = tt / self._metrics1.dyn_range
 
