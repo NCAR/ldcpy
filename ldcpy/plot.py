@@ -383,13 +383,13 @@ class MetricsPlot(object):
 
         if self._group_by == 'time.month':
             int_labels = [item.get_text() for item in ax.get_xticklabels()]
-            no_hyphen_int_labels = []
-            month_labels = []
-            for i in range(0, len(int_labels)):
-                no_hyphen_int_labels.append(int(float(re.sub('−', '-', int_labels[i]))))
-            for i in range(0, len(no_hyphen_int_labels)):
-                if calendar.month_name[no_hyphen_int_labels[i]] != '':
-                    month_labels.append(calendar.month_name[no_hyphen_int_labels[i]])
+            no_hyphen_int_labels = [(int(float(re.sub('−', '-', label)))) for label in int_labels]
+            month_labels = [
+                calendar.month_name[no_hyphen_int_label]
+                if calendar.month_name[no_hyphen_int_label] != ''
+                else ''
+                for no_hyphen_int_label in no_hyphen_int_labels
+            ]
             unique_month_labels = list(dict.fromkeys(month_labels))
             plt.gca().set_xticklabels(unique_month_labels)
 
