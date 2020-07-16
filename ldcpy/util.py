@@ -20,7 +20,8 @@ def open_datasets(varnames, list_of_files, labels, **kwargs):
     labels -- list <string>
         the respective label to access data from each netCDF file (also used in plotting fcns)
 
-    **kwargs (optional) – Additional arguments passed on to xarray.open_mfdataset().
+    **kwargs (optional) – Additional arguments passed on to xarray.open_mfdataset(). A list of available arguments can
+    be found here: http://xarray.pydata.org/en/stable/generated/xarray.open_dataset.html
 
     Returns
     =======

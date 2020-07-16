@@ -1,4 +1,5 @@
 import calendar
+import datetime
 import math
 
 import cmocean
@@ -338,10 +339,7 @@ class MetricsPlot(object):
         else:
             plot_ylabel = ylabel
 
-        if self._group_by is not None and self._group_by != 'time.month':
-            mpl.pyplot.plot(da[group_string].data, da, 'bo')
-            ax = mpl.pyplot.gca()
-        elif self._group_by == 'time.month':
+        if self._group_by is not None:
             mpl.pyplot.plot(da[group_string].data, da, 'bo')
             ax = mpl.pyplot.gca()
         else:
@@ -359,14 +357,17 @@ class MetricsPlot(object):
         mpl.pyplot.xlabel(xlabel)
 
         if self._group_by == 'time.month':
-            month_fmt = mdates.DateFormatter('%B')
-            plt.gca().xaxis.set_major_formatter(month_fmt)
+            int_labels = [item.get_text() for item in ax.get_xticklabels()]
+            month_labels = []
+            for i in range(0, len(int_labels)):
+                int_labels[i] = int(float(int_labels[i]))
+            for i in range(0, len(int_labels)):
+                if calendar.month_name[int_labels[i]] != '':
+                    month_labels.append(calendar.month_name[int_labels[i]])
+            unique_month_labels = list(dict.fromkeys(month_labels))
+            plt.gca().set_xticklabels(unique_month_labels)
 
-        if self._group_by is not None and self._group_by != 'time.month':
-            mpl.pyplot.xticks(
-                np.arange(min(da[group_string]), max(da[group_string]) + 1, tick_interval)
-            )
-        elif self._group_by == 'time.month':
+        if self._group_by is not None:
             mpl.pyplot.xticks(
                 np.arange(min(da[group_string]), max(da[group_string]) + 1, tick_interval)
             )
