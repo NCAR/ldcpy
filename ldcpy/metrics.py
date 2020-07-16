@@ -82,6 +82,9 @@ class DatasetMetrics(object):
         """
         if not self._is_memoized('_ns_con_var'):
             self._ns_con_var = self._con_var('ns', self._ds).mean(self._agg_dims)
+            self._ns_con_var.attrs = self._ds.attrs
+            if hasattr(self._ds, 'units'):
+                self._ns_con_var.attrs['units'] = f'{self._ds.units}^2'
 
         return self._ns_con_var
 
@@ -92,6 +95,9 @@ class DatasetMetrics(object):
         """
         if not self._is_memoized('_ew_con_var'):
             self._ew_con_var = self._con_var('ew', self._ds).mean(self._agg_dims)
+            self._ew_con_var.attrs = self._ds.attrs
+            if hasattr(self._ds, 'units'):
+                self._ew_con_var.attrs['units'] = f'{self._ds.units}^2'
 
         return self._ew_con_var
 
@@ -113,6 +119,9 @@ class DatasetMetrics(object):
         """
         if not self._is_memoized('_mean_abs'):
             self._mean_abs = abs(self._ds).mean(self._agg_dims)
+            self._mean_abs.attrs = self._ds.attrs
+            if hasattr(self._ds, 'units'):
+                self._mean_abs.attrs['units'] = f'{self._ds.units}'
 
         return self._mean_abs
 
@@ -123,6 +132,9 @@ class DatasetMetrics(object):
         """
         if not self._is_memoized('_mean_squared'):
             self._mean_squared = xr.ufuncs.square(self.mean)
+            self._mean_abs.attrs = self._ds.attrs
+            if hasattr(self._ds, 'units'):
+                self._mean_abs.attrs['units'] = f'{self._ds.units}^2'
 
         return self._mean_squared
 
@@ -135,6 +147,9 @@ class DatasetMetrics(object):
             self._root_mean_squared = xr.ufuncs.sqrt(
                 xr.ufuncs.square(self._ds).mean(dim=self._agg_dims)
             )
+            self._root_mean_squared.attrs = self._ds.attrs
+            if hasattr(self._ds, 'units'):
+                self._root_mean_squared.attrs['units'] = f'{self._ds.units}'
 
         return self._root_mean_squared
 
@@ -142,6 +157,9 @@ class DatasetMetrics(object):
     def sum(self) -> np.ndarray:
         if not self._is_memoized('_sum'):
             self._sum = self._ds.sum(dim=self._agg_dims)
+            self._sum.attrs = self._ds.attrs
+            if hasattr(self._ds, 'units'):
+                self._sum.attrs['units'] = f'{self._ds.units}'
 
         return self._sum
 
@@ -149,6 +167,9 @@ class DatasetMetrics(object):
     def sum_squared(self) -> np.ndarray:
         if not self._is_memoized('_sum_squared'):
             self._sum_squared = xr.ufuncs.square(self._sum_squared)
+            self._sum_squared.attrs = self._ds.attrs
+            if hasattr(self._ds, 'units'):
+                self._sum_squared.attrs['units'] = f'{self._ds.units}^2'
 
         return self._sum_squared
 
@@ -159,6 +180,9 @@ class DatasetMetrics(object):
         """
         if not self._is_memoized('_std'):
             self._std = self._ds.std(self._agg_dims)
+            self._std.attrs = self._ds.attrs
+            if hasattr(self._ds, 'units'):
+                self._std.attrs['units'] = ''
 
         return self._std
 
@@ -170,7 +194,8 @@ class DatasetMetrics(object):
         if not self._is_memoized('_variance'):
             self._variance = self._ds.var(self._agg_dims)
             self._variance.attrs = self._ds.attrs
-            self._variance.attrs['units'] = f'{self._ds.units}^2'
+            if hasattr(self._ds, 'units'):
+                self._variance.attrs['units'] = f'{self._ds.units}^2'
 
         return self._variance
 
@@ -181,6 +206,9 @@ class DatasetMetrics(object):
         """
         if not self._is_memoized('_prob_positive'):
             self._prob_positive = (self._ds > 0).sum(self._agg_dims) / self._frame_size
+            self._prob_positive.attrs = self._ds.attrs
+            if hasattr(self._ds, 'units'):
+                self._prob_positive.attrs['units'] = ''
         return self._prob_positive
 
     @property
@@ -190,6 +218,9 @@ class DatasetMetrics(object):
         """
         if not self._is_memoized('_prob_negative'):
             self._prob_negative = (self._ds < 0).sum(self._agg_dims) / self._frame_size
+            self._prob_negative.attrs = self._ds.attrs
+            if hasattr(self._ds, 'units'):
+                self._prob_negative.attrs['units'] = ''
         return self._prob_negative
 
     @property
@@ -199,6 +230,9 @@ class DatasetMetrics(object):
         """
         if not self._is_memoized('_odds_positive'):
             self._odds_positive = self.prob_positive / (1 - self.prob_positive)
+            self._odds_positive.attrs = self._ds.attrs
+            if hasattr(self._ds, 'units'):
+                self._odds_positive.attrs['units'] = ''
         return self._odds_positive
 
     @property
@@ -208,6 +242,9 @@ class DatasetMetrics(object):
         """
         if not self._is_memoized('_zscore'):
             self._zscore = np.divide(self.mean, self.std / np.sqrt(self._ds.sizes['time']))
+            self._zscore.attrs = self._ds.attrs
+            if hasattr(self._ds, 'units'):
+                self._zscore.attrs['units'] = ''
 
         return self._zscore
 
@@ -242,6 +279,9 @@ class DatasetMetrics(object):
             #         .data,
             #         dims=['lat', 'lon'],
             #     )
+            self._mae_max.attrs = self._ds.attrs
+            if hasattr(self._ds, 'units'):
+                self._mae_max.attrs['units'] = f'{self._ds.units}'
 
         return self._mae_max
 
@@ -256,6 +296,9 @@ class DatasetMetrics(object):
     @property
     def quantile_value(self) -> xr.DataArray:
         self._quantile_value = self._ds.quantile(self.quantile, dim=self._agg_dims)
+        self._quantile_value.attrs = self._ds.attrs
+        if hasattr(self._ds, 'units'):
+            self._quantile_value.attrs['units'] = ''
 
         return self._quantile_value
 
@@ -263,6 +306,9 @@ class DatasetMetrics(object):
     def max_abs(self) -> xr.DataArray:
         if not self._is_memoized('_max_abs'):
             self._max_abs = abs(self._ds).max()
+            self._max_abs.attrs = self._ds.attrs
+            if hasattr(self._ds, 'units'):
+                self._max_abs.attrs['units'] = f'{self._ds.units}'
 
         return self._max_abs
 
@@ -270,6 +316,9 @@ class DatasetMetrics(object):
     def min_abs(self) -> xr.DataArray:
         if not self._is_memoized('_min_abs'):
             self._min_abs = abs(self._ds).min()
+            self._min_abs.attrs = self._ds.attrs
+            if hasattr(self._ds, 'units'):
+                self._min_abs.attrs['units'] = f'{self._ds.units}'
 
         return self._min_abs
 
@@ -277,6 +326,9 @@ class DatasetMetrics(object):
     def max_val(self) -> xr.DataArray:
         if not self._is_memoized('_max_val'):
             self._max_val = self._ds.max()
+            self._max_val.attrs = self._ds.attrs
+            if hasattr(self._ds, 'units'):
+                self._max_val.attrs['units'] = f'{self._ds.units}'
 
         return self._max_val
 
@@ -284,6 +336,9 @@ class DatasetMetrics(object):
     def min_val(self) -> xr.DataArray:
         if not self._is_memoized('_min_val'):
             self._min_val = self._ds.min()
+            self._min_val.attrs = self._ds.attrs
+            if hasattr(self._ds, 'units'):
+                self._min_val.attrs['units'] = f'{self._ds.units}'
 
         return self._min_val
 
@@ -291,6 +346,9 @@ class DatasetMetrics(object):
     def dyn_range(self) -> xr.DataArray:
         if not self._is_memoized('_range'):
             self._dyn_range = abs((self._ds).max() - (self._ds).min())
+            self._dyn_range.attrs = self._ds.attrs
+            if hasattr(self._ds, 'units'):
+                self._dyn_range.attrs['units'] = f'{self._ds.units}'
 
         return self._dyn_range
 
@@ -312,6 +370,9 @@ class DatasetMetrics(object):
                 join='override',
             )
             self._lag1 = xr.ufuncs.square((o_1 - o_2))
+            self._lag1.attrs = self._ds.attrs
+            if hasattr(self._ds, 'units'):
+                self._lag1.attrs['units'] = ''
 
         return self._lag1
 
@@ -331,6 +392,9 @@ class DatasetMetrics(object):
             self._corr_lag1 = np.multiply(l_1, l_2).sum(dim='time') / np.multiply(
                 self._lag1, self._lag1
             ).sum(dim='time')
+            self._corr_lag1.attrs = self._ds.attrs
+            if hasattr(self._ds, 'units'):
+                self._corr_lag1.attrs['units'] = ''
 
         return self._corr_lag1
 
