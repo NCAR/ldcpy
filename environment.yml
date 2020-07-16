@@ -13,4 +13,4 @@ dependencies:
   - scipy
   - matplotlib
   - dask
-  - regex
+  - re

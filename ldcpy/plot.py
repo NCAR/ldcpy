@@ -1,12 +1,12 @@
 import calendar
 import datetime
 import math
+import re
 
 import cmocean
 import matplotlib as mpl
 import numpy as np
 import pandas as pd
-import regex as re
 import xrft
 from cartopy import crs as ccrs
 from cartopy.util import add_cyclic_point
