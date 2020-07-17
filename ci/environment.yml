@@ -12,5 +12,4 @@ dependencies:
   - zfpy
   - xrft
   - cmocean
-  - pip:
-        - tlz
+  - toolz

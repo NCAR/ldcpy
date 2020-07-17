@@ -21,5 +21,4 @@ dependencies:
   - pytest-cov
   - pytest-xdist
   - zfpy
-  - pip:
-    - tlz
+  - toolz

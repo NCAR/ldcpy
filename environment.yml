@@ -13,5 +13,4 @@ dependencies:
   - scipy
   - matplotlib
   - dask
-  - pip:
-    - tlz
+  - toolz
