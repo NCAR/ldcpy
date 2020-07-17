@@ -12,5 +12,6 @@ dependencies:
   - zfpy
   - xrft
   - cmocean
+  - tlz
   - pip:
       - cartopy
