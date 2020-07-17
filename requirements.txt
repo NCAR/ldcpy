@@ -8,4 +8,4 @@ cmocean
 jupyterlab
 xrft
 pip
-dask
+dask[complete]
