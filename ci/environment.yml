@@ -13,3 +13,4 @@ dependencies:
   - xrft
   - cmocean
   - dask
+  - intake-esm
