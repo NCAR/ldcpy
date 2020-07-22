@@ -13,6 +13,7 @@ Documentation
    :caption: Contents:
 
    installation.rst
+   development.rst
    api.rst
    examples.rst
 
