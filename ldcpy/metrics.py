@@ -21,6 +21,7 @@ class DatasetMetrics(object):
         self._ns_con_var = None
         self._ew_con_var = None
         self._mean = None
+        self._mean_abs = None
         self._std = None
         self._prob_positive = None
         self._odds_positive = None
@@ -133,9 +134,9 @@ class DatasetMetrics(object):
         """
         if not self._is_memoized('_mean_squared'):
             self._mean_squared = np.square(self.mean)
-            self._mean_abs.attrs = self._ds.attrs
+            self.mean_abs.attrs = self._ds.attrs
             if hasattr(self._ds, 'units'):
-                self._mean_abs.attrs['units'] = f'{self._ds.units}^2'
+                self.mean_abs.attrs['units'] = f'{self._ds.units}^2'
 
         return self._mean_squared
 

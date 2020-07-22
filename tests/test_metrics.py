@@ -93,7 +93,7 @@ class TestErrorMetrics(TestCase):
 
     @pytest.mark.nonsequential
     def test_mean_squared(self):
-        self.assertTrue(test_overall_metrics.mean_squared == 0.25)
+        self.assertTrue(np.isclose(test_overall_metrics.mean_squared, 0.25, rtol=1e-09))
 
     @pytest.mark.nonsequential
     def test_min_abs(self):
