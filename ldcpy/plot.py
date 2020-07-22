@@ -279,14 +279,16 @@ class MetricsPlot(object):
         masked_data = np.nan_to_num(cy_data, nan=np.nan)
         color_min = np.min(da.where(da != -inf))
         color_max = np.max(da.where(da != inf))
+        colorbar_minval = float(color_min)
+        colorbar_maxval = float(color_max)
         pc = ax.pcolormesh(
             lon,
             lat,
             masked_data,
             transform=ccrs.PlateCarree(),
             cmap=mymap,
-            vmin=color_min.values.min(),
-            vmax=color_max.values.max(),
+            vmin=colorbar_minval,
+            vmax=colorbar_maxval,
         )
         if not np.isnan(cy_data).all():
             if np.isinf(cy_data).any():
