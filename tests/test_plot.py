@@ -229,3 +229,8 @@ class TestPlot(TestCase):
     def test_mean_start_end(self):
         ldcpy.plot(ds, 'TS', set1='orig', metric='mean', start=0, end=8, plot_type='time_series')
         self.assertTrue(True)
+
+    @pytest.mark.nonsequential
+    def test_mean_time_series(self):
+        ldcpy.plot(ds, 'TS', set1='orig', metric='mean', plot_type='time_series')
+        self.assertTrue(True)

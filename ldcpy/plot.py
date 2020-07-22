@@ -279,14 +279,16 @@ class MetricsPlot(object):
         masked_data = np.nan_to_num(cy_data, nan=np.nan)
         color_min = np.min(da.where(da != -inf))
         color_max = np.max(da.where(da != inf))
+        colorbar_minval = float(color_min)
+        colorbar_maxval = float(color_max)
         pc = ax.pcolormesh(
             lon,
             lat,
             masked_data,
             transform=ccrs.PlateCarree(),
             cmap=mymap,
-            vmin=color_min.values.min(),
-            vmax=color_max.values.max(),
+            vmin=colorbar_minval,
+            vmax=colorbar_maxval,
         )
         if not np.isnan(cy_data).all():
             if np.isinf(cy_data).any():
@@ -616,13 +618,16 @@ def plot(
     )
 
     # Subset data
-    subset_set1 = lu.subset_data(
-        ds[varname].sel(collection=set1), subset, lat, lon, lev, start, end
-    )
+    if 'collection' in ds[varname].dims:
+        ds1 = ds[varname].sel(collection=set1)
+        if set2 is not None:
+            ds2 = ds[varname].sel(collection=set2)
+    else:
+        ds1 = ds[varname]
+
+    subset_set1 = lu.subset_data(ds1, subset, lat, lon, lev, start, end)
     if set2 is not None:
-        subset_set2 = lu.subset_data(
-            ds[varname].sel(collection=set2), subset, lat, lon, lev, start, end
-        )
+        subset_set2 = lu.subset_data(ds2, subset, lat, lon, lev, start, end)
 
     # Acquire raw metric values
     if metric_type in ['metric_of_diff']:
@@ -638,9 +643,15 @@ def plot(
 
     # Get metric names/values for plot title
     # if metric == 'zscore':
-    metric_name_set1 = mp.get_metric_label(metric, data, ds['gw'].values)
+    if ds.variables.mapping.get('gw') is not None:
+        metric_name_set1 = mp.get_metric_label(metric, data, ds['gw'].values)
+    else:
+        metric_name_set1 = mp.get_metric_label(metric, data)
     if metric == 'mean' and plot_type == 'spatial_comparison':
-        metric_name_set2 = mp.get_metric_label(metric, subset_set2, ds['gw'].values)
+        if ds.variables.mapping.get('gw') is not None:
+            metric_name_set2 = mp.get_metric_label(metric, subset_set2, ds['gw'].values)
+        else:
+            metric_name_set1 = mp.get_metric_label(metric, data)
 
     # Get plot data and title
     if lat is not None and lon is not None:

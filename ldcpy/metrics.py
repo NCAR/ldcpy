@@ -21,6 +21,7 @@ class DatasetMetrics(object):
         self._ns_con_var = None
         self._ew_con_var = None
         self._mean = None
+        self._mean_abs = None
         self._std = None
         self._prob_positive = None
         self._odds_positive = None
@@ -133,9 +134,9 @@ class DatasetMetrics(object):
         """
         if not self._is_memoized('_mean_squared'):
             self._mean_squared = np.square(self.mean)
-            self._mean_abs.attrs = self._ds.attrs
+            self.mean_abs.attrs = self._ds.attrs
             if hasattr(self._ds, 'units'):
-                self._mean_abs.attrs['units'] = f'{self._ds.units}^2'
+                self.mean_abs.attrs['units'] = f'{self._ds.units}^2'
 
         return self._mean_squared
 
@@ -304,7 +305,7 @@ class DatasetMetrics(object):
     @property
     def max_abs(self) -> xr.DataArray:
         if not self._is_memoized('_max_abs'):
-            self._max_abs = abs(self._ds).max()
+            self._max_abs = abs(self._ds).max(dim=self._agg_dims)
             self._max_abs.attrs = self._ds.attrs
             if hasattr(self._ds, 'units'):
                 self._max_abs.attrs['units'] = f'{self._ds.units}'
@@ -314,7 +315,7 @@ class DatasetMetrics(object):
     @property
     def min_abs(self) -> xr.DataArray:
         if not self._is_memoized('_min_abs'):
-            self._min_abs = abs(self._ds).min()
+            self._min_abs = abs(self._ds).min(dim=self._agg_dims)
             self._min_abs.attrs = self._ds.attrs
             if hasattr(self._ds, 'units'):
                 self._min_abs.attrs['units'] = f'{self._ds.units}'
@@ -324,7 +325,7 @@ class DatasetMetrics(object):
     @property
     def max_val(self) -> xr.DataArray:
         if not self._is_memoized('_max_val'):
-            self._max_val = self._ds.max()
+            self._max_val = self._ds.max(dim=self._agg_dims)
             self._max_val.attrs = self._ds.attrs
             if hasattr(self._ds, 'units'):
                 self._max_val.attrs['units'] = f'{self._ds.units}'
@@ -334,7 +335,7 @@ class DatasetMetrics(object):
     @property
     def min_val(self) -> xr.DataArray:
         if not self._is_memoized('_min_val'):
-            self._min_val = self._ds.min()
+            self._min_val = self._ds.min(dim=self._agg_dims)
             self._min_val.attrs = self._ds.attrs
             if hasattr(self._ds, 'units'):
                 self._min_val.attrs['units'] = f'{self._ds.units}'
@@ -597,7 +598,7 @@ class DiffMetrics(object):
         """
         if not self._is_memoized('_ks_p_value'):
             self._ks_p_value = np.asanyarray(ss.ks_2samp(np.ravel(self._ds2), np.ravel(self._ds1)))
-        return self._ks_p_value
+        return self._ks_p_value[0]
 
     @property
     def pearson_correlation_coefficient(self):

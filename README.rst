@@ -16,6 +16,10 @@
     :target: https://ldcpy.readthedocs.io/en/latest/?badge=latest
     :alt: Documentation Status
 
+.. image:: https://img.shields.io/pypi/v/ldcpy.svg?style=for-the-badge
+    :target: https://pypi.org/project/ldcpy
+    :alt: Python Package Index
+
 Lossy Data Compression for Python
 =================================
 
