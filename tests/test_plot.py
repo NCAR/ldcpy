@@ -36,7 +36,7 @@ class TestPlot(TestCase):
         ldcpy.plot(ds, 'TS', set1='orig', set2='recon', metric='mean')
         self.assertTrue(True)
 
-    @pytest.mark.nonsequential
+    @pytest.mark.sequential
     def test_prob_neg(self):
         ldcpy.plot(ds2, 'PRECT', set1='orig', set2='recon', metric='prob_negative')
         self.assertTrue(True)

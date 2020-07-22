@@ -42,7 +42,7 @@ class MetricsPlot(object):
         lev=0,
         color='coolwarm',
         standardized_err=False,
-        quantile=0.5,
+        quantile=None,
         contour_levs=24,
     ):
 
@@ -68,8 +68,38 @@ class MetricsPlot(object):
         self._lev = lev
         self._color = color
         self._standardized_err = standardized_err
-        self._quantile = quantile
+        self._quantile = None
         self._contour_levs = contour_levs
+
+    def verify_plot_parameters(self):
+        if self._set2_name is None and self._metric_type in ['diff', 'ratio', 'metric_of_diff']:
+            raise ValueError(f'Must specify set2 for {self._metric_type} metric type')
+        if self._set2_name is None and self._plot_type == 'spatial_comparison':
+            raise ValueError(f'Must specify set2 for plot type of {self._plot_type}')
+        if self._plot_type == 'spatial_comparison' and self._metric_type in [
+            'diff',
+            'ratio',
+            'metric_of_diff',
+        ]:
+            raise ValueError(
+                f'Cannot specify plot_type of {self._plot_type} and metric type of {self._metric_type} at the same time'
+            )
+        if self._plot_type in ['spatial', 'spatial_comparison'] and self._group_by is not None:
+            raise ValueError(f'Cannot group by {self._group_by} in a non-time-series plot')
+        if self._plot_type not in ['spatial', 'spatial_comparison'] and self._color != 'coolwarm':
+            raise ValueError('Cannot change color scheme in a non-spatial plot')
+        if self._plot_type in ['spatial', 'spatial_comparison'] and (
+            self._true_lat is not None or self._true_lon is not None
+        ):
+            raise ValueError('Cannot currently subset by latitude or longitude in a spatial plot')
+        if self._standardized_err is not False and self._metric_type != 'diff':
+            raise ValueError("Cannot standardize errors if metric_type != 'diff'")
+        if self._lev != 0 and 'lev' not in self._ds.dims:
+            raise ValueError('Cannot subset by lev in this dataset')
+        if self._quantile is not None and self._metric != 'quantile':
+            raise ValueError('Cannot change quantile value if metric is not quantile')
+        if self._quantile is None and self._metric == 'quantile':
+            raise ValueError('Must specify quantile value as argument')
 
     def get_metrics(self, da):
         da_data = da
@@ -448,7 +478,7 @@ def plot(
     lev=0,
     color='coolwarm',
     standardized_err=False,
-    quantile=0.5,
+    quantile=None,
     start=None,
     end=None,
 ):
@@ -616,6 +646,8 @@ def plot(
         standardized_err,
         quantile,
     )
+
+    mp.verify_plot_parameters()
 
     # Subset data
     if 'collection' in ds[varname].dims:
