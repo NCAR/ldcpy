@@ -45,7 +45,6 @@ shared: &shared
     - run:
         name: Running Tests
         command: |
-          pytest -m sequential --junitxml=test-reports/junit.xml --cov=./ --verbose
           pytest -m nonsequential -n 4 --junitxml=test-reports/junit.xml --cov=./ --verbose
 
         no_output_timeout: 30m
