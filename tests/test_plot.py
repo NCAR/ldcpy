@@ -36,7 +36,7 @@ class TestPlot(TestCase):
         ldcpy.plot(ds, 'TS', set1='orig', set2='recon', metric='mean')
         self.assertTrue(True)
 
-    @pytest.mark.sequential
+    @pytest.mark.nonsequential
     def test_prob_neg(self):
         ldcpy.plot(ds2, 'PRECT', set1='orig', set2='recon', metric='prob_negative')
         self.assertTrue(True)
@@ -121,7 +121,7 @@ class TestPlot(TestCase):
         )
         self.assertTrue(True is True)
 
-    @pytest.mark.sequential
+    @pytest.mark.nonsequential
     def test_mean_abs_diff_time_series(self):
         ldcpy.plot(
             ds,
@@ -135,7 +135,7 @@ class TestPlot(TestCase):
         )
         self.assertTrue(True is True)
 
-    @pytest.mark.sequential
+    @pytest.mark.nonsequential
     def test_mean_diff_time_series_subset(self):
         ldcpy.plot(
             ds2,
@@ -151,7 +151,7 @@ class TestPlot(TestCase):
         )
         self.assertTrue(True)
 
-    @pytest.mark.sequential
+    @pytest.mark.nonsequential
     def test_subset_lat_lon_ratio_time_series(self):
         ldcpy.plot(
             ds2,
@@ -198,7 +198,7 @@ class TestPlot(TestCase):
         )
         self.assertTrue(True is True)
 
-    @pytest.mark.sequential
+    @pytest.mark.nonsequential
     def test_time_series_single_point_3d_data(self):
         ldcpy.plot(
             ds3, 'T', set1='orig', metric='mean', plot_type='time_series', group_by='time.day',
@@ -217,7 +217,7 @@ class TestPlot(TestCase):
         ldcpy.plot(ds3, 'T', set1='orig', metric='mean', lev=29)
         self.assertTrue(True)
 
-    @pytest.mark.sequential
+    @pytest.mark.nonsequential
     def test_std_by_month(self):
         ldcpy.plot(
             ds, 'TS', set1='orig', metric='std', plot_type='time_series', group_by='time.month'
@@ -225,7 +225,7 @@ class TestPlot(TestCase):
         self.assertTrue(True)
 
     # Time series plot of first seven TS mean data points for ds orig dataset
-    @pytest.mark.sequential
+    @pytest.mark.nonsequential
     def test_mean_start_end(self):
         ldcpy.plot(ds, 'TS', set1='orig', metric='mean', start=0, end=8, plot_type='time_series')
         self.assertTrue(True)

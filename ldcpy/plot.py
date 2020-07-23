@@ -396,9 +396,10 @@ class MetricsPlot(object):
         else:
             plot_ylabel = ylabel
 
+        plt.figure()
         if self._group_by is not None:
-            mpl.pyplot.plot(da[group_string].data, da, 'bo')
-            ax = mpl.pyplot.gca()
+            plt.plot(da[group_string].data, da, 'bo')
+            ax = plt.gca()
         else:
             plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%m-%d-%Y'))
             plt.gca().xaxis.set_major_locator(mdates.DayLocator())
@@ -406,7 +407,7 @@ class MetricsPlot(object):
             da['time'] = dtindex
 
             mpl.pyplot.plot_date(da.time.data, da, 'bo')
-            ax = mpl.pyplot.gca()
+            ax = plt.gca()
 
         mpl.pyplot.ylabel(plot_ylabel)
         mpl.pyplot.yscale(self._scale)
@@ -414,13 +415,10 @@ class MetricsPlot(object):
         mpl.pyplot.xlabel(xlabel)
 
         if self._group_by == 'time.month':
-            int_labels = [item.get_text() for item in ax.get_xticklabels()]
-            no_hyphen_int_labels = [(int(float(re.sub('−', '-', label)))) for label in int_labels]
+            int_labels = np.setdiff1d(plt.xticks()[0].astype(int), 0)
+            # no_hyphen_int_labels = [(int(float(re.sub('−', '-', label)))) for label in int_labels]
             month_labels = [
-                calendar.month_name[no_hyphen_int_label]
-                if calendar.month_name[no_hyphen_int_label] != ''
-                else ''
-                for no_hyphen_int_label in no_hyphen_int_labels
+                calendar.month_name[i] if calendar.month_name[i] != '' else '' for i in int_labels
             ]
             unique_month_labels = list(dict.fromkeys(month_labels))
             plt.gca().set_xticklabels(unique_month_labels)
