@@ -31,8 +31,8 @@ workflows:
 shared: &shared
   steps:
     - checkout
-    - restore_cache:
-        key: deps-{{ checksum "./ci/environment.yml" }}
+    #- restore_cache:
+    #    key: deps-{{ checksum "./ci/environment.yml" }}
     - run:
         name: Install dependencies in (base environment)
         command: |
@@ -59,10 +59,10 @@ shared: &shared
     - store_artifacts:
         path: test-reports
 
-    - save_cache:
-        key: deps-{{ checksum "./ci/environment.yml" }}
-        paths:
-          - "/opt/conda/pkgs"
+    #- save_cache:
+    #    key: deps-{{ checksum "./ci/environment.yml" }}
+    #    paths:
+    #      - "/opt/conda/pkgs"
 
 
 jobs:
@@ -96,8 +96,8 @@ jobs:
       ENV_FILE: "./ci/environment.yml"
     steps:
       - checkout
-      - restore_cache:
-          key: deps-{{ checksum "./ci/environment.yml" }}
+      #- restore_cache:
+      #    key: deps-{{ checksum "./ci/environment.yml" }}
       - run:
           name: verify git tag vs. version
           command: |
@@ -118,7 +118,7 @@ jobs:
           command: |
             pip install twine
             /opt/conda/bin/twine upload dist/*
-      - save_cache:
-              key: deps-{{ checksum "./ci/environment.yml" }}
-              paths:
-                - "/opt/conda/pkgs"
+      #- save_cache:
+      #        key: deps-{{ checksum "./ci/environment.yml" }}
+      #        paths:
+      #          - "/opt/conda/pkgs"
