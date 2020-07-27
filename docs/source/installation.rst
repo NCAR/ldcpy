@@ -12,12 +12,12 @@ Ensure conda is up to date and create a clean Python (3.6+) environment:
 
     conda update conda
     conda create --name ldcpy python=3.8
+    conda activate ldcpy
 
-Now activate the ldcpy environment and install ldcpy:
+Now install ldcpy:
 
 .. code-block:: bash
 
-    conda activate ldcpy
     conda install ldcpy
 
 Alternative Installation
