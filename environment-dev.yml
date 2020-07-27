@@ -20,6 +20,7 @@ dependencies:
   - pytest
   - pytest-cov
   - pytest-xdist
-  - zfpy
   - dask
   - intake-esm
+  - pandas
+  - cython

@@ -14,3 +14,4 @@ dependencies:
   - matplotlib
   - dask
   - intake-esm
+  - cython

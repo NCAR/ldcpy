@@ -1,0 +1,4 @@
+component,frequency,experiment,variable,path
+atm,daily,20C,ICEFRAC,s3://ncar-cesm-lens-baker-lossy-compression-test/lens-ens31/cesmle-atm-ens31-20C-daily-ICEFRAC.zarr
+atm,daily,20C,PRECT,s3://ncar-cesm-lens-baker-lossy-compression-test/lens-ens31/cesmle-atm-ens31-20C-daily-PRECT.zarr
+atm,daily,20C,FLUT,s3://ncar-cesm-lens-baker-lossy-compression-test/lens-ens31/cesmle-atm-ens31-20C-daily-FLUT.zarr
