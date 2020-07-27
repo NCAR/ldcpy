@@ -20,6 +20,10 @@
     :target: https://pypi.org/project/ldcpy
     :alt: Python Package Index
 
+.. image:: https://img.shields.io/conda/vn/conda-forge/ldcpy.svg?style=for-the-badge
+    :target: https://anaconda.org/conda-forge/ldcpy
+    :alt: Conda Version
+
 Lossy Data Compression for Python
 =================================
 
