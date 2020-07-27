@@ -126,7 +126,7 @@ def print_stats(ds, varname, set1, set2, time=0, sig_dig=4):
     # output['dynamic range set1'] = ds0_metrics.get_metric('range').values
     # output['dynamic range set2'] = ds1_metrics.get_metric('range').values
 
-    # output['skip5'] = 0
+    # output['skip5'] = 0xs
 
     output['max value set1'] = ds0_metrics.get_metric('max_val').values
     output['max value set2'] = ds1_metrics.get_metric('max_val').values
@@ -148,6 +148,8 @@ def print_stats(ds, varname, set1, set2, time=0, sig_dig=4):
         'pearson_correlation_coefficient'
     ).values
     output['ks p-value'] = diff_metrics.get_diff_metric('ks_p_value')
+    tmp = 'spatial relative error(% > ' + str(ds0_metrics.get_metric('spre_tol')) + ')'
+    output[tmp] = diff_metrics.get_diff_metric('spatial_rel_error')
 
     for key, value in output.items():
         if key[:4] != 'skip':

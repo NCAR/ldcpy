@@ -38,6 +38,7 @@ class DatasetMetrics(object):
         self._sum_squared = None
         self._variance = None
         self._quantile = 0.5
+        self._spre_tol = 1.0e-4
         self._max_abs = None
         self._min_abs = None
         self._d_range = None
@@ -294,6 +295,14 @@ class DatasetMetrics(object):
         self._quantile = q
 
     @property
+    def spre_tol(self):
+        return self._spre_tol
+
+    @spre_tol.setter
+    def spre_tol(self, t):
+        self._spre_tol = t
+
+    @property
     def quantile_value(self) -> xr.DataArray:
         self._quantile_value = self._ds.quantile(self.quantile, dim=self._agg_dims)
         self._quantile_value.attrs = self._ds.attrs
@@ -515,6 +524,8 @@ class DatasetMetrics(object):
                 return self.min_val
             if name == 'range':
                 return self.dyn_range
+            if name == 'spre_tol':
+                return self.spre_tol
             if name == 'ds':
                 return self._ds
             raise ValueError(f'there is no metric with the name: {name}.')
@@ -574,6 +585,7 @@ class DiffMetrics(object):
         self._ks_p_value = None
         self._n_rms = None
         self._n_emax = None
+        self._rel_spatial_error = None
 
     def _is_memoized(self, metric_name: str) -> bool:
         return hasattr(self, metric_name) and (self.__getattribute__(metric_name) is not None)
@@ -642,6 +654,24 @@ class DiffMetrics(object):
 
         return self._n_rms
 
+    @property
+    def spatial_rel_error(self):
+        """
+        At each grid point, we compute the relative error.  Then we report the percentage of grid point whose
+        relative error is above the specified tolerance (1e-4 by default).
+        """
+
+        if not self._is_memoized('_spatial_rel_error'):
+            print(self._metrics1.get_metric('ds').shape)
+            sp_tol = self._metrics1.spre_tol
+            t1 = np.ravel(self._metrics1.get_metric('ds'))
+            t2 = np.ravel(self._metrics2.get_metric('ds'))
+            tt = (t1 - t2) / t1
+            a = len(tt[tt > sp_tol])
+            self._spatial_rel_error = (a / t1.shape[0]) * 100
+
+        return self._spatial_rel_error
+
     def get_diff_metric(self, name: str):
         """
         Gets a metric on the dataset that requires more than one input dataset
@@ -666,6 +696,8 @@ class DiffMetrics(object):
                 return self.normalized_root_mean_squared
             if name == 'n_emax':
                 return self.normalized_max_pointwise_error
+            if name == 'spatial_rel_error':
+                return self.spatial_rel_error
             raise ValueError(f'there is no metric with the name: {name}.')
         else:
             raise TypeError('name must be a string.')
