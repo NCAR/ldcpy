@@ -31,29 +31,34 @@ ldcpy is a utility for gathering and plotting metrics from NetCDF files using th
 
 Documentation and usage examples are available `here <http://ldcpy.readthedocs.io>`_.
 
-Installation for Users
-______________________
+Installation using Conda (recommended)
+______________________________________
 
-Ensure conda and pip are up to date, and your version of python is at least 3.6:
+Ensure conda is up to date and create a clean Python (3.6+) environment:
 
 .. code-block:: bash
 
     conda update conda
+    conda create --name ldcpy python=3.8
+    conda activate ldcpy
+
+Now install ldcpy:
+
+.. code-block:: bash
+
+    conda install ldcpy
+
+Alternative Installation
+________________________
+
+Ensure pip is up to date, and your version of python is at least 3.6:
+
+.. code-block:: bash
+
     pip install --upgrade pip
     python --version
 
-Create a clean conda environment:
-
-.. code-block:: bash
-
-    conda create --name ldcpy python
-    conda activate ldcpy
-
-Install cartopy (must install using conda):
-
-.. code-block:: bash
-
-    conda install cartopy
+Install cartopy using the instructions provided at https://scitools.org.uk/cartopy/docs/latest/installing.html.
 
 Then install ldcpy:
 
