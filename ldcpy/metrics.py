@@ -302,7 +302,6 @@ class DatasetMetrics(object):
     def spre_tol(self, t):
         self._spre_tol = t
 
-        
     @property
     def quantile_value(self) -> xr.DataArray:
         self._quantile_value = self._ds.quantile(self.quantile, dim=self._agg_dims)
@@ -661,19 +660,18 @@ class DiffMetrics(object):
         At each grid point, we compute the relative error.  Then we report the percentage of grid point whose
         relative error is above the specified tolerance (1e-4 by default).
         """
-        
+
         if not self._is_memoized('_spatial_rel_error'):
             print(self._metrics1.get_metric('ds').shape)
             sp_tol = self._metrics1.spre_tol
             t1 = np.ravel(self._metrics1.get_metric('ds'))
             t2 = np.ravel(self._metrics2.get_metric('ds'))
-            tt =  (t1 - t2)/t1
+            tt = (t1 - t2) / t1
             a = len(tt[tt > sp_tol])
-            self._spatial_rel_error = (a/t1.shape[0])*100
+            self._spatial_rel_error = (a / t1.shape[0]) * 100
 
         return self._spatial_rel_error
 
-    
     def get_diff_metric(self, name: str):
         """
         Gets a metric on the dataset that requires more than one input dataset
