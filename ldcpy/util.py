@@ -65,30 +65,28 @@ def print_stats(ds, varname, set1, set2, time=0, sig_dig=4):
     """
     Print error summary statistics of two DataArrays
 
-    Parameters:
-    ===========
-    ds -- xarray.Dataset
-        an xarray dataset containing multiple netCDF files concatenated across a 'collection' dimension
-    varname -- string
-        the variable of interest in the dataset
-    set1 -- string
-        the collection label of the "control" data
-    set2 -- string
-        the collection label of the (1st) data to compare
+    Parameters
+    ==========
+    ds : xarray.Dataset
+        An xarray dataset containing multiple netCDF files concatenated across a 'collection' dimension
+    varname : str
+        The variable of interest in the dataset
+    set1 : str
+        The collection label of the "control" data
+    set2 : str
+        The collection label of the (1st) data to compare
+    time : int, optional
+        The time index used to compare the two netCDF files (default 0)
 
-    Keyword Arguments:
-    ==================
-    time -- int
-        the time index used to compare the two netCDF files (default 0)
+    sig_dig : int, optional
+        (default 4)
 
     Returns
     =======
-    out -- None
+    out : None
 
     """
     print('Comparing {} data (set1) to {} data (set2)'.format(set1, set2))
-
-    import json
 
     ds0_metrics = DatasetMetrics(ds[varname].sel(collection=set1).isel(time=time), ['lat', 'lon'])
     ds1_metrics = DatasetMetrics(ds[varname].sel(collection=set2).isel(time=time), ['lat', 'lon'])
@@ -156,9 +154,6 @@ def print_stats(ds, varname, set1, set2, time=0, sig_dig=4):
             print(f'{key}: {value:.{sig_dig}e}')
         else:
             print(' ')
-
-
-#    print(json.dumps(output, indent=4, separators=(',', ': '),))
 
 
 def subset_data(ds, subset, lat=None, lon=None, lev=0, start=None, end=None):
