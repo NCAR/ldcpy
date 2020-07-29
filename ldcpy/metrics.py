@@ -4,6 +4,13 @@ import numpy as np
 import xarray as xr
 from scipy import stats as ss
 
+from cartopy.util import add_cyclic_point
+import matplotlib as mpl
+from matplotlib import pyplot as plt
+from cartopy import crs as ccrs
+from numpy import inf
+import cv2
+import os
 
 class DatasetMetrics(object):
     """
@@ -586,7 +593,8 @@ class DiffMetrics(object):
         self._n_rms = None
         self._n_emax = None
         self._rel_spatial_error = None
-
+        self._ssim_value = None
+        
     def _is_memoized(self, metric_name: str) -> bool:
         return hasattr(self, metric_name) and (self.__getattribute__(metric_name) is not None)
 
@@ -662,7 +670,7 @@ class DiffMetrics(object):
         """
 
         if not self._is_memoized('_spatial_rel_error'):
-            print(self._metrics1.get_metric('ds').shape)
+            #print(self._metrics1.get_metric('ds').shape)
             sp_tol = self._metrics1.spre_tol
             t1 = np.ravel(self._metrics1.get_metric('ds'))
             t2 = np.ravel(self._metrics2.get_metric('ds'))
@@ -672,6 +680,73 @@ class DiffMetrics(object):
 
         return self._spatial_rel_error
 
+    @property
+    def ssim_value(self):
+        """
+        We compute the SSIM (structural similarity index) on the visualization of the spatial data.
+        """
+        if not self._is_memoized('_ssim'):
+            d1 = (self._metrics1.get_metric('ds'))
+            d2 = (self._metrics2.get_metric('ds'))
+            lat1 = d1['lat']
+            lat2 = d2['lat']  
+            cy1, lon1 = add_cyclic_point(d1, coord=d1['lon'])
+            cy2, lon2 = add_cyclic_point(d2, coord=d2['lon'])
+
+            # Prevent showing stuff
+            backend_ =  mpl.get_backend() 
+            mpl.use("Agg")  
+            
+            no_inf_d1 = np.nan_to_num(cy1, nan=np.nan)
+            no_inf_d2 = np.nan_to_num(cy2, nan=np.nan)
+
+            color_min = min(
+                np.min(d1.where(d1 != -inf)).values.min(),
+                np.min(d2.where(d2 != -inf)).values.min(),
+                )
+            color_max = max(
+                np.max(d1.where(d1 != inf)).values.max(),
+                np.max(d2.where(d2 != inf)).values.max(),
+                )
+
+            fig = plt.figure(dpi=300)
+            ax1 = plt.axes(projection=ccrs.Robinson(central_longitude=0.0))
+            ax1.pcolormesh(lon1, lat1,no_inf_d1,
+                transform=ccrs.PlateCarree(), vmin=color_min,
+                vmax=color_max)
+            ax1.axis('off')
+            t_ssim1= ax1.imshow
+            plt.savefig('t_ssim1',bbox_inches="tight",
+                            transparent=True, pad_inches=0)
+
+            fig = plt.figure(dpi=300)
+            ax2 = plt.axes(projection=ccrs.Robinson(central_longitude=0.0))
+            ax2.pcolormesh(lon2, lat2, no_inf_d2,
+                transform=ccrs.PlateCarree(), vmin=color_min,
+                vmax=color_max)
+            ax2.axis('off')
+            t_ssim2= ax2.imshow
+            plt.savefig('t_ssim2',bbox_inches="tight",
+                            transparent=True, pad_inches=0)
+
+
+            from skimage.metrics import structural_similarity as ssim
+            img1 = cv2.imread("t_ssim1.png")
+            img2 = cv2.imread("t_ssim2.png")
+            s = ssim(img1, img2,multichannel=True)
+            if os.path.exists("t_ssim1.png"):
+                os.remove("t_ssim1.png")
+            if os.path.exists("t_ssim2.png"):
+                os.remove("t_ssim2.png")
+
+            # Reset backend
+            mpl.use(backend_) 
+
+            self._ssim_value = s
+
+        return self._ssim_value
+    
+        
     def get_diff_metric(self, name: str):
         """
         Gets a metric on the dataset that requires more than one input dataset
@@ -698,6 +773,8 @@ class DiffMetrics(object):
                 return self.normalized_max_pointwise_error
             if name == 'spatial_rel_error':
                 return self.spatial_rel_error
+            if name == 'ssim':
+                return self.ssim_value
             raise ValueError(f'there is no metric with the name: {name}.')
         else:
             raise TypeError('name must be a string.')
