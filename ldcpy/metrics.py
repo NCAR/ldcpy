@@ -234,7 +234,7 @@ class DatasetMetrics(object):
     @property
     def odds_positive(self) -> np.ndarray:
         """
-        The odds that a point is positive: prob_positive/(1-prob_positive)
+        The odds that a point is positive = prob_positive/(1-prob_positive)
         """
         if not self._is_memoized('_odds_positive'):
             self._odds_positive = self.prob_positive / (1 - self.prob_positive)
@@ -751,14 +751,14 @@ class DiffMetrics(object):
         """
         Gets a metric on the dataset that requires more than one input dataset
 
-        Parameters:
-        ===========
-        name -- string
-            the name of the metric (must be identical to a property name)
+        Parameters
+        ==========
+        name : str
+            The name of the metric (must be identical to a property name)
 
         Returns
         =======
-        out -- float32
+        out : float
         """
         if isinstance(name, str):
             if name == 'pearson_correlation_coefficient':

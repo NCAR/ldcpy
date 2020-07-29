@@ -555,7 +555,6 @@ def plot(
             - corr_lag1
             - quantile
             - lag1
-
     set1 : str
         The label of the dataset to gather metrics from
     set2 : str
@@ -567,16 +566,14 @@ def plot(
 
             - time.day
             - time.dayofyear
-            - time.month"
-            - time.year"
-
+            - time.month
+            - time.year
     scale : str, optional
         time-series y-axis plot transformation. (default "linear")
         Valid options:
 
             - linear
             - log
-
     metric_type : str, optional
         The type of operation to be performed on the metrics in the two collections. (default 'raw')
         Valid options:
@@ -585,7 +582,6 @@ def plot(
             - diff: the difference between the metric values in collections set1 and set2
             - ratio: the ratio of the metric values in (set2/set1)
             - metric_of_diff: the metric value computed on the difference between set1 and set2
-
     plot_type : str , optional
         The type of plot to be created. (default 'spatial')
         Valid options:
@@ -594,14 +590,12 @@ def plot(
             - spatial_comparison: two side-by-side spatial plots, one of the raw metric from set1 and the other of the raw metric from set2
             - time-series: A time-series plot of the data (computed by taking the mean across the lat and lon dimensions)
             - histogram: A histogram of the time-series data
-
     transform : str, optional
         data transformation. (default 'none')
         Valid options:
 
             - none
             - log
-
     subset : str, optional
         subset of the data to gather metrics on (default None).
         Valid options:
@@ -611,7 +605,6 @@ def plot(
             - spring: data from the months March, April, May
             - summer: data from the months June, July, August
             - autumn: data from the months September, October, November
-
     lat : float, optional
         The latitude of the data to gather metrics on (default None).
     lon : float , optional
@@ -635,10 +628,9 @@ def plot(
     end : int, optional
         A value between 0 and the number of time slices indicating the end time of a subset,
         (default None)
-
-    calc_ssim -- bool (default False)
-        whether or not to calculate the ssim (structural similarity index) between two plots
-        (only applies to plot_type = 'spatial_comparison')
+    calc_ssim : bool, optional
+        Whether or not to calculate the ssim (structural similarity index) between two plots
+        (only applies to plot_type = 'spatial_comparison'), (default False).
 
     Returns
     =======
