@@ -24,3 +24,5 @@ dependencies:
   - intake-esm
   - pandas
   - cython
+  - scikit-image
+  - opencv

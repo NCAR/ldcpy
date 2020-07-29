@@ -49,7 +49,7 @@ def open_datasets(varnames, list_of_files, labels, **kwargs):
     return full_ds
 
 
-def print_stats(ds, varname, set1, set2, time=0, sig_dig=4):
+def print_stats(ds, varname, set1, set2, time=0, significant_digits=4):
     """
     Print error summary statistics of two DataArrays
 
@@ -136,10 +136,12 @@ def print_stats(ds, varname, set1, set2, time=0, sig_dig=4):
     output['ks p-value'] = diff_metrics.get_diff_metric('ks_p_value')
     tmp = 'spatial relative error(% > ' + str(ds0_metrics.get_metric('spre_tol')) + ')'
     output[tmp] = diff_metrics.get_diff_metric('spatial_rel_error')
+    output['ssim'] = diff_metrics.get_diff_metric('ssim')
 
     for key, value in output.items():
         if key[:4] != 'skip':
-            print(f'{key}: {value:.{sig_dig}e}')
+            rounded_value = f'{float(f"{value:.{significant_digits}g}"):g}'
+            print(f'{key}: {rounded_value}')
         else:
             print(' ')
 

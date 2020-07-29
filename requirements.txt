@@ -9,3 +9,5 @@ jupyterlab
 xrft
 pip
 dask[complete]
+opencv-python
+scikit-image
