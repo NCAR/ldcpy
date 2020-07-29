@@ -152,7 +152,6 @@ def print_stats(ds, varname, set1, set2, time=0, sig_dig=4):
     output[tmp] = diff_metrics.get_diff_metric('spatial_rel_error')
     output['ssim'] = diff_metrics.get_diff_metric('ssim')
 
-    
     for key, value in output.items():
         if key[:4] != 'skip':
             print(f'{key}: {value:.{sig_dig}e}')
