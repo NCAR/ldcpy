@@ -16,4 +16,4 @@ dependencies:
   - intake-esm
   - cython
   - scikit-image
-  - opencv
+  - opencv-python
