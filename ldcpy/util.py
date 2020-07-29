@@ -9,23 +9,21 @@ def open_datasets(varnames, list_of_files, labels, **kwargs):
     a new 'collection' dimension, which can be accessed with labels.
     Stores them in an xarray dataset.
 
-    Parameters:
-    ===========
-    varnames -- list <string>
-           the variable(s) of interest to combine across input files (usually just one)
-
-    list_of_files -- list <string>
-        the file paths for the netCDF file(s) to be opened
-
-    labels -- list <string>
-        the respective label to access data from each netCDF file (also used in plotting fcns)
+    Parameters
+    ==========
+    varnames : list
+           The variable(s) of interest to combine across input files (usually just one)
+    list_of_files : list
+        The file paths for the netCDF file(s) to be opened
+    labels : list
+        The respective label to access data from each netCDF file (also used in plotting fcns)
 
     **kwargs (optional) – Additional arguments passed on to xarray.open_mfdataset(). A list of available arguments can
     be found here: http://xarray.pydata.org/en/stable/generated/xarray.open_dataset.html
 
     Returns
     =======
-    out -- xarray.Dataset
+    out : xarray.Dataset
           contains all the data from the list of files
     """
 
