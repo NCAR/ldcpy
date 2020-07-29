@@ -40,8 +40,8 @@ def open_datasets(varnames, list_of_files, labels, **kwargs):
         concat_dim='collection',
         combine='nested',
         data_vars=varnames,
-        **kwargs,
         parallel=True,
+        **kwargs,
     )
 
     full_ds['collection'] = xr.DataArray(labels, dims='collection')
