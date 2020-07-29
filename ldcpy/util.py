@@ -35,13 +35,6 @@ def open_datasets(varnames, list_of_files, labels, **kwargs):
         labels
     ), 'open_dataset file list and labels arguments must be the same length'
 
-    # check whether we need to set chunks or the user has already done so
-    if 'chunks' not in kwargs:
-        print('chucks set to (default) {}')
-        kwargs['chunks'] = {}
-    else:
-        print('chunks set to (by user) ', kwargs['chunks'])
-
     full_ds = xr.open_mfdataset(
         list_of_files,
         concat_dim='collection',
