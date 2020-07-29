@@ -15,3 +15,5 @@ dependencies:
   - dask
   - intake-esm
   - cython
+  - scikit-image
+  - opencv
