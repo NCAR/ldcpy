@@ -66,8 +66,8 @@ def print_stats(ds, varname, set1, set2, time=0, significant_digits=4):
     time : int, optional
         The time index used to compare the two netCDF files (default 0)
 
-    sig_dig : int, optional
-        (default 4)
+    significant_digits : int, optional
+        The number of significant digits to use when printing stats, (default 4)
 
     Returns
     =======
