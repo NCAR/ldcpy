@@ -37,25 +37,21 @@ def open_datasets(varnames, list_of_files, labels, **kwargs):
 
     # check whether we need to set chunks or the user has already done so
     if 'chunks' not in kwargs:
-        print("chucks set to (default) {'time', 50}")
-        kwargs['chunks'] = {'time': 50}
+        print('chucks set to (default) {}')
+        kwargs['chunks'] = {}
     else:
         print('chunks set to (by user) ', kwargs['chunks'])
 
-    # check that varname exists in each file
-    for filename in list_of_files:
-        ds_check = xr.open_dataset(filename)
-        for thisvar in varnames:
-            if thisvar not in ds_check.variables:
-                print(f"We have a problem. Variable '{thisvar}' is not in the file {filename}")
-        ds_check.close()
-
     full_ds = xr.open_mfdataset(
-        list_of_files, concat_dim='collection', combine='nested', data_vars=varnames, **kwargs,
+        list_of_files,
+        concat_dim='collection',
+        combine='nested',
+        data_vars=varnames,
+        **kwargs,
+        parallel=True,
     )
 
     full_ds['collection'] = xr.DataArray(labels, dims='collection')
-
     print('dataset size in GB {:0.2f}\n'.format(full_ds.nbytes / 1e9))
 
     return full_ds
