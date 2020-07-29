@@ -72,7 +72,11 @@ class MetricsPlot(object):
         self._contour_levs = contour_levs
 
     def verify_plot_parameters(self):
-        if self._set2_name is None and self._metric_type in ['diff', 'ratio', 'metric_of_diff']:
+        if self._set2_name is None and self._metric_type in [
+            'diff',
+            'ratio',
+            'metric_of_diff',
+        ]:
             raise ValueError(f'Must specify set2 for {self._metric_type} metric type')
         if self._set2_name is None and self._plot_type == 'spatial_comparison':
             raise ValueError(f'Must specify set2 for plot type of {self._plot_type}')
@@ -215,7 +219,8 @@ class MetricsPlot(object):
         update_label(None)
         return
 
-    def spatial_comparison_plot(self, da_set1, title_set1, da_set2, title_set2):
+    def spatial_comparison_plot(self, da_set1, title_set1, da_set2, title_set2, calc_ssim):
+
         lat_set1 = da_set1['lat']
         lat_set2 = da_set2['lat']
         cy_data_set1, lon_set1 = add_cyclic_point(da_set1, coord=da_set1['lon'])
@@ -231,7 +236,6 @@ class MetricsPlot(object):
         ax1 = plt.subplot(1, 2, 1, projection=ccrs.Robinson(central_longitude=0.0))
 
         ax1.set_facecolor('#39ff14')
-        ax1.set_title(title_set1)
 
         no_inf_data_set1 = np.nan_to_num(cy_data_set1, nan=np.nan)
         color_min = min(
@@ -252,12 +256,21 @@ class MetricsPlot(object):
             vmax=color_max,
         )
         ax1.set_global()
-        ax1.coastlines()
+
+        # if we want to get the ssim
+        if calc_ssim:
+            ax1.axis('off')
+            plt.margins(0, 0)
+            extent1 = ax1.get_window_extent().transformed(fig.dpi_scale_trans.inverted())
+
+            ax1.imshow
+            plt.savefig('tmp_ssim1', bbox_inches=extent1, transparent=True, pad_inches=0)
+            ax1.axis('on')
+            # print(extent1)
 
         ax2 = plt.subplot(1, 2, 2, projection=ccrs.Robinson(central_longitude=0.0))
 
         ax2.set_facecolor('#39ff14')
-        ax2.set_title(title_set2)
 
         no_inf_data_set2 = np.nan_to_num(cy_data_set2, nan=np.nan)
         pc2 = ax2.pcolormesh(
@@ -271,7 +284,22 @@ class MetricsPlot(object):
         )
 
         ax2.set_global()
+
+        # if we want to get the ssim
+        if calc_ssim:
+            plt.margins(0, 0)
+            ax2.axis('off')
+            extent2 = ax2.get_window_extent().transformed(fig.dpi_scale_trans.inverted())
+            ax2.imshow
+            plt.savefig('tmp_ssim2', bbox_inches=extent2, transparent=True, pad_inches=0)
+            ax2.axis('on')
+            # print(extent2)
+
+        # titles and coastlines
+        ax1.coastlines()
+        ax1.set_title(title_set1)
         ax2.coastlines()
+        ax2.set_title(title_set2)
 
         # add colorbar
         fig.subplots_adjust(left=0.1, right=0.9, bottom=0.05, top=0.95)
@@ -292,6 +320,23 @@ class MetricsPlot(object):
         else:
             proxy = [plt.Rectangle((0, 0), 1, 1, fc='#39ff14')]
             plt.legend(proxy, ['NaN'])
+
+        if calc_ssim:
+            import os
+
+            import cv2
+            from skimage.metrics import structural_similarity as ssim
+
+            img1 = cv2.imread('tmp_ssim1.png')
+            img2 = cv2.imread('tmp_ssim2.png')
+            # print(img1.shape)
+            # print(img2.shape)
+            ssim_val = ssim(img1, img2, multichannel=True)
+            print(' SSIM = % 5.5f\n' % (ssim_val))
+            if os.path.exists('tmp_ssim1.png'):
+                os.remove('tmp_ssim1.png')
+            if os.path.exists('tmp_ssim2.png'):
+                os.remove('tmp_ssim2.png')
 
     def spatial_plot(self, da, title):
 
@@ -479,6 +524,7 @@ def plot(
     quantile=None,
     start=None,
     end=None,
+    calc_ssim=False,
 ):
     """
     Plots the data given an xarray dataset
@@ -620,6 +666,10 @@ def plot(
     end -- int (default None)
         a value between 0 and the number of time slices indicating the end time of a subset
 
+    calc_ssim -- bool (default False)
+        whether or not to calculate the ssim (structural similarity index) between two plots
+        (only applies to plot_type = 'spatial_comparison')
+
     Returns
     =======
     out -- None
@@ -704,7 +754,9 @@ def plot(
 
     # Call plot functions
     if plot_type == 'spatial_comparison':
-        mp.spatial_comparison_plot(plot_data_set1, title_set1, plot_data_set2, title_set2)
+        mp.spatial_comparison_plot(
+            plot_data_set1, title_set1, plot_data_set2, title_set2, calc_ssim
+        )
     elif plot_type == 'spatial':
         mp.spatial_plot(plot_data_set1, title_set1)
     elif plot_type == 'time_series':

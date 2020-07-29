@@ -220,14 +220,16 @@ class TestPlot(TestCase):
     @pytest.mark.nonsequential
     def test_std_by_month(self):
         ldcpy.plot(
-            ds, 'TS', set1='orig', metric='std', plot_type='time_series', group_by='time.month'
+            ds, 'TS', set1='orig', metric='std', plot_type='time_series', group_by='time.month',
         )
         self.assertTrue(True)
 
     # Time series plot of first seven TS mean data points for ds orig dataset
     @pytest.mark.nonsequential
     def test_mean_start_end(self):
-        ldcpy.plot(ds, 'TS', set1='orig', metric='mean', start=0, end=8, plot_type='time_series')
+        ldcpy.plot(
+            ds, 'TS', set1='orig', metric='mean', start=0, end=8, plot_type='time_series',
+        )
         self.assertTrue(True)
 
     @pytest.mark.nonsequential
