@@ -742,7 +742,7 @@ def plot(
         if ds.variables.mapping.get('gw') is not None:
             metric_name_set2 = mp.get_metric_label(metric, subset_set2, ds['gw'].values)
         else:
-            metric_name_set1 = mp.get_metric_label(metric, data)
+            metric_name_set2 = mp.get_metric_label(metric, data)
 
     # Get plot data and title
     if lat is not None and lon is not None:
