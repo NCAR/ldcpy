@@ -506,10 +506,6 @@ class DatasetMetrics(object):
                 return self.max_val
             if name == 'min_val':
                 return self.min_val
-            if name == 'range':
-                return self.dyn_range
-            if name == 'spre_tol':
-                return self.spre_tol
             if name == 'ds':
                 return self._ds
             raise ValueError(f'there is no metric with the name: {name}.')
@@ -535,6 +531,10 @@ class DatasetMetrics(object):
                 return self.zscore_cutoff
             if name == 'zscore_percent_significant':
                 return self.zscore_percent_significant
+            if name == 'range':
+                return self.dyn_range
+            if name == 'spre_tol':
+                return self.spre_tol
             raise ValueError(f'there is no metrics with the name: {name}.')
         else:
             raise TypeError('name must be a string.')

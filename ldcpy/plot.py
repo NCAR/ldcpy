@@ -766,9 +766,7 @@ def plot(
 
     # Call plot functions
     if plot_type == 'spatial_comparison':
-        mp.spatial_comparison_plot(
-            plot_data_set1, title_set1, plot_data_set2, title_set2, calc_ssim
-        )
+        mp.spatial_comparison_plot(plot_data_set1, title_set1, plot_data_set2, title_set2)
     elif plot_type == 'spatial':
         mp.spatial_plot(plot_data_set1, title_set1)
     elif plot_type == 'time_series':
