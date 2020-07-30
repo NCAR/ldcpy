@@ -44,6 +44,7 @@ class MetricsPlot(object):
         standardized_err=False,
         quantile=None,
         contour_levs=24,
+        calc_ssim=False,
     ):
 
         self._ds = ds
@@ -70,6 +71,7 @@ class MetricsPlot(object):
         self._standardized_err = standardized_err
         self._quantile = None
         self._contour_levs = contour_levs
+        self._calc_ssim = calc_ssim
 
     def verify_plot_parameters(self):
         if self._set2_name is None and self._metric_type in [
@@ -104,6 +106,15 @@ class MetricsPlot(object):
             raise ValueError('Cannot change quantile value if metric is not quantile')
         if self._quantile is None and self._metric == 'quantile':
             raise ValueError('Must specify quantile value as argument')
+        if self._calc_ssim and self._plot_type != 'spatial_comparison':
+            raise UserWarning(
+                'SSIM is only calculated for spatial comparison plots, ignoring calc_ssim option'
+            )
+        if self._metric in ['lag1', 'corr_lag1', 'mae_day_max'] and self._plot_type not in [
+            'spatial',
+            'spatial_comparison',
+        ]:
+            raise ValueError(f'Cannot plot {self._metric} in a non-spatial plot')
 
     def get_metrics(self, da):
         da_data = da
@@ -219,7 +230,7 @@ class MetricsPlot(object):
         update_label(None)
         return
 
-    def spatial_comparison_plot(self, da_set1, title_set1, da_set2, title_set2, calc_ssim):
+    def spatial_comparison_plot(self, da_set1, title_set1, da_set2, title_set2):
 
         lat_set1 = da_set1['lat']
         lat_set2 = da_set2['lat']
@@ -258,7 +269,7 @@ class MetricsPlot(object):
         ax1.set_global()
 
         # if we want to get the ssim
-        if calc_ssim:
+        if self._calc_ssim:
             ax1.axis('off')
             plt.margins(0, 0)
             extent1 = ax1.get_window_extent().transformed(fig.dpi_scale_trans.inverted())
@@ -286,7 +297,7 @@ class MetricsPlot(object):
         ax2.set_global()
 
         # if we want to get the ssim
-        if calc_ssim:
+        if self._calc_ssim:
             plt.margins(0, 0)
             ax2.axis('off')
             extent2 = ax2.get_window_extent().transformed(fig.dpi_scale_trans.inverted())
@@ -321,7 +332,7 @@ class MetricsPlot(object):
             proxy = [plt.Rectangle((0, 0), 1, 1, fc='#39ff14')]
             plt.legend(proxy, ['NaN'])
 
-        if calc_ssim:
+        if self._calc_ssim:
             import os
 
             import cv2
@@ -693,6 +704,7 @@ def plot(
         color,
         standardized_err,
         quantile,
+        calc_ssim,
     )
 
     mp.verify_plot_parameters()
