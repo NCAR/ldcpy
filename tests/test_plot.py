@@ -24,10 +24,6 @@ ds2 = ldcpy.open_datasets(
 )
 ds3 = ldcpy.open_datasets(['T'], ['data/cam-fv/cam-fv.T.3months.nc'], ['orig'])
 
-ds4 = ldcpy.open_datasets(
-    ['PS'], ['PS.monthly.192001-200512.nc', 'c.PS.monthly.192001-200512.nc'], ['orig', 'lossy']
-)
-
 
 class TestPlot(TestCase):
     """
@@ -221,8 +217,8 @@ class TestPlot(TestCase):
 
     def test_std_by_month(self):
         ldcpy.plot(
-            ds4,
-            'PS',
+            ds,
+            'TS',
             set1='orig',
             metric='mean',
             plot_type='time_series',
