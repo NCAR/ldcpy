@@ -1,14 +1,11 @@
-============
-Example Usage
-============
+Examples
+=========
 
-`Tutorial Notebook`_
-
-`Loading Data from AWS`_
-
-`Using Large Data Files on Glade`_
+.. toctree::
+    :maxdepth: 2
 
 
-.. _Tutorial Notebook: notebooks/TutorialNotebook.ipynb
-.. _Loading Data from AWS: notebooks/AWSDataNotebook.ipynb
-.. _Using Large Data Files on Glade: notebooks/LargegDataGladeNotebook.ipynb
+    notebooks/TutorialNotebook.ipynb
+    notebooks/AWSDataNotebook.ipynb
+    notebooks/LargeDataGladeNotebook.ipynb
+    notebooks/Using ZFP to compress.ipynb
