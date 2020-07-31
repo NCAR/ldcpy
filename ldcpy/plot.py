@@ -1,4 +1,5 @@
 import calendar
+import copy
 import datetime
 import math
 import re
@@ -239,7 +240,7 @@ class MetricsPlot(object):
 
         fig = plt.figure(dpi=300, figsize=(9, 2.5))
 
-        mymap = plt.get_cmap(f'{self._color}')
+        mymap = copy.copy(mpl.cm.get_cmap(f'{self._color}'))
         mymap.set_under(color='black')
         mymap.set_over(color='white')
         mymap.set_bad(alpha=0)
@@ -354,7 +355,7 @@ class MetricsPlot(object):
         lat = da['lat']
         cy_data, lon = add_cyclic_point(da, coord=da['lon'],)
 
-        mymap = plt.get_cmap(self._color)
+        mymap = copy.copy(mpl.cm.get_cmap(f'{self._color}'))
         mymap.set_under(color='black')
         mymap.set_over(color='white')
         mymap.set_bad(alpha=0.0)
