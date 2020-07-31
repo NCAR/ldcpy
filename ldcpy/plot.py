@@ -471,7 +471,7 @@ class MetricsPlot(object):
         mpl.pyplot.xlabel(xlabel)
 
         if self._group_by == 'time.month':
-            int_labels = np.setdiff1d(plt.xticks()[0].astype(int), [0, plt.xticks()[0][-1]])
+            int_labels = np.setdiff1d(plt.xticks()[0], [0, plt.xticks()[0][-1]]).astype(int)
             month_labels = [
                 calendar.month_name[i] if calendar.month_name[i] != '' else '' for i in int_labels
             ]
