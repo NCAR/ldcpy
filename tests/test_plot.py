@@ -213,6 +213,22 @@ class TestPlot(TestCase):
         self.assertTrue(True is True)
 
     @pytest.mark.nonsequential
+    def test_ssim(self):
+        ldcpy.plot(
+            ds,
+            'TS',
+            set1='orig',
+            set2='recon',
+            metric='mean',
+            plot_type='spatial_comparison',
+            calc_ssim=True,
+        )
+
+    @pytest.mark.nonsequential
+    def test_mae_max_day(self):
+        ldcpy.plot(ds, 'TS', set1='orig', metric='mae_day_max')
+
+    @pytest.mark.nonsequential
     def test_mean_3d(self):
         ldcpy.plot(ds3, 'T', set1='orig', metric='mean', lev=29)
         self.assertTrue(True)

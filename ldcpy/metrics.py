@@ -34,7 +34,7 @@ class DatasetMetrics(object):
         self._odds_positive = None
         self._prob_negative = None
         self._zscore = None
-        self._mae_max = None
+        self._mae_day_max = None
         self._corr_lag1 = None
         self._lag1 = None
         self._agg_dims = aggregate_dims
@@ -257,41 +257,20 @@ class DatasetMetrics(object):
         return self._zscore
 
     @property
-    def mae_max(self) -> xr.DataArray:
+    def mae_day_max(self) -> xr.DataArray:
         """
-        The maximum mean absolute error at the point averaged along the aggregate dimensions.
-        TODO: There is a bug hiding in this code, plotting the values does not work correctly. Waiting on xarray 0.15.2 when ds.idxmax() will available (use self._test.idxmax())
+        The day of maximum mean absolute value at the point.
+        NOTE: only available in spatial and spatial comparison plots
         """
         if not self._is_memoized('_mae_day_max'):
-            self._mae_max = 0
-            # self._test = abs(self._ds.groupby(self._grouping).mean(dim=self._agg_dims))
-            # # Would be great to replace the code below with a single call to _test.idxmax() once idxmax is in a stable release
-            # if self._grouping == 'time.dayofyear':
-            #     self._mae_max = xr.DataArray(
-            #         self._test.isel(dayofyear=self._test.argmax(dim='dayofyear'))
-            #         .coords.variables.mapping['dayofyear']
-            #         .data,
-            #         dims=['lat', 'lon'],
-            #     )
-            # if self._grouping == 'time.month':
-            #     self._mae_max = xr.DataArray(
-            #         self._test.isel(month=self._test.argmax(dim='month'))
-            #         .coords.variables.mapping['month']
-            #         .data,
-            #         dims=['lat', 'lon'],
-            #     )
-            # if self._grouping == 'time.year':
-            #     self._mae_max = xr.DataArray(
-            #         self._test.isel(year=self._test.argmax(dim='year'))
-            #         .coords.variables.mapping['year']
-            #         .data,
-            #         dims=['lat', 'lon'],
-            #     )
-            self._mae_max.attrs = self._ds.attrs
+            self._mae_day_max = 0
+            self._test = abs(self._ds).groupby('time.dayofyear').mean()
+            self._mae_day_max = self._test.idxmax(dim='dayofyear')
+            self._mae_day_max.attrs = self._ds.attrs
             if hasattr(self._ds, 'units'):
-                self._mae_max.attrs['units'] = f'{self._ds.units}'
+                self._mae_day_max.attrs['units'] = f'{self._ds.units}'
 
-        return self._mae_max
+        return self._mae_day_max
 
     @property
     def quantile(self):
@@ -372,7 +351,7 @@ class DatasetMetrics(object):
     def lag1(self) -> xr.DataArray:
         """
         The deseasonalized lag-1 value by day of year
-        TODO: This metric currently returns a lat-lon array regardless of aggregate dimensions, so can only be used in a spatial plot.
+        NOTE: This metric returns a spatial array regardless of aggregate dimensions, so can only be used in a spatial plot.
         """
         if not self._is_memoized('_lag1'):
             self._deseas_resid = self._ds.groupby('time.dayofyear') - self._ds.groupby(
@@ -396,7 +375,7 @@ class DatasetMetrics(object):
     def corr_lag1(self) -> xr.DataArray:
         """
         The deseasonalized lag-1 correlation at each point by day of year
-        TODO: This metric currently returns a lat-lon array regardless of aggregate dimensions, so can only be used in a spatial plot.
+        NOTE: This metric returns a lat-lon array regardless of aggregate dimensions, so can only be used in a spatial plot.
         """
         if not self._is_memoized('_corr_lag1'):
             time_length = self._ds.sizes['time']
@@ -418,7 +397,6 @@ class DatasetMetrics(object):
     def zscore_cutoff(self) -> np.ndarray:
         """
         The Z-Score cutoff for a point to be considered significant
-        TODO: Some single-value properties (liek this one) cannot be used in either spatial or time-series plots, there needs to be a way to specify which these are.
         """
         if not self._is_memoized('_zscore_cutoff'):
             pvals = 2 * (1 - ss.norm.cdf(np.abs(self.zscore)))
@@ -447,7 +425,6 @@ class DatasetMetrics(object):
     def zscore_percent_significant(self) -> np.ndarray:
         """
         The percent of points where the zscore is considered significant
-        TODO: Some single-value properties (liek this one) cannot be used in either spatial or time-series plots, there needs to be a way to specify which these are.
         """
         if not self._is_memoized('_zscore_percent_significant'):
             pvals = 2 * (1 - ss.norm.cdf(np.abs(self.zscore)))
@@ -502,8 +479,8 @@ class DatasetMetrics(object):
                 return self.odds_positive
             if name == 'zscore':
                 return self.zscore
-            if name == 'mae_max':
-                return self.mae_max
+            if name == 'mae_day_max':
+                return self.mae_day_max
             if name == 'mean_abs':
                 return self.mean_abs
             if name == 'mean_squared':
@@ -529,10 +506,6 @@ class DatasetMetrics(object):
                 return self.max_val
             if name == 'min_val':
                 return self.min_val
-            if name == 'range':
-                return self.dyn_range
-            if name == 'spre_tol':
-                return self.spre_tol
             if name == 'ds':
                 return self._ds
             raise ValueError(f'there is no metric with the name: {name}.')
@@ -558,6 +531,10 @@ class DatasetMetrics(object):
                 return self.zscore_cutoff
             if name == 'zscore_percent_significant':
                 return self.zscore_percent_significant
+            if name == 'range':
+                return self.dyn_range
+            if name == 'spre_tol':
+                return self.spre_tol
             raise ValueError(f'there is no metrics with the name: {name}.')
         else:
             raise TypeError('name must be a string.')

@@ -46,7 +46,7 @@ Now install ldcpy:
 
 .. code-block:: bash
 
-    conda install ldcpy
+    conda install -c conda-forge ldcpy
 
 Alternative Installation
 ________________________
