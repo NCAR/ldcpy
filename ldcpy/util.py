@@ -9,23 +9,22 @@ def open_datasets(varnames, list_of_files, labels, **kwargs):
     a new 'collection' dimension, which can be accessed with labels.
     Stores them in an xarray dataset.
 
-    Parameters:
-    ===========
-    varnames -- list <string>
-           the variable(s) of interest to combine across input files (usually just one)
+    Parameters
+    ==========
+    varnames : list
+           The variable(s) of interest to combine across input files (usually just one)
+    list_of_files : list
+        The file paths for the netCDF file(s) to be opened
+    labels : list
+        The respective label to access data from each netCDF file (also used in plotting fcns)
 
-    list_of_files -- list <string>
-        the file paths for the netCDF file(s) to be opened
-
-    labels -- list <string>
-        the respective label to access data from each netCDF file (also used in plotting fcns)
-
-    **kwargs (optional) – Additional arguments passed on to xarray.open_mfdataset(). A list of available arguments can
-    be found here: http://xarray.pydata.org/en/stable/generated/xarray.open_dataset.html
+    **kwargs :
+        (optional) – Additional arguments passed on to xarray.open_mfdataset(). A list of available arguments can
+        be found here: http://xarray.pydata.org/en/stable/generated/xarray.open_dataset.html
 
     Returns
     =======
-    out -- xarray.Dataset
+    out : xarray.Dataset
           contains all the data from the list of files
     """
 
@@ -54,30 +53,28 @@ def print_stats(ds, varname, set1, set2, time=0, significant_digits=4):
     """
     Print error summary statistics of two DataArrays
 
-    Parameters:
-    ===========
-    ds -- xarray.Dataset
-        an xarray dataset containing multiple netCDF files concatenated across a 'collection' dimension
-    varname -- string
-        the variable of interest in the dataset
-    set1 -- string
-        the collection label of the "control" data
-    set2 -- string
-        the collection label of the (1st) data to compare
+    Parameters
+    ==========
+    ds : xarray.Dataset
+        An xarray dataset containing multiple netCDF files concatenated across a 'collection' dimension
+    varname : str
+        The variable of interest in the dataset
+    set1 : str
+        The collection label of the "control" data
+    set2 : str
+        The collection label of the (1st) data to compare
+    time : int, optional
+        The time index used to compare the two netCDF files (default 0)
 
-    Keyword Arguments:
-    ==================
-    time -- int
-        the time index used to compare the two netCDF files (default 0)
+    significant_digits : int, optional
+        The number of significant digits to use when printing stats, (default 4)
 
     Returns
     =======
-    out -- None
+    out : None
 
     """
     print('Comparing {} data (set1) to {} data (set2)'.format(set1, set2))
-
-    import json
 
     ds0_metrics = DatasetMetrics(ds[varname].sel(collection=set1).isel(time=time), ['lat', 'lon'])
     ds1_metrics = DatasetMetrics(ds[varname].sel(collection=set2).isel(time=time), ['lat', 'lon'])
@@ -147,9 +144,6 @@ def print_stats(ds, varname, set1, set2, time=0, significant_digits=4):
             print(f'{key}: {rounded_value}')
         else:
             print(' ')
-
-
-#    print(json.dumps(output, indent=4, separators=(',', ': '),))
 
 
 def subset_data(ds, subset, lat=None, lon=None, lev=0, start=None, end=None):

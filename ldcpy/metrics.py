@@ -234,7 +234,7 @@ class DatasetMetrics(object):
     @property
     def odds_positive(self) -> np.ndarray:
         """
-        The odds that a point is positive: prob_positive/(1-prob_positive)
+        The odds that a point is positive = prob_positive/(1-prob_positive)
         """
         if not self._is_memoized('_odds_positive'):
             self._odds_positive = self.prob_positive / (1 - self.prob_positive)
@@ -450,15 +450,19 @@ class DatasetMetrics(object):
         """
         Gets a metric aggregated across one or more dimensions of the dataset
 
-        Parameters:
-        ===========
-        name -- string
-            the name of the metric (must be identical to a property name)
+        Parameters
+        ==========
+        name : str
+            The name of the metric (must be identical to a property name)
+
+        q: float, optional
+           (default 0.5)
 
         Returns
         =======
-        out -- xarray.DataArray
-            a DataArray of the same size and dimensions the original dataarray, minus those dimensions that were aggregated across.
+        out : xarray.DataArray
+            A DataArray of the same size and dimensions the original dataarray,
+            minus those dimensions that were aggregated across.
         """
         if isinstance(name, str):
             if name == 'ns_con_var':
@@ -516,15 +520,15 @@ class DatasetMetrics(object):
         """
         Gets a metric consisting of a single float value
 
-        Parameters:
-        ===========
-        name -- string
+        Parameters
+        ==========
+        name : str
             the name of the metric (must be identical to a property name)
 
         Returns
         =======
-        out -- float
-            the metric value
+        out : float
+            The metric value
         """
         if isinstance(name, str):
             if name == 'zscore_cutoff':
@@ -724,14 +728,14 @@ class DiffMetrics(object):
         """
         Gets a metric on the dataset that requires more than one input dataset
 
-        Parameters:
-        ===========
-        name -- string
-            the name of the metric (must be identical to a property name)
+        Parameters
+        ==========
+        name : str
+            The name of the metric (must be identical to a property name)
 
         Returns
         =======
-        out -- float32
+        out : float
         """
         if isinstance(name, str):
             if name == 'pearson_correlation_coefficient':
