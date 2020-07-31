@@ -222,7 +222,7 @@ class TestPlot(TestCase):
             set1='orig',
             metric='mean',
             plot_type='time_series',
-            set2='lossy',
+            set2='recon',
             group_by='time.month',
             metric_type='diff',
         )
