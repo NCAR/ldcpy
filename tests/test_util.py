@@ -31,7 +31,6 @@ class TestPlot(TestCase):
     parameters. Tests still need to be written for the methods in the plot.py class.
     """
 
-    @pytest.mark.nonsequential
     def test_print_stats(self):
         ldcpy.print_stats(ds, 'TS', set1='orig', set2='recon')
         self.assertTrue(True)

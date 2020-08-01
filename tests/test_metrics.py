@@ -34,7 +34,6 @@ class TestErrorMetrics(TestCase):
             }
         ]
 
-    @pytest.mark.nonsequential
     def test_creation_01(self):
         DiffMetrics(
             xr.DataArray(self._samples[0]['observed']),
@@ -42,7 +41,6 @@ class TestErrorMetrics(TestCase):
             [],
         )
 
-    @pytest.mark.nonsequential
     def test_error_01(self):
         em = DatasetMetrics(
             xr.DataArray(self._samples[0]['observed']) - xr.DataArray(self._samples[0]['measured']),
@@ -51,7 +49,6 @@ class TestErrorMetrics(TestCase):
 
         self.assertTrue(all(self._samples[0]['expected_error'] == em.sum))
 
-    @pytest.mark.nonsequential
     def test_mean_error_01(self):
         em = DatasetMetrics(
             xr.DataArray(self._samples[0]['observed']) - xr.DataArray(self._samples[0]['measured']),
@@ -59,7 +56,6 @@ class TestErrorMetrics(TestCase):
         )
         self.assertTrue(em.mean.all() == 0.0)
 
-    @pytest.mark.nonsequential
     def test_mean_error_02(self):
         em = DatasetMetrics(
             xr.DataArray(self._samples[0]['observed'] - xr.DataArray(self._samples[0]['measured'])),
@@ -72,7 +68,6 @@ class TestErrorMetrics(TestCase):
 
         self.assertTrue(em.mean.all() == 0.0)
 
-    @pytest.mark.nonsequential
     def test_TS_02(self):
         import xarray as xr
         import zfpy
@@ -83,93 +78,71 @@ class TestErrorMetrics(TestCase):
 
         print(type(TS))
 
-    @pytest.mark.nonsequential
     def test_mean(self):
         self.assertTrue(test_overall_metrics.mean == -0.5)
 
-    @pytest.mark.nonsequential
     def test_mean_abs(self):
         self.assertTrue(test_overall_metrics.mean_abs == 50)
 
-    @pytest.mark.nonsequential
     def test_mean_squared(self):
         self.assertTrue(np.isclose(test_overall_metrics.mean_squared, 0.25, rtol=1e-09))
 
-    @pytest.mark.nonsequential
     def test_min_abs(self):
         self.assertTrue(test_overall_metrics.min_abs == 0)
 
-    @pytest.mark.nonsequential
     def test_max_abs(self):
         self.assertTrue(test_overall_metrics.max_abs == 100)
 
-    @pytest.mark.nonsequential
     def test_min_val(self):
         self.assertTrue(test_overall_metrics.min_val == -100)
 
-    @pytest.mark.nonsequential
     def test_max_val(self):
         self.assertTrue(test_overall_metrics.max_val == 99)
 
-    @pytest.mark.nonsequential
     def test_ns_con_var(self):
         self.assertTrue(test_overall_metrics.ns_con_var == 2500)  # is this right?
 
-    @pytest.mark.nonsequential
     def test_ew_con_var(self):
         self.assertTrue(test_overall_metrics.ew_con_var == 400)  # is this right?
 
-    @pytest.mark.nonsequential
     def test_odds_positive(self):
         self.assertTrue(np.isclose(test_overall_metrics.odds_positive, 0.98019802, rtol=1e-09))
 
-    @pytest.mark.nonsequential
     def test_prob_negative(self):
         self.assertTrue(test_overall_metrics.prob_negative == 0.5)
 
-    @pytest.mark.nonsequential
     def test_prob_positive(self):
         self.assertTrue(test_overall_metrics.prob_positive == 0.495)
 
-    @pytest.mark.nonsequential
     def test_dyn_range(self):
         self.assertTrue(test_overall_metrics.dyn_range == 199)
 
-    @pytest.mark.nonsequential
     def test_corr_lag1(self):
         self.assertTrue(np.isnan(test_overall_metrics.corr_lag1).all())  # is this right?
 
-    @pytest.mark.nonsequential
     def test_lag1(self):
         self.assertTrue(test_overall_metrics.lag1.all() == 0)  # is this right?
 
-    @pytest.mark.nonsequential
     def test_median(self):
         self.assertTrue(test_overall_metrics.get_metric('quantile', 0.5) == -0.5)
 
-    @pytest.mark.nonsequential
     def test_rms(self):
         self.assertTrue(np.isclose(test_overall_metrics.get_metric('rms'), 57.73647028, rtol=1e-09))
 
-    @pytest.mark.nonsequential
     def test_std(self):
         self.assertTrue(np.isclose(test_overall_metrics.get_metric('std'), 57.73430523, rtol=1e-09))
 
-    @pytest.mark.nonsequential
     def test_sum(self):
         self.assertTrue(test_overall_metrics.get_metric('sum') == -100)
 
-    @pytest.mark.nonsequential
     def test_variance(self):
         self.assertTrue(test_overall_metrics.get_metric('variance') == 3333.25)
 
-    @pytest.mark.nonsequential
     def test_zscore(self):
         self.assertTrue(
             np.isclose(test_overall_metrics.get_metric('zscore'), -0.02738647, rtol=1e-09)
         )
 
-    @pytest.mark.nonsequential
     def test_mean_spatial(self):
         self.assertTrue(
             (
@@ -185,7 +158,6 @@ class TestErrorMetrics(TestCase):
             ).all()
         )
 
-    @pytest.mark.nonsequential
     def test_mean_abs_spatial(self):
         self.assertTrue(
             (
@@ -201,7 +173,6 @@ class TestErrorMetrics(TestCase):
             ).all()
         )
 
-    @pytest.mark.nonsequential
     def test_mean_squared_spatial(self):
         self.assertTrue(
             np.isclose(
@@ -218,7 +189,6 @@ class TestErrorMetrics(TestCase):
             ).all()
         )
 
-    @pytest.mark.nonsequential
     def test_min_abs_spatial(self):
         self.assertTrue(
             (
@@ -234,7 +204,6 @@ class TestErrorMetrics(TestCase):
             ).all()
         )
 
-    @pytest.mark.nonsequential
     def test_max_abs_spatial(self):
         self.assertTrue(
             (
@@ -250,7 +219,6 @@ class TestErrorMetrics(TestCase):
             ).all()
         )
 
-    @pytest.mark.nonsequential
     def test_min_val_spatial(self):
         self.assertTrue(
             (
@@ -266,7 +234,6 @@ class TestErrorMetrics(TestCase):
             ).all()
         )
 
-    @pytest.mark.nonsequential
     def test_max_val_spatial(self):
         self.assertTrue(
             (
@@ -282,7 +249,6 @@ class TestErrorMetrics(TestCase):
             ).all()
         )
 
-    @pytest.mark.nonsequential
     def test_ns_con_var_spatial(self):
         self.assertTrue(
             (
@@ -297,7 +263,6 @@ class TestErrorMetrics(TestCase):
             ).all()
         )
 
-    @pytest.mark.nonsequential
     def test_odds_positive_spatial(self):
         self.assertTrue(
             np.isclose(
@@ -314,7 +279,6 @@ class TestErrorMetrics(TestCase):
             ).all()
         )
 
-    @pytest.mark.nonsequential
     def test_prob_positive_spatial(self):
         self.assertTrue(
             np.isclose(
@@ -331,7 +295,6 @@ class TestErrorMetrics(TestCase):
             ).all()
         )
 
-    @pytest.mark.nonsequential
     def test_prob_negative_spatial(self):
         self.assertTrue(
             np.isclose(
@@ -348,7 +311,6 @@ class TestErrorMetrics(TestCase):
             ).all()
         )
 
-    @pytest.mark.nonsequential
     def test_median_spatial(self):
         self.assertTrue(
             (
@@ -364,7 +326,6 @@ class TestErrorMetrics(TestCase):
             ).all()
         )
 
-    @pytest.mark.nonsequential
     def test_rms_spatial(self):
         self.assertTrue(
             np.isclose(
@@ -381,7 +342,6 @@ class TestErrorMetrics(TestCase):
             ).all()
         )
 
-    @pytest.mark.nonsequential
     def test_std_spatial(self):
         self.assertTrue(
             np.isclose(
@@ -398,7 +358,6 @@ class TestErrorMetrics(TestCase):
             ).all()
         )
 
-    @pytest.mark.nonsequential
     def test_sum_spatial(self):
         self.assertTrue(
             (
@@ -414,7 +373,6 @@ class TestErrorMetrics(TestCase):
             ).all()
         )
 
-    @pytest.mark.nonsequential
     def test_variance_spatial(self):
         self.assertTrue(
             (
@@ -430,7 +388,6 @@ class TestErrorMetrics(TestCase):
             ).all()
         )
 
-    @pytest.mark.nonsequential
     def test_zscore_spatial(self):
         self.assertTrue(
             np.isclose(
@@ -447,11 +404,9 @@ class TestErrorMetrics(TestCase):
             ).all()
         )
 
-    @pytest.mark.nonsequential
     def test_corr_lag1_spatial(self):
         self.assertTrue(np.isnan(test_spatial_metrics.get_metric('corr_lag1')).all())
 
-    @pytest.mark.nonsequential
     def test_ew_con_var_spatial(self):
         self.assertTrue(
             (
@@ -467,7 +422,6 @@ class TestErrorMetrics(TestCase):
             ).all()
         )
 
-    @pytest.mark.nonsequential
     def test_lag1_spatial(self):
         self.assertTrue(
             (
@@ -507,7 +461,6 @@ class TestErrorMetrics(TestCase):
             ).all()
         )
 
-    @pytest.mark.nonsequential
     def test_mean_time_series(self):
         self.assertTrue(
             np.isclose(
@@ -517,7 +470,6 @@ class TestErrorMetrics(TestCase):
             ).all()
         )
 
-    @pytest.mark.nonsequential
     def test_mean_abs_time_series(self):
         self.assertTrue(
             np.isclose(
@@ -527,7 +479,6 @@ class TestErrorMetrics(TestCase):
             ).all()
         )
 
-    @pytest.mark.nonsequential
     def test_mean_squared_time_series(self):
         self.assertTrue(
             np.isclose(
@@ -537,7 +488,6 @@ class TestErrorMetrics(TestCase):
             ).all()
         )
 
-    @pytest.mark.nonsequential
     def test_max_abs_time_series(self):
         self.assertTrue(
             np.isclose(
@@ -547,7 +497,6 @@ class TestErrorMetrics(TestCase):
             ).all()
         )
 
-    @pytest.mark.nonsequential
     def test_max_val_time_series(self):
         self.assertTrue(
             np.isclose(
@@ -557,7 +506,6 @@ class TestErrorMetrics(TestCase):
             ).all()
         )
 
-    @pytest.mark.nonsequential
     def test_min_abs_time_series(self):
         self.assertTrue(
             np.isclose(
@@ -567,7 +515,6 @@ class TestErrorMetrics(TestCase):
             ).all()
         )
 
-    @pytest.mark.nonsequential
     def test_min_val_time_series(self):
         self.assertTrue(
             np.isclose(
@@ -577,7 +524,6 @@ class TestErrorMetrics(TestCase):
             ).all()
         )
 
-    @pytest.mark.nonsequential
     def test_ns_con_var_time_series(self):
         self.assertTrue(
             np.isclose(
@@ -600,7 +546,6 @@ class TestErrorMetrics(TestCase):
             ).all()
         )
 
-    @pytest.mark.nonsequential
     def test_odds_positive_time_series(self):
         self.assertTrue(
             np.isclose(
@@ -610,7 +555,6 @@ class TestErrorMetrics(TestCase):
             ).all()
         )
 
-    @pytest.mark.nonsequential
     def test_prob_negative_time_series(self):
         self.assertTrue(
             np.isclose(
@@ -620,7 +564,6 @@ class TestErrorMetrics(TestCase):
             ).all()
         )
 
-    @pytest.mark.nonsequential
     def test_prob_positive_time_series(self):
         self.assertTrue(
             np.isclose(
@@ -630,7 +573,6 @@ class TestErrorMetrics(TestCase):
             ).all()
         )
 
-    @pytest.mark.nonsequential
     def test_median_time_series(self):
         self.assertTrue(
             np.isclose(
@@ -640,7 +582,6 @@ class TestErrorMetrics(TestCase):
             ).all()
         )
 
-    @pytest.mark.nonsequential
     def test_rms_time_series(self):
         self.assertTrue(
             np.isclose(
@@ -663,7 +604,6 @@ class TestErrorMetrics(TestCase):
             ).all()
         )
 
-    @pytest.mark.nonsequential
     def test_std_time_series(self):
         self.assertTrue(
             np.isclose(
@@ -686,7 +626,6 @@ class TestErrorMetrics(TestCase):
             ).all()
         )
 
-    @pytest.mark.nonsequential
     def test_sum_time_series(self):
         self.assertTrue(
             np.isclose(
@@ -696,7 +635,6 @@ class TestErrorMetrics(TestCase):
             ).all()
         )
 
-    @pytest.mark.nonsequential
     def test_variance_time_series(self):
         self.assertTrue(
             np.isclose(
@@ -719,7 +657,6 @@ class TestErrorMetrics(TestCase):
             ).all()
         )
 
-    @pytest.mark.nonsequential
     def test_zscore_time_series(self):
         self.assertTrue(
             np.isclose(
@@ -742,11 +679,9 @@ class TestErrorMetrics(TestCase):
             ).all()
         )
 
-    @pytest.mark.nonsequential
     def test_corr_lag1_time_series(self):
         self.assertTrue(np.isnan(test_time_series_metrics.corr_lag1).all())
 
-    @pytest.mark.nonsequential
     def test_ew_con_var_time_series(self):
         self.assertTrue(
             np.isclose(
@@ -756,7 +691,6 @@ class TestErrorMetrics(TestCase):
             ).all()
         )
 
-    @pytest.mark.nonsequential
     def test_lag1_time_series(self):
         self.assertTrue(
             np.isclose(
@@ -797,7 +731,6 @@ class TestErrorMetrics(TestCase):
             ).all()
         )
 
-    @pytest.mark.nonsequential
     def test_diff_pcc(self):
         self.assertTrue(
             np.isclose(
@@ -807,7 +740,6 @@ class TestErrorMetrics(TestCase):
             ).all()
         )
 
-    @pytest.mark.nonsequential
     def test_diff_ksp(self):
         self.assertTrue(
             np.isclose(
@@ -815,7 +747,6 @@ class TestErrorMetrics(TestCase):
             ).all()
         )
 
-    @pytest.mark.nonsequential
     def test_diff_covariance(self):
         self.assertTrue(
             np.isclose(
@@ -823,7 +754,6 @@ class TestErrorMetrics(TestCase):
             ).all()
         )
 
-    @pytest.mark.nonsequential
     def test_diff_normalized_max_pointwise_error(self):
         self.assertTrue(
             np.isclose(
@@ -831,7 +761,6 @@ class TestErrorMetrics(TestCase):
             ).all()
         )
 
-    @pytest.mark.nonsequential
     def test_diff_normalized_root_mean_squared(self):
         self.assertTrue(
             np.isclose(

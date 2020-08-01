@@ -1,3 +1,5 @@
+import functools
+
 import xarray as xr
 
 from .metrics import DatasetMetrics, DiffMetrics
@@ -34,12 +36,15 @@ def open_datasets(varnames, list_of_files, labels, **kwargs):
         labels
     ), 'open_dataset file list and labels arguments must be the same length'
 
+    preprocess_vars = functools.partial(preprocess, varnames=varnames)
+
     full_ds = xr.open_mfdataset(
         list_of_files,
         concat_dim='collection',
         combine='nested',
         data_vars=varnames,
         parallel=True,
+        preprocess=preprocess_vars,
         **kwargs,
     )
 
@@ -47,6 +52,10 @@ def open_datasets(varnames, list_of_files, labels, **kwargs):
     print('dataset size in GB {:0.2f}\n'.format(full_ds.nbytes / 1e9))
 
     return full_ds
+
+
+def preprocess(ds, varnames):
+    return ds[varnames]
 
 
 def print_stats(ds, varname, set1, set2, time=0, significant_digits=4):
