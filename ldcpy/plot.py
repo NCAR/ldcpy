@@ -1,4 +1,5 @@
 import calendar
+import copy
 import datetime
 import math
 import re
@@ -44,6 +45,7 @@ class MetricsPlot(object):
         standardized_err=False,
         quantile=None,
         contour_levs=24,
+        calc_ssim=False,
     ):
 
         self._ds = ds
@@ -70,6 +72,7 @@ class MetricsPlot(object):
         self._standardized_err = standardized_err
         self._quantile = None
         self._contour_levs = contour_levs
+        self._calc_ssim = calc_ssim
 
     def verify_plot_parameters(self):
         if self._set2_name is None and self._metric_type in [
@@ -104,6 +107,15 @@ class MetricsPlot(object):
             raise ValueError('Cannot change quantile value if metric is not quantile')
         if self._quantile is None and self._metric == 'quantile':
             raise ValueError('Must specify quantile value as argument')
+        if self._calc_ssim and self._plot_type != 'spatial_comparison':
+            raise UserWarning(
+                'SSIM is only calculated for spatial comparison plots, ignoring calc_ssim option'
+            )
+        if self._metric in ['lag1', 'corr_lag1', 'mae_day_max'] and self._plot_type not in [
+            'spatial',
+            'spatial_comparison',
+        ]:
+            raise ValueError(f'Cannot plot {self._metric} in a non-spatial plot')
 
     def get_metrics(self, da):
         da_data = da
@@ -219,7 +231,7 @@ class MetricsPlot(object):
         update_label(None)
         return
 
-    def spatial_comparison_plot(self, da_set1, title_set1, da_set2, title_set2, calc_ssim):
+    def spatial_comparison_plot(self, da_set1, title_set1, da_set2, title_set2):
 
         lat_set1 = da_set1['lat']
         lat_set2 = da_set2['lat']
@@ -228,7 +240,7 @@ class MetricsPlot(object):
 
         fig = plt.figure(dpi=300, figsize=(9, 2.5))
 
-        mymap = plt.get_cmap(f'{self._color}')
+        mymap = copy.copy(mpl.cm.get_cmap(f'{self._color}'))
         mymap.set_under(color='black')
         mymap.set_over(color='white')
         mymap.set_bad(alpha=0)
@@ -258,7 +270,7 @@ class MetricsPlot(object):
         ax1.set_global()
 
         # if we want to get the ssim
-        if calc_ssim:
+        if self._calc_ssim:
             ax1.axis('off')
             plt.margins(0, 0)
             extent1 = ax1.get_window_extent().transformed(fig.dpi_scale_trans.inverted())
@@ -286,7 +298,7 @@ class MetricsPlot(object):
         ax2.set_global()
 
         # if we want to get the ssim
-        if calc_ssim:
+        if self._calc_ssim:
             plt.margins(0, 0)
             ax2.axis('off')
             extent2 = ax2.get_window_extent().transformed(fig.dpi_scale_trans.inverted())
@@ -321,7 +333,7 @@ class MetricsPlot(object):
             proxy = [plt.Rectangle((0, 0), 1, 1, fc='#39ff14')]
             plt.legend(proxy, ['NaN'])
 
-        if calc_ssim:
+        if self._calc_ssim:
             import os
 
             import cv2
@@ -343,7 +355,7 @@ class MetricsPlot(object):
         lat = da['lat']
         cy_data, lon = add_cyclic_point(da, coord=da['lon'],)
 
-        mymap = plt.get_cmap(self._color)
+        mymap = copy.copy(mpl.cm.get_cmap(f'{self._color}'))
         mymap.set_under(color='black')
         mymap.set_over(color='white')
         mymap.set_bad(alpha=0.0)
@@ -460,8 +472,7 @@ class MetricsPlot(object):
         mpl.pyplot.xlabel(xlabel)
 
         if self._group_by == 'time.month':
-            int_labels = np.setdiff1d(plt.xticks()[0].astype(int), 0)
-            # no_hyphen_int_labels = [(int(float(re.sub('−', '-', label)))) for label in int_labels]
+            int_labels = np.setdiff1d(plt.xticks()[0], [0, plt.xticks()[0][-1]]).astype(int)
             month_labels = [
                 calendar.month_name[i] if calendar.month_name[i] != '' else '' for i in int_labels
             ]
@@ -530,149 +541,114 @@ def plot(
     Plots the data given an xarray dataset
 
 
-    Parameters:
-    ===========
-    ds -- xarray.Dataset
-        the dataset
-    varname -- string
-        the name of the variable to be plotted
-    metric -- string
-        the name of the metric to be plotted (must match a property name in the DatasetMetrics class in ldcpy.plot, for more information about the available metrics see ldcpy.DatasetMetrics)
+    Parameters
+    ==========
+    ds : xarray.Dataset
+        The input dataset
+    varname : str
+        The name of the variable to be plotted
+    metric : str
+        The name of the metric to be plotted (must match a property name in the DatasetMetrics
+        class in ldcpy.plot, for more information about the available metrics see ldcpy.DatasetMetrics)
+        Accept values include:
 
-            'ns_con_var'
+            - ns_con_var
+            - ew_con_var
+            - mean
+            - std
+            - variance
+            - prob_positive
+            - prob_negative
+            - odds_positive
+            - zscore
+            - mean_abs
+            - mean_squared
+            - rms
+            - sum
+            - sum_squared
+            - corr_lag1
+            - quantile
+            - lag1
+    set1 : str
+        The label of the dataset to gather metrics from
+    set2 : str
+        The label of the second dataset to gather metrics from (needed if metric_type
+        is diff, ratio, or metric_of_diff, or if plot_type is spatial_comparison)
+    group_by : str
+        how to group the data in time series plots.
+        Valid groupings:
 
-            'ew_con_var'
+            - time.day
+            - time.dayofyear
+            - time.month
+            - time.year
+    scale : str, optional
+        time-series y-axis plot transformation. (default "linear")
+        Valid options:
 
-            'mean'
+            - linear
+            - log
+    metric_type : str, optional
+        The type of operation to be performed on the metrics in the two collections. (default 'raw')
+        Valid options:
 
-            'std'
+            - raw: the unaltered metric values
+            - diff: the difference between the metric values in collections set1 and set2
+            - ratio: the ratio of the metric values in (set2/set1)
+            - metric_of_diff: the metric value computed on the difference between set1 and set2
+    plot_type : str , optional
+        The type of plot to be created. (default 'spatial')
+        Valid options:
 
-            'variance'
+            - spatial: a plot of the world with values at each lat and lon point (takes the mean across the time dimension)
+            - spatial_comparison: two side-by-side spatial plots, one of the raw metric from set1 and the other of the raw metric from set2
+            - time-series: A time-series plot of the data (computed by taking the mean across the lat and lon dimensions)
+            - histogram: A histogram of the time-series data
+    transform : str, optional
+        data transformation. (default 'none')
+        Valid options:
 
-            'prob_positive'
+            - none
+            - log
+    subset : str, optional
+        subset of the data to gather metrics on (default None).
+        Valid options:
 
-            'prob_negative'
-
-            'odds_positive'
-
-            'zscore'
-
-            'mean_abs'
-
-            'mean_squared'
-
-            'rms'
-
-            'sum'
-
-            'sum_squared'
-
-            'corr_lag1'
-
-            'quantile'
-
-            'lag1'
-
-
-    set1 -- string
-        the label of the dataset to gather metrics from
-
-    Keyword Arguments:
-    ==================
-    set2 -- string
-        the label of the second dataset to gather metrics from (needed if metric_type is diff, ratio, or metric_of_diff, or if plot_type is spatial_comparison)
-
-    group_by -- string
-        how to group the data in time series plots. Valid groupings:
-            "time.day"
-
-            "time.dayofyear"
-
-            "time.month"
-
-            "time.year"
-
-    scale -- string (default "linear")
-        time-series y-axis plot transformation. Valid options:
-            'linear'
-
-            'log'
-
-    metric_type -- string (default 'raw')
-        The type of operation to be performed on the metrics in the two collections. Valid options:
-
-            'raw': the unaltered metric values
-
-            'diff': the difference between the metric values in collections set1 and set2
-
-            'ratio': the ratio of the metric values in (set2/set1)
-
-            'metric_of_diff': the metric value computed on the difference between set1 and set2
-
-    plot_type -- string (default 'spatial')
-        The type of plot to be created. Valid options:
-
-            'spatial': a plot of the world with values at each lat and lon point (takes the mean across the time dimension)
-
-            'spatial_comparison': two side-by-side spatial plots, one of the raw metric from set1 and the other of the raw metric from set2
-
-            'time-series': A time-series plot of the data (computed by taking the mean across the lat and lon dimensions)
-
-            'histogram': A histogram of the time-series data
-
-    transform -- string (default 'none')
-        data transformation. Valid options:
-
-            'none'
-
-            'log'
-
-    subset -- string (default None)
-        subset of the data to gather metrics on. Valid options:
-
-            'first5': the first 5 days of data
-
-            'winter': data from the months December, January, February
-
-            'spring': data from the months March, April, May
-
-            'summer': data from the months June, July, August
-
-            'autumn': data from the months September, October, November
-
-    lat -- float (default None)
-        the latitude of the data to gather metrics on.
-
-    lon -- float (default None)
-        the longitude of the data to gather metrics on.
-
-    lev -- float (default 0)
-        the level of the data to gather metrics on (used if plotting from a 3d data set).
-
-    color -- string (default 'coolwarm')
-        the color scheme for spatial plots (see https://matplotlib.org/3.1.1/gallery/color/colormap_reference.html)
-
-    standardized_err -- bool (default False)
-        whether or not to standardize the error in a plot of metric_type="diff"
-
-    quantile -- float (default 0.5)
-        a value between 0 and 1 required if metric="quantile", corresponding to the desired quantile to gather
-
-
-    start -- int (default None)
-        a value between 0 and the number of time slices indicating the start time of a subset
-
-
-    end -- int (default None)
-        a value between 0 and the number of time slices indicating the end time of a subset
-
-    calc_ssim -- bool (default False)
-        whether or not to calculate the ssim (structural similarity index) between two plots
-        (only applies to plot_type = 'spatial_comparison')
+            - first5: the first 5 days of data
+            - winter: data from the months December, January, February
+            - spring: data from the months March, April, May
+            - summer: data from the months June, July, August
+            - autumn: data from the months September, October, November
+    lat : float, optional
+        The latitude of the data to gather metrics on (default None).
+    lon : float , optional
+        The longitude of the data to gather metrics on (default None).
+    lev : float, optional
+        The level of the data to gather metrics on (used if plotting from a 3d data set),
+        (default 0).
+    color : str, optional
+        The color scheme for spatial plots, (default 'coolwarm').
+        see https://matplotlib.org/3.1.1/gallery/color/colormap_reference.html
+        for more options
+    standardized_err : bool, optional
+        Whether or not to standardize the error in a plot of metric_type="diff",
+        (default False).
+    quantile : float, optional
+        A value between 0 and 1 required if metric="quantile", corresponding to the desired quantile to gather,
+        (default 0.5).
+    start : int, optional
+        A value between 0 and the number of time slices indicating the start time of a subset,
+        (default None).
+    end : int, optional
+        A value between 0 and the number of time slices indicating the end time of a subset,
+        (default None)
+    calc_ssim : bool, optional
+        Whether or not to calculate the ssim (structural similarity index) between two plots
+        (only applies to plot_type = 'spatial_comparison'), (default False).
 
     Returns
     =======
-    out -- None
+    out : None
     """
 
     mp = MetricsPlot(
@@ -693,6 +669,7 @@ def plot(
         color,
         standardized_err,
         quantile,
+        calc_ssim,
     )
 
     mp.verify_plot_parameters()
@@ -731,7 +708,7 @@ def plot(
         if ds.variables.mapping.get('gw') is not None:
             metric_name_set2 = mp.get_metric_label(metric, subset_set2, ds['gw'].values)
         else:
-            metric_name_set1 = mp.get_metric_label(metric, data)
+            metric_name_set2 = mp.get_metric_label(metric, data)
 
     # Get plot data and title
     if lat is not None and lon is not None:
@@ -754,9 +731,7 @@ def plot(
 
     # Call plot functions
     if plot_type == 'spatial_comparison':
-        mp.spatial_comparison_plot(
-            plot_data_set1, title_set1, plot_data_set2, title_set2, calc_ssim
-        )
+        mp.spatial_comparison_plot(plot_data_set1, title_set1, plot_data_set2, title_set2)
     elif plot_type == 'spatial':
         mp.spatial_plot(plot_data_set1, title_set1)
     elif plot_type == 'time_series':
