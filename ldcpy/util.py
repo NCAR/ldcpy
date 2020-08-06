@@ -4,12 +4,61 @@ import xarray as xr
 
 from .metrics import DatasetMetrics, DiffMetrics
 
+def collect_datasets(varnames, list_of_ds, labels, **kwargs):
+    """
+    Concatonate several different xarray datasets across a new
+    "collection" dimension, which can be accessed with the specified 
+    labels.  Stores them in an xarray dataset which can be passed to 
+    the ldcpy plot functions (Call this OR open_datasets() before
+    plotting.)
+    
+
+    Parameters
+    ==========
+    varnames : list
+        The variable(s) of interest to combine across input files (usually just one)
+    list_of_datasets : list
+        The datasets to be concatonated into a collection
+    labels : list
+        The respective label to access data from each dataset (also used in plotting fcns)
+
+        **kwargs :
+        (optional) – Additional arguments passed on to xarray.concat(). A list of available arguments can
+        be found here: https://xarray-test.readthedocs.io/en/latest/generated/xarray.concat.html
+
+    Returns
+    =======
+    out : xarray.Dataset
+          a collection containing all the data from the list datasets
+
+    """
+    # Error checking:
+    # list_of_files and labels must be same length
+    assert len(list_of_ds) == len(
+        labels
+    ), 'collect_dataset dataset list and labels arguments must be the same length'
+
+    #preprocess
+    for i, myds in enumerate(list_of_ds):
+        list_of_ds[i]= preprocess(myds, varnames)
+        
+    
+    full_ds = xr.concat( list_of_ds , 'collection', **kwargs )
+
+    full_ds['collection'] = xr.DataArray(labels, dims='collection')
+
+    print('dataset size in GB {:0.2f}\n'.format(full_ds.nbytes / 1e9))
+
+    return full_ds
+    
+    
 
 def open_datasets(varnames, list_of_files, labels, **kwargs):
     """
     Open several different netCDF files, concatenate across
-    a new 'collection' dimension, which can be accessed with labels.
-    Stores them in an xarray dataset.
+    a new 'collection' dimension, which can be accessed with the specified
+    labels. Stores them in an xarray dataset which can be passed to the ldcpy
+    plot functions.
 
     Parameters
     ==========
@@ -27,11 +76,13 @@ def open_datasets(varnames, list_of_files, labels, **kwargs):
     Returns
     =======
     out : xarray.Dataset
-          contains all the data from the list of files
+          a collection containing all the data from the list of files
+
+
     """
 
     # Error checking:
-    # list_of_files and ensemble_names must be same length
+    # list_of_files and labels must be same length
     assert len(list_of_files) == len(
         labels
     ), 'open_dataset file list and labels arguments must be the same length'

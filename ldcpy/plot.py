@@ -44,8 +44,8 @@ class MetricsPlot(object):
         color='coolwarm',
         standardized_err=False,
         quantile=None,
-        contour_levs=24,
         calc_ssim=False,
+        contour_levs=24,
     ):
 
         self._ds = ds
@@ -71,9 +71,11 @@ class MetricsPlot(object):
         self._color = color
         self._standardized_err = standardized_err
         self._quantile = None
-        self._contour_levs = contour_levs
         self._calc_ssim = calc_ssim
+        self._contour_levs = contour_levs
 
+
+        
     def verify_plot_parameters(self):
         if self._set2_name is None and self._metric_type in [
             'diff',
@@ -269,6 +271,8 @@ class MetricsPlot(object):
         )
         ax1.set_global()
 
+
+        
         # if we want to get the ssim
         if self._calc_ssim:
             ax1.axis('off')
@@ -278,7 +282,7 @@ class MetricsPlot(object):
             ax1.imshow
             plt.savefig('tmp_ssim1', bbox_inches=extent1, transparent=True, pad_inches=0)
             ax1.axis('on')
-            # print(extent1)
+
 
         ax2 = plt.subplot(1, 2, 2, projection=ccrs.Robinson(central_longitude=0.0))
 
@@ -297,8 +301,10 @@ class MetricsPlot(object):
 
         ax2.set_global()
 
+        
         # if we want to get the ssim
         if self._calc_ssim:
+
             plt.margins(0, 0)
             ax2.axis('off')
             extent2 = ax2.get_window_extent().transformed(fig.dpi_scale_trans.inverted())
@@ -335,10 +341,9 @@ class MetricsPlot(object):
 
         if self._calc_ssim:
             import os
-
             import cv2
             from skimage.metrics import structural_similarity as ssim
-
+            
             img1 = cv2.imread('tmp_ssim1.png')
             img2 = cv2.imread('tmp_ssim2.png')
             # print(img1.shape)
@@ -535,7 +540,7 @@ def plot(
     quantile=None,
     start=None,
     end=None,
-    calc_ssim=False,
+    calc_ssim=False
 ):
     """
     Plots the data given an xarray dataset
@@ -670,7 +675,7 @@ def plot(
         standardized_err,
         quantile,
         calc_ssim,
-    )
+        )
 
     mp.verify_plot_parameters()
 
