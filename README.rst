@@ -27,7 +27,8 @@
 Lossy Data Compression for Python
 =================================
 
-ldcpy is a utility for gathering and plotting metrics from NetCDF files using the Pangeo stack.
+ldcpy is a utility for gathering and plotting metrics from NetCDF or Zarr files using the Pangeo stack.
+It also contains a number of statistical and visual tools for gathering metrics  and comparing Earth System Model data files.
 
 Documentation and usage examples are available `here <http://ldcpy.readthedocs.io>`_.
 
