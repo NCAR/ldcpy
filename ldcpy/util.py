@@ -87,8 +87,10 @@ def open_datasets(varnames, list_of_files, labels, **kwargs):
         labels
     ), 'open_dataset file list and labels arguments must be the same length'
 
-    preprocess_vars = functools.partial(preprocess, varnames=varnames)
-
+    #preprocess_vars is here for working on jupyter hub...
+    def preprocess_vars(ds):
+        return ds[varnames];
+    
     full_ds = xr.open_mfdataset(
         list_of_files,
         concat_dim='collection',
