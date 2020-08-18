@@ -20,6 +20,12 @@ For a development install, do the following in the ldcpy repository directory:
     conda activate ldcpy
     python -m pip install -e .
 
+Then install the pre-commit script and git hooks for code style checking:
+
+.. code-block:: bash
+
+    pre-commit install
+
 This code block enables optional extensions for code completion, code hinting and minimizing tracebacks in Jupyter. Then start the jupyter notebook server in your browser (at localhost:8888):
 
 .. code-block:: bash
