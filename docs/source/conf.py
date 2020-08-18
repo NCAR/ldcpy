@@ -43,6 +43,7 @@ autodoc_mock_imports = [
     'opencv-python',
     'scikit-image',
     'skbuild',
+    'opencv',
 ]
 
 # Add any paths that contain templates here, relative to this directory.
