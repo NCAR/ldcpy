@@ -11,7 +11,7 @@ dependencies:
   - cmocean
   - numpy
   - scipy
-  - matplotlib
+  - matplotlib-base
   - pre-commit
   - setuptools
   - jupyterlab
