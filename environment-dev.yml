@@ -25,4 +25,4 @@ dependencies:
   - pandas
   - cython
   - scikit-image
-  - opencv
+  - opencv=4.2.0
