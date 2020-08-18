@@ -17,4 +17,4 @@ dependencies:
   - cython
   - scikit-image
   - opencv
-  - skbuild
+  - scikit-build

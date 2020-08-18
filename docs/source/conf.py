@@ -42,7 +42,7 @@ autodoc_mock_imports = [
     'scipy',
     'opencv-python',
     'scikit-image',
-    'skbuild',
+    'scikit-build',
     'opencv',
 ]
 

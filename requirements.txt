@@ -9,6 +9,6 @@ jupyterlab
 xrft
 pip
 dask[complete]
-skbuild
+scikit-build
 opencv-python
 scikit-image
