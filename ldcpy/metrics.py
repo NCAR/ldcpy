@@ -655,7 +655,12 @@ class DiffMetrics(object):
             sp_tol = self._metrics1.spre_tol
             t1 = np.ravel(self._metrics1.get_metric('ds'))
             t2 = np.ravel(self._metrics2.get_metric('ds'))
-            tt = (t1 - t2) / t1
+            tt = t1 - t2
+            # check for zeros in t1 (if zero then change to 1 - which
+            # does an absolute error at that point)
+            z = np.where(abs(t1) == 0)
+            t1[z] = 1.0
+            tt = tt / t1
             a = len(tt[tt > sp_tol])
             self._spatial_rel_error = (a / t1.shape[0]) * 100
 
