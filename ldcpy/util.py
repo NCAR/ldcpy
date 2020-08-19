@@ -207,10 +207,12 @@ def print_stats(ds, varname, set1, set2, time=0, significant_digits=4):
             print(' ')
 
 
-def check_metrics(ds, varname, set1, set2, time=0):
+def check_metrics(
+    ds, varname, set1, set2, time=0, ks_tol=0.05, pcc_tol=0.99999, spre_tol=5.0, ssim_tol=0.99995
+):
     """
 
-    Check the K-S, Pearson, and Spatial Relative Error metrics from:
+    Check the K-S, Pearson Correlation, and Spatial Relative Error metrics from:
 
     A. H. Baker, H. Xu, D. M. Hammerling, S. Li, and J. Clyne,
     “Toward a Multi-method Approach: Lossy Data Compression for
@@ -225,6 +227,12 @@ def check_metrics(ds, varname, set1, set2, time=0):
     applied to climate simulation data”, Computer Graphics Forum 38(3),
     June 2019, pp. 517-528 (doi:10.1111/cgf.13707).
 
+    Default tolerances for the tests are:
+    ------------------------
+    K-S: fail if p-value > .05
+    Pearson correlation coefficient:  fail if coefficient < .99999
+    Spatial relative error: fail if > 5% of grid points fail relative error
+    SSIM: fail if SSIM < .99995
 
     Parameters
     ==========
@@ -237,14 +245,23 @@ def check_metrics(ds, varname, set1, set2, time=0):
     set2 : str
         The collection label of the (1st) data to compare
     time : int, optional
-        The time index used t
+        The time index used t (default = 0)
+    ks_tol : float, optional
+        The p-value threshold for the K-S test (default = .05)
+    pcc_tol: float, optional
+        The default Pearson corrolation coefficient (default  = .99999)
+    spre_tol: float, optional
+        The percentage threshold for failing grid points in the spatial relative error test (default = 5.0).
+    ssim_tol: float, optional
+         The threshold for the ssim test (default = .999950
+
     Returns
     =======
     out : Number of failing metrics
 
     """
 
-    # TO DO: put metric thresholds in a modifiable data structure
+    # count the number of failuress
     num_fail = 0
 
     print('Evaluating 4 metrics for {} data (set1) and {} data (set2)'.format(set1, set2), ':')
@@ -255,34 +272,33 @@ def check_metrics(ds, varname, set1, set2, time=0):
         ['lat', 'lon'],
     )
 
-    # Pearson less than < :99999 means fail
+    # Pearson less than pcc_tol means fail
     pcc = diff_metrics.get_diff_metric('pearson_correlation_coefficient').values
-    if pcc < 0.99999:
+    if pcc < pcc_tol:
         print('     *FAILED pearson correlation coefficient test...(pcc = {0:.5f}'.format(pcc), ')')
         num_fail = num_fail + 1
     else:
         print('     PASSED pearson correlation coefficient test...(pcc = {0:.5f}'.format(pcc), ')')
 
-    # K-S p-value greater than .05 means fail
+    # K-S p-value greater than .ks_tol means fail
     ks = diff_metrics.get_diff_metric('ks_p_value')
-    if ks > 0.05:
+    if ks > ks_tol:
         print('     *FAILED ks test...(ks p_val = {0:.4f}'.format(ks), ')')
         num_fail = num_fail + 1
-
     else:
         print('     PASSED ks test...(ks p_val = {0:.4f}'.format(ks), ')')
 
-        # Spatial rel error fails if more than 5%
+    # Spatial rel error fails if more than spre_tol
     spre = diff_metrics.get_diff_metric('spatial_rel_error')
-    if spre > 5.0:
+    if spre > spre_tol:
         print('     *FAILED spatial relative error test ... (spre = {0:.2f}'.format(spre), ' %)')
         num_fail = num_fail + 1
     else:
         print('     PASSED spatial relative error test ...(spre = {0:.2f}'.format(spre), ' %)')
 
-    # SSIM less than of 0.99995 is failing
+    # SSIM less than of ssim_tol is failing
     ssim_val = diff_metrics.get_diff_metric('ssim')
-    if ssim_val < 0.99995:
+    if ssim_val < ssim_tol:
         print('     *FAILED SSIM test ... (ssim = {0:.5f}'.format(ssim_val), ')')
         num_fail = num_fail + 1
     else:
