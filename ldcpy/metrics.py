@@ -1,3 +1,4 @@
+import copy
 import os
 from typing import Optional
 
@@ -694,28 +695,62 @@ class DiffMetrics(object):
                 np.max(d1.where(d1 != inf)).values.max(), np.max(d2.where(d2 != inf)).values.max(),
             )
 
-            plt.figure(dpi=300)
-            ax1 = plt.axes(projection=ccrs.Robinson(central_longitude=0.0))
-            ax1.pcolormesh(
-                lon1, lat1, no_inf_d1, transform=ccrs.PlateCarree(), vmin=color_min, vmax=color_max,
-            )
-            ax1.axis('off')
-            ax1.imshow
-            plt.savefig('t_ssim1', bbox_inches='tight', transparent=True, pad_inches=0)
+            fig = plt.figure(dpi=300, figsize=(9, 2.5))
 
-            plt.figure(dpi=300)
-            ax2 = plt.axes(projection=ccrs.Robinson(central_longitude=0.0))
-            ax2.pcolormesh(
-                lon2, lat2, no_inf_d2, transform=ccrs.PlateCarree(), vmin=color_min, vmax=color_max,
+            mymap = plt.cm.get_cmap('coolwarm')
+            mymap.set_under(color='black')
+            mymap.set_over(color='white')
+            mymap.set_bad(alpha=0)
+
+            ax1 = plt.subplot(1, 2, 1, projection=ccrs.Robinson(central_longitude=0.0))
+            ax1.set_facecolor('#39ff14')
+
+            ax1.pcolormesh(
+                lon1,
+                lat1,
+                no_inf_d1,
+                transform=ccrs.PlateCarree(),
+                cmap=mymap,
+                vmin=color_min,
+                vmax=color_max,
             )
-            ax2.axis('off')
+            ax1.set_global()
+            ax1.coastlines(linewidth=0.5)
+            ax1.axis('off')
+            plt.margins(0, 0)
+            extent1 = ax1.get_window_extent().transformed(fig.dpi_scale_trans.inverted())
+            ax1.imshow
+            plt.savefig('t_ssim1', bbox_inches=extent1, transparent=True, pad_inches=0)
+            ax1.axis('on')
+
+            ax2 = plt.subplot(1, 2, 2, projection=ccrs.Robinson(central_longitude=0.0))
+            ax2.set_facecolor('#39ff14')
+
+            ax2.pcolormesh(
+                lon2,
+                lat2,
+                no_inf_d2,
+                transform=ccrs.PlateCarree(),
+                cmap=mymap,
+                vmin=color_min,
+                vmax=color_max,
+            )
+            ax2.set_global()
+            ax2.coastlines(linewidth=0.5)
+            plt.margins(0, 0)
             ax2.imshow
-            plt.savefig('t_ssim2', bbox_inches='tight', transparent=True, pad_inches=0)
+            ax2.axis('off')
+            extent2 = ax2.get_window_extent().transformed(fig.dpi_scale_trans.inverted())
+            plt.savefig('t_ssim2', bbox_inches=extent2, transparent=True, pad_inches=0)
+
+            ax2.axis('on')
 
             from skimage.metrics import structural_similarity as ssim
 
             img1 = cv2.imread('t_ssim1.png')
             img2 = cv2.imread('t_ssim2.png')
+            # print(img1.shape)
+            # print(img2.shape)
             s = ssim(img1, img2, multichannel=True)
             if os.path.exists('t_ssim1.png'):
                 os.remove('t_ssim1.png')

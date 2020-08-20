@@ -268,19 +268,19 @@ class MetricsPlot(object):
             vmax=color_max,
         )
         ax1.set_global()
+        ax1.coastlines(linewidth=0.5)
 
         # if we want to get the ssim
         if self._calc_ssim:
             ax1.axis('off')
             plt.margins(0, 0)
             extent1 = ax1.get_window_extent().transformed(fig.dpi_scale_trans.inverted())
-
             ax1.imshow
             plt.savefig('tmp_ssim1', bbox_inches=extent1, transparent=True, pad_inches=0)
             ax1.axis('on')
+        # end ssim
 
         ax2 = plt.subplot(1, 2, 2, projection=ccrs.Robinson(central_longitude=0.0))
-
         ax2.set_facecolor('#39ff14')
 
         no_inf_data_set2 = np.nan_to_num(cy_data_set2, nan=np.nan)
@@ -295,22 +295,19 @@ class MetricsPlot(object):
         )
 
         ax2.set_global()
-
+        ax2.coastlines(linewidth=0.5)
         # if we want to get the ssim
         if self._calc_ssim:
-
             plt.margins(0, 0)
             ax2.axis('off')
             extent2 = ax2.get_window_extent().transformed(fig.dpi_scale_trans.inverted())
             ax2.imshow
             plt.savefig('tmp_ssim2', bbox_inches=extent2, transparent=True, pad_inches=0)
             ax2.axis('on')
-            # print(extent2)
+        # end ssim
 
-        # titles and coastlines
-        ax1.coastlines()
+        # titles
         ax1.set_title(title_set1)
-        ax2.coastlines()
         ax2.set_title(title_set2)
 
         # add colorbar
@@ -343,6 +340,7 @@ class MetricsPlot(object):
             img2 = cv2.imread('tmp_ssim2.png')
             # print(img1.shape)
             # print(img2.shape)
+
             ssim_val = ssim(img1, img2, multichannel=True)
             print(' SSIM = % 5.5f\n' % (ssim_val))
             if os.path.exists('tmp_ssim1.png'):
@@ -389,7 +387,7 @@ class MetricsPlot(object):
             plt.legend(proxy, ['NaN'])
 
         ax.set_global()
-        ax.coastlines()
+        ax.coastlines(linewidth=0.5)
         ax.set_title(title)
 
     def hist_plot(self, plot_data, title):
