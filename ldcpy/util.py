@@ -110,7 +110,7 @@ def preprocess(ds, varnames):
     return ds[varnames]
 
 
-def print_stats(ds, varname, set1, set2, time=0, significant_digits=4):
+def compare_stats(ds, varname, set1, set2, time=0, significant_digits=4):
     """
     Print error summary statistics of two DataArrays
 

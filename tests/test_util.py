@@ -32,5 +32,5 @@ class TestPlot(TestCase):
     """
 
     def test_print_stats(self):
-        ldcpy.print_stats(ds, 'TS', set1='orig', set2='recon')
+        ldcpy.print_stats(ds, 'TS', sets=['orig', 'recon'])
         self.assertTrue(True)
