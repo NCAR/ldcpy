@@ -154,46 +154,43 @@ def compare_stats(ds, varname, set1, set2, time=0, significant_digits=4):
 
     output['skip1'] = 0
 
-    output['mean set1'] = ds0_metrics.get_metric('mean').values
-    output['mean set2'] = ds1_metrics.get_metric('mean').values
-    output['mean diff'] = d_metrics.get_metric('mean').values
+    output['mean set1'] = ds0_metrics.get_metric('mean').data.compute()
+    output['mean set2'] = ds1_metrics.get_metric('mean').data.compute()
+    output['mean diff'] = d_metrics.get_metric('mean').data.compute()
 
     output['skip2'] = 0
 
-    output['variance set1'] = ds0_metrics.get_metric('variance').values
-    output['variance set2'] = ds1_metrics.get_metric('variance').values
+    output['variance set1'] = ds0_metrics.get_metric('variance').data.compute()
+    output['variance set2'] = ds1_metrics.get_metric('variance').data.compute()
 
     output['skip3'] = 0
 
-    output['standard deviation set1'] = ds0_metrics.get_metric('std').values
-    output['standard deviation set2'] = ds1_metrics.get_metric('std').values
+    output['standard deviation set1'] = ds0_metrics.get_metric('std').data.compute()
+    output['standard deviation set2'] = ds1_metrics.get_metric('std').data.compute()
 
     output['skip4'] = 0
 
-    # output['dynamic range set1'] = ds0_metrics.get_metric('range').values
-    # output['dynamic range set2'] = ds1_metrics.get_metric('range').values
-
-    # output['skip5'] = 0xs
-
-    output['max value set1'] = ds0_metrics.get_metric('max_val').values
-    output['max value set2'] = ds1_metrics.get_metric('max_val').values
-    output['min value set1'] = ds0_metrics.get_metric('min_val').values
-    output['min value set2'] = ds1_metrics.get_metric('min_val').values
+    output['max value set1'] = ds0_metrics.get_metric('max_val').data.compute()
+    output['max value set2'] = ds1_metrics.get_metric('max_val').data.compute()
+    output['min value set1'] = ds0_metrics.get_metric('min_val').data.compute()
+    output['min value set2'] = ds1_metrics.get_metric('min_val').data.compute()
 
     output['skip55'] = 0
 
-    output['max abs diff'] = d_metrics.get_metric('max_abs').values
-    output['min abs diff'] = d_metrics.get_metric('min_abs').values
-    output['mean abs diff'] = d_metrics.get_metric('mean_abs').values
+    output['max abs diff'] = d_metrics.get_metric('max_abs').data.compute()
+    output['min abs diff'] = d_metrics.get_metric('min_abs').data.compute()
+    output['mean abs diff'] = d_metrics.get_metric('mean_abs').data.compute()
 
-    output['mean squared diff'] = d_metrics.get_metric('mean_squared').values
-    output['root mean squared diff'] = d_metrics.get_metric('rms').values
+    output['mean squared diff'] = d_metrics.get_metric('mean_squared').data.compute()
+    output['root mean squared diff'] = d_metrics.get_metric('rms').data.compute()
 
-    output['normalized root mean squared diff'] = diff_metrics.get_diff_metric('n_rms').values
-    output['normalized max pointwise error'] = diff_metrics.get_diff_metric('n_emax').values
+    output['normalized root mean squared diff'] = diff_metrics.get_diff_metric(
+        'n_rms'
+    ).data.compute()
+    output['normalized max pointwise error'] = diff_metrics.get_diff_metric('n_emax').data.compute()
     output['pearson correlation coefficient'] = diff_metrics.get_diff_metric(
         'pearson_correlation_coefficient'
-    ).values
+    ).data.compute()
     output['ks p-value'] = diff_metrics.get_diff_metric('ks_p_value')
     tmp = 'spatial relative error(% > ' + str(ds0_metrics.get_single_metric('spre_tol')) + ')'
     output[tmp] = diff_metrics.get_diff_metric('spatial_rel_error')
@@ -273,7 +270,7 @@ def check_metrics(
     )
 
     # Pearson less than pcc_tol means fail
-    pcc = diff_metrics.get_diff_metric('pearson_correlation_coefficient').values
+    pcc = diff_metrics.get_diff_metric('pearson_correlation_coefficient').data.compute()
     if pcc < pcc_tol:
         print('     *FAILED pearson correlation coefficient test...(pcc = {0:.5f}'.format(pcc), ')')
         num_fail = num_fail + 1
