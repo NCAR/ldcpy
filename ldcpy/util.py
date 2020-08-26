@@ -1,5 +1,6 @@
 import functools
 
+import numpy as np
 import xarray as xr
 
 from .metrics import DatasetMetrics, DiffMetrics
@@ -37,7 +38,14 @@ def collect_datasets(varnames, list_of_ds, labels, **kwargs):
     # list_of_files and labels must be same length
     assert len(list_of_ds) == len(
         labels
-    ), 'collect_dataset dataset list and labels arguments must be the same length'
+    ), 'ERROR:collect_dataset dataset list and labels arguments must be the same length'
+
+    # the number of timeslices must be the same
+    sz = np.zeros(len(list_of_ds))
+    for i, myds in enumerate(list_of_ds):
+        sz[i] = myds.sizes['time']
+    indx = np.unique(sz)
+    assert indx.size == 1, 'ERROR: all datasets must have the same length time dimension'
 
     # preprocess
     for i, myds in enumerate(list_of_ds):
@@ -84,7 +92,16 @@ def open_datasets(varnames, list_of_files, labels, **kwargs):
     # list_of_files and labels must be same length
     assert len(list_of_files) == len(
         labels
-    ), 'open_dataset file list and labels arguments must be the same length'
+    ), 'ERROR: open_dataset file list and labels arguments must be the same length'
+
+    # all must have the same time dimension
+    sz = np.zeros(len(list_of_files))
+    for i, myfile in enumerate(list_of_files):
+        myds = xr.open_dataset(myfile)
+        sz[i] = myds.sizes['time']
+        myds.close()
+    indx = np.unique(sz)
+    assert indx.size == 1, 'ERROR: all files must have the same length time dimension'
 
     # preprocess_vars is here for working on jupyter hub...
     def preprocess_vars(ds):
