@@ -96,10 +96,7 @@ class MetricsPlot(object):
             raise ValueError('Cannot change quantile value if metric is not quantile')
         if self._quantile is None and self._metric == 'quantile':
             raise ValueError('Must specify quantile value as argument')
-        if self._calc_ssim and self._plot_type != 'spatial':
-            raise UserWarning(
-                'SSIM is only calculated for spatial plots, ignoring calc_ssim option'
-            )
+
         if self._metric in ['lag1', 'corr_lag1', 'mae_day_max'] and self._plot_type not in [
             'spatial',
         ]:
@@ -124,6 +121,11 @@ class MetricsPlot(object):
             metrics_da = lm.DatasetMetrics(da_data, ['lat', 'lon'])
         else:
             raise ValueError(f'plot type {self._plot_type} not supported')
+
+        if self._calc_ssim and self._plot_type != 'spatial':
+            raise UserWarning(
+                'SSIM is only calculated for spatial plots, ignoring calc_ssim option'
+            )
 
         raw_data = metrics_da.get_metric(self._metric)
         return raw_data
