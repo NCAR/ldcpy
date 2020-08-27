@@ -598,6 +598,8 @@ class DiffMetrics(object):
         """
         The Kolmogorov-Smirnov p-value
         """
+        # Note: ravel() foces a compute for dask, but ks test in scipy can't
+        # work with uncomputed dask arrays
         if not self._is_memoized('_ks_p_value'):
             self._ks_p_value = np.asanyarray(ss.ks_2samp(np.ravel(self._ds2), np.ravel(self._ds1)))
         return self._ks_p_value[1]
@@ -654,6 +656,8 @@ class DiffMetrics(object):
         if not self._is_memoized('_spatial_rel_error'):
             # print(self._metrics1.get_metric('ds').shape)
             sp_tol = self._metrics1.spre_tol
+            # unraveling converts the dask array to numpy, but then
+            # we can assign the 1.0 and avoid zero (couldn't figure another way)
             t1 = np.ravel(self._metrics1.get_metric('ds'))
             t2 = np.ravel(self._metrics2.get_metric('ds'))
             tt = t1 - t2
