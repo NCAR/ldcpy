@@ -3,6 +3,7 @@ import copy
 import datetime
 import math
 import re
+import warnings
 
 import cmocean
 import matplotlib as mpl
@@ -123,8 +124,8 @@ class MetricsPlot(object):
             raise ValueError(f'plot type {self._plot_type} not supported')
 
         if self._calc_ssim and self._plot_type != 'spatial':
-            raise UserWarning(
-                'SSIM is only calculated for spatial plots, ignoring calc_ssim option'
+            warnings.warn(
+                'SSIM is only calculated for spatial plots, ignoring calc_ssim option', UserWarning
             )
 
         raw_data = metrics_da.get_metric(self._metric)
