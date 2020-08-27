@@ -1,5 +1,6 @@
 import functools
 
+import numpy as np
 import xarray as xr
 
 from .metrics import DatasetMetrics, DiffMetrics
@@ -37,7 +38,14 @@ def collect_datasets(varnames, list_of_ds, labels, **kwargs):
     # list_of_files and labels must be same length
     assert len(list_of_ds) == len(
         labels
-    ), 'collect_dataset dataset list and labels arguments must be the same length'
+    ), 'ERROR:collect_dataset dataset list and labels arguments must be the same length'
+
+    # the number of timeslices must be the same
+    sz = np.zeros(len(list_of_ds))
+    for i, myds in enumerate(list_of_ds):
+        sz[i] = myds.sizes['time']
+    indx = np.unique(sz)
+    assert indx.size == 1, 'ERROR: all datasets must have the same length time dimension'
 
     # preprocess
     for i, myds in enumerate(list_of_ds):
@@ -84,7 +92,16 @@ def open_datasets(varnames, list_of_files, labels, **kwargs):
     # list_of_files and labels must be same length
     assert len(list_of_files) == len(
         labels
-    ), 'open_dataset file list and labels arguments must be the same length'
+    ), 'ERROR: open_dataset file list and labels arguments must be the same length'
+
+    # all must have the same time dimension
+    sz = np.zeros(len(list_of_files))
+    for i, myfile in enumerate(list_of_files):
+        myds = xr.open_dataset(myfile)
+        sz[i] = myds.sizes['time']
+        myds.close()
+    indx = np.unique(sz)
+    assert indx.size == 1, 'ERROR: all files must have the same length time dimension'
 
     # preprocess_vars is here for working on jupyter hub...
     def preprocess_vars(ds):
@@ -226,7 +243,7 @@ def check_metrics(
 
     Default tolerances for the tests are:
     ------------------------
-    K-S: fail if p-value > .05
+    K-S: fail if p-value < .05 (significance level)
     Pearson correlation coefficient:  fail if coefficient < .99999
     Spatial relative error: fail if > 5% of grid points fail relative error
     SSIM: fail if SSIM < .99995
@@ -244,7 +261,7 @@ def check_metrics(
     time : int, optional
         The time index used t (default = 0)
     ks_tol : float, optional
-        The p-value threshold for the K-S test (default = .05)
+        The p-value threshold (significance level) for the K-S test (default = .05)
     pcc_tol: float, optional
         The default Pearson corrolation coefficient (default  = .99999)
     spre_tol: float, optional
@@ -277,9 +294,9 @@ def check_metrics(
     else:
         print('     PASSED pearson correlation coefficient test...(pcc = {0:.5f}'.format(pcc), ')')
 
-    # K-S p-value greater than .ks_tol means fail
+    # K-S p-value less than ks_tol means fail (can reject null hypo)
     ks = diff_metrics.get_diff_metric('ks_p_value')
-    if ks > ks_tol:
+    if ks < ks_tol:
         print('     *FAILED ks test...(ks p_val = {0:.4f}'.format(ks), ')')
         num_fail = num_fail + 1
     else:
