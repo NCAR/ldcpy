@@ -243,7 +243,7 @@ def check_metrics(
 
     Default tolerances for the tests are:
     ------------------------
-    K-S: fail if p-value > .05
+    K-S: fail if p-value < .05 (significance level)
     Pearson correlation coefficient:  fail if coefficient < .99999
     Spatial relative error: fail if > 5% of grid points fail relative error
     SSIM: fail if SSIM < .99995
@@ -261,7 +261,7 @@ def check_metrics(
     time : int, optional
         The time index used t (default = 0)
     ks_tol : float, optional
-        The p-value threshold for the K-S test (default = .05)
+        The p-value threshold (significance level) for the K-S test (default = .05)
     pcc_tol: float, optional
         The default Pearson corrolation coefficient (default  = .99999)
     spre_tol: float, optional
@@ -294,9 +294,9 @@ def check_metrics(
     else:
         print('     PASSED pearson correlation coefficient test...(pcc = {0:.5f}'.format(pcc), ')')
 
-    # K-S p-value greater than .ks_tol means fail
+    # K-S p-value less than ks_tol means fail (can reject null hypo)
     ks = diff_metrics.get_diff_metric('ks_p_value')
-    if ks > ks_tol:
+    if ks < ks_tol:
         print('     *FAILED ks test...(ks p_val = {0:.4f}'.format(ks), ')')
         num_fail = num_fail + 1
     else:
