@@ -48,11 +48,13 @@ If you want access to the tutorial notebook, clone the repository (this will cre
 
     git clone https://github.com/NCAR/ldcpy.git
 
-Start by activating the ldcpy environment, enabling Hinterland for code completion in Jupyter Notebook and then opening the tutorial notebook:
+Start by activating the ldcpy environment, enabling Hinterland for code completion in Jupyter Notebook and then starting the notebook server:
 
 .. code-block:: bash
 
     conda activate ldcpy
+    conda install -c conda-forge jupyter_contrib_nbextensions
+    jupyter contrib nbextension install --user
     jupyter nbextension enable hinterland/hinterland
     jupyter notebook
 

@@ -16,6 +16,7 @@ dependencies:
   - setuptools
   - jupyterlab
   - jupyter_contrib_nbextensions
+  - graphviz
   - codecov
   - pytest
   - pytest-cov
