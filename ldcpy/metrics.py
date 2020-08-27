@@ -600,7 +600,7 @@ class DiffMetrics(object):
         """
         if not self._is_memoized('_ks_p_value'):
             self._ks_p_value = np.asanyarray(ss.ks_2samp(np.ravel(self._ds2), np.ravel(self._ds1)))
-        return self._ks_p_value[0]
+        return self._ks_p_value[1]
 
     @property
     def pearson_correlation_coefficient(self):
