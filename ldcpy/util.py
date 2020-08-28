@@ -150,7 +150,12 @@ def compare_stats(ds, varname, set1, set2, time=0, significant_digits=4):
     out : None
 
     """
-    print('Comparing {} data (set1) to {} data (set2)'.format(set1, set2))
+    print('Comparing {} data (set1) to {} data (set2) at time = {}'.format(set1, set2, time))
+
+    # Make sure we don't exceed time bound
+    time_mx = ds[varname].sel(collection=set1).sizes['time'] - 1
+    if time > time_mx:
+        raise ValueError(f'specified time index exceeds max time dimension {time_mx}.')
 
     ds0_metrics = DatasetMetrics(ds[varname].sel(collection=set1).isel(time=time), ['lat', 'lon'])
     ds1_metrics = DatasetMetrics(ds[varname].sel(collection=set2).isel(time=time), ['lat', 'lon'])
