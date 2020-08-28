@@ -376,6 +376,7 @@ class MetricsPlot(object):
         if da_sets.size / da_sets.sets.size == 1:
             tick_interval = 1
         if self._group_by == 'time.dayofyear':
+
             group_string = 'dayofyear'
             xlabel = 'Day of Year'
         elif self._group_by == 'time.month':
@@ -436,18 +437,18 @@ class MetricsPlot(object):
         self._label_offset(ax)
         mpl.pyplot.xlabel(xlabel)
 
-        if self._group_by == 'time.month':
-            int_labels = np.setdiff1d(plt.xticks()[0], [0, plt.xticks()[0][-1]]).astype(int)
-            month_labels = [
-                calendar.month_name[i] for i in int_labels if calendar.month_name[i] != ''
-            ]
-            unique_month_labels = list(dict.fromkeys(month_labels))
-            plt.gca().set_xticklabels(unique_month_labels)
-
         if self._group_by is not None:
             mpl.pyplot.xticks(
                 np.arange(min(da_sets[group_string]), max(da_sets[group_string]) + 1, tick_interval)
             )
+            if self._group_by == 'time.month':
+                int_labels = plt.xticks()[0]
+                month_labels = [
+                    calendar.month_name[i] for i in int_labels if calendar.month_name[i] != ''
+                ]
+                unique_month_labels = list(dict.fromkeys(month_labels))
+                plt.gca().set_xticklabels(unique_month_labels)
+                plt.xticks(rotation=45)
         else:
             mpl.pyplot.xticks(
                 pd.date_range(
