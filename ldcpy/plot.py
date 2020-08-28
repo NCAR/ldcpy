@@ -381,6 +381,7 @@ class MetricsPlot(object):
         elif self._group_by == 'time.month':
             group_string = 'month'
             xlabel = 'Month'
+            tick_interval = 1
         elif self._group_by == 'time.year':
             group_string = 'year'
             xlabel = 'Year'
@@ -438,7 +439,7 @@ class MetricsPlot(object):
         if self._group_by == 'time.month':
             int_labels = np.setdiff1d(plt.xticks()[0], [0, plt.xticks()[0][-1]]).astype(int)
             month_labels = [
-                calendar.month_name[i] if calendar.month_name[i] != '' else '' for i in int_labels
+                calendar.month_name[i] for i in int_labels if calendar.month_name[i] != ''
             ]
             unique_month_labels = list(dict.fromkeys(month_labels))
             plt.gca().set_xticklabels(unique_month_labels)
