@@ -291,10 +291,10 @@ class MetricsPlot(object):
 
         # add colorbar
         fig.subplots_adjust(left=0.1, right=0.9, bottom=0.2, top=0.95)
-        cax = fig.add_axes([0.1, 0, 0.8, 0.05])
 
         cbs = []
         if not all([np.isnan(cy_datas[i]).all() for i in range(len(cy_datas))]):
+            cax = fig.add_axes([0.1, 0, 0.8, 0.05])
             if any([np.isinf(cy_datas[i]).any() for i in range(len(cy_datas))]):
                 for i in range(len(psets)):
                     cbs.append(
@@ -310,11 +310,14 @@ class MetricsPlot(object):
                     )
                     cbs[i].ax.set_title(f'{da_sets[i].units}')
                     cbs[i].ax.tick_params(labelsize=8, rotation=30)
+            if any([np.isnan(cy_datas[i]).any() for i in range(len(cy_datas))]):
+                proxy = [plt.Rectangle((0, 0), 1, 1, fc='#39ff14')]
+                plt.legend(proxy, ['NaN'], bbox_to_anchor=(0.565, 4))
         else:
+            fig.add_axes([0.1, 0, 0.8, 0.05])
             proxy = [plt.Rectangle((0, 0), 1, 1, fc='#39ff14')]
-            neg_inf_color = [plt.Rectangle((0, 0), 1, 1, fc='#000000')]
-            inf_color = [plt.Rectangle((0, 0), 1, 1, fc='#FFFFFF')]
-            plt.legend([proxy, neg_inf_color, inf_color], ['NaN', '-inf', 'inf'])
+            plt.legend(proxy, ['NaN'], bbox_to_anchor=(0.565, 4))
+            plt.axis('off')
 
         if self._calc_ssim:
             import os
