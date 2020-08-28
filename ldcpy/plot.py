@@ -1,8 +1,5 @@
 import calendar
 import copy
-import datetime
-import math
-import re
 import warnings
 
 import cmocean
@@ -315,7 +312,9 @@ class MetricsPlot(object):
                     cbs[i].ax.tick_params(labelsize=8, rotation=30)
         else:
             proxy = [plt.Rectangle((0, 0), 1, 1, fc='#39ff14')]
-            plt.legend(proxy, ['NaN'])
+            neg_inf_color = [plt.Rectangle((0, 0), 1, 1, fc='#000000')]
+            inf_color = [plt.Rectangle((0, 0), 1, 1, fc='#FFFFFF')]
+            plt.legend([proxy, neg_inf_color, inf_color], ['NaN', '-inf', 'inf'])
 
         if self._calc_ssim:
             import os

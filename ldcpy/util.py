@@ -1,5 +1,3 @@
-import functools
-
 import numpy as np
 import xarray as xr
 
@@ -330,7 +328,8 @@ def subset_data(ds, subset, lat=None, lon=None, lev=0, start=None, end=None):
     """
     ds_subset = ds
 
-    ds_subset = ds_subset.isel(time=slice(start, end + 1))
+    if start is not None and end is not None:
+        ds_subset = ds_subset.isel(time=slice(start, end + 1))
 
     if subset == 'winter':
         ds_subset = ds_subset.where(ds.time.dt.season == 'DJF', drop=True)
