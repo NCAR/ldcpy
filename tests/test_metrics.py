@@ -12,10 +12,14 @@ times = pd.date_range('2000-01-01', periods=10)
 lats = [0, 1, 2, 3]
 lons = [0, 1, 2, 3, 4]
 test_data = xr.DataArray(
-    np.arange(-100, 100).reshape(4, 5, 10), coords=[lats, lons, times], dims=['lat', 'lon', 'time'],
+    np.arange(-100, 100).reshape(4, 5, 10),
+    coords=[lats, lons, times],
+    dims=['lat', 'lon', 'time'],
 )
 test_data_2 = xr.DataArray(
-    np.arange(-99, 101).reshape(4, 5, 10), coords=[lats, lons, times], dims=['lat', 'lon', 'time'],
+    np.arange(-99, 101).reshape(4, 5, 10),
+    coords=[lats, lons, times],
+    dims=['lat', 'lon', 'time'],
 )
 test_overall_metrics = ldcpy.DatasetMetrics(test_data, ['time', 'lat', 'lon'])
 test_spatial_metrics = ldcpy.DatasetMetrics(test_data, ['time'])
@@ -743,27 +747,35 @@ class TestErrorMetrics(TestCase):
     def test_diff_ksp(self):
         self.assertTrue(
             np.isclose(
-                test_diff_metrics.get_diff_metric('ks_p_value'), np.array(0.005), rtol=1e-09,
+                test_diff_metrics.get_diff_metric('ks_p_value'),
+                np.array(0.005),
+                rtol=1e-09,
             ).all()
         )
 
     def test_diff_covariance(self):
         self.assertTrue(
             np.isclose(
-                test_diff_metrics.get_diff_metric('covariance'), np.array(3333.25), rtol=1e-09,
+                test_diff_metrics.get_diff_metric('covariance'),
+                np.array(3333.25),
+                rtol=1e-09,
             ).all()
         )
 
     def test_diff_normalized_max_pointwise_error(self):
         self.assertTrue(
             np.isclose(
-                test_diff_metrics.get_diff_metric('n_emax'), np.array(0.00502513), rtol=1e-09,
+                test_diff_metrics.get_diff_metric('n_emax'),
+                np.array(0.00502513),
+                rtol=1e-09,
             ).all()
         )
 
     def test_diff_normalized_root_mean_squared(self):
         self.assertTrue(
             np.isclose(
-                test_diff_metrics.get_diff_metric('n_rms'), np.array(0.00502513), rtol=1e-09,
+                test_diff_metrics.get_diff_metric('n_rms'),
+                np.array(0.00502513),
+                rtol=1e-09,
             ).all()
         )

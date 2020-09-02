@@ -201,7 +201,8 @@ class MetricsPlot(object):
         return title
 
     def _label_offset(
-        self, ax,
+        self,
+        ax,
     ):
         fmt = ax.yaxis.get_major_formatter()
         ax.yaxis.offsetText.set_visible(False)
@@ -366,7 +367,9 @@ class MetricsPlot(object):
         mpl.pyplot.xlabel('Frequency')
 
     def time_series_plot(
-        self, da_sets, titles,
+        self,
+        da_sets,
+        titles,
     ):
         """
         time series plot
@@ -475,7 +478,9 @@ class MetricsPlot(object):
         elif metric == 'mean' and self._plot_type == 'spatial' and self._metric_type == 'raw':
             o_wt_mean = np.average(
                 np.average(
-                    lm.DatasetMetrics(data, ['time']).get_metric(metric), axis=0, weights=weights,
+                    lm.DatasetMetrics(data, ['time']).get_metric(metric),
+                    axis=0,
+                    weights=weights,
                 )
             )
             metric_name = f'{metric} = {o_wt_mean:.2f}'
