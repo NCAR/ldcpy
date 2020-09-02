@@ -743,7 +743,7 @@ class TestErrorMetrics(TestCase):
     def test_diff_ksp(self):
         self.assertTrue(
             np.isclose(
-                test_diff_metrics.get_diff_metric('ks_p_value'), np.array(0.005), rtol=1e-09,
+                test_diff_metrics.get_diff_metric('ks_p_value'), np.array(1.0), rtol=1e-09,
             ).all()
         )
 
