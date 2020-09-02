@@ -23,6 +23,7 @@ dependencies:
   - pytest-xdist
   - dask
   - intake-esm
+  - nc_time_axis
   - pandas
   - cython
   - scikit-image

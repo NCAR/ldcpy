@@ -15,6 +15,7 @@ dependencies:
   - dask
   - intake-esm
   - cython
+  - nc_time_axis
   - scikit-image
   - opencv=4.2.0
   - matplotlib-base
