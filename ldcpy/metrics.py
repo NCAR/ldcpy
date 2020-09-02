@@ -18,7 +18,9 @@ class DatasetMetrics(object):
     """
 
     def __init__(
-        self, ds: xr.DataArray, aggregate_dims: list,
+        self,
+        ds: xr.DataArray,
+        aggregate_dims: list,
     ):
         self._ds = ds if (ds.dtype == np.float64) else ds.astype(np.float64)
         # For some reason, casting to float64 removes all attrs from the dataset
@@ -77,7 +79,8 @@ class DatasetMetrics(object):
             o_1, o_2 = xr.align(
                 dataset,
                 xr.concat(
-                    [dataset.tail({'lon': lon_length - 1}), dataset.head({'lon': 1})], dim='lon',
+                    [dataset.tail({'lon': lon_length - 1}), dataset.head({'lon': 1})],
+                    dim='lon',
                 ),
                 join='override',
             )
@@ -550,7 +553,10 @@ class DiffMetrics(object):
     """
 
     def __init__(
-        self, ds1: xr.DataArray, ds2: xr.DataArray, aggregate_dims: Optional[list] = None,
+        self,
+        ds1: xr.DataArray,
+        ds2: xr.DataArray,
+        aggregate_dims: Optional[list] = None,
     ) -> None:
         if isinstance(ds1, xr.DataArray):
             # Datasets
@@ -695,7 +701,8 @@ class DiffMetrics(object):
                 np.min(d2.where(d2 != -inf)).values.min(),
             )
             color_max = max(
-                np.max(d1.where(d1 != inf)).values.max(), np.max(d2.where(d2 != inf)).values.max(),
+                np.max(d1.where(d1 != inf)).values.max(),
+                np.max(d2.where(d2 != inf)).values.max(),
             )
 
             fig = plt.figure(dpi=300, figsize=(9, 2.5))

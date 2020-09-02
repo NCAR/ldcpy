@@ -41,7 +41,11 @@ class TestPlot(TestCase):
 
     def test_mean_compare(self):
         ldcpy.plot(
-            ds, 'TS', sets=['orig', 'recon'], metric='mean', plot_type='spatial',
+            ds,
+            'TS',
+            sets=['orig', 'recon'],
+            metric='mean',
+            plot_type='spatial',
         )
         self.assertTrue(True)
 
@@ -176,19 +180,33 @@ class TestPlot(TestCase):
 
     def test_time_series_single_point_3d_data(self):
         ldcpy.plot(
-            ds3, 'T', sets=['orig'], metric='mean', plot_type='time_series', group_by='time.day',
+            ds3,
+            'T',
+            sets=['orig'],
+            metric='mean',
+            plot_type='time_series',
+            group_by='time.day',
         )
         self.assertTrue(True is True)
 
     def test_zscore_plot(self):
         ldcpy.plot(
-            ds, 'TS', sets=['orig', 'recon'], metric_type='metric_of_diff', metric='zscore',
+            ds,
+            'TS',
+            sets=['orig', 'recon'],
+            metric_type='metric_of_diff',
+            metric='zscore',
         )
         self.assertTrue(True is True)
 
     def test_ssim(self):
         ldcpy.plot(
-            ds, 'TS', sets=['orig', 'recon'], metric='mean', plot_type='spatial', calc_ssim=True,
+            ds,
+            'TS',
+            sets=['orig', 'recon'],
+            metric='mean',
+            plot_type='spatial',
+            calc_ssim=True,
         )
 
     def test_mae_max_day(self):
@@ -213,7 +231,13 @@ class TestPlot(TestCase):
     # Time series plot of first seven TS mean data points for ds orig dataset
     def test_mean_start_end(self):
         ldcpy.plot(
-            ds, 'TS', sets=['orig'], metric='mean', start=0, end=8, plot_type='time_series',
+            ds,
+            'TS',
+            sets=['orig'],
+            metric='mean',
+            start=0,
+            end=8,
+            plot_type='time_series',
         )
         self.assertTrue(True)
 

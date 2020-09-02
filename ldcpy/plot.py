@@ -4,6 +4,7 @@ import warnings
 
 import cmocean
 import matplotlib as mpl
+import nc_time_axis
 import numpy as np
 import pandas as pd
 import xarray as xr
@@ -200,7 +201,8 @@ class MetricsPlot(object):
         return title
 
     def _label_offset(
-        self, ax,
+        self,
+        ax,
     ):
         fmt = ax.yaxis.get_major_formatter()
         ax.yaxis.offsetText.set_visible(False)
@@ -365,7 +367,9 @@ class MetricsPlot(object):
         mpl.pyplot.xlabel('Frequency')
 
     def time_series_plot(
-        self, da_sets, titles,
+        self,
+        da_sets,
+        titles,
     ):
         """
         time series plot
@@ -421,14 +425,17 @@ class MetricsPlot(object):
                 )
                 ax = plt.gca()
             else:
-                plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%m-%d-%Y'))
-                plt.gca().xaxis.set_major_locator(mdates.DayLocator())
-                dtindex = da_sets[i].indexes['time'].to_datetimeindex()
-                da_sets[i]['time'] = dtindex
+                # plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%m-%d-%Y'))
+                # plt.gca().xaxis.set_major_locator(mdates.DayLocator())
+                # dtindex = da_sets[i].indexes['time'].to_datetimeindex()
+                # da_sets[i]['time'] = dtindex
 
-                mpl.pyplot.plot_date(
-                    da_sets[i].time.data, da_sets[i], f'C{i}', label=f'{da_sets.sets.data[i]}'
-                )
+                # mpl.pyplot.plot_date(
+                #    da_sets[i].time.data, da_sets[i], f'C{i}', label=f'{da_sets.sets.data[i]}'
+                # )
+                dtindex = da_sets[i].indexes['time']
+                c_d_time = [nc_time_axis.CalendarDateTime(item, '365_day') for item in dtindex]
+                mpl.pyplot.plot(c_d_time, da_sets[i], f'C{i}', label=f'{da_sets.sets.data[i]}')
                 ax = plt.gca()
 
         plt.legend(bbox_to_anchor=(1.05, 1), loc='upper left', borderaxespad=0.0)
@@ -449,14 +456,14 @@ class MetricsPlot(object):
                 unique_month_labels = list(dict.fromkeys(month_labels))
                 plt.gca().set_xticklabels(unique_month_labels)
                 plt.xticks(rotation=45)
-        else:
-            mpl.pyplot.xticks(
-                pd.date_range(
-                    np.datetime64(da_sets['time'].data[0]),
-                    np.datetime64(da_sets['time'].data[-1]),
-                    periods=int(da_sets['time'].size / tick_interval) + 1,
-                )
-            )
+        # else:
+        #    mpl.pyplot.xticks(
+        #        pd.date_range(
+        #            np.datetime64(da_sets['time'].data[0]),
+        #            np.datetime64(da_sets['time'].data[-1]),
+        #            periods=int(da_sets['time'].size / tick_interval) + 1,
+        #        )
+        #    )
 
         mpl.pyplot.title(titles[0])
 
@@ -471,7 +478,9 @@ class MetricsPlot(object):
         elif metric == 'mean' and self._plot_type == 'spatial' and self._metric_type == 'raw':
             o_wt_mean = np.average(
                 np.average(
-                    lm.DatasetMetrics(data, ['time']).get_metric(metric), axis=0, weights=weights,
+                    lm.DatasetMetrics(data, ['time']).get_metric(metric),
+                    axis=0,
+                    weights=weights,
                 )
             )
             metric_name = f'{metric} = {o_wt_mean:.2f}'
