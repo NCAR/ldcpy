@@ -34,7 +34,7 @@ Documentation and usage examples are available `here <http://ldcpy.readthedocs.i
 
 
 
-:AUTHORS: Alex Pinard, Allison Baker
+:AUTHORS: Alex Pinard, Allison Baker, Dorit Hammerling
 :COPYRIGHT: 2020 University Corporation for Atmospheric Research
 :LICENSE: Apache 2.0
 

@@ -16,9 +16,19 @@ See the License for the specific language governing permissions and
 limitations under the License.
 
 
+VERSION 0.7
+------------
+- updated LICENSE
+- can create vertical plots
+
+
+VERSION 0.6
+-------------
+- First stable testing release
+
+
 VERSION 0.1
 -------------
-
 - Initial release
   
 
