@@ -440,6 +440,10 @@ class MetricsPlot(object):
         mpl.style.use('default')
 
         plt.figure()
+        if self.vert_plot:
+            plt.rcParams.update({'font.size': 16})
+        else:
+            plt.rcParams.update({'font.size': 10})
 
         for i in range(da_sets.sets.size):
             if self._group_by is not None:
@@ -466,7 +470,6 @@ class MetricsPlot(object):
 
         if self.vert_plot:
             plt.legend(loc='upper right', borderaxespad=1.0)
-            plt.rcParams.update({'font.size': 16})
         else:
             plt.rcParams.update({'font.size': 10})
             plt.legend(bbox_to_anchor=(1.05, 1), loc='upper left', borderaxespad=0.0)
