@@ -489,7 +489,7 @@ class MetricsPlot(object):
                 ]
                 unique_month_labels = list(dict.fromkeys(month_labels))
                 plt.gca().set_xticklabels(unique_month_labels)
-                plt.xticks(rotation=45)
+                plt.xticks(rotation=90)
         # else:
         #    mpl.pyplot.xticks(
         #        pd.date_range(
