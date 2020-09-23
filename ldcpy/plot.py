@@ -360,7 +360,12 @@ class MetricsPlot(object):
         else:
             mpl.pyplot.xlabel(f'{self._metric}')
         mpl.pyplot.title(f'time-series histogram: {title[0]}')
-        plt.legend(bbox_to_anchor=(1.05, 1), loc='upper left', borderaxespad=0.0)
+        if self.vert_plot:
+            plt.legend(loc='upper right', borderaxespad=1.0)
+            plt.rcParams.update({'font.size': 16})
+        else:
+            plt.rcParams.update({'font.size': 10})
+            plt.legend(bbox_to_anchor=(1.05, 1), loc='upper left', borderaxespad=0.0)
 
     def periodogram_plot(self, plot_data, title):
         plt.figure()
@@ -375,7 +380,13 @@ class MetricsPlot(object):
             freqs = np.array(range(1, int(dat.size / 2))) / dat.size
 
             mpl.pyplot.plot(freqs, i, label=plot_data[j].sets.data)
-        plt.legend(bbox_to_anchor=(1.05, 1), loc='upper left', borderaxespad=0.0)
+        if self.vert_plot:
+            plt.legend(loc='upper right', borderaxespad=1.0)
+            plt.rcParams.update({'font.size': 16})
+        else:
+            plt.rcParams.update({'font.size': 10})
+            plt.legend(bbox_to_anchor=(1.05, 1), loc='upper left', borderaxespad=0.0)
+
         mpl.pyplot.title(f'periodogram: {title[0]}')
         mpl.pyplot.ylabel('Spectrum')
         mpl.pyplot.xlabel('Frequency')
@@ -429,6 +440,7 @@ class MetricsPlot(object):
         mpl.style.use('default')
 
         plt.figure()
+
         for i in range(da_sets.sets.size):
             if self._group_by is not None:
                 plt.plot(
@@ -452,7 +464,12 @@ class MetricsPlot(object):
                 mpl.pyplot.plot(c_d_time, da_sets[i], f'C{i}', label=f'{da_sets.sets.data[i]}')
                 ax = plt.gca()
 
-        plt.legend(bbox_to_anchor=(1.05, 1), loc='upper left', borderaxespad=0.0)
+        if self.vert_plot:
+            plt.legend(loc='upper right', borderaxespad=1.0)
+            plt.rcParams.update({'font.size': 16})
+        else:
+            plt.rcParams.update({'font.size': 10})
+            plt.legend(bbox_to_anchor=(1.05, 1), loc='upper left', borderaxespad=0.0)
         mpl.pyplot.ylabel(plot_ylabel)
         mpl.pyplot.yscale(self._scale)
         self._label_offset(ax)
