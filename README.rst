@@ -32,6 +32,15 @@ It also contains a number of statistical and visual tools for gathering metrics 
 
 Documentation and usage examples are available `here <http://ldcpy.readthedocs.io>`_.
 
+
+
+:AUTHORS: Alex Pinard, Allison Baker
+:COPYRIGHT: 2020 University Corporation for Atmospheric Research
+:LICENSE: Apache 2.0
+
+
+
+
 Installation using Conda (recommended)
 ______________________________________
 
