@@ -45,6 +45,7 @@ class MetricsPlot(object):
         quantile=None,
         calc_ssim=False,
         contour_levs=24,
+        vert_plot=False,
     ):
 
         self._ds = ds
@@ -71,6 +72,7 @@ class MetricsPlot(object):
         self._quantile = None
         self._calc_ssim = calc_ssim
         self._contour_levs = contour_levs
+        self.vert_plot = vert_plot
 
     def verify_plot_parameters(self):
         if len(self._sets) < 2 and self._metric_type in [
@@ -223,7 +225,10 @@ class MetricsPlot(object):
         return
 
     def spatial_plot(self, da_sets, titles):
-        nrows = int((da_sets.sets.size + 1) / 2)
+        if self.vert_plot:
+            nrows = int((da_sets.sets.size))
+        else:
+            nrows = int((da_sets.sets.size + 1) / 2)
         if len(da_sets) == 1:
             ncols = 1
         else:
@@ -238,7 +243,10 @@ class MetricsPlot(object):
         for i in range(da_sets.sets.size):
             cy_datas[i], lon_sets[i] = add_cyclic_point(da_sets[i], coord=da_sets[i]['lon'])
 
-        fig = plt.figure(dpi=300, figsize=(9, 2.5 * nrows))
+        if self.vert_plot:
+            fig = plt.figure(dpi=300, figsize=(4.5, 2.5 * nrows))
+        else:
+            fig = plt.figure(dpi=300, figsize=(9, 2.5 * nrows))
 
         mymap = copy.copy(mpl.cm.get_cmap(f'{self._color}'))
         mymap.set_under(color='black')
@@ -248,9 +256,14 @@ class MetricsPlot(object):
         axs = {}
         psets = {}
         for i in range(da_sets.sets.size):
-            axs[i] = plt.subplot(
-                nrows, ncols, i + 1, projection=ccrs.Robinson(central_longitude=0.0)
-            )
+            if self.vert_plot:
+                axs[i] = plt.subplot(
+                    nrows, 1, i + 1, projection=ccrs.Robinson(central_longitude=0.0)
+                )
+            else:
+                axs[i] = plt.subplot(
+                    nrows, ncols, i + 1, projection=ccrs.Robinson(central_longitude=0.0)
+                )
 
             axs[i].set_facecolor('#39ff14')
 
@@ -292,7 +305,8 @@ class MetricsPlot(object):
             axs[i].set_title(titles[i])
 
         # add colorbar
-        fig.subplots_adjust(left=0.1, right=0.9, bottom=0.2, top=0.95)
+        if self.vert_plot is False:
+            fig.subplots_adjust(left=0.1, right=0.9, bottom=0.2, top=0.95)
 
         cbs = []
         if not all([np.isnan(cy_datas[i]).all() for i in range(len(cy_datas))]):
@@ -510,6 +524,7 @@ def plot(
     start=None,
     end=None,
     calc_ssim=False,
+    vert_plot=False,
 ):
     """
     Plots the data given an xarray dataset
@@ -639,6 +654,7 @@ def plot(
         standardized_err,
         quantile,
         calc_ssim,
+        vert_plot=vert_plot,
     )
 
     mp.verify_plot_parameters()
