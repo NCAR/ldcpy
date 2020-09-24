@@ -20,11 +20,13 @@ sys.path.insert(0, os.path.abspath('../../'))
 # -- Project information -----------------------------------------------------
 
 project = 'ldcpy'
-copyright = '2020, Alex Pinard'
-author = 'Alex Pinard'
+copyright = u'2020, University Corporation for Atmospheric Research'
+author = u'Alex Pinard, Allison Baker, Dorit Hammerling'
+
+
 
 # The full version, including alpha/beta/rc tags
-release = '0.1'
+release = '0.6'
 
 
 # -- General configuration ---------------------------------------------------

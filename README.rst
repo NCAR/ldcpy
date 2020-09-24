@@ -24,13 +24,22 @@
     :target: https://anaconda.org/conda-forge/ldcpy
     :alt: Conda Version
 
+.. image:: https://zenodo.org/badge/215409079.svg
+   :target: https://zenodo.org/badge/latestdoi/215409079
+
 Large Data Comparison for Python
 =================================
 
 ldcpy is a utility for gathering and plotting metrics from NetCDF or Zarr files using the Pangeo stack.
 It also contains a number of statistical and visual tools for gathering metrics and comparing Earth System Model data files.
 
+
+:AUTHORS: Alex Pinard, Allison Baker, Dorit Hammerling
+:COPYRIGHT: 2020 University Corporation for Atmospheric Research
+:LICENSE: Apache 2.0
+
 Documentation and usage examples are available `here <http://ldcpy.readthedocs.io>`_.
+
 
 Installation using Conda (recommended)
 ______________________________________
