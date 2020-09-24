@@ -245,8 +245,10 @@ class MetricsPlot(object):
 
         if self.vert_plot:
             fig = plt.figure(dpi=300, figsize=(4.5, 2.5 * nrows))
+            plt.rcParams.update({'font.size': 10})
         else:
             fig = plt.figure(dpi=300, figsize=(9, 2.5 * nrows))
+            plt.rcParams.update({'font.size': 10})
 
         mymap = copy.copy(mpl.cm.get_cmap(f'{self._color}'))
         mymap.set_under(color='black')
@@ -328,7 +330,20 @@ class MetricsPlot(object):
                     cbs[i].ax.tick_params(labelsize=8, rotation=30)
             if any([np.isnan(cy_datas[i]).any() for i in range(len(cy_datas))]):
                 proxy = [plt.Rectangle((0, 0), 1, 1, fc='#39ff14')]
-                plt.legend(proxy, ['NaN'], bbox_to_anchor=(0.565, 4))
+                if self.vert_plot:
+                    plt.rcParams.update({'font.size': 8})
+                    if len(cy_datas) == 1:
+                        bbox_height = 0.7
+                    elif len(cy_datas) == 2:
+                        bbox_height = 1
+                    else:
+                        bbox_height = 1
+                    plt.legend(
+                        proxy, ['NaN'], loc='lower center', bbox_to_anchor=(0.51, bbox_height)
+                    )
+                else:
+                    plt.rcParams.update({'font.size': 10})
+                    plt.legend(proxy, ['NaN'], bbox_to_anchor=(0.565, 4))
         else:
             fig.add_axes([0.1, 0, 0.8, 0.05])
             proxy = [plt.Rectangle((0, 0), 1, 1, fc='#39ff14')]
