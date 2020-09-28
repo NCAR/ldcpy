@@ -24,7 +24,6 @@ copyright = u'2020, University Corporation for Atmospheric Research'
 author = u'Alex Pinard, Allison Baker, Dorit Hammerling'
 
 
-
 # The full version, including alpha/beta/rc tags
 release = '0.6'
 
