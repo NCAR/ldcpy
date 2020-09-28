@@ -1,3 +1,4 @@
+import dask
 import numpy as np
 import xarray as xr
 
@@ -150,12 +151,12 @@ def compare_stats(ds, varname, set1, set2, time=0, significant_digits=4):
     out : None
 
     """
-    print('Comparing {} data (set1) to {} data (set2) at time = {}'.format(set1, set2, time))
+    print(f'Comparing {set1} data (set1) to {set2} data (set2) at time = {time}\n')
 
     # Make sure we don't exceed time bound
     time_mx = ds[varname].sel(collection=set1).sizes['time'] - 1
     if time > time_mx:
-        raise ValueError(f'specified time index exceeds max time dimension {time_mx}.')
+        raise ValueError(f'specified time index={time} exceeds max time dimension {time_mx}.')
 
     ds0_metrics = DatasetMetrics(ds[varname].sel(collection=set1).isel(time=time), ['lat', 'lon'])
     ds1_metrics = DatasetMetrics(ds[varname].sel(collection=set2).isel(time=time), ['lat', 'lon'])
@@ -171,57 +172,37 @@ def compare_stats(ds, varname, set1, set2, time=0, significant_digits=4):
     )
 
     output = {}
-
-    output['skip1'] = 0
-
-    output['mean set1'] = ds0_metrics.get_metric('mean').data.compute()
-    output['mean set2'] = ds1_metrics.get_metric('mean').data.compute()
-    output['mean diff'] = d_metrics.get_metric('mean').data.compute()
-
-    output['skip2'] = 0
-
-    output['variance set1'] = ds0_metrics.get_metric('variance').data.compute()
-    output['variance set2'] = ds1_metrics.get_metric('variance').data.compute()
-
-    output['skip3'] = 0
-
-    output['standard deviation set1'] = ds0_metrics.get_metric('std').data.compute()
-    output['standard deviation set2'] = ds1_metrics.get_metric('std').data.compute()
-
-    output['skip4'] = 0
-
-    output['max value set1'] = ds0_metrics.get_metric('max_val').data.compute()
-    output['max value set2'] = ds1_metrics.get_metric('max_val').data.compute()
-    output['min value set1'] = ds0_metrics.get_metric('min_val').data.compute()
-    output['min value set2'] = ds1_metrics.get_metric('min_val').data.compute()
-
-    output['skip55'] = 0
-
-    output['max abs diff'] = d_metrics.get_metric('max_abs').data.compute()
-    output['min abs diff'] = d_metrics.get_metric('min_abs').data.compute()
-    output['mean abs diff'] = d_metrics.get_metric('mean_abs').data.compute()
-
-    output['mean squared diff'] = d_metrics.get_metric('mean_squared').data.compute()
-    output['root mean squared diff'] = d_metrics.get_metric('rms').data.compute()
-
-    output['normalized root mean squared diff'] = diff_metrics.get_diff_metric(
-        'n_rms'
-    ).data.compute()
-    output['normalized max pointwise error'] = diff_metrics.get_diff_metric('n_emax').data.compute()
+    output['mean set1'] = ds0_metrics.get_metric('mean').data
+    output['mean set2'] = ds1_metrics.get_metric('mean').data
+    output['mean diff'] = d_metrics.get_metric('mean').data
+    output['variance set1'] = ds0_metrics.get_metric('variance').data
+    output['variance set2'] = ds1_metrics.get_metric('variance').data
+    output['standard deviation set1'] = ds0_metrics.get_metric('std').data
+    output['standard deviation set2'] = ds1_metrics.get_metric('std').data
+    output['max value set1'] = ds0_metrics.get_metric('max_val').data
+    output['max value set2'] = ds1_metrics.get_metric('max_val').data
+    output['min value set1'] = ds0_metrics.get_metric('min_val').data
+    output['min value set2'] = ds1_metrics.get_metric('min_val').data
+    output['max abs diff'] = d_metrics.get_metric('max_abs').data
+    output['min abs diff'] = d_metrics.get_metric('min_abs').data
+    output['mean abs diff'] = d_metrics.get_metric('mean_abs').data
+    output['mean squared diff'] = d_metrics.get_metric('mean_squared').data
+    output['root mean squared diff'] = d_metrics.get_metric('rms').data
+    output['normalized root mean squared diff'] = diff_metrics.get_diff_metric('n_rms').data
+    output['normalized max pointwise error'] = diff_metrics.get_diff_metric('n_emax').data
     output['pearson correlation coefficient'] = diff_metrics.get_diff_metric(
         'pearson_correlation_coefficient'
-    ).data.compute()
+    ).data
+
+    output = dask.compute(output)[0]
     output['ks p-value'] = diff_metrics.get_diff_metric('ks_p_value')
     tmp = 'spatial relative error(% > ' + str(ds0_metrics.get_single_metric('spre_tol')) + ')'
     output[tmp] = diff_metrics.get_diff_metric('spatial_rel_error')
     output['ssim'] = diff_metrics.get_diff_metric('ssim')
 
-    for key, value in output.items():
-        if key[:4] != 'skip':
-            rounded_value = f'{float(f"{value:.{significant_digits}g}"):g}'
-            print(f'{key}: {rounded_value}')
-        else:
-            print(' ')
+    for key, value in sorted(output.items()):
+        rounded_value = f'{float(f"{value:.{significant_digits}g}"):g}'
+        print(f'{key:35}: {rounded_value}')
 
 
 def check_metrics(
