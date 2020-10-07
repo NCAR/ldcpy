@@ -32,7 +32,7 @@ class TestPlot(TestCase):
     """
 
     def test_mean(self):
-        ldcpy.plot(ds, 'TS', sets=['orig', 'recon'], metric='mean')
+        ldcpy.plot(ds, 'TS', sets=['orig', 'recon'], metric='mean', vert_plot=True)
         self.assertTrue(True)
 
     def test_prob_neg(self):
@@ -49,6 +49,26 @@ class TestPlot(TestCase):
         )
         self.assertTrue(True)
 
+    def test_annual_harmonic(self):
+        ldcpy.plot(
+            ds,
+            'TS',
+            sets=['orig', 'recon'],
+            metric='annual_harmonic_relative_ratio',
+            metric_type='metric_of_diff',
+        )
+        self.assertTrue(True)
+
+    def test_pooled_variance_ratio(self):
+        ldcpy.plot(
+            ds,
+            'TS',
+            sets=['orig', 'recon', 'recon2'],
+            scale='log',
+            metric='pooled_variance_ratio',
+            metric_type='diff',
+        )
+
     def test_std_dev_compare(self):
         ldcpy.plot(
             ds,
@@ -61,7 +81,9 @@ class TestPlot(TestCase):
         self.assertTrue(True)
 
     def test_mean_diff(self):
-        ldcpy.plot(ds, 'TS', sets=['orig', 'recon'], metric='mean', metric_type='diff')
+        ldcpy.plot(
+            ds, 'TS', sets=['orig', 'recon'], metric='mean', metric_type='diff', transform='log'
+        )
         self.assertTrue(True)
 
     def test_mean_diff_standardized(self):

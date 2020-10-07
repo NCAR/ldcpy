@@ -1,6 +1,7 @@
 import os
 from typing import Optional
 
+import cftime
 import cv2
 import matplotlib as mpl
 import numpy as np
@@ -10,6 +11,7 @@ from cartopy.util import add_cyclic_point
 from matplotlib import pyplot as plt
 from numpy import inf
 from scipy import stats as ss
+from xrft import dft
 
 
 class DatasetMetrics(object):
@@ -46,6 +48,8 @@ class DatasetMetrics(object):
         self._sum = None
         self._sum_squared = None
         self._variance = None
+        self._pooled_variance = None
+        self._pooled_variance_ratio = None
         self._quantile = 0.5
         self._spre_tol = 1.0e-4
         self._max_abs = None
@@ -53,6 +57,7 @@ class DatasetMetrics(object):
         self._d_range = None
         self._min_val = None
         self._max_val = None
+        self._annual_harmonic_relative_ratio = None
 
         # single value metrics
         self._zscore_cutoff = None
@@ -87,6 +92,19 @@ class DatasetMetrics(object):
         # con_var = xr.ufuncs.square((o_1 - o_2))
         con_var = np.square((o_1 - o_2))
         return con_var
+
+    @property
+    def pooled_variance(self) -> np.ndarray:
+        """
+        The overall variance of the dataset
+        """
+        if not self._is_memoized('_pooled_variance'):
+            self._pooled_variance = self._ds.var()
+            self._pooled_variance.attrs = self._ds.attrs
+            if hasattr(self._ds, 'units'):
+                self._pooled_variance.attrs['units'] = f'{self._ds.units}^2'
+
+        return self._pooled_variance
 
     @property
     def ns_con_var(self) -> np.ndarray:
@@ -209,6 +227,19 @@ class DatasetMetrics(object):
                 self._variance.attrs['units'] = f'{self._ds.units}^2'
 
         return self._variance
+
+    @property
+    def pooled_variance_ratio(self) -> np.ndarray:
+        """
+        The pooled variance along the aggregate dimensions
+        """
+        if not self._is_memoized('_pooled_variance_ratio'):
+            self._pooled_variance_ratio = self.variance / self.pooled_variance
+            self._pooled_variance_ratio.attrs = self._ds.attrs
+            if hasattr(self._ds, 'units'):
+                self._pooled_variance_ratio.attrs['units'] = ''
+
+        return self._pooled_variance_ratio
 
     @property
     def prob_positive(self) -> np.ndarray:
@@ -375,6 +406,33 @@ class DatasetMetrics(object):
         return self._lag1
 
     @property
+    def annual_harmonic_relative_ratio(self) -> xr.DataArray:
+        """
+        The annual harmonic relative to the average periodogram value
+        in a neighborhood of 50 frequencies around the annual frequency
+        NOTE: This assumes the values along the "time" dimension are equally spaced.
+        NOTE: This metric returns a lat-lon array regardless of aggregate dimensions, so can only be used in a spatial plot.
+        """
+        if not self._is_memoized('_annual_harmonic'):
+            # drop time coordinate labels or else it will try to parse them as numbers to check spacing and fail
+            DF = dft(self._ds.drop('time'), dim=['time'], detrend='constant')
+            S = np.real(DF * np.conj(DF) / self._ds.sizes['time'])
+            S_annual = S.isel(freq_time=int(self._ds.sizes['time'] / 365) + 1)  # annual power
+            neighborhood = (
+                int(self._ds.sizes['time'] / 365) + 1 - 25,
+                int(self._ds.sizes['time'] / 365) + 1 + 25,
+            )
+            S_mean = S.isel(freq_time=slice(max(0, neighborhood[0]), neighborhood[1])).mean(
+                dim='freq_time'
+            )
+            ratio = S_annual / S_mean
+            self._annual_harmonic_relative_ratio = ratio
+
+            if hasattr(self._ds, 'units'):
+                self._annual_harmonic_relative_ratio.attrs['units'] = ''
+        return self._annual_harmonic_relative_ratio
+
+    @property
     def corr_lag1(self) -> xr.DataArray:
         """
         The deseasonalized lag-1 correlation at each point by day of year
@@ -423,6 +481,20 @@ class DatasetMetrics(object):
             self._zscore_cutoff = zscore_cutoff
 
             return self._zscore_cutoff
+
+    @property
+    def annual_harmonic_relative_ratio_pct_sig(self) -> np.ndarray:
+        """
+        The percentage of points past the significance cutoff (p value <= 0.01) for the
+        annual harmonic relative to the average periodogram value
+        in a neighborhood of 50 frequencies around the annual frequency
+        """
+
+        pvals = 1 - ss.f.cdf(self.annual_harmonic_relative_ratio, 2, 100)
+        sorted_pvals = np.sort(pvals)
+        sig_cutoff = ss.f.ppf(1 - max(sorted_pvals[sorted_pvals <= 0.01]), 2, 50)
+        pct_sig = 100 * np.mean(self.annual_harmonic_relative_ratio > sig_cutoff)
+        return pct_sig
 
     @property
     def zscore_percent_significant(self) -> np.ndarray:
@@ -478,6 +550,8 @@ class DatasetMetrics(object):
                 return self.std
             if name == 'variance':
                 return self.variance
+            if name == 'pooled_variance_ratio':
+                return self.pooled_variance_ratio
             if name == 'prob_positive':
                 return self.prob_positive
             if name == 'prob_negative':
@@ -498,6 +572,8 @@ class DatasetMetrics(object):
                 return self.sum
             if name == 'sum_squared':
                 return self.sum_squared
+            if name == 'annual_harmonic_relative_ratio':
+                return self.annual_harmonic_relative_ratio
             if name == 'corr_lag1':
                 return self.corr_lag1
             if name == 'quantile':
@@ -542,6 +618,10 @@ class DatasetMetrics(object):
                 return self.dyn_range
             if name == 'spre_tol':
                 return self.spre_tol
+            if name == 'pooled_variance':
+                return self.pooled_variance
+            if name == 'annual_harmonic_relative_ratio_pct_sig':
+                return self.annual_harmonic_relative_ratio_pct_sig
             raise ValueError(f'there is no metrics with the name: {name}.')
         else:
             raise TypeError('name must be a string.')

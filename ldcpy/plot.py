@@ -45,6 +45,7 @@ class MetricsPlot(object):
         quantile=None,
         calc_ssim=False,
         contour_levs=24,
+        short_title=False,
         vert_plot=False,
     ):
 
@@ -68,6 +69,7 @@ class MetricsPlot(object):
         self._transform = transform
         self._lev = lev
         self._color = color
+        self._short_title = short_title
         self._standardized_err = standardized_err
         self._quantile = None
         self._calc_ssim = calc_ssim
@@ -169,13 +171,16 @@ class MetricsPlot(object):
         else:
             das = f'{self._sets[0]}'
 
+        if self._short_title is True:
+            return das
+
         if self._quantile is not None and metric_name == 'quantile':
             metric_full_name = f'{metric_name} {self._quantile}'
         else:
             metric_full_name = metric_name
 
         if self._transform == 'log':
-            title = f'{self._varname}: log10({metric_full_name})'
+            title = f'{self._varname}: log10 {metric_full_name}'
         else:
             title = f'{self._varname}: {metric_full_name}'
 
@@ -199,6 +204,11 @@ class MetricsPlot(object):
 
         if self._subset is not None:
             title = f'{title} subset:{self._subset}'
+
+        if self._plot_type == 'histogram':
+            title = f'time-series histogram: :{title}'
+        elif self._plot_type == 'periodogram':
+            title = f'periodogram: :{title}'
 
         return title
 
@@ -304,6 +314,7 @@ class MetricsPlot(object):
                 axs[i].axis('on')
 
             axs[i].coastlines()
+
             axs[i].set_title(titles[i])
 
         # add colorbar
@@ -374,7 +385,7 @@ class MetricsPlot(object):
             mpl.pyplot.xlabel(f'{self._metric} ({plot_data.units})')
         else:
             mpl.pyplot.xlabel(f'{self._metric}')
-        mpl.pyplot.title(f'time-series histogram: {title[0]}')
+        mpl.pyplot.title(title[0])
         if self.vert_plot:
             plt.legend(loc='upper right', borderaxespad=1.0)
             plt.rcParams.update({'font.size': 16})
@@ -402,7 +413,7 @@ class MetricsPlot(object):
             plt.rcParams.update({'font.size': 10})
             plt.legend(bbox_to_anchor=(1.05, 1), loc='upper left', borderaxespad=0.0)
 
-        mpl.pyplot.title(f'periodogram: {title[0]}')
+        mpl.pyplot.title(title[0])
         mpl.pyplot.ylabel('Spectrum')
         mpl.pyplot.xlabel('Frequency')
 
@@ -533,6 +544,19 @@ class MetricsPlot(object):
                 )
             )
             metric_name = f'{metric} = {o_wt_mean:.2f}'
+        elif metric == 'pooled_variance_ratio':
+            pooled_sd = np.sqrt(
+                lm.DatasetMetrics((data), ['time']).get_single_metric('pooled_variance')
+            )
+            d = pooled_sd.data.compute()
+            metric_name = f'{metric}: pooled SD = {d:.2f}'
+        elif metric == 'annual_harmonic_relative_ratio':
+            p = (
+                lm.DatasetMetrics((data), ['time'])
+                .get_single_metric('annual_harmonic_relative_ratio_pct_sig')
+                .data.compute()
+            )
+            metric_name = f'{metric}: % sig = {p:.2f}'
         else:
             metric_name = metric
 
@@ -559,6 +583,7 @@ def plot(
     start=None,
     end=None,
     calc_ssim=False,
+    short_title=False,
     vert_plot=False,
 ):
     """
@@ -665,6 +690,10 @@ def plot(
     calc_ssim : bool, optional
         Whether or not to calculate the ssim (structural similarity index) between two plots
         (only applies to plot_type = 'spatial'), (default False).
+    short_title: bool, optional
+        Whether or not to include the title in the plot output (default False).
+    vert_plot: bool, optional
+        Whether or not to include the
 
     Returns
     =======
@@ -689,6 +718,7 @@ def plot(
         standardized_err,
         quantile,
         calc_ssim,
+        short_title=short_title,
         vert_plot=vert_plot,
     )
 
@@ -732,7 +762,6 @@ def plot(
             metric_names.append(mp.get_metric_label(metric, datas[i], ds['gw'].values))
         else:
             metric_names.append(mp.get_metric_label(metric, datas[i]))
-
     # Get plot data and title
     if lat is not None and lon is not None:
         mp.title_lat = subsets[0]['lat'].data[0]
