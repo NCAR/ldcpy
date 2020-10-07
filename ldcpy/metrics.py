@@ -415,7 +415,7 @@ class DatasetMetrics(object):
         """
         if not self._is_memoized('_annual_harmonic'):
             # drop time coordinate labels or else it will try to parse them as numbers to check spacing and fail
-            DF = dft(self._ds.drop('time'), dim=['time'], detrend='constant')
+            DF = dft(self._ds.drop_vars('time'), dim=['time'], detrend='constant')
             S = np.real(DF * np.conj(DF) / self._ds.sizes['time'])
             S_annual = S.isel(freq_time=int(self._ds.sizes['time'] / 365) + 1)  # annual power
             neighborhood = (
