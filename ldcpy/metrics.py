@@ -102,7 +102,7 @@ class DatasetMetrics(object):
             self._pooled_variance = self._ds.var()
             self._pooled_variance.attrs = self._ds.attrs
             if hasattr(self._ds, 'units'):
-                self._pooled_variance.attrs['units'] = f'{self._ds.units}^2'
+                self._pooled_variance.attrs['units'] = f'{self._ds.units}$^2$'
 
         return self._pooled_variance
 
@@ -115,7 +115,7 @@ class DatasetMetrics(object):
             self._ns_con_var = self._con_var('ns', self._ds).mean(self._agg_dims)
             self._ns_con_var.attrs = self._ds.attrs
             if hasattr(self._ds, 'units'):
-                self._ns_con_var.attrs['units'] = f'{self._ds.units}^2'
+                self._ns_con_var.attrs['units'] = f'{self._ds.units}$^2$'
 
         return self._ns_con_var
 
@@ -128,7 +128,7 @@ class DatasetMetrics(object):
             self._ew_con_var = self._con_var('ew', self._ds).mean(self._agg_dims)
             self._ew_con_var.attrs = self._ds.attrs
             if hasattr(self._ds, 'units'):
-                self._ew_con_var.attrs['units'] = f'{self._ds.units}^2'
+                self._ew_con_var.attrs['units'] = f'{self._ds.units}$^2$'
 
         return self._ew_con_var
 
@@ -165,7 +165,7 @@ class DatasetMetrics(object):
             self._mean_squared = np.square(self.mean)
             self.mean_abs.attrs = self._ds.attrs
             if hasattr(self._ds, 'units'):
-                self.mean_abs.attrs['units'] = f'{self._ds.units}^2'
+                self.mean_abs.attrs['units'] = f'{self._ds.units}$^2$'
 
         return self._mean_squared
 
@@ -198,7 +198,7 @@ class DatasetMetrics(object):
             self._sum_squared = np.square(self._sum_squared)
             self._sum_squared.attrs = self._ds.attrs
             if hasattr(self._ds, 'units'):
-                self._sum_squared.attrs['units'] = f'{self._ds.units}^2'
+                self._sum_squared.attrs['units'] = f'{self._ds.units}$^2$'
 
         return self._sum_squared
 
@@ -224,7 +224,7 @@ class DatasetMetrics(object):
             self._variance = self._ds.var(self._agg_dims)
             self._variance.attrs = self._ds.attrs
             if hasattr(self._ds, 'units'):
-                self._variance.attrs['units'] = f'{self._ds.units}^2'
+                self._variance.attrs['units'] = f'{self._ds.units}$^2$'
 
         return self._variance
 
