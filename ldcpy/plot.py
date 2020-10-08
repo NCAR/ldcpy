@@ -869,7 +869,7 @@ def plot(
         for i in range(len(raw_metrics)):
             plot_datas.append(mp.get_plot_data(raw_metrics[i]))
             if metric_type in ['metric_of_diff']:
-                set_names.append(f'{sets[0]} & {sets[i]}')
+                set_names.append(tex_escape(f'{sets[0]} & {sets[i+1]}'))
             else:
                 set_names.append(f'{sets[i]}')
 
@@ -880,10 +880,10 @@ def plot(
 
     if metric_type in ['ratio', 'diff']:
         for i in range(1, len(metric_names)):
-            titles.append(mp.get_title(metric_names[i], f'{sets[0]} & {sets[i]}'))
+            titles.append(mp.get_title(metric_names[i], tex_escape(f'{sets[0]} & {sets[i]}')))
     elif metric_type in ['metric_of_diff']:
         for i in range(len(metric_names)):
-            titles.append(mp.get_title(metric_names[i], f'{sets[0]} & {sets[i+1]}'))
+            titles.append(mp.get_title(metric_names[i], tex_escape(f'{sets[0]} & {sets[i+1]}')))
     else:
         for i in range(len(metric_names)):
             titles.append(mp.get_title(metric_names[i], sets[i]))
