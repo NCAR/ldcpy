@@ -28,3 +28,4 @@ dependencies:
   - cython
   - scikit-image
   - opencv=4.2.0
+  - re

@@ -19,3 +19,4 @@ dependencies:
   - scikit-image
   - opencv=4.2.0
   - matplotlib-base
+  - re

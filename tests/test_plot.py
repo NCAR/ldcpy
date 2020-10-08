@@ -4,6 +4,8 @@ import pytest
 
 import ldcpy
 
+ldcpy.plot.USETEX = False
+
 ds = ldcpy.open_datasets(
     ['TS'],
     [

@@ -18,3 +18,4 @@ dependencies:
   - scikit-image
   - opencv=4.2.0
   - nc-time-axis
+  - re

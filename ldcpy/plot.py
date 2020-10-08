@@ -21,6 +21,8 @@ from numpy import inf
 from ldcpy import metrics as lm
 from ldcpy import util as lu
 
+USETEX = True
+
 
 def tex_escape(text):
     """
@@ -529,7 +531,7 @@ class MetricsPlot(object):
             plt.rcParams.update({'font.size': 10})
         plt.rcParams.update(
             {
-                'text.usetex': True,
+                'text.usetex': USETEX,
             }
         )
 
@@ -803,7 +805,7 @@ def plot(
 
     plt.rcParams.update(
         {
-            'text.usetex': True,
+            'text.usetex': USETEX,
         }
     )
 
