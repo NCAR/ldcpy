@@ -50,6 +50,7 @@ class DatasetMetrics(object):
         self._variance = None
         self._pooled_variance = None
         self._pooled_variance_ratio = None
+        self._standardized_mean = None
         self._quantile = 0.5
         self._spre_tol = 1.0e-4
         self._max_abs = None
@@ -214,6 +215,18 @@ class DatasetMetrics(object):
                 self._std.attrs['units'] = ''
 
         return self._std
+
+    @property
+    def standardized_mean(self) -> np.ndarray:
+        """
+        The mean at each point along the aggregate dimensions divided by the standard deviation
+        """
+        if not self._is_memoized('_standardized_mean'):
+            self._standardized_mean = (self.mean - self._ds.mean()) / self._ds.std()
+            if hasattr(self._ds, 'units'):
+                self._standardized_mean.attrs['units'] = ''
+
+        return self._standardized_mean
 
     @property
     def variance(self) -> np.ndarray:
@@ -552,6 +565,8 @@ class DatasetMetrics(object):
                 return self.mean
             if name == 'std':
                 return self.std
+            if name == 'standardized_mean':
+                return self.standardized_mean
             if name == 'variance':
                 return self.variance
             if name == 'pooled_variance_ratio':

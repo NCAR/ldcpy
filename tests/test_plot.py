@@ -93,19 +93,6 @@ class TestPlot(TestCase):
         )
         self.assertTrue(True)
 
-    def test_mean_diff_standardized(self):
-        with pytest.raises(ValueError):
-            ldcpy.plot(
-                ds,
-                'TS',
-                sets=['orig', 'recon'],
-                metric='mean',
-                metric_type='diff',
-                standardized_err=True,
-                tex_format=False,
-            )
-        self.assertTrue(True)
-
     def test_prob_negative_log_compare(self):
         ldcpy.plot(
             ds,
@@ -196,7 +183,6 @@ class TestPlot(TestCase):
             metric='mean',
             metric_type='raw',
             plot_type='periodogram',
-            standardized_err=False,
             group_by='time.dayofyear',
             tex_format=False,
         )

@@ -101,7 +101,6 @@ class MetricsPlot(object):
         self._lev = lev
         self._color = color
         self._short_title = short_title
-        self._standardized_err = standardized_err
         self._quantile = None
         self._calc_ssim = calc_ssim
         self._contour_levs = contour_levs
@@ -125,8 +124,6 @@ class MetricsPlot(object):
             self._true_lat is not None or self._true_lon is not None
         ):
             raise ValueError('Cannot currently subset by latitude or longitude in a spatial plot')
-        if self._standardized_err is not False and self._metric_type != 'diff':
-            raise ValueError("Cannot standardize errors if metric_type != 'diff'")
         if self._lev != 0 and 'lev' not in self._ds.dims:
             raise ValueError('Cannot subset by lev in this dataset')
         if self._quantile is not None and self._metric != 'quantile':
@@ -142,15 +139,6 @@ class MetricsPlot(object):
     def get_metrics(self, da):
         da_data = da
         da_data.attrs = da.attrs
-        if self._metric_type == 'diff' and self._standardized_err is True:
-            if da.std(dim='time').all() == 0:
-                da_attrs = da.attrs
-                da_data = (da - da.mean(dim='time')) / da.std(dim='time')
-                da_data.attrs = da_attrs
-            else:
-                raise ValueError(
-                    'Standard deviation of error data is 0. Cannot standardize errors.'
-                )
 
         if self._plot_type in ['spatial']:
             metrics_da = lm.DatasetMetrics(da_data, ['time'])
@@ -647,7 +635,6 @@ def plot(
     lon=None,
     lev=0,
     color='coolwarm',
-    standardized_err=False,
     quantile=None,
     start=None,
     end=None,
@@ -690,6 +677,9 @@ def plot(
             - corr_lag1
             - quantile
             - lag1
+            - standardized_mean
+            - annual_harmonic_relative_ratio
+            - pooled_variance_ratio
     sets : list <str>
         The labels of the dataset to gather metrics from
     group_by : str
@@ -747,9 +737,6 @@ def plot(
         The color scheme for spatial plots, (default 'coolwarm').
         see https://matplotlib.org/3.1.1/gallery/color/colormap_reference.html
         for more options
-    standardized_err : bool, optional
-        Whether or not to standardize the error in a plot of metric_type="diff",
-        (default False).
     quantile : float, optional
         A value between 0 and 1 required if metric="quantile", corresponding to the desired quantile to gather,
         (default 0.5).
@@ -797,7 +784,6 @@ def plot(
         lon,
         lev,
         color,
-        standardized_err,
         quantile,
         calc_ssim,
         legend_loc=legend_loc,
