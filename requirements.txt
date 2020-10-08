@@ -12,4 +12,3 @@ dask[complete]
 opencv-python==4.2.0.34
 scikit-image
 nc-time-axis
-re
