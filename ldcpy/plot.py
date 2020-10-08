@@ -21,8 +21,6 @@ from numpy import inf
 from ldcpy import metrics as lm
 from ldcpy import util as lu
 
-USETEX = True
-
 
 def tex_escape(text):
     """
@@ -79,6 +77,7 @@ class MetricsPlot(object):
         axes_symmetric=False,
         legend_loc='upper right',
         vert_plot=False,
+        tex_format=True,
     ):
 
         self._ds = ds
@@ -109,6 +108,7 @@ class MetricsPlot(object):
         self._axes_symmetric = axes_symmetric
         self._legend_loc = legend_loc
         self.vert_plot = vert_plot
+        self._tex_format = tex_format
 
     def verify_plot_parameters(self):
         if len(self._sets) < 2 and self._metric_type in [
@@ -531,7 +531,7 @@ class MetricsPlot(object):
             plt.rcParams.update({'font.size': 10})
         plt.rcParams.update(
             {
-                'text.usetex': USETEX,
+                'text.usetex': self._tex_format,
             }
         )
 
@@ -656,6 +656,7 @@ def plot(
     axes_symmetric=False,
     legend_loc='upper right',
     vert_plot=False,
+    tex_format=True,
 ):
     """
     Plots the data given an xarray dataset
@@ -801,11 +802,12 @@ def plot(
         axes_symmetric=axes_symmetric,
         short_title=short_title,
         vert_plot=vert_plot,
+        tex_format=tex_format,
     )
 
     plt.rcParams.update(
         {
-            'text.usetex': USETEX,
+            'text.usetex': tex_format,
         }
     )
 
