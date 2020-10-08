@@ -77,7 +77,7 @@ class MetricsPlot(object):
         axes_symmetric=False,
         legend_loc='upper right',
         vert_plot=False,
-        tex_format=True,
+        tex_format=False,
     ):
 
         self._ds = ds
@@ -656,7 +656,7 @@ def plot(
     axes_symmetric=False,
     legend_loc='upper right',
     vert_plot=False,
-    tex_format=True,
+    tex_format=False,
 ):
     """
     Plots the data given an xarray dataset
@@ -774,6 +774,8 @@ def plot(
     vert_plot: bool, optional
         If true, forces plots into a single column format and enlarges text.
         (default False)
+    tex_format: bool, optional
+        Whether to interpret all plot output strings as latex formatting (default False)
 
     Returns
     =======
@@ -880,10 +882,10 @@ def plot(
 
     if metric_type in ['ratio', 'diff']:
         for i in range(1, len(metric_names)):
-            titles.append(mp.get_title(metric_names[i], tex_escape(f'{sets[0]} & {sets[i]}')))
+            titles.append(mp.get_title(metric_names[i], f'{sets[0]} & {sets[i]}'))
     elif metric_type in ['metric_of_diff']:
         for i in range(len(metric_names)):
-            titles.append(mp.get_title(metric_names[i], tex_escape(f'{sets[0]} & {sets[i+1]}')))
+            titles.append(mp.get_title(metric_names[i], f'{sets[0]} & {sets[i+1]}'))
     else:
         for i in range(len(metric_names)):
             titles.append(mp.get_title(metric_names[i], sets[i]))
