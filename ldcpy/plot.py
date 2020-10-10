@@ -658,7 +658,7 @@ def plot(
     metric : str
         The name of the metric to be plotted (must match a property name in the DatasetMetrics
         class in ldcpy.plot, for more information about the available metrics see ldcpy.DatasetMetrics)
-        Accept values include:
+        Acceptable values include:
 
             - ns_con_var
             - ew_con_var
@@ -680,6 +680,7 @@ def plot(
             - standardized_mean
             - annual_harmonic_relative_ratio
             - pooled_variance_ratio
+
     sets : list <str>
         The labels of the dataset to gather metrics from
     group_by : str
