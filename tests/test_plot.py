@@ -37,6 +37,21 @@ class TestPlot(TestCase):
         )
         self.assertTrue(True)
 
+    def test_standardized_mean(self):
+        ldcpy.plot(
+            ds,
+            'TS',
+            sets=['orig', 'recon'],
+            metric='standardized_mean',
+            plot_type='time_series',
+            lat=90,
+            lon=0,
+            metric_type='diff',
+            vert_plot=True,
+            tex_format=False,
+        )
+        self.assertTrue(True)
+
     def test_prob_neg(self):
         ldcpy.plot(ds2, 'PRECT', sets=['orig', 'recon'], metric='prob_negative', tex_format=False)
         self.assertTrue(True)
@@ -118,6 +133,20 @@ class TestPlot(TestCase):
             tex_format=False,
         )
         self.assertTrue(True is True)
+
+    def test_odds_positive_grouped(self):
+        # comparison between mean TS values in col_ds for "orig" and "zfpA1.0" datasets
+        ldcpy.plot(
+            ds2,
+            'PRECT',
+            sets=['orig', 'recon'],
+            metric='odds_positive',
+            plot_type='time_series',
+            group_by='time.month',
+            calc_ssim=True,
+            vert_plot=True,
+        )
+        self.assertTrue(True)
 
     def test_prob_neg_compare(self):
         ldcpy.plot(

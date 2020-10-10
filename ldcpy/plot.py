@@ -170,7 +170,10 @@ class MetricsPlot(object):
         else:
             raise ValueError(f'metric_type {self._metric_type} not supported')
 
-        if self._group_by is not None and self._metric != 'standardized_mean':
+        if self._group_by is not None and self._metric not in [
+            'standardized_mean',
+            'odds_positive',
+        ]:
             plot_attrs = plot_data.attrs
             plot_data = plot_data.groupby(self._group_by).mean(dim='time')
             plot_data.attrs = plot_attrs

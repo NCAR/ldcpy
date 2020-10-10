@@ -291,7 +291,12 @@ class DatasetMetrics(object):
         The odds that a point is positive = prob_positive/(1-prob_positive)
         """
         if not self._is_memoized('_odds_positive'):
-            self._odds_positive = self.prob_positive / (1 - self.prob_positive)
+            if self._grouping is not None:
+                self._odds_positive = self.prob_positive.groupby(self._grouping).mean() / (
+                    1 - self.prob_positive.groupby(self._grouping).mean()
+                )
+            else:
+                self._odds_positive = self.prob_positive / (1 - self.prob_positive)
             self._odds_positive.attrs = self._ds.attrs
             if hasattr(self._ds, 'units'):
                 self._odds_positive.attrs['units'] = ''
@@ -586,6 +591,7 @@ class DatasetMetrics(object):
             if name == 'prob_negative':
                 return self.prob_negative
             if name == 'odds_positive':
+                self._grouping = grouping
                 return self.odds_positive
             if name == 'zscore':
                 return self.zscore
