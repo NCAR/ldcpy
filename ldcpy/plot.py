@@ -152,7 +152,7 @@ class MetricsPlot(object):
                 'SSIM is only calculated for spatial plots, ignoring calc_ssim option', UserWarning
             )
 
-        raw_data = metrics_da.get_metric(self._metric)
+        raw_data = metrics_da.get_metric(self._metric, self._quantile, self._group_by)
         return raw_data
 
     def get_plot_data(self, raw_data_1, raw_data_2=None):

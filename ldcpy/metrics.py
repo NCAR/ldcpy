@@ -58,6 +58,7 @@ class DatasetMetrics(object):
         self._d_range = None
         self._min_val = None
         self._max_val = None
+        self._grouping = None
         self._annual_harmonic_relative_ratio = None
 
         # single value metrics
@@ -222,7 +223,12 @@ class DatasetMetrics(object):
         The mean at each point along the aggregate dimensions divided by the standard deviation
         """
         if not self._is_memoized('_standardized_mean'):
-            self._standardized_mean = (self.mean - self._ds.mean()) / self._ds.std()
+            if self._grouping is None:
+                self._standardized_mean = (self.mean - self._ds.mean()) / self._ds.std()
+            else:
+                self._standardized_mean = (
+                    self.mean.groupby(self._grouping) - self.mean.groupby(self._grouping).mean()
+                ).groupby(self._grouping) / self.mean.groupby(self._grouping).std()
             if hasattr(self._ds, 'units'):
                 self._standardized_mean.attrs['units'] = ''
 
@@ -540,7 +546,7 @@ class DatasetMetrics(object):
 
             return self._zscore_percent_significant
 
-    def get_metric(self, name: str, q: Optional[int] = 0.5):
+    def get_metric(self, name: str, q: Optional[int] = 0.5, grouping: Optional[str] = None):
         """
         Gets a metric aggregated across one or more dimensions of the dataset
 
@@ -568,6 +574,7 @@ class DatasetMetrics(object):
             if name == 'std':
                 return self.std
             if name == 'standardized_mean':
+                self._grouping = grouping
                 return self.standardized_mean
             if name == 'variance':
                 return self.variance
