@@ -27,24 +27,24 @@ def tex_escape(text):
     :param text: a plain text message
     :return: the message escaped to appear correctly in LaTeX
     """
-    conv = {
-        '&': r'\&',
-        '%': r'\%',
-        '$': r'\$',
-        '#': r'\#',
-        '_': r'\_',
-        '{': r'\{',
-        '}': r'\}',
-        '~': r'\textasciitilde{}',
-        '^': r'\^{}',
-        '\\': r'\textbackslash{}',
-        '<': r'\textless{}',
-        '>': r'\textgreater{}',
-    }
-    regex = re.compile(
-        '|'.join(re.escape(str(key)) for key in sorted(conv.keys(), key=lambda item: -len(item)))
-    )
-    return regex.sub(lambda match: conv[match.group()], text)
+    # conv = {
+    #    '&': r'\&',
+    #    '%': r'\%',
+    #    '$': r'\$',
+    #    '#': r'\#',
+    #    '_': r'\_',
+    #    '{': r'\{',
+    #    '}': r'\}',
+    #    '^': r'\^{}',
+    #    '\\': r'\textbackslash{}',
+    #    '<': r'\textless{}',
+    #    '>': r'\textgreater{}',
+    # }
+    # regex = re.compile(
+    #    '|'.join(re.escape(str(key)) for key in sorted(conv.keys(), key=lambda item: -len(item)))
+    # )
+    # return regex.sub(lambda match: conv[match.group()], text)
+    return text
 
 
 class MetricsPlot(object):
@@ -170,7 +170,7 @@ class MetricsPlot(object):
         else:
             raise ValueError(f'metric_type {self._metric_type} not supported')
 
-        if self._group_by is not None:
+        if self._group_by is not None and self._metric != 'standardized_mean':
             plot_attrs = plot_data.attrs
             plot_data = plot_data.groupby(self._group_by).mean(dim='time')
             plot_data.attrs = plot_attrs
@@ -499,11 +499,16 @@ class MetricsPlot(object):
                 ylabel = f'{self._metric} diff'
         elif self._metric_type == 'ratio':
             ylabel = f'ratio {self._metric}'
+        elif self._metric_type == 'metric_of_diff':
+            if da_sets.units != '':
+                ylabel = f'{self._metric} ({da_sets.units}) of diff'
+            else:
+                ylabel = f'{self._metric} of diff'
         else:
             if da_sets.units != '':
                 ylabel = f'{self._metric} ({da_sets.units})'
             else:
-                ylabel = f'{self._metric} diff'
+                ylabel = f'{self._metric}'
 
         if self._transform == 'log':
             plot_ylabel = f'log10({ylabel})'
