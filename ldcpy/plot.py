@@ -194,7 +194,10 @@ class MetricsPlot(object):
             das = f'{self._sets[0]}'
 
         if self._short_title is True:
-            return das
+            if self._plot_type == 'time_series':
+                return ''
+            else:
+                return das
 
         if self._quantile is not None and metric_name == 'quantile':
             metric_full_name = f'{metric_name} {self._quantile}'
