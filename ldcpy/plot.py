@@ -275,7 +275,6 @@ class MetricsPlot(object):
             ncols = 1
             nrows = len(da_sets)
 
-        lat_sets = [da_sets[i]['lat'] for i in range(da_sets.sets.size)]
         cy_datas = {}
         lon_sets = {}
         # for i in range(da_sets.sets.size):
@@ -316,6 +315,7 @@ class MetricsPlot(object):
             cy_datas = da_sets[i]
             cy_datas.persist()
             lon_sets = da_sets[i]['lon']
+            lat_sets = da_sets[i]['lat']
 
             if np.isnan(cy_datas).any() or np.isinf(cy_datas).any():
                 nan_inf_flag = 1
