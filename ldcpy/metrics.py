@@ -477,6 +477,8 @@ class DatasetMetrics(object):
             self._corr_lag1 = np.multiply(l_1, l_2).sum(dim='time') / np.multiply(
                 self._lag1, self._lag1
             ).sum(dim='time')
+            del l_1
+            del l_2
             self._corr_lag1.attrs = self._ds.attrs
             if hasattr(self._ds, 'units'):
                 self._corr_lag1.attrs['units'] = ''
