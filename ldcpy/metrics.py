@@ -438,13 +438,13 @@ class DatasetMetrics(object):
         NOTE: This assumes the values along the "time" dimension are equally spaced.
         NOTE: This metric returns a lat-lon array regardless of aggregate dimensions, so can only be used in a spatial plot.
         """
-        if not self._is_memoized('_annual_harmonic'):
+        if not self._is_memoized('_annual_harmonic_relative_ratio'):
             # drop time coordinate labels or else it will try to parse them as numbers to check spacing and fail
             ds_copy = self._ds
             new_index = [i for i in range(0, self._ds.time.size)]
             new_ds = ds_copy.assign_coords({'time': new_index})
 
-            DF = dft(new_ds.chunk({'lat': 30, 'lon': 30}), dim=['time'], detrend='constant')
+            DF = dft(new_ds, dim=['time'], detrend='constant')
             S = np.real(DF * np.conj(DF) / self._ds.sizes['time'])
             S_annual = S.isel(freq_time=int(self._ds.sizes['time'] / 365) + 1)  # annual power
             neighborhood = (
