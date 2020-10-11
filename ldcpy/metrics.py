@@ -39,7 +39,6 @@ class DatasetMetrics(object):
         self._prob_negative = None
         self._zscore = None
         self._mae_day_max = None
-        self._corr_lag1 = None
         self._lag1 = None
         self._agg_dims = aggregate_dims
         self._quantile_value = None
@@ -418,6 +417,8 @@ class DatasetMetrics(object):
                 'time.dayofyear'
             ).mean(dim='time')
 
+            self._deseas_resid = self._ds
+
             self._lag1 = np.multiply(
                 self._deseas_resid, self._deseas_resid.shift({'time': -1})
             ).sum(dim='time', skipna=True) / np.multiply(
@@ -462,30 +463,6 @@ class DatasetMetrics(object):
             if hasattr(self._ds, 'units'):
                 self._annual_harmonic_relative_ratio.attrs['units'] = ''
         return self._annual_harmonic_relative_ratio
-
-    @property
-    def corr_lag1(self) -> xr.DataArray:
-        """
-        The deseasonalized lag-1 correlation at each point by day of year
-        NOTE: This metric returns a lat-lon array regardless of aggregate dimensions, so can only be used in a spatial plot.
-        """
-        if not self._is_memoized('_corr_lag1'):
-            time_length = self._ds.sizes['time']
-            l_1, l_2 = xr.align(
-                self.lag1.head({'time': time_length - 2}),
-                self.lag1.tail({'time': time_length - 2}),
-                join='override',
-            )
-            self._corr_lag1 = np.multiply(l_1, l_2).sum(dim='time') / np.multiply(
-                self._lag1, self._lag1
-            ).sum(dim='time')
-            del l_1
-            del l_2
-            self._corr_lag1.attrs = self._ds.attrs
-            if hasattr(self._ds, 'units'):
-                self._corr_lag1.attrs['units'] = ''
-
-        return self._corr_lag1
 
     @property
     def zscore_cutoff(self) -> np.ndarray:
@@ -613,8 +590,6 @@ class DatasetMetrics(object):
                 return self.sum_squared
             if name == 'annual_harmonic_relative_ratio':
                 return self.annual_harmonic_relative_ratio
-            if name == 'corr_lag1':
-                return self.corr_lag1
             if name == 'quantile':
                 self.quantile = q
                 return self.quantile_value
