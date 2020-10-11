@@ -278,8 +278,8 @@ class MetricsPlot(object):
         lat_sets = [da_sets[i]['lat'] for i in range(da_sets.sets.size)]
         cy_datas = {}
         lon_sets = {}
-        for i in range(da_sets.sets.size):
-            cy_datas[i], lon_sets[i] = add_cyclic_point(da_sets[i], coord=da_sets[i]['lon'])
+        # for i in range(da_sets.sets.size):
+        #    cy_datas[i], lon_sets[i] = add_cyclic_point(da_sets[i], coord=da_sets[i]['lon'])
 
         if self.vert_plot:
             fig = plt.figure(dpi=300, figsize=(4.5, 2.5 * nrows))
@@ -295,6 +295,7 @@ class MetricsPlot(object):
 
         axs = {}
         psets = {}
+        nan_inf_flag = 0
         for i in range(da_sets.sets.size):
             if self.vert_plot:
                 axs[i] = plt.subplot(
@@ -307,7 +308,14 @@ class MetricsPlot(object):
 
             axs[i].set_facecolor('#39ff14')
 
-            no_inf_data_set = np.nan_to_num(cy_datas[i], nan=np.nan)
+            cy_datas, lon_sets = add_cyclic_point(da_sets[i], coord=da_sets[i]['lon'])
+
+            if any([np.isnan(cy_datas).any() for i in range(da_sets.sets.size)]) or any(
+                [np.isinf(cy_datas).any() for i in range(da_sets.sets.size)]
+            ):
+                nan_inf_flag = 1
+
+            no_inf_data_set = np.nan_to_num(cy_datas, nan=np.nan)
             color_min = min(
                 [
                     np.min(da_sets[i].where(da_sets[i] != -inf)).values.min()
@@ -325,7 +333,7 @@ class MetricsPlot(object):
                 color_min = -1 * color_max_abs
                 color_max = color_max_abs
             psets[i] = axs[i].pcolormesh(
-                lon_sets[i],
+                lon_sets,
                 lat_sets[i],
                 no_inf_data_set,
                 transform=ccrs.PlateCarree(),
@@ -354,7 +362,7 @@ class MetricsPlot(object):
             fig.subplots_adjust(left=0.1, right=0.9, bottom=0.2, top=0.95)
 
         cbs = []
-        if not all([np.isnan(cy_datas[i]).all() for i in range(len(cy_datas))]):
+        if not all([np.isnan(cy_datas).all() for i in range(da_sets.sets.size)]):
             cax = fig.add_axes([0.1, 0, 0.8, 0.05])
 
             for i in range(len(psets)):
@@ -370,9 +378,7 @@ class MetricsPlot(object):
                     else:
                         cbs[i].ax.set_anchor((0.5, 1.35 + 0.15 * (nrows - 1)))
                 cbs[i].ax.tick_params(labelsize=8, rotation=30)
-            if any([np.isnan(cy_datas[i]).any() for i in range(len(cy_datas))]) or any(
-                [np.isinf(cy_datas[i]).any() for i in range(len(cy_datas))]
-            ):
+            if nan_inf_flag:
                 proxy = [
                     plt.Rectangle((0, 0), 1, 1, fc='#39ff14'),
                     plt.Rectangle((0, 1), 2, 2, fc='#000000'),
