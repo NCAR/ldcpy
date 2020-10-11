@@ -334,8 +334,6 @@ class MetricsPlot(object):
                 no_inf_data_set,
                 transform=ccrs.PlateCarree(),
                 cmap=mymap,
-                vmin=cmin[i],
-                vmax=cmax[i],
             )
             axs[i].set_global()
 
