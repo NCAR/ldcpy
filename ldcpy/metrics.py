@@ -413,9 +413,10 @@ class DatasetMetrics(object):
         so can only be plotted in a spatial plot.
         """
         if not self._is_memoized('_lag1'):
-            self._deseas_resid = self._ds.groupby('time.dayofyear') - self._ds.groupby(
-                'time.dayofyear'
-            ).mean(dim='time')
+            # self._deseas_resid = self._ds.groupby('time.dayofyear') - self._ds.groupby(
+            #    'time.dayofyear'
+            # ).mean(dim='time')
+            self._deseas_resid = self._ds
 
             time_length = self._deseas_resid.sizes['time']
             current = self._deseas_resid.head({'time': time_length - 1})
