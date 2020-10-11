@@ -321,9 +321,9 @@ class MetricsPlot(object):
             if all([np.isnan(cy_datas).all() for i in range(da_sets.sets.size)]):
                 all_nan_flag = 1
 
-            if len(np.min(cy_datas[cy_datas != -inf]) > 0):
+            if len(cy_datas[cy_datas != -inf] > 0):
                 cmin.append(np.min(cy_datas[cy_datas != -inf]).min())
-            if len(np.max(cy_datas[cy_datas != inf]) > 0):
+            if len(cy_datas[cy_datas != inf] > 0):
                 cmax.append(np.max(cy_datas[cy_datas != inf]).max())
 
             no_inf_data_set = np.nan_to_num(cy_datas, nan=np.nan)
