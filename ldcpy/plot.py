@@ -351,7 +351,6 @@ class MetricsPlot(object):
 
             axs[i].set_title(tex_escape(titles[i]))
             del cy_datas
-            del da_sets[i]
 
         color_min = min(cmin)
         color_max = max(cmax)
