@@ -275,11 +275,6 @@ class MetricsPlot(object):
             ncols = 1
             nrows = len(da_sets)
 
-        cy_datas = {}
-        lon_sets = {}
-        # for i in range(da_sets.sets.size):
-        #    cy_datas[i], lon_sets[i] = add_cyclic_point(da_sets[i], coord=da_sets[i]['lon'])
-
         if self.vert_plot:
             fig = plt.figure(dpi=300, figsize=(4.5, 2.5 * nrows))
             plt.rcParams.update({'font.size': 10})
@@ -313,7 +308,7 @@ class MetricsPlot(object):
 
             # cy_datas, lon_sets = add_cyclic_point(da_sets[i], coord=da_sets[i]['lon'])
             cy_datas = da_sets[i]
-            cy_datas.persist()
+            cy_datas = cy_datas.persist()
             lon_sets = da_sets[i]['lon']
             lat_sets = da_sets[i]['lat']
 
