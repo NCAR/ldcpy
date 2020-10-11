@@ -619,10 +619,8 @@ class MetricsPlot(object):
             d = pooled_sd.data.compute()
             metric_name = f'{metric}: pooled SD = {d:.2f}'
         elif metric == 'annual_harmonic_relative_ratio':
-            p = (
-                lm.DatasetMetrics((data), ['time'])
-                .get_single_metric('annual_harmonic_relative_ratio_pct_sig')
-                .data.compute()
+            p = lm.DatasetMetrics((data), ['time']).get_single_metric(
+                'annual_harmonic_relative_ratio_pct_sig'
             )
             metric_name = f'{metric}: % sig = {p:.2f}'
         else:
