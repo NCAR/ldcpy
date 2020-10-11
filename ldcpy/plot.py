@@ -331,7 +331,7 @@ class MetricsPlot(object):
             # add a check here so ensure the dataset size is the same size as lon_sets * lat_sets[i]
             psets[i] = axs[i].pcolormesh(
                 lon_sets,
-                lat_sets[i],
+                lat_sets,
                 no_inf_data_set,
                 transform=ccrs.PlateCarree(),
                 cmap=mymap,
