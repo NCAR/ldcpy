@@ -353,11 +353,11 @@ class MetricsPlot(object):
             del cy_datas
 
         if len(cmin) > 0:
-            color_min = min(cmin)
+            color_min = np.min(cmin)
         else:
             color_min = -0.1
         if len(cmax) > 0:
-            color_max = max(cmax)
+            color_max = np.max(cmax)
         else:
             color_max = 0.1
 
@@ -366,7 +366,7 @@ class MetricsPlot(object):
             color_min = -1 * color_max_abs
             color_max = color_max_abs
         for i in range(len(psets)):
-            # psets[i].set_clim(color_min, color_max)
+            psets[i].set_clim(color_min, color_max)
             pass
 
         # add colorbar
