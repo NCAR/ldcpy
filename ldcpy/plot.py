@@ -296,18 +296,9 @@ class MetricsPlot(object):
         axs = {}
         psets = {}
         nan_inf_flag = 0
-        color_min = min(
-            [
-                np.min(da_sets[i].where(da_sets[i] != -inf)).values.min()
-                for i in range(da_sets.sets.size)
-            ]
-        )
-        color_max = max(
-            [
-                np.max(da_sets[i].where(da_sets[i] != inf)).values.max()
-                for i in range(da_sets.sets.size)
-            ]
-        )
+
+        cmax = []
+        cmin = []
         for i in range(da_sets.sets.size):
             if self.vert_plot:
                 axs[i] = plt.subplot(
@@ -327,19 +318,19 @@ class MetricsPlot(object):
             ):
                 nan_inf_flag = 1
 
+            cmin.append(np.min(cy_datas[cy_datas != -inf]).min())
+            cmax.append(np.max(cy_datas[cy_datas != inf]).max())
+
             no_inf_data_set = np.nan_to_num(cy_datas, nan=np.nan)
-            if self._axes_symmetric:
-                color_max_abs = max(abs(color_min), abs(color_max))
-                color_min = -1 * color_max_abs
-                color_max = color_max_abs
+
             psets[i] = axs[i].pcolormesh(
                 lon_sets,
                 lat_sets[i],
                 no_inf_data_set,
                 transform=ccrs.PlateCarree(),
                 cmap=mymap,
-                vmin=color_min,
-                vmax=color_max,
+                vmin=cmin[i],
+                vmax=cmax[i],
             )
             axs[i].set_global()
 
@@ -356,6 +347,15 @@ class MetricsPlot(object):
             axs[i].coastlines()
 
             axs[i].set_title(tex_escape(titles[i]))
+
+        color_min = min(cmin)
+        color_max = max(cmax)
+        if self._axes_symmetric:
+            color_max_abs = max(abs(color_min), abs(color_max))
+            color_min = -1 * color_max_abs
+            color_max = color_max_abs
+        for i in range(len(psets)):
+            psets[i].set_clim(color_min, color_max)
 
         # add colorbar
         if self.vert_plot is False:
