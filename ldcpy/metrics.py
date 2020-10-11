@@ -417,8 +417,6 @@ class DatasetMetrics(object):
                 'time.dayofyear'
             ).mean(dim='time')
 
-            self._deseas_resid = self._ds
-
             self._lag1 = np.multiply(
                 self._deseas_resid, self._deseas_resid.shift({'time': -1})
             ).sum(dim='time', skipna=True) / np.multiply(
