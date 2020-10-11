@@ -414,21 +414,26 @@ class DatasetMetrics(object):
         so can only be plotted in a spatial plot.
         """
         if not self._is_memoized('_lag1'):
+            print('calculating deseasonalized_diffs')
             self._deseas_resid = self._ds.groupby('time.dayofyear') - self._ds.groupby(
                 'time.dayofyear'
             ).mean(dim='time')
             # self._deseas_resid = self._ds
 
             time_length = self._ds.sizes['time']
+            print('calculating o_1, o_2')
             o_1, o_2 = xr.align(
                 self._deseas_resid.head({'time': time_length - 1}),
                 self._deseas_resid.tail({'time': time_length - 1}),
                 join='override',
             )
+            print('calculating lag1')
             # self._lag1 = np.square((o_2 - o_1))
             self._lag1 = np.multiply(o_1, o_2).sum(dim='time') / np.multiply(
                 self._deseas_resid, self._deseas_resid
             ).sum(dim='time')
+            print('done calculating lag1')
+
             self._lag1.attrs = self._ds.attrs
             if hasattr(self._ds, 'units'):
                 self._lag1.attrs['units'] = ''
