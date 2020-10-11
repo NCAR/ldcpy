@@ -312,7 +312,9 @@ class MetricsPlot(object):
 
             axs[i].set_facecolor('#39ff14')
 
-            cy_datas, lon_sets = add_cyclic_point(da_sets[i], coord=da_sets[i]['lon'])
+            # cy_datas, lon_sets = add_cyclic_point(da_sets[i], coord=da_sets[i]['lon'])
+            cy_datas = da_sets[i]
+            lon_sets = da_sets[i]['lon']
 
             if any([np.isnan(cy_datas).any() for i in range(da_sets.sets.size)]) or any(
                 [np.isinf(cy_datas).any() for i in range(da_sets.sets.size)]
@@ -321,10 +323,9 @@ class MetricsPlot(object):
             if all([np.isnan(cy_datas).all() for i in range(da_sets.sets.size)]):
                 all_nan_flag = 1
 
-            if len(cy_datas[cy_datas != -inf] > 0):
-                cmin.append(np.min(cy_datas[cy_datas != -inf]).min())
-            if len(cy_datas[cy_datas != inf] > 0):
-                cmax.append(np.max(cy_datas[cy_datas != inf]).max())
+            if not np.isinf(cy_datas).all():
+                cmin.append(np.min(cy_datas.where(cy_datas != -inf).min()))
+                cmax.append(np.max(cy_datas.where(cy_datas != inf).max()))
 
             no_inf_data_set = np.nan_to_num(cy_datas, nan=np.nan)
 
@@ -367,7 +368,8 @@ class MetricsPlot(object):
             color_min = -1 * color_max_abs
             color_max = color_max_abs
         for i in range(len(psets)):
-            psets[i].set_clim(color_min, color_max)
+            # psets[i].set_clim(color_min, color_max)
+            pass
 
         # add colorbar
         if self.vert_plot is False:
