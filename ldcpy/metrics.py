@@ -521,7 +521,7 @@ class DatasetMetrics(object):
 
         pvals = 1 - ss.f.cdf(self.annual_harmonic_relative_ratio, 2, 100)
         sorted_pvals = np.sort(pvals)
-        if sorted_pvals[sorted_pvals <= 0.01].length == 0:
+        if len(sorted_pvals[sorted_pvals <= 0.01]) == 0:
             return 0
         sig_cutoff = ss.f.ppf(1 - max(sorted_pvals[sorted_pvals <= 0.01]), 2, 50)
         pct_sig = 100 * np.mean(self.annual_harmonic_relative_ratio > sig_cutoff)
