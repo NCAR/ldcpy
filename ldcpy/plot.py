@@ -316,11 +316,9 @@ class MetricsPlot(object):
             cy_datas = da_sets[i]
             lon_sets = da_sets[i]['lon']
 
-            if any([np.isnan(cy_datas).any() for i in range(da_sets.sets.size)]) or any(
-                [np.isinf(cy_datas).any() for i in range(da_sets.sets.size)]
-            ):
+            if np.isnan(cy_datas).any() or np.isinf(cy_datas).any():
                 nan_inf_flag = 1
-            if all([np.isnan(cy_datas).all() for i in range(da_sets.sets.size)]):
+            if np.isnan(cy_datas).all():
                 all_nan_flag = 1
 
             if not np.isinf(cy_datas).all():
