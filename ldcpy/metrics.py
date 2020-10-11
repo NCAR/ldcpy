@@ -409,13 +409,15 @@ class DatasetMetrics(object):
     @property
     def lag1(self) -> xr.DataArray:
         """
-        The deseasonalized lag-1 value by day of year
-        NOTE: This metric returns a spatial array regardless of aggregate dimensions, so can only be used in a spatial plot.
+        The deseasonalized lag-1 autocorrelation value by day of year
+        NOTE: This metric returns an array of spatial values as the data set regardless of aggregate dimensions,
+        so can only be plotted in a spatial plot.
         """
         if not self._is_memoized('_lag1'):
             self._deseas_resid = self._ds.groupby('time.dayofyear') - self._ds.groupby(
                 'time.dayofyear'
             ).mean(dim='time')
+            # self._deseas_resid = self._ds
 
             time_length = self._ds.sizes['time']
             o_1, o_2 = xr.align(
@@ -423,7 +425,10 @@ class DatasetMetrics(object):
                 self._deseas_resid.tail({'time': time_length - 1}),
                 join='override',
             )
-            self._lag1 = np.square((o_1 - o_2))
+            # self._lag1 = np.square((o_2 - o_1))
+            self._lag1 = np.multiply(o_1, o_2).sum(dim='time') / np.multiply(
+                self._deseas_resid, self._deseas_resid
+            ).sum(dim='time')
             self._lag1.attrs = self._ds.attrs
             if hasattr(self._ds, 'units'):
                 self._lag1.attrs['units'] = ''

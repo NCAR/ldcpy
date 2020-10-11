@@ -328,6 +328,7 @@ class MetricsPlot(object):
 
             no_inf_data_set = np.nan_to_num(cy_datas, nan=np.nan)
 
+            # add a check here so ensure the dataset size is the same size as lon_sets * lat_sets[i]
             psets[i] = axs[i].pcolormesh(
                 lon_sets,
                 lat_sets[i],
@@ -427,7 +428,7 @@ class MetricsPlot(object):
                 plt.Rectangle((0, 1), 2, 2, fc='#000000'),
                 plt.Rectangle((0, 1), 2, 2, fc='#ffffff', edgecolor='black'),
             ]
-            plt.legend(proxy, ['NaN', '-Inf', 'Inf'], bbox_to_anchor=(0.672, 4), ncol=len(proxy))
+            plt.legend(proxy, ['NaN', '-Inf', 'Inf'], bbox_to_anchor=(0.87, 2), ncol=len(proxy))
             plt.axis('off')
 
         if self._calc_ssim:
