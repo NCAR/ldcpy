@@ -314,6 +314,7 @@ class MetricsPlot(object):
 
             # cy_datas, lon_sets = add_cyclic_point(da_sets[i], coord=da_sets[i]['lon'])
             cy_datas = da_sets[i]
+            cy_datas.persist()
             lon_sets = da_sets[i]['lon']
 
             if np.isnan(cy_datas).any() or np.isinf(cy_datas).any():
