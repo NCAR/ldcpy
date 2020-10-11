@@ -413,11 +413,13 @@ class DatasetMetrics(object):
         so can only be plotted in a spatial plot.
         """
         if not self._is_memoized('_lag1'):
+            self._ds.chunk({'time': -1, 'lat': 16, 'lon': 18})
             self._deseas_resid = self._ds.groupby('time.dayofyear') - self._ds.groupby(
                 'time.dayofyear'
             ).mean(dim='time')
 
             time_length = self._deseas_resid.sizes['time']
+            self._deseas_resid.chunk({'time': 500, 'lat': -1, 'lon': -1})
             current = self._deseas_resid.head({'time': time_length - 1})
             next = self._deseas_resid.shift({'time': -1}).head({'time': time_length - 1})
 
