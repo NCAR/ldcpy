@@ -296,6 +296,7 @@ class MetricsPlot(object):
         axs = {}
         psets = {}
         nan_inf_flag = 0
+        all_nan_flag = 0
 
         cmax = []
         cmin = []
@@ -317,6 +318,8 @@ class MetricsPlot(object):
                 [np.isinf(cy_datas).any() for i in range(da_sets.sets.size)]
             ):
                 nan_inf_flag = 1
+            if all([np.isnan(cy_datas).all() for i in range(da_sets.sets.size)]):
+                all_nan_flag = 1
 
             cmin.append(np.min(cy_datas[cy_datas != -inf]).min())
             cmax.append(np.max(cy_datas[cy_datas != inf]).max())
@@ -347,6 +350,8 @@ class MetricsPlot(object):
             axs[i].coastlines()
 
             axs[i].set_title(tex_escape(titles[i]))
+            del cy_datas
+            del da_sets[i]
 
         color_min = min(cmin)
         color_max = max(cmax)
@@ -362,7 +367,7 @@ class MetricsPlot(object):
             fig.subplots_adjust(left=0.1, right=0.9, bottom=0.2, top=0.95)
 
         cbs = []
-        if not all([np.isnan(cy_datas).all() for i in range(da_sets.sets.size)]):
+        if not all_nan_flag:
             cax = fig.add_axes([0.1, 0, 0.8, 0.05])
 
             for i in range(len(psets)):
