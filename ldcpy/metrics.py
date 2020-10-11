@@ -417,13 +417,13 @@ class DatasetMetrics(object):
                 'time.dayofyear'
             ).mean(dim='time')
 
-            self._lag1 = np.multiply(
-                self._deseas_resid, self._deseas_resid.shift({'time': -1})
-            ).sum(dim='time', skipna=True) / np.multiply(
-                self._deseas_resid, self._deseas_resid
-            ).sum(
-                dim='time'
-            )
+            time_length = self._deseas_resid.sizes['time']
+            current = self._deseas_resid.head({'time': time_length - 1})
+            next = self._deseas_resid.shift({'time': -1}).head({'time': time_length - 1})
+
+            num = current.dot(next, dims='time')
+            denom = current.dot(current, dims='time')
+            self._lag1 = num / denom
 
             self._lag1.attrs = self._ds.attrs
             if hasattr(self._ds, 'units'):
