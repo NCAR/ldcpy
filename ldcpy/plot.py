@@ -597,36 +597,40 @@ class MetricsPlot(object):
 
     def get_metric_label(self, metric, data, weights=None):
         # Get special metric names
-        if metric == 'zscore':
-            zscore_cutoff = lm.DatasetMetrics((data), ['time']).get_single_metric('zscore_cutoff')
-            percent_sig = lm.DatasetMetrics((data), ['time']).get_single_metric(
-                'zscore_percent_significant'
-            )
-            metric_name = f'{metric}: cutoff {zscore_cutoff[0]:.2f}, % sig: {percent_sig:.2f}'
-        elif metric == 'mean' and self._plot_type == 'spatial' and self._metric_type == 'raw':
-            o_wt_mean = np.average(
-                np.average(
-                    lm.DatasetMetrics(data, ['time']).get_metric(metric),
-                    axis=0,
-                    weights=weights,
+        if self._short_title is False:
+            if metric == 'zscore':
+                zscore_cutoff = lm.DatasetMetrics((data), ['time']).get_single_metric(
+                    'zscore_cutoff'
                 )
-            )
-            metric_name = f'{metric} = {o_wt_mean:.2f}'
-        elif metric == 'pooled_variance_ratio':
-            pooled_sd = np.sqrt(
-                lm.DatasetMetrics((data), ['time']).get_single_metric('pooled_variance')
-            )
-            d = pooled_sd.data.compute()
-            metric_name = f'{metric}: pooled SD = {d:.2f}'
-        elif metric == 'annual_harmonic_relative_ratio' and self._short_title is False:
-            p = lm.DatasetMetrics((data), ['time']).get_single_metric(
-                'annual_harmonic_relative_ratio_pct_sig'
-            )
-            metric_name = f'{metric}: % sig = {p:.2f}'
+                percent_sig = lm.DatasetMetrics((data), ['time']).get_single_metric(
+                    'zscore_percent_significant'
+                )
+                metric_name = f'{metric}: cutoff {zscore_cutoff[0]:.2f}, % sig: {percent_sig:.2f}'
+            elif metric == 'mean' and self._plot_type == 'spatial' and self._metric_type == 'raw':
+                o_wt_mean = np.average(
+                    np.average(
+                        lm.DatasetMetrics(data, ['time']).get_metric(metric),
+                        axis=0,
+                        weights=weights,
+                    )
+                )
+                metric_name = f'{metric} = {o_wt_mean:.2f}'
+            elif metric == 'pooled_variance_ratio':
+                pooled_sd = np.sqrt(
+                    lm.DatasetMetrics((data), ['time']).get_single_metric('pooled_variance')
+                )
+                d = pooled_sd.data.compute()
+                metric_name = f'{metric}: pooled SD = {d:.2f}'
+            elif metric == 'annual_harmonic_relative_ratio':
+                p = lm.DatasetMetrics((data), ['time']).get_single_metric(
+                    'annual_harmonic_relative_ratio_pct_sig'
+                )
+                metric_name = f'{metric}: % sig = {p:.2f}'
+            else:
+                metric_name = metric
+            return metric_name
         else:
-            metric_name = metric
-
-        return metric_name
+            return ''
 
 
 def plot(
