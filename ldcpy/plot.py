@@ -321,8 +321,10 @@ class MetricsPlot(object):
             if all([np.isnan(cy_datas).all() for i in range(da_sets.sets.size)]):
                 all_nan_flag = 1
 
-            cmin.append(np.min(cy_datas[cy_datas != -inf]).min())
-            cmax.append(np.max(cy_datas[cy_datas != inf]).max())
+            if len(np.min(cy_datas[cy_datas != -inf]) > 0):
+                cmin.append(np.min(cy_datas[cy_datas != -inf]).min())
+            if len(np.max(cy_datas[cy_datas != inf]) > 0):
+                cmax.append(np.max(cy_datas[cy_datas != inf]).max())
 
             no_inf_data_set = np.nan_to_num(cy_datas, nan=np.nan)
 
@@ -352,8 +354,15 @@ class MetricsPlot(object):
             axs[i].set_title(tex_escape(titles[i]))
             del cy_datas
 
-        color_min = min(cmin)
-        color_max = max(cmax)
+        if len(cmin) > 0:
+            color_min = min(cmin)
+        else:
+            color_min = -0.1
+        if len(cmax) > 0:
+            color_max = max(cmax)
+        else:
+            color_max = 0.1
+
         if self._axes_symmetric:
             color_max_abs = max(abs(color_min), abs(color_max))
             color_min = -1 * color_max_abs
