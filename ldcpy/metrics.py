@@ -482,19 +482,27 @@ class DatasetMetrics(object):
 
             DF = dft(new_ds, dim=['time'], detrend='constant')
             S = np.real(DF * np.conj(DF) / self._ds.sizes['time'])
-            S_annual = S.isel(freq_time=int(self._ds.sizes['time'] / 365))  # annual power
+            S_annual = S.isel(
+                freq_time=int(self._ds.sizes['time'] / 2) + int(self._ds.sizes['time'] / 365)
+            )  # annual power
             neighborhood = (
-                int(self._ds.sizes['time'] / 365) - 25,
-                int(self._ds.sizes['time'] / 365) + 25,
+                int(self._ds.sizes['time'] / 2) + int(self._ds.sizes['time'] / 365) - 25,
+                int(self._ds.sizes['time'] / 2) + int(self._ds.sizes['time'] / 365) + 25,
             )
             S_mean = xr.concat(
                 [
                     S.isel(
                         freq_time=slice(
-                            max(0, neighborhood[0]), int(self._ds.sizes['time'] / 365) - 1
+                            max(0, neighborhood[0]),
+                            int(self._ds.sizes['time'] / 2) + int(self._ds.sizes['time'] / 365) - 1,
                         )
                     ),
-                    S.isel(freq_time=slice(int(self._ds.sizes['time'] / 365) + 1, neighborhood[1])),
+                    S.isel(
+                        freq_time=slice(
+                            int(self._ds.sizes['time'] / 2) + int(self._ds.sizes['time'] / 365) + 1,
+                            neighborhood[1],
+                        )
+                    ),
                 ],
                 dim='freq_time',
             ).mean(dim='freq_time')
