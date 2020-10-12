@@ -34,6 +34,7 @@ class DatasetMetrics(object):
         self._mean = None
         self._mean_abs = None
         self._std = None
+        self._ddof = 1
         self._prob_positive = None
         self._odds_positive = None
         self._prob_negative = None
@@ -101,7 +102,7 @@ class DatasetMetrics(object):
         The overall variance of the dataset
         """
         if not self._is_memoized('_pooled_variance'):
-            self._pooled_variance = self._ds.var()
+            self._pooled_variance = self._ds.var(self._agg_dims).mean()
             self._pooled_variance.attrs = self._ds.attrs
             if hasattr(self._ds, 'units'):
                 self._pooled_variance.attrs['units'] = f'{self._ds.units}$^2$'
@@ -210,7 +211,7 @@ class DatasetMetrics(object):
         The standard deviation along the aggregate dimensions
         """
         if not self._is_memoized('_std'):
-            self._std = self._ds.std(self._agg_dims)
+            self._std = self._ds.std(self._agg_dims, self._ddof)
             self._std.attrs = self._ds.attrs
             if hasattr(self._ds, 'units'):
                 self._std.attrs['units'] = ''

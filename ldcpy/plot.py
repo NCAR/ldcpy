@@ -518,7 +518,7 @@ class MetricsPlot(object):
             else:
                 ylabel = f'{self._metric} diff'
         elif self._metric_type == 'ratio':
-            ylabel = f'ratio {self._metric}'
+            ylabel = f'{self._metric} ratio'
         elif self._metric_type == 'metric_of_diff':
             if da_sets.units != '':
                 ylabel = f'{self._metric} ({da_sets.units}) of diff'
@@ -531,7 +531,7 @@ class MetricsPlot(object):
                 ylabel = f'{self._metric}'
 
         if self._transform == 'log':
-            plot_ylabel = f'log10({ylabel})'
+            plot_ylabel = f'log10 {ylabel}'
         else:
             plot_ylabel = ylabel
 
