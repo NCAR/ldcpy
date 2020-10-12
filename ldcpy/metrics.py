@@ -211,7 +211,7 @@ class DatasetMetrics(object):
         The standard deviation along the aggregate dimensions
         """
         if not self._is_memoized('_std'):
-            self._std = self._ds.std(self._agg_dims, self._ddof)
+            self._std = self._ds.std(self._agg_dims, ddof=self._ddof)
             self._std.attrs = self._ds.attrs
             if hasattr(self._ds, 'units'):
                 self._std.attrs['units'] = ''
