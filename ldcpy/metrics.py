@@ -480,19 +480,21 @@ class DatasetMetrics(object):
             new_index = [i for i in range(0, self._ds.time.size)]
             new_ds = ds_copy.assign_coords({'time': new_index})
 
-            DF = dft(new_ds - self.mean, dim=['time'])
+            DF = dft(new_ds, dim=['time'], detrend='constant')
             S = np.real(DF * np.conj(DF) / self._ds.sizes['time'])
-            S_annual = S.isel(freq_time=int(self._ds.sizes['time'] / 365) + 1)  # annual power
+            S_annual = S.isel(freq_time=int(self._ds.sizes['time'] / 365))  # annual power
             neighborhood = (
-                int(self._ds.sizes['time'] / 365) + 1 - 25,
-                int(self._ds.sizes['time'] / 365) + 1 + 25,
+                int(self._ds.sizes['time'] / 365) - 25,
+                int(self._ds.sizes['time'] / 365) + 25,
             )
             S_mean = xr.concat(
                 [
                     S.isel(
-                        freq_time=slice(max(0, neighborhood[0]), int(self._ds.sizes['time'] / 365))
+                        freq_time=slice(
+                            max(0, neighborhood[0]), int(self._ds.sizes['time'] / 365) - 1
+                        )
                     ),
-                    S.isel(freq_time=slice(int(self._ds.sizes['time'] / 365) + 2, neighborhood[1])),
+                    S.isel(freq_time=slice(int(self._ds.sizes['time'] / 365) + 1, neighborhood[1])),
                 ],
                 dim='freq_time',
             ).mean(dim='freq_time')
