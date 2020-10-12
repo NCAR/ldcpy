@@ -62,6 +62,23 @@ class TestPlot(TestCase):
         )
         self.assertTrue(True)
 
+    def test_lag1(self):
+        ldcpy.plot(
+            ds, 'TS', sets=['orig', 'recon'], metric='lag1', plot_type='spatial', tex_format=False
+        )
+        self.assertTrue(True)
+
+    def test_lag1_first_difference(self):
+        ldcpy.plot(
+            ds,
+            'TS',
+            sets=['orig', 'recon'],
+            metric='lag1_first_difference',
+            plot_type='spatial',
+            tex_format=False,
+        )
+        self.assertTrue(True)
+
     def test_annual_harmonic(self):
         ldcpy.plot(
             ds,
