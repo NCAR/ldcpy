@@ -487,9 +487,15 @@ class DatasetMetrics(object):
                 int(self._ds.sizes['time'] / 365) + 1 - 25,
                 int(self._ds.sizes['time'] / 365) + 1 + 25,
             )
-            S_mean = S.isel(freq_time=slice(max(0, neighborhood[0]), neighborhood[1])).mean(
-                dim='freq_time'
-            )
+            S_mean = xr.concat(
+                [
+                    S.isel(
+                        freq_time=slice(max(0, neighborhood[0]), int(self._ds.sizes['time'] / 365))
+                    ),
+                    S.isel(freq_time=slice(int(self._ds.sizes['time'] / 365) + 2, neighborhood[1])),
+                ],
+                dim='freq_time',
+            ).mean(dim='freq_time')
             ratio = S_annual / S_mean
             self._annual_harmonic_relative_ratio = ratio
 
