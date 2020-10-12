@@ -443,6 +443,7 @@ class DatasetMetrics(object):
             self._deseas_resid = self._ds.groupby('time.dayofyear') - self._ds.groupby(
                 'time.dayofyear'
             ).mean(dim='time')
+            # self._deseas_resid=self._ds
 
             time_length = self._deseas_resid.sizes['time']
             current = self._deseas_resid.head({'time': time_length - 1})
@@ -453,7 +454,8 @@ class DatasetMetrics(object):
                 {'time': time_length - 1}
             )
 
-            num = first_difference_current.dot(first_difference_next, dims='time')
+            # num = first_difference_current.dot(first_difference_next, dims='time')
+            num = (first_difference_current * first_difference_next).sum(dim=['time'], skipna=True)
             denom = first_difference_current.dot(first_difference_current, dims='time')
             self._lag1_first_difference = num / denom
 
