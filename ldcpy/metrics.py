@@ -480,7 +480,7 @@ class DatasetMetrics(object):
             new_index = [i for i in range(0, self._ds.time.size)]
             new_ds = ds_copy.assign_coords({'time': new_index})
 
-            DF = dft(new_ds, dim=['time'], detrend='constant')
+            DF = dft(new_ds - self.mean, dim=['time'])
             S = np.real(DF * np.conj(DF) / self._ds.sizes['time'])
             S_annual = S.isel(freq_time=int(self._ds.sizes['time'] / 365) + 1)  # annual power
             neighborhood = (
