@@ -40,6 +40,7 @@ class DatasetMetrics(object):
         self._zscore = None
         self._mae_day_max = None
         self._lag1 = None
+        self._lag1_first_difference = None
         self._agg_dims = aggregate_dims
         self._quantile_value = None
         self._mean_squared = None
@@ -413,13 +414,11 @@ class DatasetMetrics(object):
         so can only be plotted in a spatial plot.
         """
         if not self._is_memoized('_lag1'):
-            self._ds.chunk({'time': -1, 'lat': 16, 'lon': 18})
             self._deseas_resid = self._ds.groupby('time.dayofyear') - self._ds.groupby(
                 'time.dayofyear'
             ).mean(dim='time')
 
             time_length = self._deseas_resid.sizes['time']
-            self._deseas_resid.chunk({'time': 500, 'lat': -1, 'lon': -1})
             current = self._deseas_resid.head({'time': time_length - 1})
             next = self._deseas_resid.shift({'time': -1}).head({'time': time_length - 1})
 
@@ -432,6 +431,37 @@ class DatasetMetrics(object):
                 self._lag1.attrs['units'] = ''
 
         return self._lag1
+
+    @property
+    def lag1_first_difference(self) -> xr.DataArray:
+        """
+        The deseasonalized lag-1 autocorrelation value of the first difference of the data by day of year
+        NOTE: This metric returns an array of spatial values as the data set regardless of aggregate dimensions,
+        so can only be plotted in a spatial plot.
+        """
+        if not self._is_memoized('_lag1_first_difference'):
+            self._deseas_resid = self._ds.groupby('time.dayofyear') - self._ds.groupby(
+                'time.dayofyear'
+            ).mean(dim='time')
+
+            time_length = self._deseas_resid.sizes['time']
+            current = self._deseas_resid.head({'time': time_length - 1})
+            next = self._deseas_resid.shift({'time': -1}).head({'time': time_length - 1})
+            first_difference = next - current
+            first_difference_current = first_difference.head({'time': time_length - 1})
+            first_difference_next = first_difference.shift({'time': -1}).head(
+                {'time': time_length - 1}
+            )
+
+            num = first_difference_current.dot(first_difference_next, dims='time')
+            denom = first_difference_current.dot(first_difference_current, dims='time')
+            self._lag1_first_difference = num / denom
+
+            self._lag1_first_difference.attrs = self._ds.attrs
+            if hasattr(self._ds, 'units'):
+                self._lag1_first_difference.attrs['units'] = ''
+
+        return self._lag1_first_difference
 
     @property
     def annual_harmonic_relative_ratio(self) -> xr.DataArray:
@@ -595,6 +625,8 @@ class DatasetMetrics(object):
                 return self.quantile_value
             if name == 'lag1':
                 return self.lag1
+            if name == 'lag1_first_difference':
+                return self.lag1_first_difference
             if name == 'max_abs':
                 return self.max_abs
             if name == 'min_abs':
