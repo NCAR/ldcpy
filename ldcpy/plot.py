@@ -78,6 +78,7 @@ class MetricsPlot(object):
         legend_loc='upper right',
         vert_plot=False,
         tex_format=False,
+        legend_offset=None,
     ):
 
         self._ds = ds
@@ -108,6 +109,7 @@ class MetricsPlot(object):
         self._legend_loc = legend_loc
         self.vert_plot = vert_plot
         self._tex_format = tex_format
+        self._legend_offset = legend_offset
 
     def verify_plot_parameters(self):
         if len(self._sets) < 2 and self._metric_type in [
@@ -457,7 +459,12 @@ class MetricsPlot(object):
             plt.rcParams.update({'font.size': 16})
         else:
             plt.rcParams.update({'font.size': 10})
-            plt.legend(bbox_to_anchor=(1.05, 1), loc='upper left', borderaxespad=0.0)
+            if self._legend_loc is None:
+                plt.legend(bbox_to_anchor=(1.05, 1), loc=self._legend_loc, borderaxespad=0.0)
+            else:
+                plt.legend(
+                    bbox_to_anchor=self._legend_offset, loc=self._legend_loc, borderaxespad=0.0
+                )
 
     def periodogram_plot(self, plot_data, title):
         plt.figure()
@@ -477,7 +484,12 @@ class MetricsPlot(object):
             plt.rcParams.update({'font.size': 16})
         else:
             plt.rcParams.update({'font.size': 10})
-            plt.legend(bbox_to_anchor=(1.05, 1), loc='upper left', borderaxespad=0.0)
+            if self._legend_loc is None:
+                plt.legend(bbox_to_anchor=(1.05, 1), loc=self._legend_loc, borderaxespad=0.0)
+            else:
+                plt.legend(
+                    bbox_to_anchor=self._legend_offset, loc=self._legend_loc, borderaxespad=0.0
+                )
 
         mpl.pyplot.title(tex_escape(title[0]))
         mpl.pyplot.ylabel('Spectrum')
@@ -575,10 +587,18 @@ class MetricsPlot(object):
                     label.set_horizontalalignment('right')
 
         if self.vert_plot:
-            plt.legend(loc=self._legend_loc, borderaxespad=1.0)
+            if self._legend_offset is None:
+                plt.legend(loc=self._legend_loc, borderaxespad=1.0)
+            else:
+                plt.legend(
+                    loc=self._legend_loc, borderaxespad=1.0, bbox_to_anchor=self._legend_offset
+                )
         else:
             plt.rcParams.update({'font.size': 10})
-            plt.legend(bbox_to_anchor=(1.05, 1), loc='upper left', borderaxespad=0.0)
+            if self._legend_offset is None:
+                plt.legend(bbox_to_anchor=(1.05, 1), loc='upper left', borderaxespad=0.0)
+            else:
+                plt.legend(bbox_to_anchor=self._legend_offset, loc='upper left', borderaxespad=0.0)
         mpl.pyplot.ylabel(tex_escape(plot_ylabel))
         mpl.pyplot.yscale(self._scale)
         self._label_offset(ax)
@@ -671,6 +691,7 @@ def plot(
     legend_loc='upper right',
     vert_plot=False,
     tex_format=False,
+    legend_offset=None,
 ):
     """
     Plots the data given an xarray dataset
@@ -791,6 +812,11 @@ def plot(
         (default False)
     tex_format: bool, optional
         Whether to interpret all plot output strings as latex formatting (default False)
+    legend_offset: 2-tuple, optional
+        The x- and y- offset of the legend. Moves the corner of the legend specified by
+        legend_loc to the specified location specified (where (0,0) is the bottom left corner
+        of the plot and (1,1) is the top right corner). Only affects time-series, histogram,
+        and periodogram plots.
 
     Returns
     =======
@@ -819,6 +845,7 @@ def plot(
         short_title=short_title,
         vert_plot=vert_plot,
         tex_format=tex_format,
+        legend_offset=legend_offset,
     )
 
     plt.rcParams.update(

@@ -225,12 +225,12 @@ class DatasetMetrics(object):
         """
         if not self._is_memoized('_standardized_mean'):
             if self._grouping is None:
-                self._standardized_mean = (self.mean - self._ds.mean()) / self._ds.std()
+                self._standardized_mean = (self.mean - self._ds.mean()) / self._ds.std(ddof=1)
             else:
                 self._standardized_mean = (
                     self.mean.groupby(self._grouping).mean()
                     - self.mean.groupby(self._grouping).mean().mean()
-                ) / self.mean.groupby(self._grouping).mean().std()
+                ) / self.mean.groupby(self._grouping).mean().std(ddof=1)
             if hasattr(self._ds, 'units'):
                 self._standardized_mean.attrs['units'] = ''
 
