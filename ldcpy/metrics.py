@@ -1,6 +1,7 @@
 import os
 from typing import Optional
 
+import cftime
 import cv2
 import matplotlib as mpl
 import numpy as np
@@ -10,6 +11,7 @@ from cartopy.util import add_cyclic_point
 from matplotlib import pyplot as plt
 from numpy import inf
 from scipy import stats as ss
+from xrft import dft
 
 
 class DatasetMetrics(object):
@@ -32,13 +34,14 @@ class DatasetMetrics(object):
         self._mean = None
         self._mean_abs = None
         self._std = None
+        self._ddof = 1
         self._prob_positive = None
         self._odds_positive = None
         self._prob_negative = None
         self._zscore = None
         self._mae_day_max = None
-        self._corr_lag1 = None
         self._lag1 = None
+        self._lag1_first_difference = None
         self._agg_dims = aggregate_dims
         self._quantile_value = None
         self._mean_squared = None
@@ -46,6 +49,9 @@ class DatasetMetrics(object):
         self._sum = None
         self._sum_squared = None
         self._variance = None
+        self._pooled_variance = None
+        self._pooled_variance_ratio = None
+        self._standardized_mean = None
         self._quantile = 0.5
         self._spre_tol = 1.0e-4
         self._max_abs = None
@@ -53,6 +59,8 @@ class DatasetMetrics(object):
         self._d_range = None
         self._min_val = None
         self._max_val = None
+        self._grouping = None
+        self._annual_harmonic_relative_ratio = None
 
         # single value metrics
         self._zscore_cutoff = None
@@ -89,6 +97,19 @@ class DatasetMetrics(object):
         return con_var
 
     @property
+    def pooled_variance(self) -> np.ndarray:
+        """
+        The overall variance of the dataset
+        """
+        if not self._is_memoized('_pooled_variance'):
+            self._pooled_variance = self._ds.var(self._agg_dims).mean()
+            self._pooled_variance.attrs = self._ds.attrs
+            if hasattr(self._ds, 'units'):
+                self._pooled_variance.attrs['units'] = f'{self._ds.units}$^2$'
+
+        return self._pooled_variance
+
+    @property
     def ns_con_var(self) -> np.ndarray:
         """
         The North-South Contrast Variance averaged along the aggregate dimensions
@@ -97,7 +118,7 @@ class DatasetMetrics(object):
             self._ns_con_var = self._con_var('ns', self._ds).mean(self._agg_dims)
             self._ns_con_var.attrs = self._ds.attrs
             if hasattr(self._ds, 'units'):
-                self._ns_con_var.attrs['units'] = f'{self._ds.units}^2'
+                self._ns_con_var.attrs['units'] = f'{self._ds.units}$^2$'
 
         return self._ns_con_var
 
@@ -110,7 +131,7 @@ class DatasetMetrics(object):
             self._ew_con_var = self._con_var('ew', self._ds).mean(self._agg_dims)
             self._ew_con_var.attrs = self._ds.attrs
             if hasattr(self._ds, 'units'):
-                self._ew_con_var.attrs['units'] = f'{self._ds.units}^2'
+                self._ew_con_var.attrs['units'] = f'{self._ds.units}$^2$'
 
         return self._ew_con_var
 
@@ -147,7 +168,7 @@ class DatasetMetrics(object):
             self._mean_squared = np.square(self.mean)
             self.mean_abs.attrs = self._ds.attrs
             if hasattr(self._ds, 'units'):
-                self.mean_abs.attrs['units'] = f'{self._ds.units}^2'
+                self.mean_abs.attrs['units'] = f'{self._ds.units}$^2$'
 
         return self._mean_squared
 
@@ -180,7 +201,7 @@ class DatasetMetrics(object):
             self._sum_squared = np.square(self._sum_squared)
             self._sum_squared.attrs = self._ds.attrs
             if hasattr(self._ds, 'units'):
-                self._sum_squared.attrs['units'] = f'{self._ds.units}^2'
+                self._sum_squared.attrs['units'] = f'{self._ds.units}$^2$'
 
         return self._sum_squared
 
@@ -190,12 +211,30 @@ class DatasetMetrics(object):
         The standard deviation along the aggregate dimensions
         """
         if not self._is_memoized('_std'):
-            self._std = self._ds.std(self._agg_dims)
+            self._std = self._ds.std(self._agg_dims, ddof=self._ddof)
             self._std.attrs = self._ds.attrs
             if hasattr(self._ds, 'units'):
                 self._std.attrs['units'] = ''
 
         return self._std
+
+    @property
+    def standardized_mean(self) -> np.ndarray:
+        """
+        The mean at each point along the aggregate dimensions divided by the standard deviation
+        """
+        if not self._is_memoized('_standardized_mean'):
+            if self._grouping is None:
+                self._standardized_mean = (self.mean - self._ds.mean()) / self._ds.std(ddof=1)
+            else:
+                self._standardized_mean = (
+                    self.mean.groupby(self._grouping).mean()
+                    - self.mean.groupby(self._grouping).mean().mean()
+                ) / self.mean.groupby(self._grouping).mean().std(ddof=1)
+            if hasattr(self._ds, 'units'):
+                self._standardized_mean.attrs['units'] = ''
+
+        return self._standardized_mean
 
     @property
     def variance(self) -> np.ndarray:
@@ -206,9 +245,22 @@ class DatasetMetrics(object):
             self._variance = self._ds.var(self._agg_dims)
             self._variance.attrs = self._ds.attrs
             if hasattr(self._ds, 'units'):
-                self._variance.attrs['units'] = f'{self._ds.units}^2'
+                self._variance.attrs['units'] = f'{self._ds.units}$^2$'
 
         return self._variance
+
+    @property
+    def pooled_variance_ratio(self) -> np.ndarray:
+        """
+        The pooled variance along the aggregate dimensions
+        """
+        if not self._is_memoized('_pooled_variance_ratio'):
+            self._pooled_variance_ratio = self.variance / self.pooled_variance
+            self._pooled_variance_ratio.attrs = self._ds.attrs
+            if hasattr(self._ds, 'units'):
+                self._pooled_variance_ratio.attrs['units'] = ''
+
+        return self._pooled_variance_ratio
 
     @property
     def prob_positive(self) -> np.ndarray:
@@ -240,7 +292,12 @@ class DatasetMetrics(object):
         The odds that a point is positive = prob_positive/(1-prob_positive)
         """
         if not self._is_memoized('_odds_positive'):
-            self._odds_positive = self.prob_positive / (1 - self.prob_positive)
+            if self._grouping is not None:
+                self._odds_positive = self.prob_positive.groupby(self._grouping).mean() / (
+                    1 - self.prob_positive.groupby(self._grouping).mean()
+                )
+            else:
+                self._odds_positive = self.prob_positive / (1 - self.prob_positive)
             self._odds_positive.attrs = self._ds.attrs
             if hasattr(self._ds, 'units'):
                 self._odds_positive.attrs['units'] = ''
@@ -353,21 +410,23 @@ class DatasetMetrics(object):
     @property
     def lag1(self) -> xr.DataArray:
         """
-        The deseasonalized lag-1 value by day of year
-        NOTE: This metric returns a spatial array regardless of aggregate dimensions, so can only be used in a spatial plot.
+        The deseasonalized lag-1 autocorrelation value by day of year
+        NOTE: This metric returns an array of spatial values as the data set regardless of aggregate dimensions,
+        so can only be plotted in a spatial plot.
         """
         if not self._is_memoized('_lag1'):
             self._deseas_resid = self._ds.groupby('time.dayofyear') - self._ds.groupby(
                 'time.dayofyear'
             ).mean(dim='time')
 
-            time_length = self._ds.sizes['time']
-            o_1, o_2 = xr.align(
-                self._deseas_resid.head({'time': time_length - 1}),
-                self._deseas_resid.tail({'time': time_length - 1}),
-                join='override',
-            )
-            self._lag1 = np.square((o_1 - o_2))
+            time_length = self._deseas_resid.sizes['time']
+            current = self._deseas_resid.head({'time': time_length - 1})
+            next = self._deseas_resid.shift({'time': -1}).head({'time': time_length - 1})
+
+            num = current.dot(next, dims='time')
+            denom = current.dot(current, dims='time')
+            self._lag1 = num / denom
+
             self._lag1.attrs = self._ds.attrs
             if hasattr(self._ds, 'units'):
                 self._lag1.attrs['units'] = ''
@@ -375,26 +434,84 @@ class DatasetMetrics(object):
         return self._lag1
 
     @property
-    def corr_lag1(self) -> xr.DataArray:
+    def lag1_first_difference(self) -> xr.DataArray:
         """
-        The deseasonalized lag-1 correlation at each point by day of year
+        The deseasonalized lag-1 autocorrelation value of the first difference of the data by day of year
+        NOTE: This metric returns an array of spatial values as the data set regardless of aggregate dimensions,
+        so can only be plotted in a spatial plot.
+        """
+        if not self._is_memoized('_lag1_first_difference'):
+            self._deseas_resid = self._ds.groupby('time.dayofyear') - self._ds.groupby(
+                'time.dayofyear'
+            ).mean(dim='time')
+            # self._deseas_resid=self._ds
+
+            time_length = self._deseas_resid.sizes['time']
+            current = self._deseas_resid.head({'time': time_length - 1})
+            next = self._deseas_resid.shift({'time': -1}).head({'time': time_length - 1})
+            first_difference = next - current
+            first_difference_current = first_difference.head({'time': time_length - 1})
+            first_difference_next = first_difference.shift({'time': -1}).head(
+                {'time': time_length - 1}
+            )
+
+            # num = first_difference_current.dot(first_difference_next, dims='time')
+            num = (first_difference_current * first_difference_next).sum(dim=['time'], skipna=True)
+            denom = first_difference_current.dot(first_difference_current, dims='time')
+            self._lag1_first_difference = num / denom
+
+            self._lag1_first_difference.attrs = self._ds.attrs
+            if hasattr(self._ds, 'units'):
+                self._lag1_first_difference.attrs['units'] = ''
+
+        return self._lag1_first_difference
+
+    @property
+    def annual_harmonic_relative_ratio(self) -> xr.DataArray:
+        """
+        The annual harmonic relative to the average periodogram value
+        in a neighborhood of 50 frequencies around the annual frequency
+        NOTE: This assumes the values along the "time" dimension are equally spaced.
         NOTE: This metric returns a lat-lon array regardless of aggregate dimensions, so can only be used in a spatial plot.
         """
-        if not self._is_memoized('_corr_lag1'):
-            time_length = self._ds.sizes['time']
-            l_1, l_2 = xr.align(
-                self.lag1.head({'time': time_length - 2}),
-                self.lag1.tail({'time': time_length - 2}),
-                join='override',
-            )
-            self._corr_lag1 = np.multiply(l_1, l_2).sum(dim='time') / np.multiply(
-                self._lag1, self._lag1
-            ).sum(dim='time')
-            self._corr_lag1.attrs = self._ds.attrs
-            if hasattr(self._ds, 'units'):
-                self._corr_lag1.attrs['units'] = ''
+        if not self._is_memoized('_annual_harmonic_relative_ratio'):
+            # drop time coordinate labels or else it will try to parse them as numbers to check spacing and fail
+            ds_copy = self._ds
+            new_index = [i for i in range(0, self._ds.time.size)]
+            new_ds = ds_copy.assign_coords({'time': new_index})
 
-        return self._corr_lag1
+            DF = dft(new_ds, dim=['time'], detrend='constant')
+            S = np.real(DF * np.conj(DF) / self._ds.sizes['time'])
+            S_annual = S.isel(
+                freq_time=int(self._ds.sizes['time'] / 2) + int(self._ds.sizes['time'] / 365)
+            )  # annual power
+            neighborhood = (
+                int(self._ds.sizes['time'] / 2) + int(self._ds.sizes['time'] / 365) - 25,
+                int(self._ds.sizes['time'] / 2) + int(self._ds.sizes['time'] / 365) + 25,
+            )
+            S_mean = xr.concat(
+                [
+                    S.isel(
+                        freq_time=slice(
+                            max(0, neighborhood[0]),
+                            int(self._ds.sizes['time'] / 2) + int(self._ds.sizes['time'] / 365) - 1,
+                        )
+                    ),
+                    S.isel(
+                        freq_time=slice(
+                            int(self._ds.sizes['time'] / 2) + int(self._ds.sizes['time'] / 365) + 1,
+                            neighborhood[1],
+                        )
+                    ),
+                ],
+                dim='freq_time',
+            ).mean(dim='freq_time')
+            ratio = S_annual / S_mean
+            self._annual_harmonic_relative_ratio = ratio
+
+            if hasattr(self._ds, 'units'):
+                self._annual_harmonic_relative_ratio.attrs['units'] = ''
+        return self._annual_harmonic_relative_ratio
 
     @property
     def zscore_cutoff(self) -> np.ndarray:
@@ -425,6 +542,22 @@ class DatasetMetrics(object):
             return self._zscore_cutoff
 
     @property
+    def annual_harmonic_relative_ratio_pct_sig(self) -> np.ndarray:
+        """
+        The percentage of points past the significance cutoff (p value <= 0.01) for the
+        annual harmonic relative to the average periodogram value
+        in a neighborhood of 50 frequencies around the annual frequency
+        """
+
+        pvals = 1 - ss.f.cdf(self.annual_harmonic_relative_ratio, 2, 100)
+        sorted_pvals = np.sort(pvals)
+        if len(sorted_pvals[sorted_pvals <= 0.01]) == 0:
+            return 0
+        sig_cutoff = ss.f.ppf(1 - max(sorted_pvals[sorted_pvals <= 0.01]), 2, 50)
+        pct_sig = 100 * np.mean(self.annual_harmonic_relative_ratio > sig_cutoff)
+        return pct_sig
+
+    @property
     def zscore_percent_significant(self) -> np.ndarray:
         """
         The percent of points where the zscore is considered significant
@@ -449,7 +582,7 @@ class DatasetMetrics(object):
 
             return self._zscore_percent_significant
 
-    def get_metric(self, name: str, q: Optional[int] = 0.5):
+    def get_metric(self, name: str, q: Optional[int] = 0.5, grouping: Optional[str] = None):
         """
         Gets a metric aggregated across one or more dimensions of the dataset
 
@@ -476,13 +609,19 @@ class DatasetMetrics(object):
                 return self.mean
             if name == 'std':
                 return self.std
+            if name == 'standardized_mean':
+                self._grouping = grouping
+                return self.standardized_mean
             if name == 'variance':
                 return self.variance
+            if name == 'pooled_variance_ratio':
+                return self.pooled_variance_ratio
             if name == 'prob_positive':
                 return self.prob_positive
             if name == 'prob_negative':
                 return self.prob_negative
             if name == 'odds_positive':
+                self._grouping = grouping
                 return self.odds_positive
             if name == 'zscore':
                 return self.zscore
@@ -498,13 +637,15 @@ class DatasetMetrics(object):
                 return self.sum
             if name == 'sum_squared':
                 return self.sum_squared
-            if name == 'corr_lag1':
-                return self.corr_lag1
+            if name == 'annual_harmonic_relative_ratio':
+                return self.annual_harmonic_relative_ratio
             if name == 'quantile':
                 self.quantile = q
                 return self.quantile_value
             if name == 'lag1':
                 return self.lag1
+            if name == 'lag1_first_difference':
+                return self.lag1_first_difference
             if name == 'max_abs':
                 return self.max_abs
             if name == 'min_abs':
@@ -542,6 +683,10 @@ class DatasetMetrics(object):
                 return self.dyn_range
             if name == 'spre_tol':
                 return self.spre_tol
+            if name == 'pooled_variance':
+                return self.pooled_variance
+            if name == 'annual_harmonic_relative_ratio_pct_sig':
+                return self.annual_harmonic_relative_ratio_pct_sig
             raise ValueError(f'there is no metrics with the name: {name}.')
         else:
             raise TypeError('name must be a string.')

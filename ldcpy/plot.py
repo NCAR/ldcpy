@@ -1,9 +1,11 @@
 import calendar
 import copy
+import re
 import warnings
 
 import cmocean
 import matplotlib as mpl
+import matplotlib.patches as mpatches
 import nc_time_axis
 import numpy as np
 import pandas as pd
@@ -13,10 +15,36 @@ from cartopy import crs as ccrs
 from cartopy.util import add_cyclic_point
 from matplotlib import dates as mdates
 from matplotlib import pyplot as plt
+from mpl_toolkits.axes_grid1 import make_axes_locatable
 from numpy import inf
 
 from ldcpy import metrics as lm
 from ldcpy import util as lu
+
+
+def tex_escape(text):
+    """
+    :param text: a plain text message
+    :return: the message escaped to appear correctly in LaTeX
+    """
+    # conv = {
+    #    '&': r'\&',
+    #    '%': r'\%',
+    #    '$': r'\$',
+    #    '#': r'\#',
+    #    '_': r'\_',
+    #    '{': r'\{',
+    #    '}': r'\}',
+    #    '^': r'\^{}',
+    #    '\\': r'\textbackslash{}',
+    #    '<': r'\textless{}',
+    #    '>': r'\textgreater{}',
+    # }
+    # regex = re.compile(
+    #    '|'.join(re.escape(str(key)) for key in sorted(conv.keys(), key=lambda item: -len(item)))
+    # )
+    # return regex.sub(lambda match: conv[match.group()], text)
+    return text
 
 
 class MetricsPlot(object):
@@ -45,7 +73,12 @@ class MetricsPlot(object):
         quantile=None,
         calc_ssim=False,
         contour_levs=24,
+        short_title=False,
+        axes_symmetric=False,
+        legend_loc='upper right',
         vert_plot=False,
+        tex_format=False,
+        legend_offset=None,
     ):
 
         self._ds = ds
@@ -68,11 +101,15 @@ class MetricsPlot(object):
         self._transform = transform
         self._lev = lev
         self._color = color
-        self._standardized_err = standardized_err
+        self._short_title = short_title
         self._quantile = None
         self._calc_ssim = calc_ssim
         self._contour_levs = contour_levs
+        self._axes_symmetric = axes_symmetric
+        self._legend_loc = legend_loc
         self.vert_plot = vert_plot
+        self._tex_format = tex_format
+        self._legend_offset = legend_offset
 
     def verify_plot_parameters(self):
         if len(self._sets) < 2 and self._metric_type in [
@@ -89,8 +126,6 @@ class MetricsPlot(object):
             self._true_lat is not None or self._true_lon is not None
         ):
             raise ValueError('Cannot currently subset by latitude or longitude in a spatial plot')
-        if self._standardized_err is not False and self._metric_type != 'diff':
-            raise ValueError("Cannot standardize errors if metric_type != 'diff'")
         if self._lev != 0 and 'lev' not in self._ds.dims:
             raise ValueError('Cannot subset by lev in this dataset')
         if self._quantile is not None and self._metric != 'quantile':
@@ -106,15 +141,6 @@ class MetricsPlot(object):
     def get_metrics(self, da):
         da_data = da
         da_data.attrs = da.attrs
-        if self._metric_type == 'diff' and self._standardized_err is True:
-            if da.std(dim='time').all() == 0:
-                da_attrs = da.attrs
-                da_data = (da - da.mean(dim='time')) / da.std(dim='time')
-                da_data.attrs = da_attrs
-            else:
-                raise ValueError(
-                    'Standard deviation of error data is 0. Cannot standardize errors.'
-                )
 
         if self._plot_type in ['spatial']:
             metrics_da = lm.DatasetMetrics(da_data, ['time'])
@@ -128,7 +154,7 @@ class MetricsPlot(object):
                 'SSIM is only calculated for spatial plots, ignoring calc_ssim option', UserWarning
             )
 
-        raw_data = metrics_da.get_metric(self._metric)
+        raw_data = metrics_da.get_metric(self._metric, self._quantile, self._group_by)
         return raw_data
 
     def get_plot_data(self, raw_data_1, raw_data_2=None):
@@ -146,7 +172,10 @@ class MetricsPlot(object):
         else:
             raise ValueError(f'metric_type {self._metric_type} not supported')
 
-        if self._group_by is not None:
+        if self._group_by is not None and self._metric not in [
+            'standardized_mean',
+            'odds_positive',
+        ]:
             plot_attrs = plot_data.attrs
             plot_data = plot_data.groupby(self._group_by).mean(dim='time')
             plot_data.attrs = plot_attrs
@@ -169,13 +198,19 @@ class MetricsPlot(object):
         else:
             das = f'{self._sets[0]}'
 
+        if self._short_title is True:
+            if self._plot_type == 'time_series':
+                return ''
+            else:
+                return das
+
         if self._quantile is not None and metric_name == 'quantile':
             metric_full_name = f'{metric_name} {self._quantile}'
         else:
             metric_full_name = metric_name
 
         if self._transform == 'log':
-            title = f'{self._varname}: log10({metric_full_name})'
+            title = f'{self._varname}: log10 {metric_full_name}'
         else:
             title = f'{self._varname}: {metric_full_name}'
 
@@ -199,6 +234,11 @@ class MetricsPlot(object):
 
         if self._subset is not None:
             title = f'{title} subset:{self._subset}'
+
+        if self._plot_type == 'histogram':
+            title = f'time-series histogram:{title}'
+        elif self._plot_type == 'periodogram':
+            title = f'periodogram:{title}'
 
         return title
 
@@ -237,12 +277,6 @@ class MetricsPlot(object):
             ncols = 1
             nrows = len(da_sets)
 
-        lat_sets = [da_sets[i]['lat'] for i in range(da_sets.sets.size)]
-        cy_datas = {}
-        lon_sets = {}
-        for i in range(da_sets.sets.size):
-            cy_datas[i], lon_sets[i] = add_cyclic_point(da_sets[i], coord=da_sets[i]['lon'])
-
         if self.vert_plot:
             fig = plt.figure(dpi=300, figsize=(4.5, 2.5 * nrows))
             plt.rcParams.update({'font.size': 10})
@@ -257,6 +291,11 @@ class MetricsPlot(object):
 
         axs = {}
         psets = {}
+        nan_inf_flag = 0
+        all_nan_flag = 0
+
+        cmax = []
+        cmin = []
         for i in range(da_sets.sets.size):
             if self.vert_plot:
                 axs[i] = plt.subplot(
@@ -269,27 +308,30 @@ class MetricsPlot(object):
 
             axs[i].set_facecolor('#39ff14')
 
-            no_inf_data_set = np.nan_to_num(cy_datas[i], nan=np.nan)
-            color_min = min(
-                [
-                    np.min(da_sets[i].where(da_sets[i] != -inf)).values.min()
-                    for i in range(da_sets.sets.size)
-                ]
-            )
-            color_max = max(
-                [
-                    np.max(da_sets[i].where(da_sets[i] != inf)).values.max()
-                    for i in range(da_sets.sets.size)
-                ]
-            )
+            # cy_datas, lon_sets = add_cyclic_point(da_sets[i], coord=da_sets[i]['lon'])
+            cy_datas = da_sets[i]
+            cy_datas = cy_datas.persist()
+            lon_sets = da_sets[i]['lon']
+            lat_sets = da_sets[i]['lat']
+
+            if np.isnan(cy_datas).any() or np.isinf(cy_datas).any():
+                nan_inf_flag = 1
+            if np.isnan(cy_datas).all():
+                all_nan_flag = 1
+
+            if not np.isinf(cy_datas).all():
+                cmin.append(np.min(cy_datas.where(cy_datas != -inf).min()))
+                cmax.append(np.max(cy_datas.where(cy_datas != inf).max()))
+
+            no_inf_data_set = np.nan_to_num(cy_datas, nan=np.nan)
+
+            # add a check here so ensure the dataset size is the same size as lon_sets * lat_sets[i]
             psets[i] = axs[i].pcolormesh(
-                lon_sets[i],
-                lat_sets[i],
+                lon_sets,
+                lat_sets,
                 no_inf_data_set,
                 transform=ccrs.PlateCarree(),
                 cmap=mymap,
-                vmin=color_min,
-                vmax=color_max,
             )
             axs[i].set_global()
 
@@ -304,50 +346,87 @@ class MetricsPlot(object):
                 axs[i].axis('on')
 
             axs[i].coastlines()
-            axs[i].set_title(titles[i])
+
+            axs[i].set_title(tex_escape(titles[i]))
+            del cy_datas
+
+        if len(cmin) > 0:
+            color_min = np.min(cmin)
+        else:
+            color_min = -0.1
+        if len(cmax) > 0:
+            color_max = np.max(cmax)
+        else:
+            color_max = 0.1
+
+        if self._axes_symmetric:
+            color_max_abs = max(abs(color_min), abs(color_max))
+            color_min = -1 * color_max_abs
+            color_max = color_max_abs
+        for i in range(len(psets)):
+            psets[i].set_clim(color_min, color_max)
+            pass
 
         # add colorbar
         if self.vert_plot is False:
             fig.subplots_adjust(left=0.1, right=0.9, bottom=0.2, top=0.95)
 
         cbs = []
-        if not all([np.isnan(cy_datas[i]).all() for i in range(len(cy_datas))]):
+        if not all_nan_flag:
             cax = fig.add_axes([0.1, 0, 0.8, 0.05])
-            if any([np.isinf(cy_datas[i]).any() for i in range(len(cy_datas))]):
-                for i in range(len(psets)):
-                    cbs.append(
-                        fig.colorbar(
-                            psets[i], cax=cax, orientation='horizontal', shrink=0.95, extend='both'
-                        )
-                    )
-                    cbs[i].ax.set_title(f'{da_sets[i].units}')
-            else:
-                for i in range(len(psets)):
-                    cbs.append(
-                        fig.colorbar(psets[i], cax=cax, orientation='horizontal', shrink=0.95)
-                    )
-                    cbs[i].ax.set_title(f'{da_sets[i].units}')
-                    cbs[i].ax.tick_params(labelsize=8, rotation=30)
-            if any([np.isnan(cy_datas[i]).any() for i in range(len(cy_datas))]):
-                proxy = [plt.Rectangle((0, 0), 1, 1, fc='#39ff14')]
+
+            for i in range(len(psets)):
+                cbs.append(fig.colorbar(psets[i], cax=cax, orientation='horizontal', shrink=0.95))
+                cbs[i].ax.set_title(f'{da_sets[i].units}')
+                if self.vert_plot:
+                    cbs[i].ax.set_aspect(0.03)
+                    cbs[i].ax.set_anchor((0, 1.35 + 0.15 * (nrows - 1)))
+                else:
+                    cbs[i].ax.set_aspect(0.03)
+                    if len(psets) > 2:
+                        cbs[i].ax.set_anchor((0, 1.35 + 0.15 * (nrows - 1)))
+                    else:
+                        cbs[i].ax.set_anchor((0.5, 1.35 + 0.15 * (nrows - 1)))
+                cbs[i].ax.tick_params(labelsize=8, rotation=30)
+            if nan_inf_flag:
+                proxy = [
+                    plt.Rectangle((0, 0), 1, 1, fc='#39ff14'),
+                    plt.Rectangle((0, 1), 2, 2, fc='#000000'),
+                    plt.Rectangle((0, 1), 2, 2, fc='#ffffff', edgecolor='black'),
+                ]
                 if self.vert_plot:
                     plt.rcParams.update({'font.size': 8})
-                    if len(cy_datas) == 1:
-                        bbox_height = 0.7
-                    elif len(cy_datas) == 2:
-                        bbox_height = 1
-                    else:
-                        bbox_height = 1
                     plt.legend(
-                        proxy, ['NaN'], loc='lower center', bbox_to_anchor=(0.51, bbox_height)
+                        proxy,
+                        ['NaN', '-Inf', 'Inf'],
+                        loc='lower center',
+                        bbox_to_anchor=(0.51, -6),
+                        ncol=len(proxy),
                     )
                 else:
                     plt.rcParams.update({'font.size': 10})
-                    plt.legend(proxy, ['NaN'], bbox_to_anchor=(0.565, 4))
+                    if len(psets) > 2:
+                        plt.legend(
+                            proxy,
+                            ['NaN', '-Inf', 'Inf'],
+                            bbox_to_anchor=(0.672, 4),
+                            ncol=len(proxy),
+                        )
+                    else:
+                        plt.legend(
+                            proxy,
+                            ['NaN', '-Inf', 'Inf'],
+                            bbox_to_anchor=(0.78, -2),
+                            ncol=len(proxy),
+                        )
         else:
             fig.add_axes([0.1, 0, 0.8, 0.05])
-            proxy = [plt.Rectangle((0, 0), 1, 1, fc='#39ff14')]
-            plt.legend(proxy, ['NaN'], bbox_to_anchor=(0.565, 4))
+            proxy = [
+                plt.Rectangle((0, 0), 1, 1, fc='#39ff14'),
+                plt.Rectangle((0, 1), 2, 2, fc='#000000'),
+                plt.Rectangle((0, 1), 2, 2, fc='#ffffff', edgecolor='black'),
+            ]
+            plt.legend(proxy, ['NaN', '-Inf', 'Inf'], bbox_to_anchor=(0.87, 2), ncol=len(proxy))
             plt.axis('off')
 
         if self._calc_ssim:
@@ -371,16 +450,21 @@ class MetricsPlot(object):
         fig, axs = mpl.pyplot.subplots(1, 1, sharey=True, tight_layout=True)
         axs.hist(plot_data, label=plot_data.sets.data)
         if plot_data.units != '':
-            mpl.pyplot.xlabel(f'{self._metric} ({plot_data.units})')
+            mpl.pyplot.xlabel(tex_escape(f'{self._metric} ({plot_data.units})'))
         else:
-            mpl.pyplot.xlabel(f'{self._metric}')
-        mpl.pyplot.title(f'time-series histogram: {title[0]}')
+            mpl.pyplot.xlabel(tex_escape(f'{self._metric}'))
+        mpl.pyplot.title(tex_escape(title[0]))
         if self.vert_plot:
-            plt.legend(loc='upper right', borderaxespad=1.0)
+            plt.legend(loc=self._legend_loc, borderaxespad=1.0)
             plt.rcParams.update({'font.size': 16})
         else:
             plt.rcParams.update({'font.size': 10})
-            plt.legend(bbox_to_anchor=(1.05, 1), loc='upper left', borderaxespad=0.0)
+            if self._legend_loc is None:
+                plt.legend(bbox_to_anchor=(1.05, 1), loc=self._legend_loc, borderaxespad=0.0)
+            else:
+                plt.legend(
+                    bbox_to_anchor=self._legend_offset, loc=self._legend_loc, borderaxespad=0.0
+                )
 
     def periodogram_plot(self, plot_data, title):
         plt.figure()
@@ -396,13 +480,18 @@ class MetricsPlot(object):
 
             mpl.pyplot.plot(freqs, i, label=plot_data[j].sets.data)
         if self.vert_plot:
-            plt.legend(loc='upper right', borderaxespad=1.0)
+            plt.legend(loc=self._legend_loc, borderaxespad=1.0)
             plt.rcParams.update({'font.size': 16})
         else:
             plt.rcParams.update({'font.size': 10})
-            plt.legend(bbox_to_anchor=(1.05, 1), loc='upper left', borderaxespad=0.0)
+            if self._legend_loc is None:
+                plt.legend(bbox_to_anchor=(1.05, 1), loc=self._legend_loc, borderaxespad=0.0)
+            else:
+                plt.legend(
+                    bbox_to_anchor=self._legend_offset, loc=self._legend_loc, borderaxespad=0.0
+                )
 
-        mpl.pyplot.title(f'periodogram: {title[0]}')
+        mpl.pyplot.title(tex_escape(title[0]))
         mpl.pyplot.ylabel('Spectrum')
         mpl.pyplot.xlabel('Frequency')
 
@@ -414,6 +503,7 @@ class MetricsPlot(object):
         """
         time series plot
         """
+
         group_string = 'time.year'
         xlabel = 'date'
         tick_interval = int(da_sets.size / da_sets.sets.size / 5) + 1
@@ -440,15 +530,20 @@ class MetricsPlot(object):
             else:
                 ylabel = f'{self._metric} diff'
         elif self._metric_type == 'ratio':
-            ylabel = f'ratio {self._metric}'
+            ylabel = f'{self._metric} ratio'
+        elif self._metric_type == 'metric_of_diff':
+            if da_sets.units != '':
+                ylabel = f'{self._metric} ({da_sets.units}) of diff'
+            else:
+                ylabel = f'{self._metric} of diff'
         else:
             if da_sets.units != '':
                 ylabel = f'{self._metric} ({da_sets.units})'
             else:
-                ylabel = f'{self._metric} diff'
+                ylabel = f'{self._metric}'
 
         if self._transform == 'log':
-            plot_ylabel = f'log10({ylabel})'
+            plot_ylabel = f'log10 {ylabel}'
         else:
             plot_ylabel = ylabel
 
@@ -459,6 +554,11 @@ class MetricsPlot(object):
             plt.rcParams.update({'font.size': 16})
         else:
             plt.rcParams.update({'font.size': 10})
+        plt.rcParams.update(
+            {
+                'text.usetex': self._tex_format,
+            }
+        )
 
         for i in range(da_sets.sets.size):
             if self._group_by is not None:
@@ -482,16 +582,27 @@ class MetricsPlot(object):
                 c_d_time = [nc_time_axis.CalendarDateTime(item, '365_day') for item in dtindex]
                 mpl.pyplot.plot(c_d_time, da_sets[i], f'C{i}', label=f'{da_sets.sets.data[i]}')
                 ax = plt.gca()
+                for label in ax.get_xticklabels():
+                    label.set_rotation(30)
+                    label.set_horizontalalignment('right')
 
         if self.vert_plot:
-            plt.legend(loc='upper right', borderaxespad=1.0)
+            if self._legend_offset is None:
+                plt.legend(loc=self._legend_loc, borderaxespad=1.0)
+            else:
+                plt.legend(
+                    loc=self._legend_loc, borderaxespad=1.0, bbox_to_anchor=self._legend_offset
+                )
         else:
             plt.rcParams.update({'font.size': 10})
-            plt.legend(bbox_to_anchor=(1.05, 1), loc='upper left', borderaxespad=0.0)
-        mpl.pyplot.ylabel(plot_ylabel)
+            if self._legend_offset is None:
+                plt.legend(bbox_to_anchor=(1.05, 1), loc='upper left', borderaxespad=0.0)
+            else:
+                plt.legend(bbox_to_anchor=self._legend_offset, loc='upper left', borderaxespad=0.0)
+        mpl.pyplot.ylabel(tex_escape(plot_ylabel))
         mpl.pyplot.yscale(self._scale)
         self._label_offset(ax)
-        mpl.pyplot.xlabel(xlabel)
+        mpl.pyplot.xlabel(tex_escape(xlabel))
 
         if self._group_by is not None:
             mpl.pyplot.xticks(
@@ -504,7 +615,9 @@ class MetricsPlot(object):
                 ]
                 unique_month_labels = list(dict.fromkeys(month_labels))
                 plt.gca().set_xticklabels(unique_month_labels)
-                plt.xticks(rotation=90)
+                for label in ax.get_xticklabels():
+                    label.set_rotation(30)
+                    label.set_horizontalalignment('right')
         # else:
         #    mpl.pyplot.xticks(
         #        pd.date_range(
@@ -514,29 +627,44 @@ class MetricsPlot(object):
         #        )
         #    )
 
-        mpl.pyplot.title(titles[0])
+        mpl.pyplot.title(tex_escape(titles[0]))
 
     def get_metric_label(self, metric, data, weights=None):
         # Get special metric names
-        if metric == 'zscore':
-            zscore_cutoff = lm.DatasetMetrics((data), ['time']).get_single_metric('zscore_cutoff')
-            percent_sig = lm.DatasetMetrics((data), ['time']).get_single_metric(
-                'zscore_percent_significant'
-            )
-            metric_name = f'{metric}: cutoff {zscore_cutoff[0]:.2f}, % sig: {percent_sig:.2f}'
-        elif metric == 'mean' and self._plot_type == 'spatial' and self._metric_type == 'raw':
-            o_wt_mean = np.average(
-                np.average(
-                    lm.DatasetMetrics(data, ['time']).get_metric(metric),
-                    axis=0,
-                    weights=weights,
+        if self._short_title is False:
+            if metric == 'zscore':
+                zscore_cutoff = lm.DatasetMetrics((data), ['time']).get_single_metric(
+                    'zscore_cutoff'
                 )
-            )
-            metric_name = f'{metric} = {o_wt_mean:.2f}'
+                percent_sig = lm.DatasetMetrics((data), ['time']).get_single_metric(
+                    'zscore_percent_significant'
+                )
+                metric_name = f'{metric}: cutoff {zscore_cutoff[0]:.2f}, % sig: {percent_sig:.2f}'
+            elif metric == 'mean' and self._plot_type == 'spatial' and self._metric_type == 'raw':
+                o_wt_mean = np.average(
+                    np.average(
+                        lm.DatasetMetrics(data, ['time']).get_metric(metric),
+                        axis=0,
+                        weights=weights,
+                    )
+                )
+                metric_name = f'{metric} = {o_wt_mean:.2f}'
+            elif metric == 'pooled_variance_ratio':
+                pooled_sd = np.sqrt(
+                    lm.DatasetMetrics((data), ['time']).get_single_metric('pooled_variance')
+                )
+                d = pooled_sd.data.compute()
+                metric_name = f'{metric}: pooled SD = {d:.2f}'
+            elif metric == 'annual_harmonic_relative_ratio':
+                p = lm.DatasetMetrics((data), ['time']).get_single_metric(
+                    'annual_harmonic_relative_ratio_pct_sig'
+                )
+                metric_name = f'{metric}: % sig = {p:.2f}'
+            else:
+                metric_name = metric
+            return metric_name
         else:
-            metric_name = metric
-
-        return metric_name
+            return ''
 
 
 def plot(
@@ -554,12 +682,16 @@ def plot(
     lon=None,
     lev=0,
     color='coolwarm',
-    standardized_err=False,
     quantile=None,
     start=None,
     end=None,
     calc_ssim=False,
+    short_title=False,
+    axes_symmetric=False,
+    legend_loc='upper right',
     vert_plot=False,
+    tex_format=False,
+    legend_offset=None,
 ):
     """
     Plots the data given an xarray dataset
@@ -574,7 +706,7 @@ def plot(
     metric : str
         The name of the metric to be plotted (must match a property name in the DatasetMetrics
         class in ldcpy.plot, for more information about the available metrics see ldcpy.DatasetMetrics)
-        Accept values include:
+        Acceptable values include:
 
             - ns_con_var
             - ew_con_var
@@ -593,6 +725,10 @@ def plot(
             - corr_lag1
             - quantile
             - lag1
+            - standardized_mean
+            - annual_harmonic_relative_ratio
+            - pooled_variance_ratio
+
     sets : list <str>
         The labels of the dataset to gather metrics from
     group_by : str
@@ -650,9 +786,6 @@ def plot(
         The color scheme for spatial plots, (default 'coolwarm').
         see https://matplotlib.org/3.1.1/gallery/color/colormap_reference.html
         for more options
-    standardized_err : bool, optional
-        Whether or not to standardize the error in a plot of metric_type="diff",
-        (default False).
     quantile : float, optional
         A value between 0 and 1 required if metric="quantile", corresponding to the desired quantile to gather,
         (default 0.5).
@@ -664,7 +797,26 @@ def plot(
         (default None)
     calc_ssim : bool, optional
         Whether or not to calculate the ssim (structural similarity index) between two plots
-        (only applies to plot_type = 'spatial'), (default False).
+        (only applies to plot_type = 'spatial'), (default False)
+    short_title: bool, optional
+        If True, use a shortened title in the plot output (default False).
+    axes_symmetric: bool, optional
+        Whether or not to make the colorbar axes symmetric about zero (used in a spatial plot)
+        (default False)
+    legend_loc: str, optional
+        The location to put the legend in a time-series plot in single-column format
+        (plot_type = "time_series", vert_plot=True)
+        (default "upper right")
+    vert_plot: bool, optional
+        If true, forces plots into a single column format and enlarges text.
+        (default False)
+    tex_format: bool, optional
+        Whether to interpret all plot output strings as latex formatting (default False)
+    legend_offset: 2-tuple, optional
+        The x- and y- offset of the legend. Moves the corner of the legend specified by
+        legend_loc to the specified location specified (where (0,0) is the bottom left corner
+        of the plot and (1,1) is the top right corner). Only affects time-series, histogram,
+        and periodogram plots.
 
     Returns
     =======
@@ -686,10 +838,20 @@ def plot(
         lon,
         lev,
         color,
-        standardized_err,
         quantile,
         calc_ssim,
+        legend_loc=legend_loc,
+        axes_symmetric=axes_symmetric,
+        short_title=short_title,
         vert_plot=vert_plot,
+        tex_format=tex_format,
+        legend_offset=legend_offset,
+    )
+
+    plt.rcParams.update(
+        {
+            'text.usetex': tex_format,
+        }
     )
 
     mp.verify_plot_parameters()
@@ -732,7 +894,6 @@ def plot(
             metric_names.append(mp.get_metric_label(metric, datas[i], ds['gw'].values))
         else:
             metric_names.append(mp.get_metric_label(metric, datas[i]))
-
     # Get plot data and title
     if lat is not None and lon is not None:
         mp.title_lat = subsets[0]['lat'].data[0]
@@ -746,12 +907,12 @@ def plot(
     if metric_type in ['diff', 'ratio']:
         for i in range(1, len(raw_metrics)):
             plot_datas.append(mp.get_plot_data(raw_metrics[0], raw_metrics[i]))
-            set_names.append(f'{sets[0]} & {sets[i]}')
+            set_names.append(tex_escape(f'{sets[0]} & {sets[i]}'))
     else:
         for i in range(len(raw_metrics)):
             plot_datas.append(mp.get_plot_data(raw_metrics[i]))
             if metric_type in ['metric_of_diff']:
-                set_names.append(f'{sets[0]} & {sets[i]}')
+                set_names.append(tex_escape(f'{sets[0]} & {sets[i+1]}'))
             else:
                 set_names.append(f'{sets[i]}')
 
