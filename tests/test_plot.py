@@ -32,9 +32,7 @@ class TestPlot(TestCase):
     """
 
     def test_mean(self):
-        ldcpy.plot(
-            ds, 'TS', sets=['orig', 'recon'], metric='mean', vert_plot=True, tex_format=False
-        )
+        ldcpy.plot(ds, 'TS', sets=['orig', 'recon'], calc='mean', vert_plot=True, tex_format=False)
         self.assertTrue(True)
 
     def test_standardized_mean(self):
@@ -42,29 +40,29 @@ class TestPlot(TestCase):
             ds,
             'TS',
             sets=['orig', 'recon'],
-            metric='standardized_mean',
+            calc='standardized_mean',
             plot_type='time_series',
             lat=90,
             lon=0,
-            metric_type='diff',
+            calc_type='diff',
             vert_plot=True,
             tex_format=False,
         )
         self.assertTrue(True)
 
     def test_prob_neg(self):
-        ldcpy.plot(ds2, 'PRECT', sets=['orig', 'recon'], metric='prob_negative', tex_format=False)
+        ldcpy.plot(ds2, 'PRECT', sets=['orig', 'recon'], calc='prob_negative', tex_format=False)
         self.assertTrue(True)
 
     def test_mean_compare(self):
         ldcpy.plot(
-            ds, 'TS', sets=['orig', 'recon'], metric='mean', plot_type='spatial', tex_format=False
+            ds, 'TS', sets=['orig', 'recon'], calc='mean', plot_type='spatial', tex_format=False
         )
         self.assertTrue(True)
 
     def test_lag1(self):
         ldcpy.plot(
-            ds, 'TS', sets=['orig', 'recon'], metric='lag1', plot_type='spatial', tex_format=False
+            ds, 'TS', sets=['orig', 'recon'], calc='lag1', plot_type='spatial', tex_format=False
         )
         self.assertTrue(True)
 
@@ -73,7 +71,7 @@ class TestPlot(TestCase):
             ds,
             'TS',
             sets=['orig', 'recon'],
-            metric='lag1_first_difference',
+            calc='lag1_first_difference',
             plot_type='spatial',
             tex_format=False,
         )
@@ -84,8 +82,8 @@ class TestPlot(TestCase):
             ds,
             'TS',
             sets=['orig', 'recon'],
-            metric='ann_harmonic_rel_ratio',
-            metric_type='metric_of_diff',
+            calc='ann_harmonic_ratio',
+            calc_type='metric_of_diff',
             tex_format=False,
         )
         self.assertTrue(True)
@@ -96,8 +94,8 @@ class TestPlot(TestCase):
             'TS',
             sets=['orig', 'recon', 'recon2'],
             scale='log',
-            metric='pooled_var_ratio',
-            metric_type='diff',
+            calc='pooled_var_ratio',
+            calc_type='diff',
             tex_format=False,
         )
 
@@ -106,7 +104,7 @@ class TestPlot(TestCase):
             ds,
             'TS',
             sets=['orig', 'recon'],
-            metric='std',
+            calc='std',
             color='cmo.thermal',
             plot_type='spatial',
             tex_format=False,
@@ -118,8 +116,8 @@ class TestPlot(TestCase):
             ds,
             'TS',
             sets=['orig', 'recon'],
-            metric='mean',
-            metric_type='diff',
+            calc='mean',
+            calc_type='diff',
             transform='log',
             tex_format=False,
         )
@@ -130,7 +128,7 @@ class TestPlot(TestCase):
             ds,
             'TS',
             sets=['orig', 'recon'],
-            metric='prob_negative',
+            calc='prob_negative',
             color='coolwarm',
             transform='log',
             plot_type='spatial',
@@ -143,8 +141,8 @@ class TestPlot(TestCase):
             ds2,
             'PRECT',
             sets=['orig', 'recon'],
-            metric='odds_positive',
-            metric_type='ratio',
+            calc='odds_positive',
+            calc_type='ratio',
             transform='log',
             color='cmo.thermal',
             tex_format=False,
@@ -157,7 +155,7 @@ class TestPlot(TestCase):
             ds2,
             'PRECT',
             sets=['orig', 'recon'],
-            metric='odds_positive',
+            calc='odds_positive',
             plot_type='time_series',
             group_by='time.month',
             calc_ssim=True,
@@ -170,7 +168,7 @@ class TestPlot(TestCase):
             ds2,
             'PRECT',
             sets=['orig', 'recon'],
-            metric='prob_negative',
+            calc='prob_negative',
             color='binary',
             plot_type='spatial',
             tex_format=False,
@@ -182,8 +180,8 @@ class TestPlot(TestCase):
             ds,
             'TS',
             sets=['orig', 'recon', 'recon2'],
-            metric='mean_abs',
-            metric_type='diff',
+            calc='mean_abs',
+            calc_type='diff',
             plot_type='time_series',
             tex_format=False,
         )
@@ -195,8 +193,8 @@ class TestPlot(TestCase):
             ds2,
             'PRECT',
             sets=['recon', 'orig'],
-            metric_type='diff',
-            metric='mean',
+            calc_type='diff',
+            calc='mean',
             plot_type='time_series',
             subset='first50',
             lat=44.56,
@@ -210,8 +208,8 @@ class TestPlot(TestCase):
             ds2,
             'PRECT',
             sets=['orig', 'recon'],
-            metric='mean',
-            metric_type='ratio',
+            calc='mean',
+            calc_type='ratio',
             group_by=None,
             subset='first50',
             lat=44.76,
@@ -226,8 +224,8 @@ class TestPlot(TestCase):
             ds2,
             'PRECT',
             sets=['orig', 'recon'],
-            metric='mean',
-            metric_type='raw',
+            calc='mean',
+            calc_type='raw',
             plot_type='periodogram',
             group_by='time.dayofyear',
             tex_format=False,
@@ -239,8 +237,8 @@ class TestPlot(TestCase):
             ds2,
             'PRECT',
             sets=['orig', 'recon'],
-            metric='mean',
-            metric_type='diff',
+            calc='mean',
+            calc_type='diff',
             subset='winter',
             plot_type='histogram',
             group_by='time.dayofyear',
@@ -253,7 +251,7 @@ class TestPlot(TestCase):
             ds3,
             'T',
             sets=['orig'],
-            metric='mean',
+            calc='mean',
             plot_type='time_series',
             group_by='time.day',
             tex_format=False,
@@ -265,8 +263,8 @@ class TestPlot(TestCase):
             ds,
             'TS',
             sets=['orig', 'recon'],
-            metric_type='metric_of_diff',
-            metric='zscore',
+            calc_type='metric_of_diff',
+            calc='zscore',
             tex_format=False,
         )
         self.assertTrue(True is True)
@@ -276,17 +274,17 @@ class TestPlot(TestCase):
             ds,
             'TS',
             sets=['orig', 'recon'],
-            metric='mean',
+            calc='mean',
             plot_type='spatial',
             calc_ssim=True,
             tex_format=False,
         )
 
     def test_mae_max_day(self):
-        ldcpy.plot(ds, 'TS', sets=['orig'], metric='mae_day_max', tex_format=False)
+        ldcpy.plot(ds, 'TS', sets=['orig'], calc='mae_day_max', tex_format=False)
 
     def test_mean_3d(self):
-        ldcpy.plot(ds3, 'T', sets=['orig'], metric='mean', lev=29, tex_format=False)
+        ldcpy.plot(ds3, 'T', sets=['orig'], calc='mean', lev=29, tex_format=False)
         self.assertTrue(True)
 
     def test_std_by_month(self):
@@ -294,10 +292,10 @@ class TestPlot(TestCase):
             ds,
             'TS',
             sets=['orig', 'recon'],
-            metric='mean',
+            calc='mean',
             plot_type='time_series',
             group_by='time.month',
-            metric_type='diff',
+            calc_type='diff',
             tex_format=False,
         )
         self.assertTrue(True)
@@ -308,7 +306,7 @@ class TestPlot(TestCase):
             ds,
             'TS',
             sets=['orig'],
-            metric='mean',
+            calc='mean',
             start=0,
             end=8,
             plot_type='time_series',
@@ -317,15 +315,11 @@ class TestPlot(TestCase):
         self.assertTrue(True)
 
     def test_mean_time_series(self):
-        ldcpy.plot(
-            ds, 'TS', sets=['orig'], metric='mean', plot_type='time_series', tex_format=False
-        )
+        ldcpy.plot(ds, 'TS', sets=['orig'], calc='mean', plot_type='time_series', tex_format=False)
         self.assertTrue(True)
 
     def test_periodogram(self):
-        ldcpy.plot(
-            ds, 'TS', sets=['orig'], metric='mean', plot_type='periodogram', tex_format=False
-        )
+        ldcpy.plot(ds, 'TS', sets=['orig'], calc='mean', plot_type='periodogram', tex_format=False)
         self.assertTrue(True)
 
     def test_plot_multiple_time_series(self):
@@ -333,7 +327,7 @@ class TestPlot(TestCase):
             ds,
             'TS',
             sets=['orig', 'recon'],
-            metric='mean',
+            calc='mean',
             plot_type='time_series',
             tex_format=False,
         )

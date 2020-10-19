@@ -670,11 +670,11 @@ class MetricsPlot(object):
 def plot(
     ds,
     varname,
-    metric,
+    calc,
     sets,
     group_by=None,
     scale='linear',
-    metric_type='raw',
+    calc_type='raw',
     plot_type='spatial',
     transform='none',
     subset=None,
@@ -703,7 +703,7 @@ def plot(
         The input dataset
     varname : str
         The name of the variable to be plotted
-    metric : str
+    calc : str
         The name of the metric to be plotted (must match a property name in the DatasetMetrics
         class in ldcpy.plot, for more information about the available metrics see ldcpy.DatasetMetrics)
         Acceptable values include:
@@ -745,7 +745,7 @@ def plot(
 
             - linear
             - log
-    metric_type : str, optional
+    calc_type : str, optional
         The type of operation to be performed on the metrics. (default 'raw')
         Valid options:
 
@@ -826,11 +826,11 @@ def plot(
     mp = MetricsPlot(
         ds,
         varname,
-        metric,
+        calc,
         sets,
         group_by,
         scale,
-        metric_type,
+        calc_type,
         plot_type,
         transform,
         subset,
@@ -872,7 +872,7 @@ def plot(
 
     # Acquire raw metric values
     datas = []
-    if metric_type in ['metric_of_diff']:
+    if calc_type in ['metric_of_diff']:
         if subsets is not None:
             for i in range(1, len(subsets)):
                 datas.append(subsets[0] - subsets[i])
@@ -891,9 +891,9 @@ def plot(
     metric_names = []
     for i in range(len(datas)):
         if ds.variables.mapping.get('gw') is not None:
-            metric_names.append(mp.get_metric_label(metric, datas[i], ds['gw'].values))
+            metric_names.append(mp.get_metric_label(calc, datas[i], ds['gw'].values))
         else:
-            metric_names.append(mp.get_metric_label(metric, datas[i]))
+            metric_names.append(mp.get_metric_label(calc, datas[i]))
     # Get plot data and title
     if lat is not None and lon is not None:
         mp.title_lat = subsets[0]['lat'].data[0]
@@ -904,14 +904,14 @@ def plot(
 
     plot_datas = []
     set_names = []
-    if metric_type in ['diff', 'ratio']:
+    if calc_type in ['diff', 'ratio']:
         for i in range(1, len(raw_metrics)):
             plot_datas.append(mp.get_plot_data(raw_metrics[0], raw_metrics[i]))
             set_names.append(tex_escape(f'{sets[0]} & {sets[i]}'))
     else:
         for i in range(len(raw_metrics)):
             plot_datas.append(mp.get_plot_data(raw_metrics[i]))
-            if metric_type in ['metric_of_diff']:
+            if calc_type in ['metric_of_diff']:
                 set_names.append(tex_escape(f'{sets[0]} & {sets[i+1]}'))
             else:
                 set_names.append(f'{sets[i]}')
@@ -921,10 +921,10 @@ def plot(
 
     titles = []
 
-    if metric_type in ['ratio', 'diff']:
+    if calc_type in ['ratio', 'diff']:
         for i in range(1, len(metric_names)):
             titles.append(mp.get_title(metric_names[i], f'{sets[0]} & {sets[i]}'))
-    elif metric_type in ['metric_of_diff']:
+    elif calc_type in ['metric_of_diff']:
         for i in range(len(metric_names)):
             titles.append(mp.get_title(metric_names[i], f'{sets[0]} & {sets[i+1]}'))
     else:
