@@ -222,6 +222,7 @@ class DatasetMetrics(object):
     def standardized_mean(self) -> np.ndarray:
         """
         The mean at each point along the aggregate dimensions divided by the standard deviation
+        NOTE: will always be 0 if aggregating over all dimensions
         """
         if not self._is_memoized('_standardized_mean'):
             if self._grouping is None:
@@ -307,6 +308,7 @@ class DatasetMetrics(object):
     def zscore(self) -> np.ndarray:
         """
         The z-score of a point averaged along the aggregate dimensions under the null hypothesis that the true mean is zero.
+        NOTE: currently assumes we are aggregating along the time dimension so is only suitable for a spatial plot.
         """
         if not self._is_memoized('_zscore'):
             self._zscore = np.divide(self.mean, self.std / np.sqrt(self._ds.sizes['time']))
@@ -615,7 +617,7 @@ class DatasetMetrics(object):
                 return self.standardized_mean
             if name == 'variance':
                 return self.variance
-            if name == 'pooled_variance_ratio':
+            if name == 'pooled_var_ratio':
                 return self.pooled_variance_ratio
             if name == 'prob_positive':
                 return self.prob_positive
@@ -638,7 +640,7 @@ class DatasetMetrics(object):
                 return self.sum
             if name == 'sum_squared':
                 return self.sum_squared
-            if name == 'annual_harmonic_relative_ratio':
+            if name == 'ann_harmonic_ratio':
                 return self.annual_harmonic_relative_ratio
             if name == 'quantile':
                 self.quantile = q

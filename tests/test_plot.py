@@ -84,7 +84,7 @@ class TestPlot(TestCase):
             ds,
             'TS',
             sets=['orig', 'recon'],
-            metric='annual_harmonic_relative_ratio',
+            metric='ann_harmonic_rel_ratio',
             metric_type='metric_of_diff',
             tex_format=False,
         )
@@ -96,7 +96,7 @@ class TestPlot(TestCase):
             'TS',
             sets=['orig', 'recon', 'recon2'],
             scale='log',
-            metric='pooled_variance_ratio',
+            metric='pooled_var_ratio',
             metric_type='diff',
             tex_format=False,
         )
