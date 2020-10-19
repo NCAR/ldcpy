@@ -582,7 +582,7 @@ class DatasetMetrics(object):
 
             return self._zscore_percent_significant
 
-    def get_metric(self, name: str, q: Optional[int] = 0.5, grouping: Optional[str] = None):
+    def get_metric(self, name: str, q: Optional[int] = 0.5, grouping: Optional[str] = None, ddof=1):
         """
         Gets a metric aggregated across one or more dimensions of the dataset
 
@@ -608,6 +608,7 @@ class DatasetMetrics(object):
             if name == 'mean':
                 return self.mean
             if name == 'std':
+                self._ddof = ddof
                 return self.std
             if name == 'standardized_mean':
                 self._grouping = grouping
@@ -762,8 +763,8 @@ class DiffMetrics(object):
         if not self._is_memoized('_pearson_correlation_coefficient'):
             self._pcc = (
                 self.covariance
-                / self._metrics1.get_metric('std')
-                / self._metrics2.get_metric('std')
+                / self._metrics1.get_metric('std', ddof=0)
+                / self._metrics2.get_metric('std', ddof=0)
             )
 
         return self._pcc

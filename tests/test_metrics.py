@@ -648,7 +648,7 @@ class TestErrorMetrics(TestCase):
         self.assertTrue(
             np.isclose(
                 test_diff_metrics.get_diff_metric('pearson_correlation_coefficient'),
-                np.array(0.995),
+                np.array(1),
                 rtol=1e-09,
             ).all()
         )
