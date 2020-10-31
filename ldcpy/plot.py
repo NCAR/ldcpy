@@ -649,7 +649,7 @@ class MetricsPlot(object):
                     )
                 )
                 metric_name = f'{metric} = {o_wt_mean:.2f}'
-            elif metric == 'pooled_variance_ratio':
+            elif metric == 'pooled_var_ratio':
                 pooled_sd = np.sqrt(
                     lm.DatasetMetrics((data), ['time']).get_single_metric('pooled_variance')
                 )

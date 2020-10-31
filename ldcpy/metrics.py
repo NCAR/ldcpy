@@ -1,3 +1,4 @@
+import copy
 import os
 from typing import Optional
 
@@ -855,7 +856,7 @@ class DiffMetrics(object):
 
             fig = plt.figure(dpi=300, figsize=(9, 2.5))
 
-            mymap = plt.cm.get_cmap('coolwarm')
+            mymap = copy.copy(plt.cm.get_cmap('coolwarm'))
             mymap.set_under(color='black')
             mymap.set_over(color='white')
             mymap.set_bad(alpha=0)
