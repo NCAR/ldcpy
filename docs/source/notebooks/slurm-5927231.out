@@ -1,9 +1,0 @@
-distributed.nanny - INFO -         Start Nanny at: 'tcp://10.12.205.14:34359'
-distributed.diskutils - INFO - Found stale lock file and directory '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-snnvrjvo', purging
-distributed.diskutils - ERROR - Failed to remove '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-snnvrjvo' (failed in <built-in function lstat>): [Errno 2] No such file or directory: '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-snnvrjvo'
-distributed.diskutils - INFO - Found stale lock file and directory '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-8v5dukke', purging
-distributed.diskutils - INFO - Found stale lock file and directory '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-dfr338w2', purging
-distributed.diskutils - INFO - Found stale lock file and directory '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-g7sea36p', purging
-distributed.diskutils - ERROR - Failed to remove '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-g7sea36p' (failed in <built-in function rmdir>): [Errno 2] No such file or directory: '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-g7sea36p'
-distributed.diskutils - INFO - Found stale lock file and directory '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-n9tqgsws', purging
-slurmstepd: error: *** JOB 5927231 ON casper05 CANCELLED AT 2020-09-23T16:41:37 ***

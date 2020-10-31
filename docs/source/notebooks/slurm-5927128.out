@@ -1,5 +1,0 @@
-distributed.nanny - INFO -         Start Nanny at: 'tcp://10.12.205.15:43618'
-distributed.diskutils - INFO - Found stale lock file and directory '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-5ufv68tf', purging
-distributed.diskutils - INFO - Found stale lock file and directory '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-pkqguusi', purging
-distributed.diskutils - INFO - Found stale lock file and directory '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-a0wztf4i', purging
-slurmstepd: error: *** JOB 5927128 ON casper06 CANCELLED AT 2020-09-23T16:28:06 ***

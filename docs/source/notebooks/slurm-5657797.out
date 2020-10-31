@@ -1,2 +1,0 @@
-slurmstepd: error: *** JOB 5657797 ON casper02 CANCELLED AT 2020-07-30T19:52:36 ***
-distributed.nanny - INFO -         Start Nanny at: 'tcp://10.12.205.11:45514'

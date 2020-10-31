@@ -1,4 +1,0 @@
-distributed.nanny - INFO -         Start Nanny at: 'tcp://10.12.205.26:44990'
-distributed.diskutils - INFO - Found stale lock file and directory '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-mxkxs8h7', purging
-distributed.diskutils - ERROR - Failed to remove '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-mxkxs8h7' (failed in <built-in function rmdir>): [Errno 2] No such file or directory: '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-mxkxs8h7'
-slurmstepd: error: *** JOB 5760680 ON casper17 CANCELLED AT 2020-08-27T22:47:24 ***
