@@ -1,0 +1,29 @@
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.7.161:36459'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.7.161:43525'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.7.161:33539'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.7.161:40517'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.7.161:45947'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.7.161:45635'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.7.161:36473'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.7.161:42599'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.7.161:43769'
+distributed.dask_worker - INFO - Exiting on signal 15
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.7.161:36459'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.7.161:43525'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.7.161:33539'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.7.161:40517'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.7.161:45947'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.7.161:45635'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.7.161:36473'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.7.161:42599'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.7.161:43769'
+distributed.nanny - INFO - Worker process 7183 was killed by signal 15
+distributed.nanny - INFO - Worker process 7175 was killed by signal 15
+distributed.nanny - INFO - Worker process 7180 was killed by signal 15
+distributed.nanny - INFO - Worker process 7186 was killed by signal 15
+distributed.nanny - INFO - Worker process 7172 was killed by signal 15
+distributed.nanny - INFO - Worker process 7170 was killed by signal 15
+distributed.nanny - INFO - Worker process 7168 was killed by signal 15
+distributed.nanny - INFO - Worker process 7167 was killed by signal 15
+distributed.nanny - INFO - Worker process 7177 was killed by signal 15
+distributed.dask_worker - INFO - End worker

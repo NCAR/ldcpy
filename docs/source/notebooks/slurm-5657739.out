@@ -1,0 +1,16 @@
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.12.205.20:46845'
+distributed.worker - INFO -       Start worker at:   tcp://10.12.205.20:38598
+distributed.worker - INFO -          Listening to:   tcp://10.12.205.20:38598
+distributed.worker - INFO -          dashboard at:         10.12.205.20:38029
+distributed.worker - INFO - Waiting to connect to:   tcp://10.12.205.30:37831
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -               Threads:                          4
+distributed.worker - INFO -                Memory:                   40.00 GB
+distributed.worker - INFO -       Local Directory: /glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-fvxo3c8d
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -         Registered to:   tcp://10.12.205.30:37831
+distributed.worker - INFO - -------------------------------------------------
+distributed.core - INFO - Starting established connection
+distributed.worker - INFO - Stopping worker at tcp://10.12.205.20:38598
+distributed.diskutils - ERROR - Failed to remove '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-fvxo3c8d' (failed in <built-in function lstat>): [Errno 2] No such file or directory: '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-fvxo3c8d'
+slurmstepd: error: *** JOB 5657739 ON casper11 CANCELLED AT 2020-07-30T19:06:51 ***

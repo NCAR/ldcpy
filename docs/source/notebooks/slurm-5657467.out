@@ -1,0 +1,26 @@
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.12.205.28:35082'
+distributed.worker - INFO -       Start worker at:   tcp://10.12.205.28:34694
+distributed.worker - INFO -          Listening to:   tcp://10.12.205.28:34694
+distributed.worker - INFO -          dashboard at:         10.12.205.28:37008
+distributed.worker - INFO - Waiting to connect to:   tcp://10.12.205.28:38128
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -               Threads:                          4
+distributed.worker - INFO -                Memory:                   40.00 GB
+distributed.worker - INFO -       Local Directory: /glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-jl96of09
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -         Registered to:   tcp://10.12.205.28:38128
+distributed.worker - INFO - -------------------------------------------------
+distributed.core - INFO - Starting established connection
+distributed.utils_perf - INFO - full garbage collection released 13.07 MB from 464 reference cycles (threshold: 10.00 MB)
+distributed.worker - INFO - Can't find dependencies for key ('astype-getitem-49aa68651948e74b97ce915297b452c2', 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-f68f30222777adfe57deca529d9d680c', 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('astype-getitem-be8f5ac38e45fa804f5909bd781da2d5', 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-9c981a73ee464b2bbd5e1d5c5d70d536', 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('astype-getitem-be8f5ac38e45fa804f5909bd781da2d5', 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-9c981a73ee464b2bbd5e1d5c5d70d536', 0, 0) 1 .  Asking scheduler
+distributed.worker - INFO - Connection to scheduler broken.  Reconnecting...
+distributed.worker - INFO - Stopping worker at tcp://10.12.205.28:34694
+distributed.diskutils - ERROR - Failed to remove '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-jl96of09' (failed in <built-in function lstat>): [Errno 2] No such file or directory: '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-jl96of09'
+distributed.nanny - INFO - Worker closed
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.12.205.28:35082'
+distributed.dask_worker - INFO - End worker

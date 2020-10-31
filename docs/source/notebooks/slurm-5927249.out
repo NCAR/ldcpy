@@ -1,0 +1,20 @@
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.12.205.31:45178'
+distributed.diskutils - INFO - Found stale lock file and directory '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-73m8kv3g', purging
+distributed.diskutils - INFO - Found stale lock file and directory '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-phew8rz4', purging
+distributed.diskutils - INFO - Found stale lock file and directory '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-nc0upsb0', purging
+distributed.diskutils - ERROR - Failed to remove '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-nc0upsb0' (failed in <built-in function rmdir>): [Errno 39] Directory not empty: '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-nc0upsb0'
+distributed.diskutils - INFO - Found stale lock file and directory '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-pbqchzw9', purging
+distributed.worker - INFO -       Start worker at:   tcp://10.12.205.31:42562
+distributed.worker - INFO -          Listening to:   tcp://10.12.205.31:42562
+distributed.worker - INFO -          dashboard at:         10.12.205.31:34928
+distributed.worker - INFO - Waiting to connect to:   tcp://10.12.205.19:46050
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -               Threads:                          4
+distributed.worker - INFO -                Memory:                   40.00 GB
+distributed.worker - INFO -       Local Directory: /glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-_xbt7er_
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -         Registered to:   tcp://10.12.205.19:46050
+distributed.worker - INFO - -------------------------------------------------
+distributed.core - INFO - Starting established connection
+distributed.worker - INFO - Stopping worker at tcp://10.12.205.31:42562
+slurmstepd: error: *** JOB 5927249 ON casper22 CANCELLED AT 2020-09-23T16:42:12 ***

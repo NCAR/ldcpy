@@ -1,0 +1,181 @@
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.10.86:46175'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.10.86:37833'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.10.86:37107'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.10.86:36709'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.10.86:43823'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.10.86:33051'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.10.86:37199'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.10.86:45187'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.10.86:39447'
+distributed.diskutils - INFO - Found stale lock file and directory '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-c7sw5qbh', purging
+distributed.diskutils - INFO - Found stale lock file and directory '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-7q2iceak', purging
+distributed.diskutils - INFO - Found stale lock file and directory '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-6fhb9p_m', purging
+distributed.diskutils - INFO - Found stale lock file and directory '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-m75_9jy_', purging
+distributed.diskutils - INFO - Found stale lock file and directory '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-lbdm3yli', purging
+distributed.diskutils - INFO - Found stale lock file and directory '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-1gn4meem', purging
+distributed.diskutils - INFO - Found stale lock file and directory '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-w1voqp61', purging
+distributed.diskutils - INFO - Found stale lock file and directory '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-0jwvxt19', purging
+distributed.diskutils - INFO - Found stale lock file and directory '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-vxyr4g6m', purging
+distributed.worker - INFO -       Start worker at:   tcp://10.148.10.86:39119
+distributed.worker - INFO -          Listening to:   tcp://10.148.10.86:39119
+distributed.worker - INFO -          dashboard at:         10.148.10.86:41577
+distributed.worker - INFO - Waiting to connect to:   tcp://10.148.10.15:45357
+/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/contextlib.py:119: UserWarning: Creating scratch directories is taking a surprisingly long time. This is often due to running workers on a network file system. Consider specifying a local-directory to point workers to write scratch data to a local disk.
+  next(self.gen)
+distributed.worker - INFO -       Start worker at:   tcp://10.148.10.86:44263
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -          Listening to:   tcp://10.148.10.86:44263
+distributed.worker - INFO -               Threads:                          4
+distributed.worker - INFO -          dashboard at:         10.148.10.86:32821
+distributed.worker - INFO - Waiting to connect to:   tcp://10.148.10.15:45357
+distributed.worker - INFO -                Memory:                   12.11 GB
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -       Local Directory: /glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-45i72r1s
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -               Threads:                          4
+distributed.worker - INFO -                Memory:                   12.11 GB
+distributed.worker - INFO -       Local Directory: /glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-md0hz45y
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -         Registered to:   tcp://10.148.10.15:45357
+distributed.worker - INFO - -------------------------------------------------
+distributed.core - INFO - Starting established connection
+distributed.worker - INFO -         Registered to:   tcp://10.148.10.15:45357
+distributed.worker - INFO - -------------------------------------------------
+distributed.core - INFO - Starting established connection
+/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/contextlib.py:119: UserWarning: Creating scratch directories is taking a surprisingly long time. This is often due to running workers on a network file system. Consider specifying a local-directory to point workers to write scratch data to a local disk.
+  next(self.gen)
+distributed.worker - INFO -       Start worker at:   tcp://10.148.10.86:43175
+distributed.worker - INFO -          Listening to:   tcp://10.148.10.86:43175
+distributed.worker - INFO -          dashboard at:         10.148.10.86:37929
+distributed.worker - INFO - Waiting to connect to:   tcp://10.148.10.15:45357
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -               Threads:                          4
+distributed.worker - INFO -                Memory:                   12.11 GB
+distributed.worker - INFO -       Local Directory: /glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-plwif0td
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -       Start worker at:   tcp://10.148.10.86:46739
+distributed.worker - INFO -          Listening to:   tcp://10.148.10.86:46739
+distributed.worker - INFO -          dashboard at:         10.148.10.86:40935
+distributed.worker - INFO - Waiting to connect to:   tcp://10.148.10.15:45357
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -               Threads:                          4
+distributed.worker - INFO -                Memory:                   12.11 GB
+distributed.worker - INFO -       Local Directory: /glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-kq857j3h
+distributed.worker - INFO - -------------------------------------------------
+/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/contextlib.py:119: UserWarning: Creating scratch directories is taking a surprisingly long time. This is often due to running workers on a network file system. Consider specifying a local-directory to point workers to write scratch data to a local disk.
+  next(self.gen)
+distributed.worker - INFO -       Start worker at:   tcp://10.148.10.86:36799
+distributed.worker - INFO -          Listening to:   tcp://10.148.10.86:36799
+distributed.worker - INFO -          dashboard at:         10.148.10.86:34931
+distributed.worker - INFO - Waiting to connect to:   tcp://10.148.10.15:45357
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -               Threads:                          4
+distributed.worker - INFO -                Memory:                   12.11 GB
+distributed.worker - INFO -       Local Directory: /glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-ue7fkk2a
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -       Start worker at:   tcp://10.148.10.86:41399
+distributed.worker - INFO -          Listening to:   tcp://10.148.10.86:41399
+distributed.worker - INFO -          dashboard at:         10.148.10.86:33507
+distributed.worker - INFO -       Start worker at:   tcp://10.148.10.86:44517
+distributed.worker - INFO - Waiting to connect to:   tcp://10.148.10.15:45357
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -          Listening to:   tcp://10.148.10.86:44517
+distributed.worker - INFO -               Threads:                          4
+distributed.worker - INFO -          dashboard at:         10.148.10.86:41579
+distributed.worker - INFO -                Memory:                   12.11 GB
+distributed.worker - INFO - Waiting to connect to:   tcp://10.148.10.15:45357
+distributed.worker - INFO -       Local Directory: /glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-9eur_zm1
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -               Threads:                          4
+distributed.worker - INFO -                Memory:                   12.11 GB
+distributed.worker - INFO -       Local Directory: /glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-gjtsxh7n
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -         Registered to:   tcp://10.148.10.15:45357
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -       Start worker at:   tcp://10.148.10.86:36357
+distributed.worker - INFO -          Listening to:   tcp://10.148.10.86:36357
+distributed.worker - INFO -          dashboard at:         10.148.10.86:33747
+distributed.worker - INFO - Waiting to connect to:   tcp://10.148.10.15:45357
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -               Threads:                          4
+distributed.worker - INFO -                Memory:                   12.11 GB
+distributed.worker - INFO -       Local Directory: /glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-syfcbpin
+distributed.core - INFO - Starting established connection
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -         Registered to:   tcp://10.148.10.15:45357
+distributed.worker - INFO - -------------------------------------------------
+distributed.core - INFO - Starting established connection
+distributed.worker - INFO -         Registered to:   tcp://10.148.10.15:45357
+distributed.worker - INFO - -------------------------------------------------
+distributed.core - INFO - Starting established connection
+distributed.worker - INFO -         Registered to:   tcp://10.148.10.15:45357
+distributed.worker - INFO - -------------------------------------------------
+distributed.core - INFO - Starting established connection
+/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/contextlib.py:119: UserWarning: Creating scratch directories is taking a surprisingly long time. This is often due to running workers on a network file system. Consider specifying a local-directory to point workers to write scratch data to a local disk.
+  next(self.gen)
+distributed.worker - INFO -       Start worker at:   tcp://10.148.10.86:34267
+distributed.worker - INFO -          Listening to:   tcp://10.148.10.86:34267
+distributed.worker - INFO -          dashboard at:         10.148.10.86:40145
+distributed.worker - INFO - Waiting to connect to:   tcp://10.148.10.15:45357
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -               Threads:                          4
+distributed.worker - INFO -                Memory:                   12.11 GB
+distributed.worker - INFO -       Local Directory: /glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-2sac44ir
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -         Registered to:   tcp://10.148.10.15:45357
+distributed.worker - INFO - -------------------------------------------------
+distributed.core - INFO - Starting established connection
+distributed.worker - INFO -         Registered to:   tcp://10.148.10.15:45357
+distributed.worker - INFO - -------------------------------------------------
+distributed.core - INFO - Starting established connection
+distributed.worker - INFO -         Registered to:   tcp://10.148.10.15:45357
+distributed.worker - INFO - -------------------------------------------------
+distributed.core - INFO - Starting established connection
+distributed.utils_perf - INFO - full garbage collection released 238.43 MB from 1172 reference cycles (threshold: 10.00 MB)
+distributed.worker - WARNING - Heartbeat to scheduler failed
+distributed.worker - WARNING - Heartbeat to scheduler failed
+distributed.worker - WARNING - Heartbeat to scheduler failed
+distributed.worker - WARNING - Heartbeat to scheduler failed
+distributed.worker - WARNING - Heartbeat to scheduler failed
+distributed.worker - WARNING - Heartbeat to scheduler failed
+distributed.worker - WARNING - Heartbeat to scheduler failed
+distributed.worker - WARNING - Heartbeat to scheduler failed
+distributed.worker - WARNING - Heartbeat to scheduler failed
+distributed.worker - INFO - Connection to scheduler broken.  Reconnecting...
+distributed.worker - INFO - Connection to scheduler broken.  Reconnecting...
+distributed.worker - INFO - Connection to scheduler broken.  Reconnecting...
+distributed.worker - INFO - Connection to scheduler broken.  Reconnecting...
+distributed.worker - INFO - Connection to scheduler broken.  Reconnecting...
+distributed.worker - INFO - Connection to scheduler broken.  Reconnecting...
+distributed.worker - INFO - Connection to scheduler broken.  Reconnecting...
+distributed.worker - INFO - Connection to scheduler broken.  Reconnecting...
+distributed.worker - INFO - Connection to scheduler broken.  Reconnecting...
+distributed.worker - INFO - Stopping worker at tcp://10.148.10.86:46739
+distributed.worker - INFO - Stopping worker at tcp://10.148.10.86:44263
+distributed.worker - INFO - Stopping worker at tcp://10.148.10.86:44517
+distributed.worker - INFO - Stopping worker at tcp://10.148.10.86:36357
+distributed.worker - INFO - Stopping worker at tcp://10.148.10.86:39119
+distributed.worker - INFO - Stopping worker at tcp://10.148.10.86:43175
+distributed.worker - INFO - Stopping worker at tcp://10.148.10.86:41399
+distributed.worker - INFO - Stopping worker at tcp://10.148.10.86:34267
+distributed.worker - INFO - Stopping worker at tcp://10.148.10.86:36799
+distributed.nanny - INFO - Worker closed
+distributed.nanny - INFO - Worker closed
+distributed.nanny - INFO - Worker closed
+distributed.nanny - INFO - Worker closed
+distributed.nanny - INFO - Worker closed
+distributed.nanny - INFO - Worker closed
+distributed.nanny - INFO - Worker closed
+distributed.nanny - INFO - Worker closed
+distributed.nanny - INFO - Worker closed
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.10.86:45187'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.10.86:43823'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.10.86:46175'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.10.86:37199'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.10.86:33051'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.10.86:37833'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.10.86:37107'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.10.86:36709'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.10.86:39447'
+distributed.dask_worker - INFO - End worker

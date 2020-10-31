@@ -1,0 +1,142 @@
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.7.13:33815'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.7.13:37335'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.7.13:44647'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.7.13:39347'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.7.13:39167'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.7.13:36199'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.7.13:35719'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.7.13:40413'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.7.13:41019'
+distributed.diskutils - INFO - Found stale lock file and directory '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-103c1s8c', purging
+distributed.diskutils - INFO - Found stale lock file and directory '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-nel7s9z4', purging
+distributed.diskutils - INFO - Found stale lock file and directory '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-p_d3d3qu', purging
+distributed.diskutils - INFO - Found stale lock file and directory '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-ot67_ijp', purging
+distributed.diskutils - INFO - Found stale lock file and directory '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-tuuss7cu', purging
+distributed.diskutils - INFO - Found stale lock file and directory '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-q9_2b7_4', purging
+distributed.diskutils - INFO - Found stale lock file and directory '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-xick9tuj', purging
+distributed.diskutils - INFO - Found stale lock file and directory '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-q9dvhpwv', purging
+distributed.diskutils - INFO - Found stale lock file and directory '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-53es8r13', purging
+distributed.diskutils - INFO - Found stale lock file and directory '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-z9dhv6cy', purging
+distributed.diskutils - INFO - Found stale lock file and directory '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-o3oy6h14', purging
+distributed.diskutils - INFO - Found stale lock file and directory '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-t0v8mlk6', purging
+distributed.diskutils - ERROR - Failed to remove '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-t0v8mlk6' (failed in <built-in function rmdir>): [Errno 2] No such file or directory: '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-t0v8mlk6'
+distributed.diskutils - INFO - Found stale lock file and directory '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-4ypozo5l', purging
+distributed.diskutils - ERROR - Failed to remove '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-4ypozo5l/storage' (failed in <built-in function rmdir>): [Errno 2] No such file or directory: 'storage'
+distributed.diskutils - INFO - Found stale lock file and directory '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-wpn8xufj', purging
+/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/contextlib.py:119: UserWarning: Creating scratch directories is taking a surprisingly long time. This is often due to running workers on a network file system. Consider specifying a local-directory to point workers to write scratch data to a local disk.
+  next(self.gen)
+distributed.worker - INFO -       Start worker at:    tcp://10.148.7.13:34663
+distributed.worker - INFO -          Listening to:    tcp://10.148.7.13:34663
+distributed.worker - INFO -          dashboard at:          10.148.7.13:38831
+distributed.worker - INFO - Waiting to connect to:   tcp://10.148.10.15:35763
+distributed.worker - INFO - -------------------------------------------------
+/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/contextlib.py:119: UserWarning: Creating scratch directories is taking a surprisingly long time. This is often due to running workers on a network file system. Consider specifying a local-directory to point workers to write scratch data to a local disk.
+  next(self.gen)
+distributed.worker - INFO -       Start worker at:    tcp://10.148.7.13:39069
+distributed.worker - INFO -               Threads:                          4
+distributed.worker - INFO -          Listening to:    tcp://10.148.7.13:39069
+distributed.worker - INFO -                Memory:                   12.11 GB
+distributed.worker - INFO -       Local Directory: /glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-tu1c_7s4
+distributed.worker - INFO -          dashboard at:          10.148.7.13:42521
+distributed.worker - INFO - Waiting to connect to:   tcp://10.148.10.15:35763
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -               Threads:                          4
+distributed.worker - INFO -                Memory:                   12.11 GB
+distributed.worker - INFO -       Local Directory: /glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-qmgrpv52
+/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/contextlib.py:119: UserWarning: Creating scratch directories is taking a surprisingly long time. This is often due to running workers on a network file system. Consider specifying a local-directory to point workers to write scratch data to a local disk.
+  next(self.gen)
+distributed.worker - INFO -       Start worker at:    tcp://10.148.7.13:39217
+distributed.worker - INFO - -------------------------------------------------
+/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/contextlib.py:119: UserWarning: Creating scratch directories is taking a surprisingly long time. This is often due to running workers on a network file system. Consider specifying a local-directory to point workers to write scratch data to a local disk.
+  next(self.gen)
+distributed.worker - INFO -       Start worker at:    tcp://10.148.7.13:38405
+distributed.worker - INFO -       Start worker at:    tcp://10.148.7.13:43777
+distributed.worker - INFO -          Listening to:    tcp://10.148.7.13:39217
+distributed.worker - INFO -          Listening to:    tcp://10.148.7.13:43777
+distributed.worker - INFO -          Listening to:    tcp://10.148.7.13:38405
+distributed.worker - INFO -          dashboard at:          10.148.7.13:45205
+distributed.worker - INFO - Waiting to connect to:   tcp://10.148.10.15:35763
+distributed.worker - INFO -          dashboard at:          10.148.7.13:33103
+distributed.worker - INFO -          dashboard at:          10.148.7.13:43349
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO - Waiting to connect to:   tcp://10.148.10.15:35763
+distributed.worker - INFO - Waiting to connect to:   tcp://10.148.10.15:35763
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -               Threads:                          4
+distributed.worker - INFO -               Threads:                          4
+distributed.worker - INFO -                Memory:                   12.11 GB
+distributed.worker - INFO -               Threads:                          4
+distributed.worker - INFO -       Local Directory: /glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-35rbxhxo
+distributed.worker - INFO -                Memory:                   12.11 GB
+distributed.worker - INFO -                Memory:                   12.11 GB
+distributed.worker - INFO -       Local Directory: /glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-k_xuqdyl
+distributed.worker - INFO -       Local Directory: /glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-glmkuwve
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO - -------------------------------------------------
+/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/contextlib.py:119: UserWarning: Creating scratch directories is taking a surprisingly long time. This is often due to running workers on a network file system. Consider specifying a local-directory to point workers to write scratch data to a local disk.
+  next(self.gen)
+distributed.worker - INFO -       Start worker at:    tcp://10.148.7.13:45369
+distributed.worker - INFO -          Listening to:    tcp://10.148.7.13:45369
+/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/contextlib.py:119: UserWarning: Creating scratch directories is taking a surprisingly long time. This is often due to running workers on a network file system. Consider specifying a local-directory to point workers to write scratch data to a local disk.
+  next(self.gen)
+distributed.worker - INFO -       Start worker at:    tcp://10.148.7.13:35545
+distributed.worker - INFO -          dashboard at:          10.148.7.13:37855
+distributed.worker - INFO -          Listening to:    tcp://10.148.7.13:35545
+distributed.worker - INFO - Waiting to connect to:   tcp://10.148.10.15:35763
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -          dashboard at:          10.148.7.13:35333
+distributed.worker - INFO - Waiting to connect to:   tcp://10.148.10.15:35763
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -               Threads:                          4
+distributed.worker - INFO -                Memory:                   12.11 GB
+distributed.worker - INFO -               Threads:                          4
+distributed.worker - INFO -       Local Directory: /glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-94270fn_
+distributed.worker - INFO -                Memory:                   12.11 GB
+distributed.worker - INFO -       Local Directory: /glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-xa4dynkb
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO - -------------------------------------------------
+/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/contextlib.py:119: UserWarning: Creating scratch directories is taking a surprisingly long time. This is often due to running workers on a network file system. Consider specifying a local-directory to point workers to write scratch data to a local disk.
+  next(self.gen)
+distributed.worker - INFO -       Start worker at:    tcp://10.148.7.13:35203
+/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/contextlib.py:119: UserWarning: Creating scratch directories is taking a surprisingly long time. This is often due to running workers on a network file system. Consider specifying a local-directory to point workers to write scratch data to a local disk.
+  next(self.gen)
+distributed.worker - INFO -       Start worker at:    tcp://10.148.7.13:34343
+distributed.worker - INFO -          Listening to:    tcp://10.148.7.13:35203
+distributed.worker - INFO -          Listening to:    tcp://10.148.7.13:34343
+distributed.worker - INFO -          dashboard at:          10.148.7.13:44711
+distributed.worker - INFO -          dashboard at:          10.148.7.13:33389
+distributed.worker - INFO - Waiting to connect to:   tcp://10.148.10.15:35763
+distributed.worker - INFO - Waiting to connect to:   tcp://10.148.10.15:35763
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -               Threads:                          4
+distributed.worker - INFO -               Threads:                          4
+distributed.worker - INFO -                Memory:                   12.11 GB
+distributed.worker - INFO -                Memory:                   12.11 GB
+distributed.worker - INFO -       Local Directory: /glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-xpcatu7t
+distributed.worker - INFO -       Local Directory: /glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-b4fuh5uz
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO - -------------------------------------------------
+distributed.dask_worker - INFO - Exiting on signal 15
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.7.13:33815'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.7.13:37335'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.7.13:44647'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.7.13:39347'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.7.13:39167'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.7.13:36199'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.7.13:35719'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.7.13:40413'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.7.13:41019'
+distributed.nanny - INFO - Worker process 69616 was killed by signal 15
+distributed.nanny - INFO - Worker process 69618 was killed by signal 15
+distributed.nanny - INFO - Worker process 69617 was killed by signal 15
+distributed.nanny - INFO - Worker process 69627 was killed by signal 15
+distributed.nanny - INFO - Worker process 69633 was killed by signal 15
+distributed.nanny - INFO - Worker process 69631 was killed by signal 15
+distributed.nanny - INFO - Worker process 69623 was killed by signal 15
+distributed.nanny - INFO - Worker process 69622 was killed by signal 15
+distributed.nanny - INFO - Worker process 69614 was killed by signal 15
+distributed.dask_worker - INFO - End worker

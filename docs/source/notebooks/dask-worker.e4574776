@@ -1,0 +1,272 @@
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.7.163:39545'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.7.163:46219'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.7.163:33521'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.7.163:33881'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.7.163:39521'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.7.163:36003'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.7.163:43209'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.7.163:36887'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.7.163:40987'
+distributed.diskutils - INFO - Found stale lock file and directory '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-prbpnmoj', purging
+distributed.diskutils - INFO - Found stale lock file and directory '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-fv1ybhhz', purging
+distributed.diskutils - INFO - Found stale lock file and directory '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-12i52osj', purging
+distributed.diskutils - INFO - Found stale lock file and directory '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-9zqsim1i', purging
+distributed.diskutils - INFO - Found stale lock file and directory '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-85vu84ix', purging
+distributed.diskutils - INFO - Found stale lock file and directory '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-wqezu2fe', purging
+distributed.diskutils - INFO - Found stale lock file and directory '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-riz6v8xc', purging
+distributed.diskutils - INFO - Found stale lock file and directory '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-5f2pm73s', purging
+distributed.diskutils - INFO - Found stale lock file and directory '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-_udzsku4', purging
+distributed.worker - INFO -       Start worker at:   tcp://10.148.7.163:37857
+distributed.worker - INFO -          Listening to:   tcp://10.148.7.163:37857
+distributed.worker - INFO -          dashboard at:         10.148.7.163:37353
+distributed.worker - INFO - Waiting to connect to:   tcp://10.148.10.15:36879
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -               Threads:                          4
+distributed.worker - INFO -                Memory:                   12.11 GB
+distributed.worker - INFO -       Local Directory: /glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-mnu80lh7
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -         Registered to:   tcp://10.148.10.15:36879
+distributed.worker - INFO - -------------------------------------------------
+distributed.core - INFO - Starting established connection
+distributed.worker - INFO -       Start worker at:   tcp://10.148.7.163:36151
+distributed.worker - INFO -          Listening to:   tcp://10.148.7.163:36151
+distributed.worker - INFO -          dashboard at:         10.148.7.163:34597
+distributed.worker - INFO - Waiting to connect to:   tcp://10.148.10.15:36879
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -               Threads:                          4
+distributed.worker - INFO -                Memory:                   12.11 GB
+distributed.worker - INFO -       Local Directory: /glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-eca3sbh3
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -       Start worker at:   tcp://10.148.7.163:37357
+distributed.worker - INFO -          Listening to:   tcp://10.148.7.163:37357
+distributed.worker - INFO -          dashboard at:         10.148.7.163:42727
+distributed.worker - INFO - Waiting to connect to:   tcp://10.148.10.15:36879
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -               Threads:                          4
+distributed.worker - INFO -                Memory:                   12.11 GB
+distributed.worker - INFO -       Local Directory: /glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-hyclyp6w
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -       Start worker at:   tcp://10.148.7.163:37211
+distributed.worker - INFO -          Listening to:   tcp://10.148.7.163:37211
+distributed.worker - INFO -          dashboard at:         10.148.7.163:34263
+distributed.worker - INFO - Waiting to connect to:   tcp://10.148.10.15:36879
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -               Threads:                          4
+distributed.worker - INFO -                Memory:                   12.11 GB
+distributed.worker - INFO -       Local Directory: /glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-r_910ma6
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -         Registered to:   tcp://10.148.10.15:36879
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -       Start worker at:   tcp://10.148.7.163:41063
+distributed.worker - INFO -          Listening to:   tcp://10.148.7.163:41063
+distributed.worker - INFO -          dashboard at:         10.148.7.163:42573
+distributed.worker - INFO - Waiting to connect to:   tcp://10.148.10.15:36879
+distributed.core - INFO - Starting established connection
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -               Threads:                          4
+distributed.worker - INFO -                Memory:                   12.11 GB
+distributed.worker - INFO -       Local Directory: /glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-pqvc4ay6
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -       Start worker at:   tcp://10.148.7.163:39799
+distributed.worker - INFO -          Listening to:   tcp://10.148.7.163:39799
+distributed.worker - INFO -          dashboard at:         10.148.7.163:40737
+distributed.worker - INFO - Waiting to connect to:   tcp://10.148.10.15:36879
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -               Threads:                          4
+distributed.worker - INFO -                Memory:                   12.11 GB
+distributed.worker - INFO -       Local Directory: /glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-42h_a652
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -         Registered to:   tcp://10.148.10.15:36879
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -       Start worker at:   tcp://10.148.7.163:34807
+distributed.worker - INFO -          Listening to:   tcp://10.148.7.163:34807
+distributed.core - INFO - Starting established connection
+distributed.worker - INFO -          dashboard at:         10.148.7.163:38055
+distributed.worker - INFO - Waiting to connect to:   tcp://10.148.10.15:36879
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -               Threads:                          4
+distributed.worker - INFO -                Memory:                   12.11 GB
+distributed.worker - INFO -       Local Directory: /glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-3wy51vbb
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -         Registered to:   tcp://10.148.10.15:36879
+distributed.worker - INFO - -------------------------------------------------
+distributed.core - INFO - Starting established connection
+distributed.worker - INFO -       Start worker at:   tcp://10.148.7.163:34327
+distributed.worker - INFO -          Listening to:   tcp://10.148.7.163:34327
+distributed.worker - INFO -          dashboard at:         10.148.7.163:37853
+distributed.worker - INFO - Waiting to connect to:   tcp://10.148.10.15:36879
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -               Threads:                          4
+distributed.worker - INFO -                Memory:                   12.11 GB
+distributed.worker - INFO -       Local Directory: /glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-nuk0uctq
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -         Registered to:   tcp://10.148.10.15:36879
+distributed.worker - INFO - -------------------------------------------------
+distributed.core - INFO - Starting established connection
+distributed.worker - INFO -         Registered to:   tcp://10.148.10.15:36879
+distributed.worker - INFO - -------------------------------------------------
+distributed.core - INFO - Starting established connection
+distributed.worker - INFO -         Registered to:   tcp://10.148.10.15:36879
+distributed.worker - INFO - -------------------------------------------------
+distributed.core - INFO - Starting established connection
+distributed.worker - INFO -         Registered to:   tcp://10.148.10.15:36879
+distributed.worker - INFO - -------------------------------------------------
+distributed.core - INFO - Starting established connection
+distributed.worker - INFO -       Start worker at:   tcp://10.148.7.163:39199
+distributed.worker - INFO -          Listening to:   tcp://10.148.7.163:39199
+distributed.worker - INFO -          dashboard at:         10.148.7.163:39901
+distributed.worker - INFO - Waiting to connect to:   tcp://10.148.10.15:36879
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -               Threads:                          4
+distributed.worker - INFO -                Memory:                   12.11 GB
+distributed.worker - INFO -       Local Directory: /glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-13wvr1hv
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -         Registered to:   tcp://10.148.10.15:36879
+distributed.worker - INFO - -------------------------------------------------
+distributed.core - INFO - Starting established connection
+distributed.utils_perf - INFO - full garbage collection released 20.76 MB from 502 reference cycles (threshold: 10.00 MB)
+distributed.utils_perf - INFO - full garbage collection released 431.67 MB from 592 reference cycles (threshold: 10.00 MB)
+distributed.utils_perf - INFO - full garbage collection released 653.26 MB from 441 reference cycles (threshold: 10.00 MB)
+distributed.utils_perf - INFO - full garbage collection released 259.55 MB from 1136 reference cycles (threshold: 10.00 MB)
+distributed.utils_perf - INFO - full garbage collection released 265.44 MB from 1539 reference cycles (threshold: 10.00 MB)
+distributed.utils_perf - INFO - full garbage collection released 25.53 MB from 1520 reference cycles (threshold: 10.00 MB)
+distributed.worker - INFO - Can't find dependencies for key ('nanmax-aggregate-bdbf498cfcc7ddce36c6b01c548ee17c',)
+distributed.worker - INFO - Dependent not found: ('nanmax-nanmax-aggregate-bdbf498cfcc7ddce36c6b01c548ee17c',) 0 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('nanmax-aggregate-bdbf498cfcc7ddce36c6b01c548ee17c',)
+distributed.worker - INFO - Dependent not found: ('nanmax-nanmax-aggregate-bdbf498cfcc7ddce36c6b01c548ee17c',) 1 .  Asking scheduler
+distributed.utils_perf - INFO - full garbage collection released 285.66 MB from 1730 reference cycles (threshold: 10.00 MB)
+distributed.utils_perf - INFO - full garbage collection released 460.64 MB from 1116 reference cycles (threshold: 10.00 MB)
+distributed.utils_perf - INFO - full garbage collection released 133.60 MB from 1709 reference cycles (threshold: 10.00 MB)
+distributed.utils_perf - INFO - full garbage collection released 200.40 MB from 1226 reference cycles (threshold: 10.00 MB)
+distributed.utils_perf - INFO - full garbage collection released 133.60 MB from 1509 reference cycles (threshold: 10.00 MB)
+distributed.worker - WARNING - Worker is at 80% memory usage. Pausing worker.  Process memory: 9.70 GB -- Worker memory limit: 12.11 GB
+distributed.utils_perf - INFO - full garbage collection released 267.21 MB from 1670 reference cycles (threshold: 10.00 MB)
+distributed.worker - WARNING - Worker is at 80% memory usage. Pausing worker.  Process memory: 9.69 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 65% memory usage. Resuming worker. Process memory: 7.92 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 80% memory usage. Pausing worker.  Process memory: 9.75 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 65% memory usage. Resuming worker. Process memory: 7.98 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 65% memory usage. Resuming worker. Process memory: 7.93 GB -- Worker memory limit: 12.11 GB
+distributed.utils_perf - INFO - full garbage collection released 25.35 MB from 1430 reference cycles (threshold: 10.00 MB)
+distributed.utils_perf - INFO - full garbage collection released 799.41 MB from 1816 reference cycles (threshold: 10.00 MB)
+distributed.worker - WARNING - Worker is at 81% memory usage. Pausing worker.  Process memory: 9.88 GB -- Worker memory limit: 12.11 GB
+distributed.utils_perf - INFO - full garbage collection released 400.67 MB from 770 reference cycles (threshold: 10.00 MB)
+distributed.utils_perf - INFO - full garbage collection released 199.08 MB from 742 reference cycles (threshold: 10.00 MB)
+distributed.utils_perf - INFO - full garbage collection released 51.57 MB from 1689 reference cycles (threshold: 10.00 MB)
+distributed.worker - INFO - Connection to scheduler broken.  Reconnecting...
+distributed.worker - INFO - Connection to scheduler broken.  Reconnecting...
+distributed.worker - INFO - Connection to scheduler broken.  Reconnecting...
+distributed.worker - INFO - Connection to scheduler broken.  Reconnecting...
+distributed.worker - INFO - Connection to scheduler broken.  Reconnecting...
+distributed.worker - INFO - Connection to scheduler broken.  Reconnecting...
+distributed.worker - INFO - Connection to scheduler broken.  Reconnecting...
+distributed.worker - INFO - Connection to scheduler broken.  Reconnecting...
+distributed.worker - INFO - Connection to scheduler broken.  Reconnecting...
+tornado.application - ERROR - Exception in callback <function Worker.__init__.<locals>.<lambda> at 0x2b8ad3b874d0>
+Traceback (most recent call last):
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/tornado/ioloop.py", line 907, in _run
+    return self.callback()
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/worker.py", line 652, in <lambda>
+    lambda: self.batched_stream.send({"op": "keep-alive"}),
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/batched.py", line 117, in send
+    raise CommClosedError
+distributed.comm.core.CommClosedError
+tornado.application - ERROR - Exception in callback <function Worker.__init__.<locals>.<lambda> at 0x2adbc94f14d0>
+Traceback (most recent call last):
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/tornado/ioloop.py", line 907, in _run
+    return self.callback()
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/worker.py", line 652, in <lambda>
+    lambda: self.batched_stream.send({"op": "keep-alive"}),
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/batched.py", line 117, in send
+    raise CommClosedError
+distributed.comm.core.CommClosedError
+tornado.application - ERROR - Exception in callback <function Worker.__init__.<locals>.<lambda> at 0x2b3366b304d0>
+Traceback (most recent call last):
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/tornado/ioloop.py", line 907, in _run
+    return self.callback()
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/worker.py", line 652, in <lambda>
+    lambda: self.batched_stream.send({"op": "keep-alive"}),
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/batched.py", line 117, in send
+    raise CommClosedError
+distributed.comm.core.CommClosedError
+tornado.application - ERROR - Exception in callback <function Worker.__init__.<locals>.<lambda> at 0x2b2a5e0a1a70>
+Traceback (most recent call last):
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/tornado/ioloop.py", line 907, in _run
+    return self.callback()
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/worker.py", line 652, in <lambda>
+    lambda: self.batched_stream.send({"op": "keep-alive"}),
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/batched.py", line 117, in send
+    raise CommClosedError
+distributed.comm.core.CommClosedError
+tornado.application - ERROR - Exception in callback <function Worker.__init__.<locals>.<lambda> at 0x2afedc8b7a70>
+Traceback (most recent call last):
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/tornado/ioloop.py", line 907, in _run
+    return self.callback()
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/worker.py", line 652, in <lambda>
+    lambda: self.batched_stream.send({"op": "keep-alive"}),
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/batched.py", line 117, in send
+    raise CommClosedError
+distributed.comm.core.CommClosedError
+tornado.application - ERROR - Exception in callback <function Worker.__init__.<locals>.<lambda> at 0x2abd281644d0>
+Traceback (most recent call last):
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/tornado/ioloop.py", line 907, in _run
+    return self.callback()
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/worker.py", line 652, in <lambda>
+    lambda: self.batched_stream.send({"op": "keep-alive"}),
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/batched.py", line 117, in send
+    raise CommClosedError
+distributed.comm.core.CommClosedError
+tornado.application - ERROR - Exception in callback <function Worker.__init__.<locals>.<lambda> at 0x2b5a0f2ec9e0>
+Traceback (most recent call last):
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/tornado/ioloop.py", line 907, in _run
+    return self.callback()
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/worker.py", line 652, in <lambda>
+    lambda: self.batched_stream.send({"op": "keep-alive"}),
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/batched.py", line 117, in send
+    raise CommClosedError
+distributed.comm.core.CommClosedError
+tornado.application - ERROR - Exception in callback <function Worker.__init__.<locals>.<lambda> at 0x2b09211994d0>
+Traceback (most recent call last):
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/tornado/ioloop.py", line 907, in _run
+    return self.callback()
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/worker.py", line 652, in <lambda>
+    lambda: self.batched_stream.send({"op": "keep-alive"}),
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/batched.py", line 117, in send
+    raise CommClosedError
+distributed.comm.core.CommClosedError
+tornado.application - ERROR - Exception in callback <function Worker.__init__.<locals>.<lambda> at 0x2abb6e4e0b90>
+Traceback (most recent call last):
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/tornado/ioloop.py", line 907, in _run
+    return self.callback()
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/worker.py", line 652, in <lambda>
+    lambda: self.batched_stream.send({"op": "keep-alive"}),
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/batched.py", line 117, in send
+    raise CommClosedError
+distributed.comm.core.CommClosedError
+distributed.worker - INFO - Stopping worker at tcp://10.148.7.163:41063
+distributed.worker - INFO - Stopping worker at tcp://10.148.7.163:37857
+distributed.worker - INFO - Stopping worker at tcp://10.148.7.163:37211
+distributed.worker - INFO - Stopping worker at tcp://10.148.7.163:39199
+distributed.worker - INFO - Stopping worker at tcp://10.148.7.163:34807
+distributed.worker - INFO - Stopping worker at tcp://10.148.7.163:36151
+distributed.worker - INFO - Stopping worker at tcp://10.148.7.163:37357
+distributed.worker - INFO - Stopping worker at tcp://10.148.7.163:39799
+distributed.worker - INFO - Stopping worker at tcp://10.148.7.163:34327
+distributed.nanny - INFO - Worker closed
+distributed.nanny - INFO - Worker closed
+distributed.nanny - INFO - Worker closed
+distributed.nanny - INFO - Worker closed
+distributed.nanny - INFO - Worker closed
+distributed.nanny - INFO - Worker closed
+distributed.nanny - INFO - Worker closed
+distributed.nanny - INFO - Worker closed
+distributed.nanny - INFO - Worker closed
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.7.163:36003'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.7.163:33521'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.7.163:39521'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.7.163:46219'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.7.163:39545'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.7.163:43209'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.7.163:33881'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.7.163:40987'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.7.163:36887'
+distributed.dask_worker - INFO - End worker

@@ -1,0 +1,19 @@
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.12.205.31:45440'
+distributed.diskutils - INFO - Found stale lock file and directory '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-f93xdogv', purging
+distributed.diskutils - INFO - Found stale lock file and directory '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-e88ub2aj', purging
+distributed.diskutils - INFO - Found stale lock file and directory '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-rudn6zdj', purging
+distributed.diskutils - INFO - Found stale lock file and directory '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-pc2nlla_', purging
+distributed.worker - INFO -       Start worker at:   tcp://10.12.205.31:46016
+distributed.worker - INFO -          Listening to:   tcp://10.12.205.31:46016
+distributed.worker - INFO -          dashboard at:         10.12.205.31:41000
+distributed.worker - INFO - Waiting to connect to:   tcp://10.12.205.19:46050
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -               Threads:                          4
+distributed.worker - INFO -                Memory:                   40.00 GB
+distributed.worker - INFO -       Local Directory: /glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-2g6_yha1
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -         Registered to:   tcp://10.12.205.19:46050
+distributed.worker - INFO - -------------------------------------------------
+distributed.core - INFO - Starting established connection
+distributed.worker - INFO - Stopping worker at tcp://10.12.205.31:46016
+slurmstepd: error: *** JOB 5927246 ON casper22 CANCELLED AT 2020-09-23T16:42:01 ***

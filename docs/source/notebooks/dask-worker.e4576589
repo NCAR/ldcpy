@@ -1,0 +1,182 @@
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.9.230:36221'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.9.230:36347'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.9.230:41623'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.9.230:35265'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.9.230:34321'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.9.230:41253'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.9.230:42957'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.9.230:34509'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.9.230:36193'
+distributed.diskutils - INFO - Found stale lock file and directory '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-bq6h6p6q', purging
+distributed.diskutils - INFO - Found stale lock file and directory '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-kn8y2ohw', purging
+distributed.worker - INFO -       Start worker at:   tcp://10.148.9.230:46849
+distributed.worker - INFO -          Listening to:   tcp://10.148.9.230:46849
+distributed.worker - INFO -          dashboard at:         10.148.9.230:33915
+distributed.worker - INFO - Waiting to connect to:   tcp://10.148.10.15:42677
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -       Start worker at:   tcp://10.148.9.230:35399
+distributed.worker - INFO -          Listening to:   tcp://10.148.9.230:35399
+distributed.worker - INFO -               Threads:                          4
+distributed.worker - INFO -          dashboard at:         10.148.9.230:33185
+distributed.worker - INFO -                Memory:                   12.11 GB
+distributed.worker - INFO - Waiting to connect to:   tcp://10.148.10.15:42677
+distributed.worker - INFO -       Local Directory: /glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-jiot489d
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -               Threads:                          4
+distributed.worker - INFO -                Memory:                   12.11 GB
+distributed.worker - INFO -       Local Directory: /glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-_rb6p39h
+distributed.worker - INFO -       Start worker at:   tcp://10.148.9.230:43125
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -       Start worker at:   tcp://10.148.9.230:34519
+distributed.worker - INFO -          Listening to:   tcp://10.148.9.230:43125
+distributed.worker - INFO -          Listening to:   tcp://10.148.9.230:34519
+distributed.worker - INFO -          dashboard at:         10.148.9.230:33593
+distributed.worker - INFO - Waiting to connect to:   tcp://10.148.10.15:42677
+distributed.worker - INFO -          dashboard at:         10.148.9.230:45531
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO - Waiting to connect to:   tcp://10.148.10.15:42677
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -               Threads:                          4
+distributed.worker - INFO -                Memory:                   12.11 GB
+distributed.worker - INFO -               Threads:                          4
+distributed.worker - INFO -       Local Directory: /glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-pfba4bzg
+distributed.worker - INFO -                Memory:                   12.11 GB
+distributed.worker - INFO -       Local Directory: /glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-ngswhhys
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -       Start worker at:   tcp://10.148.9.230:38509
+distributed.worker - INFO -          Listening to:   tcp://10.148.9.230:38509
+distributed.worker - INFO -          dashboard at:         10.148.9.230:40701
+distributed.worker - INFO - Waiting to connect to:   tcp://10.148.10.15:42677
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -               Threads:                          4
+distributed.worker - INFO -                Memory:                   12.11 GB
+distributed.worker - INFO -         Registered to:   tcp://10.148.10.15:42677
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -       Local Directory: /glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-dme7c2o2
+distributed.worker - INFO -       Start worker at:   tcp://10.148.9.230:41241
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -          Listening to:   tcp://10.148.9.230:41241
+distributed.worker - INFO -          dashboard at:         10.148.9.230:38535
+distributed.worker - INFO - Waiting to connect to:   tcp://10.148.10.15:42677
+distributed.worker - INFO - -------------------------------------------------
+distributed.core - INFO - Starting established connection
+distributed.worker - INFO -               Threads:                          4
+distributed.worker - INFO -                Memory:                   12.11 GB
+distributed.worker - INFO -       Local Directory: /glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-jtnw8apo
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -         Registered to:   tcp://10.148.10.15:42677
+distributed.worker - INFO - -------------------------------------------------
+distributed.core - INFO - Starting established connection
+distributed.worker - INFO -         Registered to:   tcp://10.148.10.15:42677
+distributed.worker - INFO - -------------------------------------------------
+distributed.core - INFO - Starting established connection
+distributed.worker - INFO -         Registered to:   tcp://10.148.10.15:42677
+distributed.worker - INFO - -------------------------------------------------
+distributed.core - INFO - Starting established connection
+distributed.worker - INFO -         Registered to:   tcp://10.148.10.15:42677
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -       Start worker at:   tcp://10.148.9.230:34629
+distributed.worker - INFO -          Listening to:   tcp://10.148.9.230:34629
+distributed.worker - INFO -          dashboard at:         10.148.9.230:43533
+distributed.worker - INFO - Waiting to connect to:   tcp://10.148.10.15:42677
+distributed.worker - INFO - -------------------------------------------------
+distributed.core - INFO - Starting established connection
+distributed.worker - INFO -               Threads:                          4
+distributed.worker - INFO -                Memory:                   12.11 GB
+distributed.worker - INFO -       Local Directory: /glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-zhyzi0cd
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -         Registered to:   tcp://10.148.10.15:42677
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -       Start worker at:   tcp://10.148.9.230:43201
+distributed.worker - INFO -          Listening to:   tcp://10.148.9.230:43201
+distributed.worker - INFO -          dashboard at:         10.148.9.230:44371
+distributed.worker - INFO - Waiting to connect to:   tcp://10.148.10.15:42677
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -               Threads:                          4
+distributed.worker - INFO -                Memory:                   12.11 GB
+distributed.core - INFO - Starting established connection
+distributed.worker - INFO -       Local Directory: /glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-_rlv528n
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -         Registered to:   tcp://10.148.10.15:42677
+distributed.worker - INFO - -------------------------------------------------
+distributed.core - INFO - Starting established connection
+distributed.worker - INFO -         Registered to:   tcp://10.148.10.15:42677
+distributed.worker - INFO - -------------------------------------------------
+distributed.core - INFO - Starting established connection
+distributed.diskutils - INFO - Found stale lock file and directory '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-1p4yst38', purging
+distributed.diskutils - INFO - Found stale lock file and directory '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-gp71vkg1', purging
+distributed.diskutils - INFO - Found stale lock file and directory '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-3rhy4f27', purging
+distributed.diskutils - INFO - Found stale lock file and directory '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-egha6ydk', purging
+distributed.diskutils - INFO - Found stale lock file and directory '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-5q2ztokd', purging
+distributed.diskutils - INFO - Found stale lock file and directory '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-4nadf_4b', purging
+distributed.diskutils - INFO - Found stale lock file and directory '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-9qvevtso', purging
+/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/contextlib.py:119: UserWarning: Creating scratch directories is taking a surprisingly long time. This is often due to running workers on a network file system. Consider specifying a local-directory to point workers to write scratch data to a local disk.
+  next(self.gen)
+distributed.worker - INFO -       Start worker at:   tcp://10.148.9.230:44607
+distributed.worker - INFO -          Listening to:   tcp://10.148.9.230:44607
+distributed.worker - INFO -          dashboard at:         10.148.9.230:40101
+distributed.worker - INFO - Waiting to connect to:   tcp://10.148.10.15:42677
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -               Threads:                          4
+distributed.worker - INFO -                Memory:                   12.11 GB
+distributed.worker - INFO -       Local Directory: /glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-14cy3dt7
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -         Registered to:   tcp://10.148.10.15:42677
+distributed.worker - INFO - -------------------------------------------------
+distributed.core - INFO - Starting established connection
+distributed.worker - WARNING - Heartbeat to scheduler failed
+distributed.worker - WARNING - Heartbeat to scheduler failed
+distributed.worker - WARNING - Heartbeat to scheduler failed
+distributed.worker - WARNING - Heartbeat to scheduler failed
+distributed.worker - WARNING - Heartbeat to scheduler failed
+distributed.worker - INFO - Connection to scheduler broken.  Reconnecting...
+distributed.worker - WARNING - Heartbeat to scheduler failed
+distributed.worker - INFO - Connection to scheduler broken.  Reconnecting...
+distributed.worker - INFO - Connection to scheduler broken.  Reconnecting...
+distributed.worker - INFO - Connection to scheduler broken.  Reconnecting...
+distributed.worker - INFO - Connection to scheduler broken.  Reconnecting...
+distributed.worker - WARNING - Heartbeat to scheduler failed
+distributed.worker - WARNING - Heartbeat to scheduler failed
+distributed.worker - INFO - Connection to scheduler broken.  Reconnecting...
+distributed.worker - INFO - Connection to scheduler broken.  Reconnecting...
+distributed.worker - INFO - Connection to scheduler broken.  Reconnecting...
+distributed.worker - INFO - Connection to scheduler broken.  Reconnecting...
+distributed.worker - INFO - Stopping worker at tcp://10.148.9.230:34629
+distributed.worker - INFO - Stopping worker at tcp://10.148.9.230:38509
+distributed.worker - INFO - Stopping worker at tcp://10.148.9.230:43125
+distributed.worker - INFO - Stopping worker at tcp://10.148.9.230:43201
+distributed.worker - INFO - Stopping worker at tcp://10.148.9.230:34519
+distributed.worker - INFO - Stopping worker at tcp://10.148.9.230:35399
+distributed.worker - INFO - Stopping worker at tcp://10.148.9.230:41241
+distributed.worker - INFO - Stopping worker at tcp://10.148.9.230:46849
+distributed.worker - INFO - Stopping worker at tcp://10.148.9.230:44607
+distributed.diskutils - ERROR - Failed to remove '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-zhyzi0cd' (failed in <built-in function lstat>): [Errno 2] No such file or directory: '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-zhyzi0cd'
+distributed.diskutils - ERROR - Failed to remove '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-_rb6p39h' (failed in <built-in function lstat>): [Errno 2] No such file or directory: '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-_rb6p39h'
+distributed.diskutils - ERROR - Failed to remove '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-pfba4bzg' (failed in <built-in function lstat>): [Errno 2] No such file or directory: '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-pfba4bzg'
+distributed.diskutils - ERROR - Failed to remove '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-dme7c2o2' (failed in <built-in function lstat>): [Errno 2] No such file or directory: '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-dme7c2o2'
+distributed.diskutils - ERROR - Failed to remove '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-ngswhhys' (failed in <built-in function lstat>): [Errno 2] No such file or directory: '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-ngswhhys'
+distributed.diskutils - ERROR - Failed to remove '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-jtnw8apo' (failed in <built-in function lstat>): [Errno 2] No such file or directory: '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-jtnw8apo'
+distributed.diskutils - ERROR - Failed to remove '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-_rlv528n' (failed in <built-in function lstat>): [Errno 2] No such file or directory: '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-_rlv528n'
+distributed.diskutils - ERROR - Failed to remove '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-jiot489d' (failed in <built-in function lstat>): [Errno 2] No such file or directory: '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-jiot489d'
+distributed.diskutils - ERROR - Failed to remove '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-14cy3dt7' (failed in <built-in function lstat>): [Errno 2] No such file or directory: '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-14cy3dt7'
+distributed.nanny - INFO - Worker closed
+distributed.nanny - INFO - Worker closed
+distributed.nanny - INFO - Worker closed
+distributed.nanny - INFO - Worker closed
+distributed.nanny - INFO - Worker closed
+distributed.nanny - INFO - Worker closed
+distributed.nanny - INFO - Worker closed
+distributed.nanny - INFO - Worker closed
+distributed.nanny - INFO - Worker closed
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.9.230:42957'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.9.230:36347'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.9.230:34321'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.9.230:41623'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.9.230:41253'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.9.230:36193'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.9.230:34509'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.9.230:35265'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.9.230:36221'
+distributed.dask_worker - INFO - End worker

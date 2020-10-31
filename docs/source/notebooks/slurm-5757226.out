@@ -1,0 +1,18 @@
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.12.205.15:45731'
+distributed.diskutils - INFO - Found stale lock file and directory '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-a5bsrhmb', purging
+distributed.diskutils - ERROR - Failed to remove '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-a5bsrhmb/storage' (failed in <built-in function rmdir>): [Errno 2] No such file or directory: 'storage'
+distributed.worker - INFO -       Start worker at:   tcp://10.12.205.15:44293
+distributed.worker - INFO -          Listening to:   tcp://10.12.205.15:44293
+distributed.worker - INFO -          dashboard at:         10.12.205.15:41268
+distributed.worker - INFO - Waiting to connect to:   tcp://10.12.205.28:34399
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -               Threads:                          4
+distributed.worker - INFO -                Memory:                   40.00 GB
+distributed.worker - INFO -       Local Directory: /glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-x5mo9v5a
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -         Registered to:   tcp://10.12.205.28:34399
+distributed.worker - INFO - -------------------------------------------------
+distributed.core - INFO - Starting established connection
+distributed.worker - INFO - Stopping worker at tcp://10.12.205.15:44293
+distributed.diskutils - ERROR - Failed to remove '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-x5mo9v5a' (failed in <built-in function lstat>): [Errno 2] No such file or directory: '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-x5mo9v5a'
+slurmstepd: error: *** JOB 5757226 ON casper06 CANCELLED AT 2020-08-26T19:28:51 ***

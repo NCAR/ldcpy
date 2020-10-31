@@ -1,0 +1,31 @@
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.10.192:42009'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.10.192:34277'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.10.192:45495'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.10.192:46455'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.10.192:33087'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.10.192:33143'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.10.192:38023'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.10.192:33957'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.10.192:36189'
+distributed.diskutils - INFO - Found stale lock file and directory '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-wdr7z30p', purging
+distributed.diskutils - ERROR - Failed to remove '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-wdr7z30p' (failed in <built-in function lstat>): [Errno 2] No such file or directory: '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-wdr7z30p'
+distributed.dask_worker - INFO - Exiting on signal 15
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.10.192:42009'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.10.192:34277'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.10.192:45495'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.10.192:46455'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.10.192:33087'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.10.192:33143'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.10.192:38023'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.10.192:33957'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.10.192:36189'
+distributed.nanny - INFO - Worker process 40824 was killed by signal 15
+distributed.nanny - INFO - Worker process 40836 was killed by signal 15
+distributed.nanny - INFO - Worker process 40830 was killed by signal 15
+distributed.nanny - INFO - Worker process 40818 was killed by signal 15
+distributed.nanny - INFO - Worker process 40826 was killed by signal 15
+distributed.nanny - INFO - Worker process 40819 was killed by signal 15
+distributed.nanny - INFO - Worker process 40817 was killed by signal 15
+distributed.nanny - INFO - Worker process 40833 was killed by signal 15
+distributed.nanny - INFO - Worker process 40823 was killed by signal 15
+distributed.dask_worker - INFO - End worker

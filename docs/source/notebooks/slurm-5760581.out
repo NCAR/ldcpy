@@ -1,0 +1,20 @@
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.12.205.12:43724'
+distributed.diskutils - INFO - Found stale lock file and directory '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-rmgrljs4', purging
+distributed.diskutils - INFO - Found stale lock file and directory '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-lmc09cj6', purging
+distributed.diskutils - ERROR - Failed to remove '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-lmc09cj6/storage' (failed in <built-in function rmdir>): [Errno 2] No such file or directory: 'storage'
+distributed.diskutils - ERROR - Failed to remove '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-lmc09cj6' (failed in <built-in function rmdir>): [Errno 2] No such file or directory: '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-lmc09cj6'
+distributed.worker - INFO -       Start worker at:   tcp://10.12.205.12:44888
+distributed.worker - INFO -          Listening to:   tcp://10.12.205.12:44888
+distributed.worker - INFO -          dashboard at:         10.12.205.12:44455
+distributed.worker - INFO - Waiting to connect to:   tcp://10.12.205.30:44294
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -               Threads:                          4
+distributed.worker - INFO -                Memory:                   40.00 GB
+distributed.worker - INFO -       Local Directory: /glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-y5s04te5
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -         Registered to:   tcp://10.12.205.30:44294
+distributed.worker - INFO - -------------------------------------------------
+distributed.core - INFO - Starting established connection
+distributed.worker - INFO - Stopping worker at tcp://10.12.205.12:44888
+distributed.diskutils - ERROR - Failed to remove '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-y5s04te5' (failed in <built-in function lstat>): [Errno 2] No such file or directory: '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-y5s04te5'
+slurmstepd: error: *** JOB 5760581 ON casper03 CANCELLED AT 2020-08-27T22:05:44 ***

@@ -1,0 +1,15 @@
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.12.205.34:36739'
+distributed.diskutils - INFO - Found stale lock file and directory '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-0s1swp8j', purging
+distributed.worker - INFO -       Start worker at:   tcp://10.12.205.34:35403
+distributed.worker - INFO -          Listening to:   tcp://10.12.205.34:35403
+distributed.worker - INFO -          dashboard at:         10.12.205.34:39245
+distributed.worker - INFO - Waiting to connect to:   tcp://10.12.205.28:37051
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -               Threads:                          4
+distributed.worker - INFO -                Memory:                   40.00 GB
+distributed.worker - INFO -       Local Directory: /glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-wufx3s9c
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -         Registered to:   tcp://10.12.205.28:37051
+distributed.worker - INFO - -------------------------------------------------
+distributed.core - INFO - Starting established connection
+slurmstepd: error: *** JOB 5757076 ON casper25 CANCELLED AT 2020-08-26T18:41:06 DUE TO TIME LIMIT ***

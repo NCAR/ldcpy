@@ -1,0 +1,270 @@
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.7.187:41541'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.7.187:40339'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.7.187:44313'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.7.187:37569'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.7.187:39237'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.7.187:38435'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.7.187:42679'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.7.187:37455'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.7.187:41557'
+distributed.diskutils - INFO - Found stale lock file and directory '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-pf6dzm8g', purging
+distributed.diskutils - INFO - Found stale lock file and directory '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-99pkk5jh', purging
+distributed.diskutils - INFO - Found stale lock file and directory '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-xf2lfq_9', purging
+distributed.diskutils - INFO - Found stale lock file and directory '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-p6hf7ofm', purging
+distributed.diskutils - INFO - Found stale lock file and directory '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-bt8egwo7', purging
+distributed.diskutils - INFO - Found stale lock file and directory '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-71mk6ycd', purging
+distributed.diskutils - INFO - Found stale lock file and directory '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-d9nj34kb', purging
+distributed.diskutils - INFO - Found stale lock file and directory '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-00fff1p0', purging
+distributed.diskutils - INFO - Found stale lock file and directory '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-gn8e281c', purging
+distributed.worker - INFO -       Start worker at:   tcp://10.148.7.187:33959
+distributed.worker - INFO -       Start worker at:   tcp://10.148.7.187:34537
+distributed.worker - INFO -       Start worker at:   tcp://10.148.7.187:42391
+distributed.worker - INFO -          Listening to:   tcp://10.148.7.187:33959
+distributed.worker - INFO -          dashboard at:         10.148.7.187:39143
+distributed.worker - INFO -          Listening to:   tcp://10.148.7.187:42391
+distributed.worker - INFO -          Listening to:   tcp://10.148.7.187:34537
+distributed.worker - INFO - Waiting to connect to:   tcp://10.148.10.15:46803
+distributed.worker - INFO -          dashboard at:         10.148.7.187:40313
+distributed.worker - INFO -          dashboard at:         10.148.7.187:42801
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO - Waiting to connect to:   tcp://10.148.10.15:46803
+distributed.worker - INFO - Waiting to connect to:   tcp://10.148.10.15:46803
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -               Threads:                          4
+distributed.worker - INFO -               Threads:                          4
+distributed.worker - INFO -               Threads:                          4
+distributed.worker - INFO -                Memory:                   12.11 GB
+distributed.worker - INFO -                Memory:                   12.11 GB
+distributed.worker - INFO -       Local Directory: /glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-tkqqa_mi
+distributed.worker - INFO -                Memory:                   12.11 GB
+distributed.worker - INFO -       Local Directory: /glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-2sod6dc3
+distributed.worker - INFO -       Local Directory: /glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-rht45cf9
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -       Start worker at:   tcp://10.148.7.187:34551
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -          Listening to:   tcp://10.148.7.187:34551
+distributed.worker - INFO -          dashboard at:         10.148.7.187:36751
+distributed.worker - INFO - Waiting to connect to:   tcp://10.148.10.15:46803
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -               Threads:                          4
+distributed.worker - INFO -                Memory:                   12.11 GB
+distributed.worker - INFO -       Local Directory: /glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-8gc1yncg
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -       Start worker at:   tcp://10.148.7.187:37475
+distributed.worker - INFO -          Listening to:   tcp://10.148.7.187:37475
+distributed.worker - INFO -          dashboard at:         10.148.7.187:44539
+distributed.worker - INFO - Waiting to connect to:   tcp://10.148.10.15:46803
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -               Threads:                          4
+distributed.worker - INFO -                Memory:                   12.11 GB
+distributed.worker - INFO -       Local Directory: /glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-s_4qv5f7
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -       Start worker at:   tcp://10.148.7.187:38613
+distributed.worker - INFO -       Start worker at:   tcp://10.148.7.187:43271
+distributed.worker - INFO -          Listening to:   tcp://10.148.7.187:38613
+distributed.worker - INFO -          dashboard at:         10.148.7.187:41999
+distributed.worker - INFO -          Listening to:   tcp://10.148.7.187:43271
+distributed.worker - INFO - Waiting to connect to:   tcp://10.148.10.15:46803
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -          dashboard at:         10.148.7.187:38201
+distributed.worker - INFO - Waiting to connect to:   tcp://10.148.10.15:46803
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -               Threads:                          4
+distributed.worker - INFO -                Memory:                   12.11 GB
+distributed.worker - INFO -               Threads:                          4
+distributed.worker - INFO -       Local Directory: /glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-p8trgzrm
+distributed.worker - INFO -                Memory:                   12.11 GB
+distributed.worker - INFO -       Local Directory: /glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-tazfl051
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -       Start worker at:   tcp://10.148.7.187:39285
+distributed.worker - INFO -          Listening to:   tcp://10.148.7.187:39285
+distributed.worker - INFO -          dashboard at:         10.148.7.187:41515
+distributed.worker - INFO - Waiting to connect to:   tcp://10.148.10.15:46803
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -               Threads:                          4
+distributed.worker - INFO -                Memory:                   12.11 GB
+distributed.worker - INFO -       Local Directory: /glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-9olx_jyx
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -       Start worker at:   tcp://10.148.7.187:43601
+distributed.worker - INFO -          Listening to:   tcp://10.148.7.187:43601
+distributed.worker - INFO -          dashboard at:         10.148.7.187:39577
+distributed.worker - INFO - Waiting to connect to:   tcp://10.148.10.15:46803
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -               Threads:                          4
+distributed.worker - INFO -                Memory:                   12.11 GB
+distributed.worker - INFO -       Local Directory: /glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-we63zi86
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -         Registered to:   tcp://10.148.10.15:46803
+distributed.worker - INFO - -------------------------------------------------
+distributed.core - INFO - Starting established connection
+distributed.worker - INFO -         Registered to:   tcp://10.148.10.15:46803
+distributed.worker - INFO - -------------------------------------------------
+distributed.core - INFO - Starting established connection
+distributed.worker - INFO -         Registered to:   tcp://10.148.10.15:46803
+distributed.worker - INFO - -------------------------------------------------
+distributed.core - INFO - Starting established connection
+distributed.worker - INFO -         Registered to:   tcp://10.148.10.15:46803
+distributed.worker - INFO - -------------------------------------------------
+distributed.core - INFO - Starting established connection
+distributed.worker - INFO -         Registered to:   tcp://10.148.10.15:46803
+distributed.worker - INFO - -------------------------------------------------
+distributed.core - INFO - Starting established connection
+distributed.worker - INFO -         Registered to:   tcp://10.148.10.15:46803
+distributed.worker - INFO - -------------------------------------------------
+distributed.core - INFO - Starting established connection
+distributed.worker - INFO -         Registered to:   tcp://10.148.10.15:46803
+distributed.worker - INFO - -------------------------------------------------
+distributed.core - INFO - Starting established connection
+distributed.worker - INFO -         Registered to:   tcp://10.148.10.15:46803
+distributed.worker - INFO - -------------------------------------------------
+distributed.core - INFO - Starting established connection
+distributed.worker - INFO -         Registered to:   tcp://10.148.10.15:46803
+distributed.worker - INFO - -------------------------------------------------
+distributed.core - INFO - Starting established connection
+distributed.core - INFO - Event loop was unresponsive in Worker for 6.95s.  This is often caused by long-running GIL-holding functions or moving large chunks of data. This can cause timeouts and instability.
+distributed.core - INFO - Event loop was unresponsive in Worker for 8.83s.  This is often caused by long-running GIL-holding functions or moving large chunks of data. This can cause timeouts and instability.
+distributed.core - INFO - Event loop was unresponsive in Worker for 9.89s.  This is often caused by long-running GIL-holding functions or moving large chunks of data. This can cause timeouts and instability.
+distributed.core - INFO - Event loop was unresponsive in Worker for 9.90s.  This is often caused by long-running GIL-holding functions or moving large chunks of data. This can cause timeouts and instability.
+distributed.core - INFO - Event loop was unresponsive in Worker for 10.73s.  This is often caused by long-running GIL-holding functions or moving large chunks of data. This can cause timeouts and instability.
+distributed.core - INFO - Event loop was unresponsive in Worker for 12.26s.  This is often caused by long-running GIL-holding functions or moving large chunks of data. This can cause timeouts and instability.
+distributed.core - INFO - Event loop was unresponsive in Worker for 16.69s.  This is often caused by long-running GIL-holding functions or moving large chunks of data. This can cause timeouts and instability.
+distributed.core - INFO - Event loop was unresponsive in Worker for 34.72s.  This is often caused by long-running GIL-holding functions or moving large chunks of data. This can cause timeouts and instability.
+distributed.core - INFO - Event loop was unresponsive in Worker for 34.69s.  This is often caused by long-running GIL-holding functions or moving large chunks of data. This can cause timeouts and instability.
+distributed.core - INFO - Event loop was unresponsive in Worker for 29.92s.  This is often caused by long-running GIL-holding functions or moving large chunks of data. This can cause timeouts and instability.
+distributed.worker - INFO - Connection to scheduler broken.  Reconnecting...
+distributed.worker - WARNING - Heartbeat to scheduler failed
+distributed.worker - INFO - Comm closed
+distributed.worker - WARNING - Heartbeat to scheduler failed
+distributed.worker - INFO - Connection to scheduler broken.  Reconnecting...
+distributed.core - INFO - Event loop was unresponsive in Worker for 29.86s.  This is often caused by long-running GIL-holding functions or moving large chunks of data. This can cause timeouts and instability.
+distributed.worker - WARNING - Heartbeat to scheduler failed
+distributed.worker - INFO - Connection to scheduler broken.  Reconnecting...
+distributed.worker - INFO - Comm closed
+distributed.worker - WARNING - Heartbeat to scheduler failed
+distributed.worker - INFO - Connection to scheduler broken.  Reconnecting...
+distributed.core - INFO - Event loop was unresponsive in Worker for 29.93s.  This is often caused by long-running GIL-holding functions or moving large chunks of data. This can cause timeouts and instability.
+distributed.worker - INFO - Connection to scheduler broken.  Reconnecting...
+distributed.worker - WARNING - Heartbeat to scheduler failed
+distributed.worker - INFO - Comm closed
+distributed.worker - INFO - Comm closed
+distributed.worker - INFO - Comm closed
+distributed.worker - INFO - Comm closed
+distributed.core - INFO - Event loop was unresponsive in Worker for 34.81s.  This is often caused by long-running GIL-holding functions or moving large chunks of data. This can cause timeouts and instability.
+distributed.worker - WARNING - Heartbeat to scheduler failed
+distributed.worker - INFO - Connection to scheduler broken.  Reconnecting...
+distributed.core - INFO - Event loop was unresponsive in Worker for 34.62s.  This is often caused by long-running GIL-holding functions or moving large chunks of data. This can cause timeouts and instability.
+distributed.worker - WARNING - Heartbeat to scheduler failed
+distributed.worker - INFO - Connection to scheduler broken.  Reconnecting...
+distributed.core - INFO - Event loop was unresponsive in Worker for 30.61s.  This is often caused by long-running GIL-holding functions or moving large chunks of data. This can cause timeouts and instability.
+distributed.worker - WARNING - Heartbeat to scheduler failed
+distributed.worker - INFO - Connection to scheduler broken.  Reconnecting...
+distributed.worker - INFO - Comm closed
+distributed.worker - INFO - Comm closed
+distributed.worker - INFO - Comm closed
+distributed.core - INFO - Event loop was unresponsive in Worker for 30.64s.  This is often caused by long-running GIL-holding functions or moving large chunks of data. This can cause timeouts and instability.
+distributed.worker - INFO - Comm closed
+distributed.worker - WARNING - Heartbeat to scheduler failed
+distributed.worker - INFO - Connection to scheduler broken.  Reconnecting...
+distributed.worker - INFO - Comm closed
+distributed.worker - INFO - Comm closed
+distributed.worker - INFO - Comm closed
+distributed.worker - INFO - Comm closed
+distributed.worker - INFO - Stopping worker at tcp://10.148.7.187:33959
+distributed.worker - INFO - Stopping worker at tcp://10.148.7.187:43271
+distributed.diskutils - ERROR - Failed to remove '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-tazfl051' (failed in <built-in function lstat>): [Errno 2] No such file or directory: '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-tazfl051'
+distributed.diskutils - ERROR - Failed to remove '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-tkqqa_mi' (failed in <built-in function lstat>): [Errno 2] No such file or directory: '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-tkqqa_mi'
+distributed.worker - INFO - Stopping worker at tcp://10.148.7.187:34537
+distributed.diskutils - ERROR - Failed to remove '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-rht45cf9' (failed in <built-in function lstat>): [Errno 2] No such file or directory: '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-rht45cf9'
+distributed.worker - INFO - Stopping worker at tcp://10.148.7.187:42391
+distributed.worker - INFO - Stopping worker at tcp://10.148.7.187:34551
+distributed.diskutils - ERROR - Failed to remove '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-2sod6dc3' (failed in <built-in function lstat>): [Errno 2] No such file or directory: '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-2sod6dc3'
+distributed.diskutils - ERROR - Failed to remove '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-8gc1yncg' (failed in <built-in function lstat>): [Errno 2] No such file or directory: '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-8gc1yncg'
+distributed.nanny - INFO - Worker closed
+distributed.nanny - INFO - Worker closed
+distributed.nanny - INFO - Worker closed
+distributed.nanny - INFO - Worker closed
+distributed.nanny - INFO - Worker closed
+distributed.batched - INFO - Batched Comm Closed: 
+distributed.core - INFO - Event loop was unresponsive in Worker for 34.68s.  This is often caused by long-running GIL-holding functions or moving large chunks of data. This can cause timeouts and instability.
+tornado.application - ERROR - Exception in callback <function Worker.__init__.<locals>.<lambda> at 0x2acde19f1050>
+Traceback (most recent call last):
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/tornado/ioloop.py", line 907, in _run
+    return self.callback()
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/worker.py", line 652, in <lambda>
+    lambda: self.batched_stream.send({"op": "keep-alive"}),
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/batched.py", line 117, in send
+    raise CommClosedError
+distributed.comm.core.CommClosedError
+distributed.worker - INFO - Comm closed
+distributed.worker - INFO - Comm closed
+distributed.worker - INFO - Comm closed
+distributed.worker - INFO - Comm closed
+distributed.batched - INFO - Batched Comm Closed: 
+distributed.core - INFO - Event loop was unresponsive in Worker for 34.72s.  This is often caused by long-running GIL-holding functions or moving large chunks of data. This can cause timeouts and instability.
+tornado.application - ERROR - Exception in callback <function Worker.__init__.<locals>.<lambda> at 0x2b3439ed6320>
+Traceback (most recent call last):
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/tornado/ioloop.py", line 907, in _run
+    return self.callback()
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/worker.py", line 652, in <lambda>
+    lambda: self.batched_stream.send({"op": "keep-alive"}),
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/batched.py", line 117, in send
+    raise CommClosedError
+distributed.comm.core.CommClosedError
+distributed.worker - INFO - Comm closed
+distributed.worker - INFO - Comm closed
+distributed.worker - INFO - Comm closed
+distributed.worker - INFO - Comm closed
+distributed.batched - INFO - Batched Comm Closed: 
+distributed.core - INFO - Event loop was unresponsive in Worker for 34.62s.  This is often caused by long-running GIL-holding functions or moving large chunks of data. This can cause timeouts and instability.
+tornado.application - ERROR - Exception in callback <function Worker.__init__.<locals>.<lambda> at 0x2ade8b2aa4d0>
+Traceback (most recent call last):
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/tornado/ioloop.py", line 907, in _run
+    return self.callback()
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/worker.py", line 652, in <lambda>
+    lambda: self.batched_stream.send({"op": "keep-alive"}),
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/batched.py", line 117, in send
+    raise CommClosedError
+distributed.comm.core.CommClosedError
+distributed.worker - INFO - Comm closed
+distributed.worker - INFO - Comm closed
+distributed.worker - INFO - Comm closed
+distributed.batched - INFO - Batched Comm Closed: 
+distributed.core - INFO - Event loop was unresponsive in Worker for 35.09s.  This is often caused by long-running GIL-holding functions or moving large chunks of data. This can cause timeouts and instability.
+tornado.application - ERROR - Exception in callback <function Worker.__init__.<locals>.<lambda> at 0x2b8732e74320>
+Traceback (most recent call last):
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/tornado/ioloop.py", line 907, in _run
+    return self.callback()
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/worker.py", line 652, in <lambda>
+    lambda: self.batched_stream.send({"op": "keep-alive"}),
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/batched.py", line 117, in send
+    raise CommClosedError
+distributed.comm.core.CommClosedError
+distributed.worker - INFO - Comm closed
+distributed.worker - INFO - Comm closed
+distributed.worker - INFO - Comm closed
+distributed.worker - INFO - Comm closed
+distributed.worker - INFO - Stopping worker at tcp://10.148.7.187:39285
+distributed.diskutils - ERROR - Failed to remove '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-9olx_jyx' (failed in <built-in function lstat>): [Errno 2] No such file or directory: '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-9olx_jyx'
+distributed.worker - INFO - Stopping worker at tcp://10.148.7.187:38613
+distributed.diskutils - ERROR - Failed to remove '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-p8trgzrm' (failed in <built-in function lstat>): [Errno 2] No such file or directory: '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-p8trgzrm'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.7.187:41557'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.7.187:42679'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.7.187:40339'
+distributed.worker - INFO - Stopping worker at tcp://10.148.7.187:37475
+distributed.diskutils - ERROR - Failed to remove '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-s_4qv5f7' (failed in <built-in function lstat>): [Errno 2] No such file or directory: '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-s_4qv5f7'
+distributed.worker - INFO - Stopping worker at tcp://10.148.7.187:43601
+distributed.diskutils - ERROR - Failed to remove '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-we63zi86' (failed in <built-in function lstat>): [Errno 2] No such file or directory: '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-we63zi86'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.7.187:39237'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.7.187:44313'
+distributed.nanny - INFO - Worker closed
+distributed.nanny - INFO - Worker closed
+distributed.nanny - INFO - Worker closed
+distributed.nanny - INFO - Worker closed
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.7.187:37569'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.7.187:38435'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.7.187:37455'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.7.187:41541'
+distributed.dask_worker - INFO - End worker

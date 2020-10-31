@@ -1,0 +1,21 @@
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.7.97:42541'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.7.97:43123'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.7.97:35335'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.7.97:43295'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.7.97:34957'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.7.97:46045'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.7.97:42243'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.7.97:35197'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.7.97:34291'
+distributed.dask_worker - INFO - Exiting on signal 15
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.7.97:42541'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.7.97:43123'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.7.97:35335'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.7.97:43295'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.7.97:34957'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.7.97:46045'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.7.97:42243'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.7.97:35197'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.7.97:34291'
+/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/multiprocessing/semaphore_tracker.py:144: UserWarning: semaphore_tracker: There appear to be 54 leaked semaphores to clean up at shutdown
+  len(cache))

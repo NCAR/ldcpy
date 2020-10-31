@@ -1,0 +1,763 @@
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.6.249:46059'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.6.249:35247'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.6.249:34929'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.6.249:37141'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.6.249:37509'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.6.249:39855'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.6.249:38093'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.6.249:36333'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.6.249:37811'
+distributed.diskutils - INFO - Found stale lock file and directory '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-oesxtmes', purging
+distributed.diskutils - INFO - Found stale lock file and directory '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-fg0ye1sz', purging
+distributed.diskutils - INFO - Found stale lock file and directory '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-2pey5yz_', purging
+distributed.diskutils - INFO - Found stale lock file and directory '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-_rdptjs6', purging
+distributed.diskutils - INFO - Found stale lock file and directory '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-4vd7op2s', purging
+distributed.diskutils - INFO - Found stale lock file and directory '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-zbsl7psy', purging
+distributed.diskutils - INFO - Found stale lock file and directory '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-qk40_zut', purging
+distributed.diskutils - INFO - Found stale lock file and directory '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-uxzdxxgp', purging
+distributed.diskutils - INFO - Found stale lock file and directory '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-t6enes40', purging
+distributed.worker - INFO -       Start worker at:   tcp://10.148.6.249:46741
+distributed.worker - INFO -          Listening to:   tcp://10.148.6.249:46741
+distributed.worker - INFO -          dashboard at:         10.148.6.249:40869
+distributed.worker - INFO - Waiting to connect to:  tcp://10.148.13.152:46087
+distributed.worker - INFO -       Start worker at:   tcp://10.148.6.249:38919
+distributed.worker - INFO -       Start worker at:   tcp://10.148.6.249:34825
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -          Listening to:   tcp://10.148.6.249:34825
+distributed.worker - INFO -          Listening to:   tcp://10.148.6.249:38919
+distributed.worker - INFO -          dashboard at:         10.148.6.249:35397
+distributed.worker - INFO -               Threads:                          4
+distributed.worker - INFO -          dashboard at:         10.148.6.249:36561
+distributed.worker - INFO - Waiting to connect to:  tcp://10.148.13.152:46087
+distributed.worker - INFO - Waiting to connect to:  tcp://10.148.13.152:46087
+distributed.worker - INFO -                Memory:                   12.11 GB
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -       Local Directory: /glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-zl6rdfgi
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -               Threads:                          4
+distributed.worker - INFO -               Threads:                          4
+distributed.worker - INFO -                Memory:                   12.11 GB
+distributed.worker - INFO -                Memory:                   12.11 GB
+distributed.worker - INFO -       Local Directory: /glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-umwp5f1d
+distributed.worker - INFO -       Local Directory: /glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-ri9pvxp9
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -       Start worker at:   tcp://10.148.6.249:44599
+distributed.worker - INFO -          Listening to:   tcp://10.148.6.249:44599
+distributed.worker - INFO -          dashboard at:         10.148.6.249:43205
+distributed.worker - INFO - Waiting to connect to:  tcp://10.148.13.152:46087
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -               Threads:                          4
+distributed.worker - INFO -                Memory:                   12.11 GB
+distributed.worker - INFO -       Local Directory: /glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-p58ndqfh
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -       Start worker at:   tcp://10.148.6.249:36041
+distributed.worker - INFO -          Listening to:   tcp://10.148.6.249:36041
+distributed.worker - INFO -          dashboard at:         10.148.6.249:36935
+distributed.worker - INFO - Waiting to connect to:  tcp://10.148.13.152:46087
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -               Threads:                          4
+distributed.worker - INFO -                Memory:                   12.11 GB
+distributed.worker - INFO -       Local Directory: /glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-ktijcksm
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -         Registered to:  tcp://10.148.13.152:46087
+distributed.worker - INFO - -------------------------------------------------
+distributed.core - INFO - Starting established connection
+distributed.worker - INFO -         Registered to:  tcp://10.148.13.152:46087
+distributed.worker - INFO - -------------------------------------------------
+distributed.core - INFO - Starting established connection
+distributed.worker - INFO -         Registered to:  tcp://10.148.13.152:46087
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -       Start worker at:   tcp://10.148.6.249:44397
+distributed.worker - INFO -          Listening to:   tcp://10.148.6.249:44397
+distributed.worker - INFO -          dashboard at:         10.148.6.249:32905
+distributed.worker - INFO - Waiting to connect to:  tcp://10.148.13.152:46087
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -               Threads:                          4
+distributed.worker - INFO -                Memory:                   12.11 GB
+distributed.worker - INFO -       Local Directory: /glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-urcytkn3
+distributed.worker - INFO - -------------------------------------------------
+distributed.core - INFO - Starting established connection
+distributed.worker - INFO -         Registered to:  tcp://10.148.13.152:46087
+distributed.worker - INFO - -------------------------------------------------
+distributed.core - INFO - Starting established connection
+distributed.worker - INFO -         Registered to:  tcp://10.148.13.152:46087
+distributed.worker - INFO - -------------------------------------------------
+distributed.core - INFO - Starting established connection
+distributed.worker - INFO -       Start worker at:   tcp://10.148.6.249:37457
+distributed.worker - INFO -          Listening to:   tcp://10.148.6.249:37457
+distributed.worker - INFO -          dashboard at:         10.148.6.249:35663
+distributed.worker - INFO - Waiting to connect to:  tcp://10.148.13.152:46087
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -               Threads:                          4
+distributed.worker - INFO -                Memory:                   12.11 GB
+distributed.worker - INFO -       Local Directory: /glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-63z6ao33
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -         Registered to:  tcp://10.148.13.152:46087
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -       Start worker at:   tcp://10.148.6.249:45541
+distributed.core - INFO - Starting established connection
+distributed.worker - INFO -          Listening to:   tcp://10.148.6.249:45541
+distributed.worker - INFO -          dashboard at:         10.148.6.249:42217
+distributed.worker - INFO - Waiting to connect to:  tcp://10.148.13.152:46087
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -               Threads:                          4
+distributed.worker - INFO -                Memory:                   12.11 GB
+distributed.worker - INFO -       Local Directory: /glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-zbeoe52l
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -         Registered to:  tcp://10.148.13.152:46087
+distributed.worker - INFO - -------------------------------------------------
+distributed.core - INFO - Starting established connection
+distributed.worker - INFO -         Registered to:  tcp://10.148.13.152:46087
+distributed.worker - INFO - -------------------------------------------------
+distributed.core - INFO - Starting established connection
+distributed.worker - INFO -       Start worker at:   tcp://10.148.6.249:37253
+distributed.worker - INFO -          Listening to:   tcp://10.148.6.249:37253
+distributed.worker - INFO -          dashboard at:         10.148.6.249:44155
+distributed.worker - INFO - Waiting to connect to:  tcp://10.148.13.152:46087
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -               Threads:                          4
+distributed.worker - INFO -                Memory:                   12.11 GB
+distributed.worker - INFO -       Local Directory: /glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-q5l16rm7
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -         Registered to:  tcp://10.148.13.152:46087
+distributed.worker - INFO - -------------------------------------------------
+distributed.core - INFO - Starting established connection
+distributed.worker - INFO - Connection to scheduler broken.  Reconnecting...
+distributed.worker - INFO - Connection to scheduler broken.  Reconnecting...
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -         Registered to:  tcp://10.148.13.152:46087
+distributed.worker - INFO - -------------------------------------------------
+distributed.core - INFO - Starting established connection
+distributed.worker - INFO -         Registered to:  tcp://10.148.13.152:46087
+distributed.worker - INFO - -------------------------------------------------
+distributed.core - INFO - Starting established connection
+distributed.worker - WARNING - Worker is at 80% memory usage. Pausing worker.  Process memory: 9.75 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 67% memory usage. Resuming worker. Process memory: 8.20 GB -- Worker memory limit: 12.11 GB
+distributed.utils_perf - INFO - full garbage collection released 319.55 MB from 144 reference cycles (threshold: 10.00 MB)
+distributed.worker - WARNING - Worker is at 82% memory usage. Pausing worker.  Process memory: 9.93 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 79% memory usage. Resuming worker. Process memory: 9.61 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 92% memory usage. Pausing worker.  Process memory: 11.18 GB -- Worker memory limit: 12.11 GB
+distributed.utils_perf - INFO - full garbage collection released 133.53 MB from 550 reference cycles (threshold: 10.00 MB)
+distributed.worker - WARNING - Worker is at 80% memory usage. Pausing worker.  Process memory: 9.71 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 78% memory usage. Resuming worker. Process memory: 9.51 GB -- Worker memory limit: 12.11 GB
+distributed.utils_perf - INFO - full garbage collection released 333.74 MB from 1481 reference cycles (threshold: 10.00 MB)
+distributed.worker - WARNING - Worker is at 80% memory usage. Pausing worker.  Process memory: 9.73 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 79% memory usage. Resuming worker. Process memory: 9.62 GB -- Worker memory limit: 12.11 GB
+distributed.utils_perf - INFO - full garbage collection released 61.36 MB from 1083 reference cycles (threshold: 10.00 MB)
+distributed.utils_perf - INFO - full garbage collection released 66.80 MB from 1922 reference cycles (threshold: 10.00 MB)
+distributed.worker - WARNING - Worker is at 64% memory usage. Resuming worker. Process memory: 7.84 GB -- Worker memory limit: 12.11 GB
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 38, 0, 0)
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 33, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 38, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 33, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 35, 0, 0)
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 42, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 42, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 35, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 46, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 46, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 61, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 61, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 56, 0, 0)
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 42, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 56, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 42, 0, 0) 1 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 56, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 56, 0, 0) 1 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 28, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 28, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 28, 0, 0)
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 23, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 23, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 24, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 24, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 45, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 45, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 17, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 17, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 18, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 18, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 19, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 19, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 20, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 20, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 21, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 21, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 27, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 27, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 29, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 29, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 47, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 47, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 51, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 51, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 0, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 0, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 1, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 1, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 2, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 2, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 3, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 3, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 3, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 3, 0, 0) 1 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 43, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 43, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 8, 0, 0)
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 44, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 8, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 44, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 48, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 48, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 34, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 34, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 52, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 52, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 39, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 39, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 48, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 48, 0, 0) 1 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 41, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 41, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 52, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 52, 0, 0) 1 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 39, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 39, 0, 0) 1 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 41, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 41, 0, 0) 1 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 7, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 7, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 13, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 13, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 6, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 6, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 30, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 30, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 11, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 11, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 25, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 25, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 4, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 4, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 15, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 15, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 22, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 22, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 26, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 26, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 59, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 59, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 62, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 62, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 10, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 10, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 12, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 12, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 12, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 12, 0, 0) 1 .  Asking scheduler
+distributed.utils_perf - INFO - full garbage collection released 1.68 GB from 482 reference cycles (threshold: 10.00 MB)
+distributed.worker - WARNING - Worker is at 81% memory usage. Pausing worker.  Process memory: 9.84 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 67% memory usage. Resuming worker. Process memory: 8.16 GB -- Worker memory limit: 12.11 GB
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 17, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 17, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 38, 0, 0)
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 33, 0, 0)
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 43, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 38, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 33, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 43, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 18, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 18, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 44, 0, 0)
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 42, 0, 0)
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 35, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 35, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 42, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 44, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 19, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 19, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 46, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 46, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 48, 0, 0)
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 61, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 48, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 61, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 20, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 20, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 56, 0, 0)
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 52, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 52, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 56, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 21, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 21, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 35, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 35, 0, 0) 1 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 27, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 27, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 56, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 56, 0, 0) 1 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 29, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 29, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 47, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 47, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 51, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 51, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 0, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 0, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 1, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 1, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 2, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 2, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 3, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 3, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 3, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 3, 0, 0) 1 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 62, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 62, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 59, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 59, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 6, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 6, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 45, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 45, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 45, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 45, 0, 0) 1 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 11, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 11, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 25, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 25, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 25, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 25, 0, 0) 1 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 7, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 7, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 13, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 13, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 28, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 28, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 30, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 30, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 8, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 8, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 34, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 34, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 39, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 39, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 4, 0, 0)
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 41, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 4, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 41, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 15, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 15, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 22, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 22, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 26, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 26, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 26, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 26, 0, 0) 1 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 10, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 10, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 12, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 12, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 23, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 23, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 24, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 24, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 38, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 38, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 33, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 33, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 42, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 42, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 35, 0, 0)
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 61, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 61, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 35, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 42, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 42, 0, 0) 1 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 46, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 46, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 56, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 56, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 62, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 62, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 62, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 62, 0, 0) 1 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 59, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 59, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 59, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 59, 0, 0) 1 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 13, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 13, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 30, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 30, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 17, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 17, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 18, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 18, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 19, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 19, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 8, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 8, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 20, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 20, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 34, 0, 0)
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 6, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 34, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 6, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 21, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 21, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 27, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 27, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 39, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 39, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 11, 0, 0)
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 41, 0, 0)
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 29, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 41, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 29, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 11, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 47, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 47, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 51, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 51, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 25, 0, 0)
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 0, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 0, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 25, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 1, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 1, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 2, 0, 0)
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 45, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 2, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 45, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 3, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 3, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 1, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 1, 0, 0) 1 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 4, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 4, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 15, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 15, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 22, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 22, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 26, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 26, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 43, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 43, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 44, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 44, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 10, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 10, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 48, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 48, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 12, 0, 0)
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 52, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 12, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 52, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 23, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 23, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 24, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 24, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 7, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 7, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 28, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 28, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 28, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 28, 0, 0) 1 .  Asking scheduler
+distributed.utils_perf - INFO - full garbage collection released 734.82 MB from 774 reference cycles (threshold: 10.00 MB)
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 17, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 17, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 6, 0, 0)
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 38, 0, 0)
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 8, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 6, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 38, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 8, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 18, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 18, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 42, 0, 0)
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 11, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 42, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 11, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 34, 0, 0)
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 19, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 34, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 19, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 33, 0, 0)
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 61, 0, 0)
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 25, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 61, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 33, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 25, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 20, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 20, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 39, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 39, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 21, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 21, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 45, 0, 0)
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 35, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 35, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 45, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 27, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 27, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 41, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 41, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 6, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 6, 0, 0) 1 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 29, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 29, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 42, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 42, 0, 0) 1 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 46, 0, 0)
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 47, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 47, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 46, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 61, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 61, 0, 0) 1 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 51, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 51, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 0, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 0, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 1, 0, 0)
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 56, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 1, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 56, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 2, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 2, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 3, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 3, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 51, 0, 0)
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 62, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 62, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 30, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 30, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 28, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 28, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 7, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 7, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 43, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 43, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 4, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 4, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 44, 0, 0)
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 13, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 44, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 13, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 15, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 15, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 7, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 7, 0, 0) 1 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 48, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 48, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 22, 0, 0)
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 13, 0, 0)
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 52, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 22, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 13, 0, 0) 1 .  Asking scheduler
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 52, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 59, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 59, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 44, 0, 0)
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 26, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 26, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 44, 0, 0) 1 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 10, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 10, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 12, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 12, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 23, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 23, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 52, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 52, 0, 0) 1 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 24, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 24, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 10, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 10, 0, 0) 1 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 24, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 24, 0, 0) 1 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 6, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 6, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 33, 0, 0)
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 38, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 33, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 38, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 11, 0, 0)
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 42, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 11, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 35, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 42, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 35, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 4, 0, 0)
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 25, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 25, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 61, 0, 0)
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 46, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 61, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 46, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 4, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 45, 0, 0)
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 56, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 45, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 56, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 15, 0, 0)
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 42, 0, 0)
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 11, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 42, 0, 0) 1 .  Asking scheduler
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 11, 0, 0) 1 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 35, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 15, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 35, 0, 0) 1 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 56, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 56, 0, 0) 1 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 22, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 22, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 26, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 26, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 17, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 17, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 2, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 2, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 12, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 12, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 2, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 2, 0, 0) 1 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 12, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 12, 0, 0) 1 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 23, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 23, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 18, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 18, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 19, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 19, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 20, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 20, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 21, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 21, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 27, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 27, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 29, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 29, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 47, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 47, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 51, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 51, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 0, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 0, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 1, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 1, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 3, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 3, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 3, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 3, 0, 0) 1 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 8, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 8, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 34, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 34, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 39, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 39, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 41, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 41, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 39, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 39, 0, 0) 1 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 43, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 43, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 59, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 59, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 44, 0, 0)
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 62, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 62, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 44, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 10, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 10, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 24, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 24, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 48, 0, 0)
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 62, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 62, 0, 0) 1 .  Asking scheduler
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 48, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 52, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 52, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 52, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 52, 0, 0) 1 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 13, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 13, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 30, 0, 0)
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 7, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 30, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 7, 0, 0) 0 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('mean_chunk-f0079d97ea218e09d1662750d1b800a2', 28, 0, 0)
+distributed.worker - INFO - Dependent not found: ('getitem-d4a30ff1511a9bcb83b65ecd3205bb50', 28, 0, 0) 0 .  Asking scheduler
+distributed.utils_perf - INFO - full garbage collection released 66.36 MB from 643 reference cycles (threshold: 10.00 MB)
+distributed.worker - INFO - Can't find dependencies for key ('nanmax-aggregate-fd8c12643b8b5e2000d0ccf4cdd18b0d',)
+distributed.worker - INFO - Dependent not found: ('nanmax-nanmax-aggregate-fd8c12643b8b5e2000d0ccf4cdd18b0d',) 0 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('nanmax-aggregate-fd8c12643b8b5e2000d0ccf4cdd18b0d',)
+distributed.worker - INFO - Dependent not found: ('nanmax-nanmax-aggregate-fd8c12643b8b5e2000d0ccf4cdd18b0d',) 1 .  Asking scheduler
+distributed.worker - WARNING - Worker is at 82% memory usage. Pausing worker.  Process memory: 9.95 GB -- Worker memory limit: 12.11 GB
+distributed.utils_perf - INFO - full garbage collection released 200.35 MB from 818 reference cycles (threshold: 10.00 MB)
+distributed.worker - WARNING - Heartbeat to scheduler failed
+distributed.worker - WARNING - Heartbeat to scheduler failed
+distributed.worker - WARNING - Heartbeat to scheduler failed
+distributed.worker - WARNING - Heartbeat to scheduler failed
+distributed.worker - WARNING - Heartbeat to scheduler failed
+distributed.worker - WARNING - Heartbeat to scheduler failed
+distributed.worker - WARNING - Heartbeat to scheduler failed
+distributed.worker - WARNING - Heartbeat to scheduler failed
+distributed.worker - INFO - Connection to scheduler broken.  Reconnecting...
+distributed.worker - INFO - Connection to scheduler broken.  Reconnecting...
+distributed.worker - INFO - Connection to scheduler broken.  Reconnecting...
+distributed.worker - INFO - Connection to scheduler broken.  Reconnecting...
+distributed.worker - INFO - Connection to scheduler broken.  Reconnecting...
+distributed.worker - INFO - Connection to scheduler broken.  Reconnecting...
+distributed.worker - INFO - Connection to scheduler broken.  Reconnecting...
+distributed.worker - INFO - Connection to scheduler broken.  Reconnecting...
+distributed.worker - INFO - Connection to scheduler broken.  Reconnecting...
+tornado.application - ERROR - Exception in callback <function Worker.__init__.<locals>.<lambda> at 0x2abb345a1b90>
+Traceback (most recent call last):
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/tornado/ioloop.py", line 907, in _run
+    return self.callback()
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/worker.py", line 652, in <lambda>
+    lambda: self.batched_stream.send({"op": "keep-alive"}),
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/batched.py", line 117, in send
+    raise CommClosedError
+distributed.comm.core.CommClosedError
+tornado.application - ERROR - Exception in callback <function Worker.__init__.<locals>.<lambda> at 0x2ba30a1e6a70>
+Traceback (most recent call last):
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/tornado/ioloop.py", line 907, in _run
+    return self.callback()
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/worker.py", line 652, in <lambda>
+    lambda: self.batched_stream.send({"op": "keep-alive"}),
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/batched.py", line 117, in send
+    raise CommClosedError
+distributed.comm.core.CommClosedError
+distributed.worker - INFO - Stopping worker at tcp://10.148.6.249:44599
+distributed.worker - INFO - Stopping worker at tcp://10.148.6.249:46741
+distributed.worker - INFO - Stopping worker at tcp://10.148.6.249:37457
+distributed.worker - INFO - Stopping worker at tcp://10.148.6.249:34825
+distributed.worker - INFO - Stopping worker at tcp://10.148.6.249:45541
+distributed.worker - INFO - Stopping worker at tcp://10.148.6.249:38919
+distributed.worker - INFO - Stopping worker at tcp://10.148.6.249:44397
+distributed.worker - INFO - Stopping worker at tcp://10.148.6.249:36041
+distributed.worker - INFO - Stopping worker at tcp://10.148.6.249:37253
+distributed.nanny - INFO - Worker closed
+distributed.nanny - INFO - Worker closed
+distributed.nanny - INFO - Worker closed
+distributed.nanny - INFO - Worker closed
+distributed.nanny - INFO - Worker closed
+distributed.nanny - INFO - Worker closed
+distributed.nanny - INFO - Worker closed
+distributed.nanny - INFO - Worker closed
+distributed.nanny - INFO - Worker closed
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.6.249:39855'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.6.249:36333'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.6.249:34929'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.6.249:38093'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.6.249:35247'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.6.249:37509'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.6.249:46059'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.6.249:37141'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.6.249:37811'
+distributed.dask_worker - INFO - End worker

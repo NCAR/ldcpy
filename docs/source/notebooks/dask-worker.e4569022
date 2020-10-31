@@ -1,0 +1,645 @@
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.7.78:40075'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.7.78:41525'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.7.78:33993'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.7.78:42215'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.7.78:41667'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.7.78:32775'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.7.78:41595'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.7.78:33243'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.7.78:35761'
+distributed.diskutils - INFO - Found stale lock file and directory '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-zeho7ku_', purging
+distributed.diskutils - INFO - Found stale lock file and directory '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-nnjhjh_6', purging
+distributed.diskutils - INFO - Found stale lock file and directory '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-3vcpp9p_', purging
+distributed.diskutils - INFO - Found stale lock file and directory '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-ez5b99pc', purging
+distributed.diskutils - INFO - Found stale lock file and directory '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-x8vjflcq', purging
+distributed.diskutils - INFO - Found stale lock file and directory '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-7d6y3y1i', purging
+distributed.diskutils - INFO - Found stale lock file and directory '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-y1ury4oz', purging
+distributed.worker - INFO -       Start worker at:    tcp://10.148.7.78:38213
+distributed.worker - INFO -          Listening to:    tcp://10.148.7.78:38213
+distributed.worker - INFO -          dashboard at:          10.148.7.78:46657
+distributed.worker - INFO - Waiting to connect to:   tcp://10.148.10.15:36191
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -               Threads:                          4
+distributed.worker - INFO -                Memory:                   12.11 GB
+distributed.worker - INFO -       Local Directory: /glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-9f7vc_v3
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -       Start worker at:    tcp://10.148.7.78:41097
+distributed.worker - INFO -          Listening to:    tcp://10.148.7.78:41097
+distributed.worker - INFO -          dashboard at:          10.148.7.78:37181
+distributed.worker - INFO - Waiting to connect to:   tcp://10.148.10.15:36191
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -               Threads:                          4
+distributed.worker - INFO -                Memory:                   12.11 GB
+distributed.worker - INFO -       Local Directory: /glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-jkbjtluh
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -       Start worker at:    tcp://10.148.7.78:41685
+distributed.worker - INFO -          Listening to:    tcp://10.148.7.78:41685
+distributed.worker - INFO -          dashboard at:          10.148.7.78:46811
+distributed.worker - INFO - Waiting to connect to:   tcp://10.148.10.15:36191
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -               Threads:                          4
+distributed.worker - INFO -                Memory:                   12.11 GB
+distributed.worker - INFO -       Local Directory: /glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-3j4eavwz
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -       Start worker at:    tcp://10.148.7.78:46171
+distributed.worker - INFO -          Listening to:    tcp://10.148.7.78:46171
+distributed.worker - INFO -          dashboard at:          10.148.7.78:40863
+distributed.worker - INFO - Waiting to connect to:   tcp://10.148.10.15:36191
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -               Threads:                          4
+distributed.worker - INFO -                Memory:                   12.11 GB
+distributed.worker - INFO -       Local Directory: /glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-bqq2j6cz
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -       Start worker at:    tcp://10.148.7.78:46627
+distributed.worker - INFO -          Listening to:    tcp://10.148.7.78:46627
+distributed.worker - INFO -          dashboard at:          10.148.7.78:34353
+distributed.worker - INFO - Waiting to connect to:   tcp://10.148.10.15:36191
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -               Threads:                          4
+distributed.worker - INFO -       Start worker at:    tcp://10.148.7.78:39655
+distributed.worker - INFO -                Memory:                   12.11 GB
+distributed.worker - INFO -       Local Directory: /glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-qcjgru2p
+distributed.worker - INFO -          Listening to:    tcp://10.148.7.78:39655
+distributed.worker - INFO -       Start worker at:    tcp://10.148.7.78:34471
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -          dashboard at:          10.148.7.78:32903
+distributed.worker - INFO -          Listening to:    tcp://10.148.7.78:34471
+distributed.worker - INFO - Waiting to connect to:   tcp://10.148.10.15:36191
+distributed.worker - INFO -          dashboard at:          10.148.7.78:40699
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO - Waiting to connect to:   tcp://10.148.10.15:36191
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -       Start worker at:    tcp://10.148.7.78:42167
+distributed.worker - INFO -               Threads:                          4
+distributed.worker - INFO -          Listening to:    tcp://10.148.7.78:42167
+distributed.worker - INFO -                Memory:                   12.11 GB
+distributed.worker - INFO -               Threads:                          4
+distributed.worker - INFO -       Local Directory: /glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-ap8f0obw
+distributed.worker - INFO -          dashboard at:          10.148.7.78:41983
+distributed.worker - INFO - Waiting to connect to:   tcp://10.148.10.15:36191
+distributed.worker - INFO -                Memory:                   12.11 GB
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -       Local Directory: /glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-wxsq2wqq
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -               Threads:                          4
+distributed.worker - INFO -                Memory:                   12.11 GB
+distributed.worker - INFO -       Local Directory: /glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-uap3_g94
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -       Start worker at:    tcp://10.148.7.78:35483
+distributed.worker - INFO -          Listening to:    tcp://10.148.7.78:35483
+distributed.worker - INFO -          dashboard at:          10.148.7.78:40949
+distributed.worker - INFO - Waiting to connect to:   tcp://10.148.10.15:36191
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -               Threads:                          4
+distributed.worker - INFO -                Memory:                   12.11 GB
+distributed.worker - INFO -       Local Directory: /glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-_3pgfz47
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -         Registered to:   tcp://10.148.10.15:36191
+distributed.worker - INFO - -------------------------------------------------
+distributed.core - INFO - Starting established connection
+distributed.worker - INFO -         Registered to:   tcp://10.148.10.15:36191
+distributed.worker - INFO - -------------------------------------------------
+distributed.core - INFO - Starting established connection
+distributed.worker - INFO -         Registered to:   tcp://10.148.10.15:36191
+distributed.worker - INFO - -------------------------------------------------
+distributed.core - INFO - Starting established connection
+distributed.worker - INFO -         Registered to:   tcp://10.148.10.15:36191
+distributed.worker - INFO - -------------------------------------------------
+distributed.core - INFO - Starting established connection
+distributed.worker - INFO -         Registered to:   tcp://10.148.10.15:36191
+distributed.worker - INFO - -------------------------------------------------
+distributed.core - INFO - Starting established connection
+distributed.worker - INFO -         Registered to:   tcp://10.148.10.15:36191
+distributed.worker - INFO - -------------------------------------------------
+distributed.core - INFO - Starting established connection
+distributed.worker - INFO -         Registered to:   tcp://10.148.10.15:36191
+distributed.worker - INFO - -------------------------------------------------
+distributed.core - INFO - Starting established connection
+distributed.worker - INFO -         Registered to:   tcp://10.148.10.15:36191
+distributed.worker - INFO - -------------------------------------------------
+distributed.core - INFO - Starting established connection
+distributed.worker - INFO -         Registered to:   tcp://10.148.10.15:36191
+distributed.worker - INFO - -------------------------------------------------
+distributed.core - INFO - Starting established connection
+distributed.worker - ERROR - Worker stream died during communication: tcp://10.148.10.16:39203
+Traceback (most recent call last):
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/comm/tcp.py", line 188, in read
+    n_frames = await stream.read_bytes(8)
+tornado.iostream.StreamClosedError: Stream is closed
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/worker.py", line 1953, in gather_dep
+    self.rpc, deps, worker, who=self.address
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/worker.py", line 3222, in get_data_from_worker
+    return await retry_operation(_get_data, operation="get_data_from_worker")
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/utils_comm.py", line 391, in retry_operation
+    operation=operation,
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/utils_comm.py", line 379, in retry
+    return await coro()
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/worker.py", line 3209, in _get_data
+    max_connections=max_connections,
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/core.py", line 541, in send_recv
+    response = await comm.read(deserializers=deserializers)
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/comm/tcp.py", line 208, in read
+    convert_stream_closed_error(self, e)
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/comm/tcp.py", line 121, in convert_stream_closed_error
+    raise CommClosedError("in %s: %s: %s" % (obj, exc.__class__.__name__, exc))
+distributed.comm.core.CommClosedError: in <closed TCP>: ConnectionResetError: [Errno 104] Connection reset by peer
+distributed.worker - ERROR - Worker stream died during communication: tcp://10.148.10.16:39203
+Traceback (most recent call last):
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/comm/tcp.py", line 188, in read
+    n_frames = await stream.read_bytes(8)
+tornado.iostream.StreamClosedError: Stream is closed
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/worker.py", line 1953, in gather_dep
+    self.rpc, deps, worker, who=self.address
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/worker.py", line 3222, in get_data_from_worker
+    return await retry_operation(_get_data, operation="get_data_from_worker")
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/utils_comm.py", line 391, in retry_operation
+    operation=operation,
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/utils_comm.py", line 379, in retry
+    return await coro()
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/worker.py", line 3209, in _get_data
+    max_connections=max_connections,
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/core.py", line 541, in send_recv
+    response = await comm.read(deserializers=deserializers)
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/comm/tcp.py", line 208, in read
+    convert_stream_closed_error(self, e)
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/comm/tcp.py", line 121, in convert_stream_closed_error
+    raise CommClosedError("in %s: %s: %s" % (obj, exc.__class__.__name__, exc))
+distributed.comm.core.CommClosedError: in <closed TCP>: ConnectionResetError: [Errno 104] Connection reset by peer
+distributed.worker - INFO - Can't find dependencies for key ('rechunk-merge-a2d9c150534c902988d0de741b5918f8', 0, 8, 2, 2)
+distributed.worker - INFO - Can't find dependencies for key ('rechunk-merge-a2d9c150534c902988d0de741b5918f8', 0, 8, 3, 1)
+distributed.worker - INFO - Dependent not found: ('rechunk-split-a2d9c150534c902988d0de741b5918f8', 709) 0 .  Asking scheduler
+distributed.worker - INFO - Dependent not found: ('rechunk-split-a2d9c150534c902988d0de741b5918f8', 696) 0 .  Asking scheduler
+distributed.worker - INFO - Dependent not found: ('rechunk-split-a2d9c150534c902988d0de741b5918f8', 697) 0 .  Asking scheduler
+distributed.worker - INFO - Dependent not found: ('rechunk-split-a2d9c150534c902988d0de741b5918f8', 708) 0 .  Asking scheduler
+distributed.worker - ERROR - Worker stream died during communication: tcp://10.148.10.16:39203
+Traceback (most recent call last):
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/comm/tcp.py", line 188, in read
+    n_frames = await stream.read_bytes(8)
+tornado.iostream.StreamClosedError: Stream is closed
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/worker.py", line 1953, in gather_dep
+    self.rpc, deps, worker, who=self.address
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/worker.py", line 3222, in get_data_from_worker
+    return await retry_operation(_get_data, operation="get_data_from_worker")
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/utils_comm.py", line 391, in retry_operation
+    operation=operation,
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/utils_comm.py", line 379, in retry
+    return await coro()
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/worker.py", line 3209, in _get_data
+    max_connections=max_connections,
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/core.py", line 541, in send_recv
+    response = await comm.read(deserializers=deserializers)
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/comm/tcp.py", line 208, in read
+    convert_stream_closed_error(self, e)
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/comm/tcp.py", line 121, in convert_stream_closed_error
+    raise CommClosedError("in %s: %s: %s" % (obj, exc.__class__.__name__, exc))
+distributed.comm.core.CommClosedError: in <closed TCP>: ConnectionResetError: [Errno 104] Connection reset by peer
+distributed.worker - INFO - Can't find dependencies for key ('rechunk-merge-a2d9c150534c902988d0de741b5918f8', 0, 8, 1, 2)
+distributed.worker - INFO - Dependent not found: ('rechunk-split-a2d9c150534c902988d0de741b5918f8', 679) 0 .  Asking scheduler
+distributed.worker - INFO - Dependent not found: ('rechunk-split-a2d9c150534c902988d0de741b5918f8', 678) 0 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('rechunk-merge-a2d9c150534c902988d0de741b5918f8', 0, 8, 1, 2)
+distributed.worker - INFO - Can't find dependencies for key ('rechunk-merge-703ae277aafa55203021f8461b5a0983', 1, 17, 0, 0)
+distributed.worker - INFO - Can't find dependencies for key ('rechunk-merge-703ae277aafa55203021f8461b5a0983', 1, 17, 0, 0)
+distributed.worker - INFO - Dependent not found: ('rechunk-split-703ae277aafa55203021f8461b5a0983', 151) 0 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('rechunk-merge-703ae277aafa55203021f8461b5a0983', 1, 17, 0, 0)
+distributed.worker - ERROR - Worker stream died during communication: tcp://10.148.10.16:39203
+Traceback (most recent call last):
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/comm/tcp.py", line 188, in read
+    n_frames = await stream.read_bytes(8)
+tornado.iostream.StreamClosedError: Stream is closed
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/worker.py", line 1953, in gather_dep
+    self.rpc, deps, worker, who=self.address
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/worker.py", line 3222, in get_data_from_worker
+    return await retry_operation(_get_data, operation="get_data_from_worker")
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/utils_comm.py", line 391, in retry_operation
+    operation=operation,
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/utils_comm.py", line 379, in retry
+    return await coro()
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/worker.py", line 3209, in _get_data
+    max_connections=max_connections,
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/core.py", line 541, in send_recv
+    response = await comm.read(deserializers=deserializers)
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/comm/tcp.py", line 208, in read
+    convert_stream_closed_error(self, e)
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/comm/tcp.py", line 121, in convert_stream_closed_error
+    raise CommClosedError("in %s: %s: %s" % (obj, exc.__class__.__name__, exc))
+distributed.comm.core.CommClosedError: in <closed TCP>: ConnectionResetError: [Errno 104] Connection reset by peer
+distributed.worker - INFO - Can't find dependencies for key ('rechunk-merge-703ae277aafa55203021f8461b5a0983', 0, 7, 0, 0)
+distributed.worker - ERROR - Worker stream died during communication: tcp://10.148.10.16:39907
+Traceback (most recent call last):
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/comm/tcp.py", line 188, in read
+    n_frames = await stream.read_bytes(8)
+tornado.iostream.StreamClosedError: Stream is closed
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/worker.py", line 1953, in gather_dep
+    self.rpc, deps, worker, who=self.address
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/worker.py", line 3222, in get_data_from_worker
+    return await retry_operation(_get_data, operation="get_data_from_worker")
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/utils_comm.py", line 391, in retry_operation
+    operation=operation,
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/utils_comm.py", line 379, in retry
+    return await coro()
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/worker.py", line 3209, in _get_data
+    max_connections=max_connections,
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/core.py", line 541, in send_recv
+    response = await comm.read(deserializers=deserializers)
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/comm/tcp.py", line 208, in read
+    convert_stream_closed_error(self, e)
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/comm/tcp.py", line 121, in convert_stream_closed_error
+    raise CommClosedError("in %s: %s: %s" % (obj, exc.__class__.__name__, exc))
+distributed.comm.core.CommClosedError: in <closed TCP>: ConnectionResetError: [Errno 104] Connection reset by peer
+distributed.worker - ERROR - Worker stream died during communication: tcp://10.148.10.16:39907
+Traceback (most recent call last):
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/comm/tcp.py", line 188, in read
+    n_frames = await stream.read_bytes(8)
+tornado.iostream.StreamClosedError: Stream is closed
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/worker.py", line 1953, in gather_dep
+    self.rpc, deps, worker, who=self.address
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/worker.py", line 3222, in get_data_from_worker
+    return await retry_operation(_get_data, operation="get_data_from_worker")
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/utils_comm.py", line 391, in retry_operation
+    operation=operation,
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/utils_comm.py", line 379, in retry
+    return await coro()
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/worker.py", line 3209, in _get_data
+    max_connections=max_connections,
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/core.py", line 541, in send_recv
+    response = await comm.read(deserializers=deserializers)
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/comm/tcp.py", line 208, in read
+    convert_stream_closed_error(self, e)
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/comm/tcp.py", line 121, in convert_stream_closed_error
+    raise CommClosedError("in %s: %s: %s" % (obj, exc.__class__.__name__, exc))
+distributed.comm.core.CommClosedError: in <closed TCP>: ConnectionResetError: [Errno 104] Connection reset by peer
+distributed.worker - INFO - Can't find dependencies for key ('rechunk-merge-703ae277aafa55203021f8461b5a0983', 0, 16, 0, 0)
+distributed.worker - INFO - Dependent not found: ('rechunk-split-703ae277aafa55203021f8461b5a0983', 35) 0 .  Asking scheduler
+distributed.worker - ERROR - Worker stream died during communication: tcp://10.148.10.16:39907
+Traceback (most recent call last):
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/comm/tcp.py", line 188, in read
+    n_frames = await stream.read_bytes(8)
+tornado.iostream.StreamClosedError: Stream is closed
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/worker.py", line 1953, in gather_dep
+    self.rpc, deps, worker, who=self.address
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/worker.py", line 3222, in get_data_from_worker
+    return await retry_operation(_get_data, operation="get_data_from_worker")
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/utils_comm.py", line 391, in retry_operation
+    operation=operation,
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/utils_comm.py", line 379, in retry
+    return await coro()
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/worker.py", line 3209, in _get_data
+    max_connections=max_connections,
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/core.py", line 541, in send_recv
+    response = await comm.read(deserializers=deserializers)
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/comm/tcp.py", line 208, in read
+    convert_stream_closed_error(self, e)
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/comm/tcp.py", line 121, in convert_stream_closed_error
+    raise CommClosedError("in %s: %s: %s" % (obj, exc.__class__.__name__, exc))
+distributed.comm.core.CommClosedError: in <closed TCP>: ConnectionResetError: [Errno 104] Connection reset by peer
+distributed.worker - INFO - Can't find dependencies for key ('rechunk-merge-703ae277aafa55203021f8461b5a0983', 1, 40, 0, 0)
+distributed.worker - ERROR - Worker stream died during communication: tcp://10.148.10.16:39907
+Traceback (most recent call last):
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/comm/tcp.py", line 188, in read
+    n_frames = await stream.read_bytes(8)
+tornado.iostream.StreamClosedError: Stream is closed
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/worker.py", line 1953, in gather_dep
+    self.rpc, deps, worker, who=self.address
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/worker.py", line 3222, in get_data_from_worker
+    return await retry_operation(_get_data, operation="get_data_from_worker")
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/utils_comm.py", line 391, in retry_operation
+    operation=operation,
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/utils_comm.py", line 379, in retry
+    return await coro()
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/worker.py", line 3209, in _get_data
+    max_connections=max_connections,
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/core.py", line 541, in send_recv
+    response = await comm.read(deserializers=deserializers)
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/comm/tcp.py", line 208, in read
+    convert_stream_closed_error(self, e)
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/comm/tcp.py", line 121, in convert_stream_closed_error
+    raise CommClosedError("in %s: %s: %s" % (obj, exc.__class__.__name__, exc))
+distributed.comm.core.CommClosedError: in <closed TCP>: ConnectionResetError: [Errno 104] Connection reset by peer
+distributed.worker - ERROR - Worker stream died during communication: tcp://10.148.10.16:39907
+Traceback (most recent call last):
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/comm/tcp.py", line 198, in read
+    n = await stream.read_into(frame)
+tornado.iostream.StreamClosedError: Stream is closed
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/worker.py", line 1953, in gather_dep
+    self.rpc, deps, worker, who=self.address
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/worker.py", line 3222, in get_data_from_worker
+    return await retry_operation(_get_data, operation="get_data_from_worker")
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/utils_comm.py", line 391, in retry_operation
+    operation=operation,
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/utils_comm.py", line 379, in retry
+    return await coro()
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/worker.py", line 3209, in _get_data
+    max_connections=max_connections,
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/core.py", line 541, in send_recv
+    response = await comm.read(deserializers=deserializers)
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/comm/tcp.py", line 208, in read
+    convert_stream_closed_error(self, e)
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/comm/tcp.py", line 123, in convert_stream_closed_error
+    raise CommClosedError("in %s: %s" % (obj, exc))
+distributed.comm.core.CommClosedError: in <closed TCP>: Stream is closed
+distributed.worker - INFO - Can't find dependencies for key ('rechunk-merge-a2d9c150534c902988d0de741b5918f8', 0, 6, 3, 2)
+distributed.worker - INFO - Can't find dependencies for key ('rechunk-merge-a2d9c150534c902988d0de741b5918f8', 0, 6, 3, 2)
+distributed.worker - INFO - Can't find dependencies for key ('rechunk-merge-a2d9c150534c902988d0de741b5918f8', 0, 6, 3, 2)
+distributed.worker - INFO - Can't find dependencies for key ('rechunk-merge-a2d9c150534c902988d0de741b5918f8', 0, 6, 3, 2)
+distributed.worker - INFO - Can't find dependencies for key ('rechunk-merge-a2d9c150534c902988d0de741b5918f8', 0, 6, 3, 2)
+distributed.worker - INFO - Can't find dependencies for key ('rechunk-merge-a2d9c150534c902988d0de741b5918f8', 0, 6, 3, 2)
+distributed.worker - ERROR - Worker stream died during communication: tcp://10.148.10.16:45545
+Traceback (most recent call last):
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/comm/tcp.py", line 198, in read
+    n = await stream.read_into(frame)
+tornado.iostream.StreamClosedError: Stream is closed
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/worker.py", line 1953, in gather_dep
+    self.rpc, deps, worker, who=self.address
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/worker.py", line 3222, in get_data_from_worker
+    return await retry_operation(_get_data, operation="get_data_from_worker")
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/utils_comm.py", line 391, in retry_operation
+    operation=operation,
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/utils_comm.py", line 379, in retry
+    return await coro()
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/worker.py", line 3209, in _get_data
+    max_connections=max_connections,
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/core.py", line 541, in send_recv
+    response = await comm.read(deserializers=deserializers)
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/comm/tcp.py", line 208, in read
+    convert_stream_closed_error(self, e)
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/comm/tcp.py", line 123, in convert_stream_closed_error
+    raise CommClosedError("in %s: %s" % (obj, exc))
+distributed.comm.core.CommClosedError: in <closed TCP>: Stream is closed
+distributed.worker - ERROR - Worker stream died during communication: tcp://10.148.10.16:45545
+Traceback (most recent call last):
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/comm/tcp.py", line 188, in read
+    n_frames = await stream.read_bytes(8)
+tornado.iostream.StreamClosedError: Stream is closed
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/worker.py", line 1953, in gather_dep
+    self.rpc, deps, worker, who=self.address
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/worker.py", line 3222, in get_data_from_worker
+    return await retry_operation(_get_data, operation="get_data_from_worker")
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/utils_comm.py", line 391, in retry_operation
+    operation=operation,
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/utils_comm.py", line 379, in retry
+    return await coro()
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/worker.py", line 3209, in _get_data
+    max_connections=max_connections,
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/core.py", line 541, in send_recv
+    response = await comm.read(deserializers=deserializers)
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/comm/tcp.py", line 208, in read
+    convert_stream_closed_error(self, e)
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/comm/tcp.py", line 121, in convert_stream_closed_error
+    raise CommClosedError("in %s: %s: %s" % (obj, exc.__class__.__name__, exc))
+distributed.comm.core.CommClosedError: in <closed TCP>: ConnectionResetError: [Errno 104] Connection reset by peer
+distributed.worker - INFO - Can't find dependencies for key ('rechunk-merge-703ae277aafa55203021f8461b5a0983', 0, 17, 0, 0)
+distributed.worker - INFO - Dependent not found: ('rechunk-split-703ae277aafa55203021f8461b5a0983', 37) 0 .  Asking scheduler
+distributed.worker - ERROR - Worker stream died during communication: tcp://10.148.10.16:45545
+Traceback (most recent call last):
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/comm/tcp.py", line 188, in read
+    n_frames = await stream.read_bytes(8)
+tornado.iostream.StreamClosedError: Stream is closed
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/worker.py", line 1953, in gather_dep
+    self.rpc, deps, worker, who=self.address
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/worker.py", line 3222, in get_data_from_worker
+    return await retry_operation(_get_data, operation="get_data_from_worker")
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/utils_comm.py", line 391, in retry_operation
+    operation=operation,
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/utils_comm.py", line 379, in retry
+    return await coro()
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/worker.py", line 3209, in _get_data
+    max_connections=max_connections,
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/core.py", line 541, in send_recv
+    response = await comm.read(deserializers=deserializers)
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/comm/tcp.py", line 208, in read
+    convert_stream_closed_error(self, e)
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/comm/tcp.py", line 121, in convert_stream_closed_error
+    raise CommClosedError("in %s: %s: %s" % (obj, exc.__class__.__name__, exc))
+distributed.comm.core.CommClosedError: in <closed TCP>: ConnectionResetError: [Errno 104] Connection reset by peer
+distributed.worker - INFO - Can't find dependencies for key ('getitem-896d379806ee59330b8b3bbd5f646dbb', 4, 9)
+distributed.worker - ERROR - Worker stream died during communication: tcp://10.148.10.16:45545
+Traceback (most recent call last):
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/comm/tcp.py", line 188, in read
+    n_frames = await stream.read_bytes(8)
+tornado.iostream.StreamClosedError: Stream is closed
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/worker.py", line 1953, in gather_dep
+    self.rpc, deps, worker, who=self.address
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/worker.py", line 3222, in get_data_from_worker
+    return await retry_operation(_get_data, operation="get_data_from_worker")
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/utils_comm.py", line 391, in retry_operation
+    operation=operation,
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/utils_comm.py", line 379, in retry
+    return await coro()
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/worker.py", line 3209, in _get_data
+    max_connections=max_connections,
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/core.py", line 541, in send_recv
+    response = await comm.read(deserializers=deserializers)
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/comm/tcp.py", line 208, in read
+    convert_stream_closed_error(self, e)
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/comm/tcp.py", line 121, in convert_stream_closed_error
+    raise CommClosedError("in %s: %s: %s" % (obj, exc.__class__.__name__, exc))
+distributed.comm.core.CommClosedError: in <closed TCP>: ConnectionResetError: [Errno 104] Connection reset by peer
+distributed.worker - INFO - Can't find dependencies for key ('rechunk-merge-703ae277aafa55203021f8461b5a0983', 0, 29, 0, 0)
+distributed.worker - INFO - Dependent not found: ('rechunk-split-703ae277aafa55203021f8461b5a0983', 63) 0 .  Asking scheduler
+distributed.worker - ERROR - Worker stream died during communication: tcp://10.148.10.16:45855
+Traceback (most recent call last):
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/comm/tcp.py", line 188, in read
+    n_frames = await stream.read_bytes(8)
+tornado.iostream.StreamClosedError: Stream is closed
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/worker.py", line 1953, in gather_dep
+    self.rpc, deps, worker, who=self.address
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/worker.py", line 3222, in get_data_from_worker
+    return await retry_operation(_get_data, operation="get_data_from_worker")
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/utils_comm.py", line 391, in retry_operation
+    operation=operation,
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/utils_comm.py", line 379, in retry
+    return await coro()
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/worker.py", line 3209, in _get_data
+    max_connections=max_connections,
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/core.py", line 541, in send_recv
+    response = await comm.read(deserializers=deserializers)
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/comm/tcp.py", line 208, in read
+    convert_stream_closed_error(self, e)
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/comm/tcp.py", line 121, in convert_stream_closed_error
+    raise CommClosedError("in %s: %s: %s" % (obj, exc.__class__.__name__, exc))
+distributed.comm.core.CommClosedError: in <closed TCP>: ConnectionResetError: [Errno 104] Connection reset by peer
+distributed.worker - ERROR - Worker stream died during communication: tcp://10.148.10.16:45855
+Traceback (most recent call last):
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/comm/tcp.py", line 188, in read
+    n_frames = await stream.read_bytes(8)
+tornado.iostream.StreamClosedError: Stream is closed
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/worker.py", line 1953, in gather_dep
+    self.rpc, deps, worker, who=self.address
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/worker.py", line 3222, in get_data_from_worker
+    return await retry_operation(_get_data, operation="get_data_from_worker")
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/utils_comm.py", line 391, in retry_operation
+    operation=operation,
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/utils_comm.py", line 379, in retry
+    return await coro()
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/worker.py", line 3209, in _get_data
+    max_connections=max_connections,
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/core.py", line 541, in send_recv
+    response = await comm.read(deserializers=deserializers)
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/comm/tcp.py", line 208, in read
+    convert_stream_closed_error(self, e)
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/comm/tcp.py", line 121, in convert_stream_closed_error
+    raise CommClosedError("in %s: %s: %s" % (obj, exc.__class__.__name__, exc))
+distributed.comm.core.CommClosedError: in <closed TCP>: ConnectionResetError: [Errno 104] Connection reset by peer
+distributed.worker - ERROR - Worker stream died during communication: tcp://10.148.10.16:45855
+Traceback (most recent call last):
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/comm/tcp.py", line 188, in read
+    n_frames = await stream.read_bytes(8)
+tornado.iostream.StreamClosedError: Stream is closed
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/worker.py", line 1953, in gather_dep
+    self.rpc, deps, worker, who=self.address
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/worker.py", line 3222, in get_data_from_worker
+    return await retry_operation(_get_data, operation="get_data_from_worker")
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/utils_comm.py", line 391, in retry_operation
+    operation=operation,
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/utils_comm.py", line 379, in retry
+    return await coro()
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/worker.py", line 3209, in _get_data
+    max_connections=max_connections,
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/core.py", line 541, in send_recv
+    response = await comm.read(deserializers=deserializers)
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/comm/tcp.py", line 208, in read
+    convert_stream_closed_error(self, e)
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/comm/tcp.py", line 121, in convert_stream_closed_error
+    raise CommClosedError("in %s: %s: %s" % (obj, exc.__class__.__name__, exc))
+distributed.comm.core.CommClosedError: in <closed TCP>: ConnectionResetError: [Errno 104] Connection reset by peer
+distributed.worker - INFO - Can't find dependencies for key ('rechunk-merge-703ae277aafa55203021f8461b5a0983', 0, 46, 0, 0)
+distributed.worker - ERROR - Worker stream died during communication: tcp://10.148.10.16:45855
+Traceback (most recent call last):
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/comm/tcp.py", line 198, in read
+    n = await stream.read_into(frame)
+tornado.iostream.StreamClosedError: Stream is closed
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/worker.py", line 1953, in gather_dep
+    self.rpc, deps, worker, who=self.address
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/worker.py", line 3222, in get_data_from_worker
+    return await retry_operation(_get_data, operation="get_data_from_worker")
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/utils_comm.py", line 391, in retry_operation
+    operation=operation,
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/utils_comm.py", line 379, in retry
+    return await coro()
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/worker.py", line 3209, in _get_data
+    max_connections=max_connections,
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/core.py", line 541, in send_recv
+    response = await comm.read(deserializers=deserializers)
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/comm/tcp.py", line 208, in read
+    convert_stream_closed_error(self, e)
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/comm/tcp.py", line 123, in convert_stream_closed_error
+    raise CommClosedError("in %s: %s" % (obj, exc))
+distributed.comm.core.CommClosedError: in <closed TCP>: Stream is closed
+distributed.worker - INFO - Can't find dependencies for key ('rechunk-merge-703ae277aafa55203021f8461b5a0983', 0, 22, 0, 0)
+distributed.worker - INFO - Dependent not found: ('rechunk-split-703ae277aafa55203021f8461b5a0983', 101) 0 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('rechunk-merge-703ae277aafa55203021f8461b5a0983', 0, 39, 0, 0)
+distributed.worker - INFO - Dependent not found: ('rechunk-split-703ae277aafa55203021f8461b5a0983', 48) 0 .  Asking scheduler
+distributed.worker - INFO - Dependent not found: ('rechunk-split-703ae277aafa55203021f8461b5a0983', 86) 0 .  Asking scheduler
+distributed.worker - ERROR - Worker stream died during communication: tcp://10.148.10.16:45545
+Traceback (most recent call last):
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/comm/core.py", line 232, in connect
+    _raise(error)
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/comm/core.py", line 213, in _raise
+    raise IOError(msg)
+OSError: Timed out trying to connect to 'tcp://10.148.10.16:45545' after 10 s: in <distributed.comm.tcp.TCPConnector object at 0x2b327b145650>: ConnectionRefusedError: [Errno 111] Connection refused
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/worker.py", line 1953, in gather_dep
+    self.rpc, deps, worker, who=self.address
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/worker.py", line 3222, in get_data_from_worker
+    return await retry_operation(_get_data, operation="get_data_from_worker")
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/utils_comm.py", line 391, in retry_operation
+    operation=operation,
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/utils_comm.py", line 379, in retry
+    return await coro()
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/worker.py", line 3199, in _get_data
+    comm = await rpc.connect(worker)
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/core.py", line 908, in connect
+    connection_args=self.connection_args,
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/comm/core.py", line 243, in connect
+    _raise(error)
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/comm/core.py", line 213, in _raise
+    raise IOError(msg)
+OSError: Timed out trying to connect to 'tcp://10.148.10.16:45545' after 10 s: Timed out trying to connect to 'tcp://10.148.10.16:45545' after 10 s: in <distributed.comm.tcp.TCPConnector object at 0x2b327b145650>: ConnectionRefusedError: [Errno 111] Connection refused
+distributed.worker - INFO - Stopping worker at tcp://10.148.7.78:38213
+distributed.worker - INFO - Stopping worker at tcp://10.148.7.78:46627
+distributed.diskutils - ERROR - Failed to remove '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-qcjgru2p' (failed in <built-in function lstat>): [Errno 2] No such file or directory: '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-qcjgru2p'
+distributed.diskutils - ERROR - Failed to remove '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-9f7vc_v3' (failed in <built-in function lstat>): [Errno 2] No such file or directory: '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-9f7vc_v3'
+distributed.dask_worker - INFO - Exiting on signal 15
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.7.78:40075'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.7.78:41525'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.7.78:33993'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.7.78:42215'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.7.78:41667'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.7.78:32775'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.7.78:41595'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.7.78:33243'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.7.78:35761'
+/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/multiprocessing/semaphore_tracker.py:144: UserWarning: semaphore_tracker: There appear to be 54 leaked semaphores to clean up at shutdown
+  len(cache))

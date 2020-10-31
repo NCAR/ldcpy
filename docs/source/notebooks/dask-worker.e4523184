@@ -1,0 +1,38 @@
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.7.60:42179'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.7.60:40059'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.7.60:40451'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.7.60:41925'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.7.60:43055'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.7.60:32779'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.7.60:46561'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.7.60:35105'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.7.60:37095'
+distributed.diskutils - INFO - Found stale lock file and directory '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-pv51djt1', purging
+distributed.diskutils - INFO - Found stale lock file and directory '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-npfwbnzl', purging
+distributed.diskutils - INFO - Found stale lock file and directory '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-8sphfnqd', purging
+distributed.diskutils - INFO - Found stale lock file and directory '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-jn0e1fq7', purging
+distributed.diskutils - INFO - Found stale lock file and directory '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-m6c3hdto', purging
+distributed.diskutils - INFO - Found stale lock file and directory '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-l_l4yv07', purging
+distributed.diskutils - INFO - Found stale lock file and directory '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-o59hkphy', purging
+distributed.diskutils - INFO - Found stale lock file and directory '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-gajglapg', purging
+distributed.diskutils - INFO - Found stale lock file and directory '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-bttgvi9v', purging
+distributed.dask_worker - INFO - Exiting on signal 15
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.7.60:42179'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.7.60:40059'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.7.60:40451'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.7.60:41925'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.7.60:43055'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.7.60:32779'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.7.60:46561'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.7.60:35105'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.7.60:37095'
+distributed.nanny - INFO - Worker process 43022 was killed by signal 15
+distributed.nanny - INFO - Worker process 43040 was killed by signal 15
+distributed.nanny - INFO - Worker process 43038 was killed by signal 15
+distributed.nanny - INFO - Worker process 43026 was killed by signal 15
+distributed.nanny - INFO - Worker process 43024 was killed by signal 15
+distributed.nanny - INFO - Worker process 43020 was killed by signal 15
+distributed.nanny - INFO - Worker process 43031 was killed by signal 15
+distributed.nanny - INFO - Worker process 43021 was killed by signal 15
+distributed.nanny - INFO - Worker process 43035 was killed by signal 15
+distributed.dask_worker - INFO - End worker

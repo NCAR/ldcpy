@@ -1,0 +1,16 @@
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.12.205.20:42575'
+distributed.worker - INFO -       Start worker at:   tcp://10.12.205.20:43263
+distributed.worker - INFO -          Listening to:   tcp://10.12.205.20:43263
+distributed.worker - INFO -          dashboard at:         10.12.205.20:43346
+distributed.worker - INFO - Waiting to connect to:   tcp://10.12.205.27:39506
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -               Threads:                          4
+distributed.worker - INFO -                Memory:                   40.00 GB
+distributed.worker - INFO -       Local Directory: /glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-zc34_jbf
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -         Registered to:   tcp://10.12.205.27:39506
+distributed.worker - INFO - -------------------------------------------------
+distributed.core - INFO - Starting established connection
+distributed.worker - INFO - Stopping worker at tcp://10.12.205.20:43263
+distributed.nanny - INFO - Worker closed
+slurmstepd: error: *** JOB 5928569 ON casper11 CANCELLED AT 2020-09-23T19:40:05 ***

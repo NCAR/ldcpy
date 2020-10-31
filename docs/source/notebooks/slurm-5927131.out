@@ -1,0 +1,2 @@
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.12.205.31:39426'
+slurmstepd: error: *** JOB 5927131 ON casper22 CANCELLED AT 2020-09-23T16:28:04 ***

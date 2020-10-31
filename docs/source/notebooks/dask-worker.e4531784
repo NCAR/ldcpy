@@ -1,0 +1,236 @@
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.7.196:39121'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.7.196:43965'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.7.196:45161'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.7.196:45097'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.7.196:42637'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.7.196:40313'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.7.196:37895'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.7.196:38293'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.7.196:36757'
+distributed.worker - INFO -       Start worker at:   tcp://10.148.7.196:44235
+distributed.worker - INFO -       Start worker at:   tcp://10.148.7.196:42197
+distributed.worker - INFO -          Listening to:   tcp://10.148.7.196:44235
+distributed.worker - INFO -          dashboard at:         10.148.7.196:45655
+distributed.worker - INFO -          Listening to:   tcp://10.148.7.196:42197
+distributed.worker - INFO - Waiting to connect to:   tcp://10.148.10.15:38101
+distributed.worker - INFO -       Start worker at:   tcp://10.148.7.196:34153
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -          dashboard at:         10.148.7.196:36623
+distributed.worker - INFO -          Listening to:   tcp://10.148.7.196:34153
+distributed.worker - INFO - Waiting to connect to:   tcp://10.148.10.15:38101
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -          dashboard at:         10.148.7.196:38423
+distributed.worker - INFO -       Start worker at:   tcp://10.148.7.196:43349
+distributed.worker - INFO -               Threads:                          4
+distributed.worker - INFO - Waiting to connect to:   tcp://10.148.10.15:38101
+distributed.worker - INFO -          Listening to:   tcp://10.148.7.196:43349
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -                Memory:                   12.11 GB
+distributed.worker - INFO -       Local Directory: /glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-wahsosq9
+distributed.worker - INFO -               Threads:                          4
+distributed.worker - INFO -          dashboard at:         10.148.7.196:43909
+distributed.worker - INFO - Waiting to connect to:   tcp://10.148.10.15:38101
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -                Memory:                   12.11 GB
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -               Threads:                          4
+distributed.worker - INFO -       Local Directory: /glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-3kkfycmp
+distributed.worker - INFO -                Memory:                   12.11 GB
+distributed.worker - INFO -       Local Directory: /glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-qag536tk
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -               Threads:                          4
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -                Memory:                   12.11 GB
+distributed.worker - INFO -       Local Directory: /glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-g319ouj_
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -       Start worker at:   tcp://10.148.7.196:41099
+distributed.worker - INFO -          Listening to:   tcp://10.148.7.196:41099
+distributed.worker - INFO -          dashboard at:         10.148.7.196:42961
+distributed.worker - INFO - Waiting to connect to:   tcp://10.148.10.15:38101
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -               Threads:                          4
+distributed.worker - INFO -                Memory:                   12.11 GB
+distributed.worker - INFO -       Local Directory: /glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-mjtc7ymq
+distributed.worker - INFO -       Start worker at:   tcp://10.148.7.196:40895
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -          Listening to:   tcp://10.148.7.196:40895
+distributed.worker - INFO -          dashboard at:         10.148.7.196:34393
+distributed.worker - INFO - Waiting to connect to:   tcp://10.148.10.15:38101
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -               Threads:                          4
+distributed.worker - INFO -                Memory:                   12.11 GB
+distributed.worker - INFO -       Local Directory: /glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-0cl30ko5
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -       Start worker at:   tcp://10.148.7.196:35223
+distributed.worker - INFO -       Start worker at:   tcp://10.148.7.196:39219
+distributed.worker - INFO -          Listening to:   tcp://10.148.7.196:35223
+distributed.worker - INFO -          Listening to:   tcp://10.148.7.196:39219
+distributed.worker - INFO -          dashboard at:         10.148.7.196:40631
+distributed.worker - INFO -          dashboard at:         10.148.7.196:39699
+distributed.worker - INFO - Waiting to connect to:   tcp://10.148.10.15:38101
+distributed.worker - INFO - Waiting to connect to:   tcp://10.148.10.15:38101
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -               Threads:                          4
+distributed.worker - INFO -               Threads:                          4
+distributed.worker - INFO -                Memory:                   12.11 GB
+distributed.worker - INFO -                Memory:                   12.11 GB
+distributed.worker - INFO -       Local Directory: /glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-gc26ipmr
+distributed.worker - INFO -       Local Directory: /glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-bn7y2dpg
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -       Start worker at:   tcp://10.148.7.196:44657
+distributed.worker - INFO -          Listening to:   tcp://10.148.7.196:44657
+distributed.worker - INFO -          dashboard at:         10.148.7.196:38277
+distributed.worker - INFO - Waiting to connect to:   tcp://10.148.10.15:38101
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -               Threads:                          4
+distributed.worker - INFO -                Memory:                   12.11 GB
+distributed.worker - INFO -       Local Directory: /glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-35mxeopz
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -         Registered to:   tcp://10.148.10.15:38101
+distributed.worker - INFO - -------------------------------------------------
+distributed.core - INFO - Starting established connection
+distributed.worker - INFO -         Registered to:   tcp://10.148.10.15:38101
+distributed.worker - INFO - -------------------------------------------------
+distributed.core - INFO - Starting established connection
+distributed.worker - INFO -         Registered to:   tcp://10.148.10.15:38101
+distributed.worker - INFO - -------------------------------------------------
+distributed.core - INFO - Starting established connection
+distributed.worker - INFO -         Registered to:   tcp://10.148.10.15:38101
+distributed.worker - INFO - -------------------------------------------------
+distributed.core - INFO - Starting established connection
+distributed.worker - INFO -         Registered to:   tcp://10.148.10.15:38101
+distributed.worker - INFO - -------------------------------------------------
+distributed.core - INFO - Starting established connection
+distributed.worker - INFO -         Registered to:   tcp://10.148.10.15:38101
+distributed.worker - INFO - -------------------------------------------------
+distributed.core - INFO - Starting established connection
+distributed.worker - INFO -         Registered to:   tcp://10.148.10.15:38101
+distributed.worker - INFO - -------------------------------------------------
+distributed.core - INFO - Starting established connection
+distributed.worker - INFO -         Registered to:   tcp://10.148.10.15:38101
+distributed.worker - INFO - -------------------------------------------------
+distributed.core - INFO - Starting established connection
+distributed.worker - INFO -         Registered to:   tcp://10.148.10.15:38101
+distributed.worker - INFO - -------------------------------------------------
+distributed.core - INFO - Starting established connection
+distributed.worker - WARNING - Worker is at 80% memory usage. Pausing worker.  Process memory: 9.78 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 80% memory usage. Pausing worker.  Process memory: 9.72 GB -- Worker memory limit: 12.11 GB
+distributed.worker - ERROR - [Errno 2] No such file or directory: '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-bn7y2dpg/storage/%28%27concatenate-9306761062214e1a899c27fe99e647bd%27%2C%202%2C%200%2C%200%2C%200%29'
+Traceback (most recent call last):
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/worker.py", line 1529, in transition_dep_flight_memory
+    self.put_key_in_memory(dep, value)
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/worker.py", line 1894, in put_key_in_memory
+    self.data[key] = value
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/zict/buffer.py", line 87, in __setitem__
+    self.fast[key] = value
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/zict/lru.py", line 70, in __setitem__
+    self.evict()
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/zict/lru.py", line 89, in evict
+    cb(k, v)
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/zict/buffer.py", line 60, in fast_to_slow
+    self.slow[key] = value
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/zict/func.py", line 41, in __setitem__
+    self.d[key] = self.dump(value)
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/zict/file.py", line 79, in __setitem__
+    with open(os.path.join(self.directory, _safe_key(key)), "wb") as f:
+FileNotFoundError: [Errno 2] No such file or directory: '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-bn7y2dpg/storage/%28%27concatenate-9306761062214e1a899c27fe99e647bd%27%2C%202%2C%200%2C%200%2C%200%29'
+distributed.utils - ERROR - [Errno 2] No such file or directory: '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-bn7y2dpg/storage/%28%27concatenate-9306761062214e1a899c27fe99e647bd%27%2C%202%2C%200%2C%200%2C%200%29'
+Traceback (most recent call last):
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/utils.py", line 665, in log_errors
+    yield
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/worker.py", line 2031, in gather_dep
+    self.transition_dep(d, "memory", value=data[d])
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/worker.py", line 1462, in transition_dep
+    state = func(dep, **kwargs)
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/worker.py", line 1529, in transition_dep_flight_memory
+    self.put_key_in_memory(dep, value)
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/worker.py", line 1894, in put_key_in_memory
+    self.data[key] = value
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/zict/buffer.py", line 87, in __setitem__
+    self.fast[key] = value
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/zict/lru.py", line 70, in __setitem__
+    self.evict()
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/zict/lru.py", line 89, in evict
+    cb(k, v)
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/zict/buffer.py", line 60, in fast_to_slow
+    self.slow[key] = value
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/zict/func.py", line 41, in __setitem__
+    self.d[key] = self.dump(value)
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/zict/file.py", line 79, in __setitem__
+    with open(os.path.join(self.directory, _safe_key(key)), "wb") as f:
+FileNotFoundError: [Errno 2] No such file or directory: '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-bn7y2dpg/storage/%28%27concatenate-9306761062214e1a899c27fe99e647bd%27%2C%202%2C%200%2C%200%2C%200%29'
+tornado.application - ERROR - Exception in callback functools.partial(<bound method IOLoop._discard_future_result of <tornado.platform.asyncio.AsyncIOLoop object at 0x2b1a459d8b90>>, <Task finished coro=<Worker.gather_dep() done, defined at /ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/worker.py:1935> exception=FileNotFoundError(2, 'No such file or directory')>)
+Traceback (most recent call last):
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/tornado/ioloop.py", line 743, in _run_callback
+    ret = callback()
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/tornado/ioloop.py", line 767, in _discard_future_result
+    future.result()
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/worker.py", line 2031, in gather_dep
+    self.transition_dep(d, "memory", value=data[d])
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/worker.py", line 1462, in transition_dep
+    state = func(dep, **kwargs)
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/worker.py", line 1529, in transition_dep_flight_memory
+    self.put_key_in_memory(dep, value)
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/worker.py", line 1894, in put_key_in_memory
+    self.data[key] = value
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/zict/buffer.py", line 87, in __setitem__
+    self.fast[key] = value
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/zict/lru.py", line 70, in __setitem__
+    self.evict()
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/zict/lru.py", line 89, in evict
+    cb(k, v)
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/zict/buffer.py", line 60, in fast_to_slow
+    self.slow[key] = value
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/zict/func.py", line 41, in __setitem__
+    self.d[key] = self.dump(value)
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/zict/file.py", line 79, in __setitem__
+    with open(os.path.join(self.directory, _safe_key(key)), "wb") as f:
+FileNotFoundError: [Errno 2] No such file or directory: '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-bn7y2dpg/storage/%28%27concatenate-9306761062214e1a899c27fe99e647bd%27%2C%202%2C%200%2C%200%2C%200%29'
+distributed.worker - INFO - Connection to scheduler broken.  Reconnecting...
+distributed.worker - INFO - Connection to scheduler broken.  Reconnecting...
+distributed.worker - INFO - Connection to scheduler broken.  Reconnecting...
+distributed.worker - INFO - Connection to scheduler broken.  Reconnecting...
+distributed.worker - INFO - Connection to scheduler broken.  Reconnecting...
+distributed.worker - INFO - Connection to scheduler broken.  Reconnecting...
+distributed.worker - INFO - Connection to scheduler broken.  Reconnecting...
+distributed.worker - INFO - Connection to scheduler broken.  Reconnecting...
+distributed.worker - INFO - Connection to scheduler broken.  Reconnecting...
+distributed.worker - INFO - Stopping worker at tcp://10.148.7.196:42197
+distributed.diskutils - ERROR - Failed to remove '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-3kkfycmp' (failed in <built-in function lstat>): [Errno 2] No such file or directory: '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-3kkfycmp'
+distributed.worker - INFO - Stopping worker at tcp://10.148.7.196:39219
+distributed.worker - INFO - Stopping worker at tcp://10.148.7.196:40895
+distributed.worker - INFO - Stopping worker at tcp://10.148.7.196:34153
+distributed.diskutils - ERROR - Failed to remove '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-gc26ipmr' (failed in <built-in function lstat>): [Errno 2] No such file or directory: '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-gc26ipmr'
+distributed.worker - INFO - Stopping worker at tcp://10.148.7.196:41099
+distributed.worker - INFO - Stopping worker at tcp://10.148.7.196:35223
+distributed.worker - INFO - Stopping worker at tcp://10.148.7.196:44235
+distributed.diskutils - ERROR - Failed to remove '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-0cl30ko5' (failed in <built-in function lstat>): [Errno 2] No such file or directory: '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-0cl30ko5'
+distributed.diskutils - ERROR - Failed to remove '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-qag536tk' (failed in <built-in function lstat>): [Errno 2] No such file or directory: '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-qag536tk'
+distributed.diskutils - ERROR - Failed to remove '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-mjtc7ymq' (failed in <built-in function lstat>): [Errno 2] No such file or directory: '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-mjtc7ymq'
+distributed.diskutils - ERROR - Failed to remove '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-wahsosq9' (failed in <built-in function lstat>): [Errno 2] No such file or directory: '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-wahsosq9'
+distributed.worker - INFO - Stopping worker at tcp://10.148.7.196:43349
+distributed.diskutils - ERROR - Failed to remove '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-bn7y2dpg' (failed in <built-in function lstat>): [Errno 2] No such file or directory: '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-bn7y2dpg'
+distributed.worker - INFO - Stopping worker at tcp://10.148.7.196:44657
+distributed.diskutils - ERROR - Failed to remove '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-g319ouj_' (failed in <built-in function lstat>): [Errno 2] No such file or directory: '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-g319ouj_'
+distributed.diskutils - ERROR - Failed to remove '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-35mxeopz' (failed in <built-in function lstat>): [Errno 2] No such file or directory: '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-35mxeopz'
+distributed.nanny - INFO - Worker closed
+distributed.nanny - INFO - Worker closed
+distributed.nanny - INFO - Worker closed
+distributed.nanny - INFO - Worker closed
+distributed.nanny - INFO - Worker closed
+distributed.nanny - INFO - Worker closed
+distributed.nanny - INFO - Worker closed
+distributed.nanny - INFO - Worker closed
+distributed.nanny - INFO - Worker closed
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.7.196:43965'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.7.196:38293'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.7.196:45097'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.7.196:37895'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.7.196:36757'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.7.196:42637'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.7.196:39121'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.7.196:45161'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.7.196:40313'
+distributed.dask_worker - INFO - End worker

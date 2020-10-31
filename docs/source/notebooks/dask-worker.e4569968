@@ -1,0 +1,38 @@
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.7.53:36651'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.7.53:43377'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.7.53:45903'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.7.53:39729'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.7.53:41817'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.7.53:46613'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.7.53:36207'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.7.53:33597'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.7.53:35657'
+distributed.diskutils - INFO - Found stale lock file and directory '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-ot67_ijp', purging
+distributed.diskutils - ERROR - Failed to remove '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-ot67_ijp' (failed in <built-in function lstat>): [Errno 2] No such file or directory: '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-ot67_ijp'
+distributed.diskutils - INFO - Found stale lock file and directory '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-t0v8mlk6', purging
+distributed.diskutils - ERROR - Failed to remove '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-t0v8mlk6/storage' (failed in <built-in function rmdir>): [Errno 2] No such file or directory: 'storage'
+distributed.diskutils - INFO - Found stale lock file and directory '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-37a8wf0z', purging
+distributed.diskutils - INFO - Found stale lock file and directory '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-fovkypp4', purging
+distributed.diskutils - INFO - Found stale lock file and directory '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-4ypozo5l', purging
+distributed.diskutils - ERROR - Failed to remove '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-4ypozo5l' (failed in <built-in function rmdir>): [Errno 2] No such file or directory: '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-4ypozo5l'
+distributed.diskutils - INFO - Found stale lock file and directory '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-glmkuwve', purging
+distributed.dask_worker - INFO - Exiting on signal 15
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.7.53:36651'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.7.53:43377'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.7.53:45903'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.7.53:39729'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.7.53:41817'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.7.53:46613'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.7.53:36207'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.7.53:33597'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.7.53:35657'
+distributed.nanny - INFO - Worker process 18963 was killed by signal 15
+distributed.nanny - INFO - Worker process 18971 was killed by signal 15
+distributed.nanny - INFO - Worker process 18957 was killed by signal 15
+distributed.nanny - INFO - Worker process 18973 was killed by signal 15
+distributed.nanny - INFO - Worker process 18968 was killed by signal 15
+distributed.nanny - INFO - Worker process 18954 was killed by signal 15
+distributed.nanny - INFO - Worker process 18959 was killed by signal 15
+distributed.nanny - INFO - Worker process 18956 was killed by signal 15
+distributed.nanny - INFO - Worker process 18962 was killed by signal 15
+distributed.dask_worker - INFO - End worker

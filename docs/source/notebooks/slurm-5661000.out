@@ -1,0 +1,11 @@
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.12.205.19:37874'
+slurmstepd: error: *** JOB 5661000 ON casper10 CANCELLED AT 2020-07-31T14:58:10 ***
+distributed.worker - INFO -       Start worker at:   tcp://10.12.205.19:43007
+distributed.worker - INFO -          Listening to:   tcp://10.12.205.19:43007
+distributed.worker - INFO -          dashboard at:         10.12.205.19:45866
+distributed.worker - INFO - Waiting to connect to:   tcp://10.12.205.30:32966
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -               Threads:                          4
+distributed.worker - INFO -                Memory:                   40.00 GB
+distributed.worker - INFO -       Local Directory: /glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-t2xtky17
+distributed.worker - INFO - -------------------------------------------------

@@ -1,0 +1,29 @@
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.7.43:42657'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.7.43:43943'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.7.43:45949'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.7.43:34035'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.7.43:41379'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.7.43:41851'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.7.43:33553'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.7.43:37097'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.7.43:36059'
+distributed.dask_worker - INFO - Exiting on signal 15
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.7.43:42657'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.7.43:43943'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.7.43:45949'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.7.43:34035'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.7.43:41379'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.7.43:41851'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.7.43:33553'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.7.43:37097'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.7.43:36059'
+distributed.nanny - INFO - Worker process 23367 was killed by signal 15
+distributed.nanny - INFO - Worker process 23356 was killed by signal 15
+distributed.nanny - INFO - Worker process 23358 was killed by signal 15
+distributed.nanny - INFO - Worker process 23362 was killed by signal 15
+distributed.nanny - INFO - Worker process 23365 was killed by signal 15
+distributed.nanny - INFO - Worker process 23348 was killed by signal 15
+distributed.nanny - INFO - Worker process 23347 was killed by signal 15
+distributed.nanny - INFO - Worker process 23353 was killed by signal 15
+distributed.nanny - INFO - Worker process 23346 was killed by signal 15
+distributed.dask_worker - INFO - End worker

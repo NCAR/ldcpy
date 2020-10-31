@@ -1,0 +1,29 @@
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.10.221:35401'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.10.221:38005'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.10.221:34961'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.10.221:38007'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.10.221:35407'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.10.221:38207'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.10.221:39519'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.10.221:46629'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.10.221:38281'
+distributed.dask_worker - INFO - Exiting on signal 15
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.10.221:35401'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.10.221:38005'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.10.221:34961'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.10.221:38007'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.10.221:35407'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.10.221:38207'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.10.221:39519'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.10.221:46629'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.10.221:38281'
+distributed.nanny - INFO - Worker process 9787 was killed by signal 15
+distributed.nanny - INFO - Worker process 9789 was killed by signal 15
+distributed.nanny - INFO - Worker process 9797 was killed by signal 15
+distributed.nanny - INFO - Worker process 9793 was killed by signal 15
+distributed.nanny - INFO - Worker process 9781 was killed by signal 15
+distributed.nanny - INFO - Worker process 9786 was killed by signal 15
+distributed.nanny - INFO - Worker process 9780 was killed by signal 15
+distributed.nanny - INFO - Worker process 9784 was killed by signal 15
+distributed.nanny - INFO - Worker process 9799 was killed by signal 15
+distributed.dask_worker - INFO - End worker

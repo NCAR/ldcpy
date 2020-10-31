@@ -1,0 +1,287 @@
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.10.81:41613'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.10.81:33951'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.10.81:38873'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.10.81:44029'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.10.81:35169'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.10.81:37779'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.10.81:38569'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.10.81:39745'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.10.81:34937'
+distributed.diskutils - INFO - Found stale lock file and directory '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-6zf8p96e', purging
+distributed.diskutils - INFO - Found stale lock file and directory '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-k1r4jyd3', purging
+distributed.diskutils - INFO - Found stale lock file and directory '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-ukdw19x4', purging
+distributed.diskutils - INFO - Found stale lock file and directory '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-7cldnq8w', purging
+distributed.diskutils - INFO - Found stale lock file and directory '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-xlahmkz6', purging
+distributed.diskutils - INFO - Found stale lock file and directory '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-vny5gdkz', purging
+distributed.diskutils - INFO - Found stale lock file and directory '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-2_6rkngs', purging
+distributed.diskutils - INFO - Found stale lock file and directory '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-_nue_k52', purging
+distributed.diskutils - INFO - Found stale lock file and directory '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-e99msocf', purging
+distributed.worker - INFO -       Start worker at:   tcp://10.148.10.81:43841
+distributed.worker - INFO -          Listening to:   tcp://10.148.10.81:43841
+distributed.worker - INFO -       Start worker at:   tcp://10.148.10.81:32815
+distributed.worker - INFO -          dashboard at:         10.148.10.81:38465
+distributed.worker - INFO -          Listening to:   tcp://10.148.10.81:32815
+distributed.worker - INFO - Waiting to connect to:   tcp://10.148.10.15:44001
+distributed.worker - INFO -       Start worker at:   tcp://10.148.10.81:43589
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -          dashboard at:         10.148.10.81:37789
+distributed.worker - INFO - Waiting to connect to:   tcp://10.148.10.15:44001
+distributed.worker - INFO -          Listening to:   tcp://10.148.10.81:43589
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -          dashboard at:         10.148.10.81:36275
+distributed.worker - INFO -               Threads:                          4
+distributed.worker - INFO - Waiting to connect to:   tcp://10.148.10.15:44001
+distributed.worker - INFO -                Memory:                   12.11 GB
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -       Local Directory: /glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-i_wfpnsj
+distributed.worker - INFO -               Threads:                          4
+distributed.worker - INFO -                Memory:                   12.11 GB
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -       Local Directory: /glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-po3oixzh
+distributed.worker - INFO -               Threads:                          4
+distributed.worker - INFO -                Memory:                   12.11 GB
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -       Local Directory: /glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-zntlwbht
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -       Start worker at:   tcp://10.148.10.81:45833
+distributed.worker - INFO -          Listening to:   tcp://10.148.10.81:45833
+distributed.worker - INFO -          dashboard at:         10.148.10.81:36199
+distributed.worker - INFO - Waiting to connect to:   tcp://10.148.10.15:44001
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -               Threads:                          4
+distributed.worker - INFO -                Memory:                   12.11 GB
+distributed.worker - INFO -       Local Directory: /glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-hpnet210
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -       Start worker at:   tcp://10.148.10.81:39401
+distributed.worker - INFO -          Listening to:   tcp://10.148.10.81:39401
+distributed.worker - INFO -          dashboard at:         10.148.10.81:34183
+distributed.worker - INFO - Waiting to connect to:   tcp://10.148.10.15:44001
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -               Threads:                          4
+distributed.worker - INFO -                Memory:                   12.11 GB
+distributed.worker - INFO -       Local Directory: /glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-fbvreftz
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -       Start worker at:   tcp://10.148.10.81:33583
+distributed.worker - INFO -          Listening to:   tcp://10.148.10.81:33583
+distributed.worker - INFO -       Start worker at:   tcp://10.148.10.81:36831
+distributed.worker - INFO -          dashboard at:         10.148.10.81:46625
+distributed.worker - INFO -          Listening to:   tcp://10.148.10.81:36831
+distributed.worker - INFO - Waiting to connect to:   tcp://10.148.10.15:44001
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -          dashboard at:         10.148.10.81:43611
+distributed.worker - INFO - Waiting to connect to:   tcp://10.148.10.15:44001
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -               Threads:                          4
+distributed.worker - INFO -                Memory:                   12.11 GB
+distributed.worker - INFO -       Local Directory: /glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-feeeo90o
+distributed.worker - INFO -               Threads:                          4
+distributed.worker - INFO -                Memory:                   12.11 GB
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -       Local Directory: /glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-r_boieud
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -       Start worker at:   tcp://10.148.10.81:34001
+distributed.worker - INFO -          Listening to:   tcp://10.148.10.81:34001
+distributed.worker - INFO -          dashboard at:         10.148.10.81:39571
+distributed.worker - INFO - Waiting to connect to:   tcp://10.148.10.15:44001
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -               Threads:                          4
+distributed.worker - INFO -         Registered to:   tcp://10.148.10.15:44001
+distributed.worker - INFO -                Memory:                   12.11 GB
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -       Local Directory: /glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-ankkms4g
+distributed.worker - INFO -       Start worker at:   tcp://10.148.10.81:45225
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -          Listening to:   tcp://10.148.10.81:45225
+distributed.worker - INFO -          dashboard at:         10.148.10.81:38589
+distributed.worker - INFO - Waiting to connect to:   tcp://10.148.10.15:44001
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -               Threads:                          4
+distributed.core - INFO - Starting established connection
+distributed.worker - INFO -                Memory:                   12.11 GB
+distributed.worker - INFO -       Local Directory: /glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-j0q1y04c
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -         Registered to:   tcp://10.148.10.15:44001
+distributed.worker - INFO - -------------------------------------------------
+distributed.core - INFO - Starting established connection
+distributed.worker - INFO -         Registered to:   tcp://10.148.10.15:44001
+distributed.worker - INFO - -------------------------------------------------
+distributed.core - INFO - Starting established connection
+distributed.worker - INFO -         Registered to:   tcp://10.148.10.15:44001
+distributed.worker - INFO - -------------------------------------------------
+distributed.core - INFO - Starting established connection
+distributed.worker - INFO -         Registered to:   tcp://10.148.10.15:44001
+distributed.worker - INFO - -------------------------------------------------
+distributed.core - INFO - Starting established connection
+distributed.worker - INFO -         Registered to:   tcp://10.148.10.15:44001
+distributed.worker - INFO - -------------------------------------------------
+distributed.core - INFO - Starting established connection
+distributed.worker - INFO -         Registered to:   tcp://10.148.10.15:44001
+distributed.worker - INFO - -------------------------------------------------
+distributed.core - INFO - Starting established connection
+distributed.worker - INFO -         Registered to:   tcp://10.148.10.15:44001
+distributed.worker - INFO - -------------------------------------------------
+distributed.core - INFO - Starting established connection
+distributed.worker - INFO -         Registered to:   tcp://10.148.10.15:44001
+distributed.worker - INFO - -------------------------------------------------
+distributed.core - INFO - Starting established connection
+distributed.worker - INFO - Can't find dependencies for key ('nanmax-aggregate-20a31ca26f54e65bf710fb7a7c7c70bf',)
+distributed.worker - INFO - Dependent not found: ('nanmax-nanmax-aggregate-20a31ca26f54e65bf710fb7a7c7c70bf',) 0 .  Asking scheduler
+distributed.worker - INFO - Can't find dependencies for key ('nanmax-aggregate-20a31ca26f54e65bf710fb7a7c7c70bf',)
+distributed.worker - INFO - Dependent not found: ('nanmax-nanmax-aggregate-20a31ca26f54e65bf710fb7a7c7c70bf',) 1 .  Asking scheduler
+distributed.worker - WARNING - Worker is at 80% memory usage. Pausing worker.  Process memory: 9.78 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 80% memory usage. Pausing worker.  Process memory: 9.69 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 80% memory usage. Pausing worker.  Process memory: 9.70 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 80% memory usage. Pausing worker.  Process memory: 9.72 GB -- Worker memory limit: 12.11 GB
+distributed.worker - INFO - Failed to put key in memory
+Traceback (most recent call last):
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/worker.py", line 1671, in transition_executing_done
+    self.put_key_in_memory(key, value, transition=False)
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/worker.py", line 1894, in put_key_in_memory
+    self.data[key] = value
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/zict/buffer.py", line 87, in __setitem__
+    self.fast[key] = value
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/zict/lru.py", line 70, in __setitem__
+    self.evict()
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/zict/lru.py", line 89, in evict
+    cb(k, v)
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/zict/buffer.py", line 60, in fast_to_slow
+    self.slow[key] = value
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/zict/func.py", line 41, in __setitem__
+    self.d[key] = self.dump(value)
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/zict/file.py", line 79, in __setitem__
+    with open(os.path.join(self.directory, _safe_key(key)), "wb") as f:
+FileNotFoundError: [Errno 2] No such file or directory: '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-i_wfpnsj/storage/%28%27concatenate-1ef72f604929ac538a79fda0156ae2c1%27%2C%206%2C%206%2C%200%2C%200%29'
+distributed.worker - INFO - Failed to put key in memory
+Traceback (most recent call last):
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/worker.py", line 1671, in transition_executing_done
+    self.put_key_in_memory(key, value, transition=False)
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/worker.py", line 1894, in put_key_in_memory
+    self.data[key] = value
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/zict/buffer.py", line 87, in __setitem__
+    self.fast[key] = value
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/zict/lru.py", line 70, in __setitem__
+    self.evict()
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/zict/lru.py", line 89, in evict
+    cb(k, v)
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/zict/buffer.py", line 60, in fast_to_slow
+    self.slow[key] = value
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/zict/func.py", line 41, in __setitem__
+    self.d[key] = self.dump(value)
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/zict/file.py", line 79, in __setitem__
+    with open(os.path.join(self.directory, _safe_key(key)), "wb") as f:
+FileNotFoundError: [Errno 2] No such file or directory: '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-i_wfpnsj/storage/%28%27concatenate-1ef72f604929ac538a79fda0156ae2c1%27%2C%206%2C%2013%2C%200%2C%200%29'
+distributed.worker - WARNING - Worker is at 80% memory usage. Pausing worker.  Process memory: 9.69 GB -- Worker memory limit: 12.11 GB
+distributed.worker - INFO - Failed to put key in memory
+Traceback (most recent call last):
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/worker.py", line 1671, in transition_executing_done
+    self.put_key_in_memory(key, value, transition=False)
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/worker.py", line 1894, in put_key_in_memory
+    self.data[key] = value
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/zict/buffer.py", line 87, in __setitem__
+    self.fast[key] = value
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/zict/lru.py", line 70, in __setitem__
+    self.evict()
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/zict/lru.py", line 89, in evict
+    cb(k, v)
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/zict/buffer.py", line 60, in fast_to_slow
+    self.slow[key] = value
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/zict/func.py", line 41, in __setitem__
+    self.d[key] = self.dump(value)
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/zict/file.py", line 79, in __setitem__
+    with open(os.path.join(self.directory, _safe_key(key)), "wb") as f:
+FileNotFoundError: [Errno 2] No such file or directory: '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-i_wfpnsj/storage/%28%27concatenate-1ef72f604929ac538a79fda0156ae2c1%27%2C%206%2C%2018%2C%200%2C%200%29'
+distributed.worker - INFO - Failed to put key in memory
+Traceback (most recent call last):
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/worker.py", line 1671, in transition_executing_done
+    self.put_key_in_memory(key, value, transition=False)
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/worker.py", line 1894, in put_key_in_memory
+    self.data[key] = value
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/zict/buffer.py", line 87, in __setitem__
+    self.fast[key] = value
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/zict/lru.py", line 70, in __setitem__
+    self.evict()
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/zict/lru.py", line 89, in evict
+    cb(k, v)
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/zict/buffer.py", line 60, in fast_to_slow
+    self.slow[key] = value
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/zict/func.py", line 41, in __setitem__
+    self.d[key] = self.dump(value)
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/zict/file.py", line 79, in __setitem__
+    with open(os.path.join(self.directory, _safe_key(key)), "wb") as f:
+FileNotFoundError: [Errno 2] No such file or directory: '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-i_wfpnsj/storage/%28%27concatenate-1ef72f604929ac538a79fda0156ae2c1%27%2C%206%2C%2023%2C%200%2C%200%29'
+distributed.worker - INFO - Failed to put key in memory
+Traceback (most recent call last):
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/worker.py", line 1671, in transition_executing_done
+    self.put_key_in_memory(key, value, transition=False)
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/worker.py", line 1894, in put_key_in_memory
+    self.data[key] = value
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/zict/buffer.py", line 87, in __setitem__
+    self.fast[key] = value
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/zict/lru.py", line 70, in __setitem__
+    self.evict()
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/zict/lru.py", line 89, in evict
+    cb(k, v)
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/zict/buffer.py", line 60, in fast_to_slow
+    self.slow[key] = value
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/zict/func.py", line 41, in __setitem__
+    self.d[key] = self.dump(value)
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/zict/file.py", line 79, in __setitem__
+    with open(os.path.join(self.directory, _safe_key(key)), "wb") as f:
+FileNotFoundError: [Errno 2] No such file or directory: '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-i_wfpnsj/storage/%28%27concatenate-1ef72f604929ac538a79fda0156ae2c1%27%2C%206%2C%2029%2C%200%2C%200%29'
+distributed.worker - WARNING - Worker is at 79% memory usage. Resuming worker. Process memory: 9.68 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 80% memory usage. Pausing worker.  Process memory: 9.73 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 85% memory usage. Pausing worker.  Process memory: 10.35 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 78% memory usage. Resuming worker. Process memory: 9.53 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 82% memory usage. Pausing worker.  Process memory: 10.03 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 78% memory usage. Resuming worker. Process memory: 9.51 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 86% memory usage. Pausing worker.  Process memory: 10.43 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 82% memory usage. Pausing worker.  Process memory: 10.04 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 77% memory usage. Resuming worker. Process memory: 9.41 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 78% memory usage. Resuming worker. Process memory: 9.51 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 82% memory usage. Pausing worker.  Process memory: 9.95 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 76% memory usage. Resuming worker. Process memory: 9.32 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 78% memory usage. Resuming worker. Process memory: 9.54 GB -- Worker memory limit: 12.11 GB
+distributed.worker - INFO - Failed to put key in memory
+Traceback (most recent call last):
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/worker.py", line 1671, in transition_executing_done
+    self.put_key_in_memory(key, value, transition=False)
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/worker.py", line 1894, in put_key_in_memory
+    self.data[key] = value
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/zict/buffer.py", line 87, in __setitem__
+    self.fast[key] = value
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/zict/lru.py", line 70, in __setitem__
+    self.evict()
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/zict/lru.py", line 89, in evict
+    cb(k, v)
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/zict/buffer.py", line 60, in fast_to_slow
+    self.slow[key] = value
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/zict/func.py", line 41, in __setitem__
+    self.d[key] = self.dump(value)
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/zict/file.py", line 79, in __setitem__
+    with open(os.path.join(self.directory, _safe_key(key)), "wb") as f:
+FileNotFoundError: [Errno 2] No such file or directory: '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-zntlwbht/storage/%28%27concatenate-1ef72f604929ac538a79fda0156ae2c1%27%2C%206%2C%204%2C%200%2C%200%29'
+distributed.worker - WARNING - Worker is at 80% memory usage. Pausing worker.  Process memory: 9.73 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 80% memory usage. Pausing worker.  Process memory: 9.70 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 79% memory usage. Resuming worker. Process memory: 9.68 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 80% memory usage. Pausing worker.  Process memory: 9.75 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 83% memory usage. Pausing worker.  Process memory: 10.05 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 79% memory usage. Resuming worker. Process memory: 9.64 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 81% memory usage. Pausing worker.  Process memory: 9.84 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 82% memory usage. Pausing worker.  Process memory: 9.98 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 78% memory usage. Resuming worker. Process memory: 9.55 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 80% memory usage. Pausing worker.  Process memory: 9.69 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 85% memory usage. Pausing worker.  Process memory: 10.41 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 76% memory usage. Resuming worker. Process memory: 9.27 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 81% memory usage. Pausing worker.  Process memory: 9.81 GB -- Worker memory limit: 12.11 GB
+distributed.dask_worker - INFO - Exiting on signal 15
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.10.81:41613'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.10.81:33951'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.10.81:38873'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.10.81:44029'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.10.81:35169'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.10.81:37779'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.10.81:38569'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.10.81:39745'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.10.81:34937'
+/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/multiprocessing/semaphore_tracker.py:144: UserWarning: semaphore_tracker: There appear to be 54 leaked semaphores to clean up at shutdown
+  len(cache))

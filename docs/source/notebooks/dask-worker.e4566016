@@ -1,0 +1,164 @@
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.10.222:40757'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.10.222:41133'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.10.222:40579'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.10.222:38513'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.10.222:37873'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.10.222:35715'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.10.222:44527'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.10.222:42755'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.10.222:37797'
+distributed.diskutils - INFO - Found stale lock file and directory '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-yfmi4kbc', purging
+distributed.diskutils - INFO - Found stale lock file and directory '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-phwc46q1', purging
+distributed.diskutils - INFO - Found stale lock file and directory '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-qmu90jzo', purging
+distributed.diskutils - INFO - Found stale lock file and directory '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-56r2fhsa', purging
+distributed.diskutils - INFO - Found stale lock file and directory '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-__b3_9wh', purging
+distributed.diskutils - INFO - Found stale lock file and directory '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-0dh_5zd0', purging
+distributed.diskutils - INFO - Found stale lock file and directory '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-tkbpvcml', purging
+distributed.diskutils - INFO - Found stale lock file and directory '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-goz60ha6', purging
+distributed.diskutils - INFO - Found stale lock file and directory '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-7473jclr', purging
+distributed.diskutils - INFO - Found stale lock file and directory '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-8eygau8_', purging
+distributed.diskutils - INFO - Found stale lock file and directory '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-10bbgg88', purging
+distributed.diskutils - INFO - Found stale lock file and directory '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-2g1osah6', purging
+distributed.diskutils - INFO - Found stale lock file and directory '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-x8heiin0', purging
+distributed.diskutils - INFO - Found stale lock file and directory '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-ngbqkptj', purging
+distributed.diskutils - INFO - Found stale lock file and directory '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-kyczq_h9', purging
+distributed.diskutils - INFO - Found stale lock file and directory '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-9zy4b5nn', purging
+distributed.diskutils - INFO - Found stale lock file and directory '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-ojba6yxx', purging
+distributed.worker - INFO -       Start worker at:  tcp://10.148.10.222:45343
+/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/contextlib.py:119: UserWarning: Creating scratch directories is taking a surprisingly long time. This is often due to running workers on a network file system. Consider specifying a local-directory to point workers to write scratch data to a local disk.
+  next(self.gen)
+distributed.worker - INFO -       Start worker at:  tcp://10.148.10.222:34655
+distributed.worker - INFO -          Listening to:  tcp://10.148.10.222:45343
+distributed.worker - INFO -          Listening to:  tcp://10.148.10.222:34655
+distributed.worker - INFO -          dashboard at:        10.148.10.222:36931
+distributed.worker - INFO -          dashboard at:        10.148.10.222:44575
+distributed.worker - INFO - Waiting to connect to:   tcp://10.148.10.15:46557
+distributed.worker - INFO - Waiting to connect to:   tcp://10.148.10.15:46557
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -       Start worker at:  tcp://10.148.10.222:45029
+distributed.worker - INFO -       Start worker at:  tcp://10.148.10.222:38747
+distributed.worker - INFO -          Listening to:  tcp://10.148.10.222:45029
+distributed.worker - INFO -               Threads:                          4
+distributed.worker - INFO -               Threads:                          4
+distributed.worker - INFO -          dashboard at:        10.148.10.222:33629
+distributed.worker - INFO -                Memory:                   12.11 GB
+distributed.worker - INFO -                Memory:                   12.11 GB
+distributed.worker - INFO -          Listening to:  tcp://10.148.10.222:38747
+distributed.worker - INFO -       Local Directory: /glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-uk2ul63m
+distributed.worker - INFO - Waiting to connect to:   tcp://10.148.10.15:46557
+distributed.worker - INFO -       Local Directory: /glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-4xga557n
+distributed.worker - INFO -          dashboard at:        10.148.10.222:34409
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO - Waiting to connect to:   tcp://10.148.10.15:46557
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -               Threads:                          4
+distributed.worker - INFO -                Memory:                   12.11 GB
+distributed.worker - INFO -               Threads:                          4
+distributed.worker - INFO -       Local Directory: /glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-ff4lh2k7
+distributed.worker - INFO -                Memory:                   12.11 GB
+distributed.worker - INFO -       Local Directory: /glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-io90yzb9
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -       Start worker at:  tcp://10.148.10.222:42999
+distributed.worker - INFO -          Listening to:  tcp://10.148.10.222:42999
+distributed.worker - INFO -          dashboard at:        10.148.10.222:35197
+distributed.worker - INFO - Waiting to connect to:   tcp://10.148.10.15:46557
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -               Threads:                          4
+distributed.worker - INFO -                Memory:                   12.11 GB
+distributed.worker - INFO -       Local Directory: /glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-u0o6qbr3
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -         Registered to:   tcp://10.148.10.15:46557
+distributed.worker - INFO - -------------------------------------------------
+distributed.core - INFO - Starting established connection
+distributed.worker - INFO -         Registered to:   tcp://10.148.10.15:46557
+distributed.worker - INFO - -------------------------------------------------
+distributed.core - INFO - Starting established connection
+distributed.worker - INFO -       Start worker at:  tcp://10.148.10.222:34621
+distributed.worker - INFO -          Listening to:  tcp://10.148.10.222:34621
+distributed.worker - INFO -          dashboard at:        10.148.10.222:39245
+distributed.worker - INFO - Waiting to connect to:   tcp://10.148.10.15:46557
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -               Threads:                          4
+distributed.worker - INFO -       Start worker at:  tcp://10.148.10.222:40195
+distributed.worker - INFO -                Memory:                   12.11 GB
+distributed.worker - INFO -       Local Directory: /glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-s0f74apr
+distributed.worker - INFO -          Listening to:  tcp://10.148.10.222:40195
+distributed.worker - INFO -          dashboard at:        10.148.10.222:45143
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO - Waiting to connect to:   tcp://10.148.10.15:46557
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -         Registered to:   tcp://10.148.10.15:46557
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -               Threads:                          4
+distributed.worker - INFO -                Memory:                   12.11 GB
+distributed.worker - INFO -       Local Directory: /glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-nveydjl3
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -       Start worker at:  tcp://10.148.10.222:38241
+distributed.worker - INFO -          Listening to:  tcp://10.148.10.222:38241
+distributed.worker - INFO -          dashboard at:        10.148.10.222:36251
+distributed.core - INFO - Starting established connection
+distributed.worker - INFO - Waiting to connect to:   tcp://10.148.10.15:46557
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -               Threads:                          4
+distributed.worker - INFO -                Memory:                   12.11 GB
+distributed.worker - INFO -       Local Directory: /glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-rauno3oh
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -         Registered to:   tcp://10.148.10.15:46557
+distributed.worker - INFO - -------------------------------------------------
+distributed.core - INFO - Starting established connection
+distributed.worker - INFO -       Start worker at:  tcp://10.148.10.222:38749
+distributed.worker - INFO -          Listening to:  tcp://10.148.10.222:38749
+distributed.worker - INFO -          dashboard at:        10.148.10.222:35463
+distributed.worker - INFO - Waiting to connect to:   tcp://10.148.10.15:46557
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -               Threads:                          4
+distributed.worker - INFO -                Memory:                   12.11 GB
+distributed.worker - INFO -       Local Directory: /glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-y03jqf5v
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -         Registered to:   tcp://10.148.10.15:46557
+distributed.worker - INFO - -------------------------------------------------
+distributed.core - INFO - Starting established connection
+distributed.worker - INFO -         Registered to:   tcp://10.148.10.15:46557
+distributed.worker - INFO - -------------------------------------------------
+distributed.core - INFO - Starting established connection
+distributed.worker - INFO -         Registered to:   tcp://10.148.10.15:46557
+distributed.worker - INFO - -------------------------------------------------
+distributed.core - INFO - Starting established connection
+distributed.worker - INFO -         Registered to:   tcp://10.148.10.15:46557
+distributed.worker - INFO - -------------------------------------------------
+distributed.core - INFO - Starting established connection
+distributed.worker - INFO -         Registered to:   tcp://10.148.10.15:46557
+distributed.worker - INFO - -------------------------------------------------
+distributed.core - INFO - Starting established connection
+distributed.utils_perf - INFO - full garbage collection released 221.18 MB from 721 reference cycles (threshold: 10.00 MB)
+distributed.worker - INFO - Connection to scheduler broken.  Reconnecting...
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -         Registered to:   tcp://10.148.10.15:46557
+distributed.worker - INFO - -------------------------------------------------
+distributed.core - INFO - Starting established connection
+distributed.worker - INFO - Connection to scheduler broken.  Reconnecting...
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -         Registered to:   tcp://10.148.10.15:46557
+distributed.worker - INFO - -------------------------------------------------
+distributed.core - INFO - Starting established connection
+distributed.worker - WARNING - Could not find data: {"('mean_chunk-8f960eb99bc4de4350ad6d92d3d212d9', 1)": ['tcp://10.148.11.80:38413']} on workers: [] (who_has: {"('mean_combine-partial-e7a71a944b4b86d01872bc3dca5aa0fd', 0)": ['tcp://10.148.11.80:46325'], "('mean_chunk-260c4b72341a4e82361f53f406b5b306', 6)": ['tcp://10.148.11.80:44667'], "('mean_combine-partial-d7cf199e51268e5d26965a5456a4c742', 0)": ['tcp://10.148.11.80:43617'], "('mean_chunk-d7b54a78c2ffdbac018f9becd2619a38', 7)": ['tcp://10.148.11.80:43617'], "('mean_chunk-147e6e9ba21821a0fc864ffc2bd4db09', 0)": ['tcp://10.148.11.80:38413'], "('mean_chunk-2a036b9fdd9c0e6d7a364d45beefb0e6', 0)": ['tcp://10.148.11.80:43585'], "('mean_chunk-b099cdc103bdbf582cf67afda507661e', 6)": ['tcp://10.148.11.80:46325'], "('mean_chunk-b280e5ec3beebac394f0658412fb2389', 50)": ['tcp://10.148.11.80:44975'], "('mean_chunk-0e1764b8f7feaed89616a715680df04d', 0)": ['tcp://10.148.11.80:44975'], "('mean_combine-partial-a5e9f5c36a4e475616ad693c99f208ea', 0)": ['tcp://10.148.11.80:44975'], "('mean_chunk-b3047850b581ad76788adc35446de295', 33)": ['tcp://10.148.11.80:44975'], "('mean_chunk-280d643f270db210e41f0c87906a4e7f', 0)": ['tcp://10.148.11.80:46325'], "('mean_chunk-5ae0b640335c0249d8d930c697f887c4', 7)": ['tcp://10.148.11.80:44667'], "('mean_combine-partial-8614178ae45d9b8d1d0b8b6c18a7370d', 0)": ['tcp://10.148.11.80:46325'], "('mean_chunk-2c2630d8242b78a1104ea055d127d51d', 1)": ['tcp://10.148.11.80:43617'], "('mean_chunk-b68480f247a276127675160855fa5a3d', 7)": ['tcp://10.148.11.80:46325'], "('mean_chunk-e20153cc6580e828a7ac4449774a4c1e', 6)": ['tcp://10.148.11.80:43585'], "('mean_combine-partial-0f85ef2e7ec1aacfdd673d65882d7352', 0)": ['tcp://10.148.11.80:44975'], "('mean_chunk-03048fd5b0b4b224ddaac450cee3f3a0', 0)": ['tcp://10.148.11.80:43585'], "('mean_combine-partial-a99bf4964ff3ae71abcfe0658026c0b3', 0)": ['tcp://10.148.11.80:38413'], "('mean_chunk-7eb552fa0e0d841ba201a2441f0d3adb', 7)": ['tcp://10.148.11.80:38413'], "('mean_chunk-33f2bb57d410b377ed7f399328fe14fd', 6)": ['tcp://10.148.11.80:44667'], "('mean_chunk-93d1d3abcdc2e02ef453497c3c60844a', 7)": ['tcp://10.148.11.80:43585'], "('mean_chunk-54779284e73d620008c932a7340fe83e', 6)": ['tcp://10.148.11.80:46325'], "('mean_chunk-f3de81730247c83c7abd082e02a9945b', 6)": ['tcp://10.148.11.80:44667'], "('mean_chunk-0901ec901776244dcb082e9abc1284fc', 6)": ['tcp://10.148.11.80:43617'], "('mean_chunk-22fff0ee558d116e59b81afd159cc030', 6)": ['tcp://10.148.11.80:38413'], "('mean_combine-partial-e66dee2e7d0c4e88cfb3baad7909053d', 0)": ['tcp://10.148.11.80:43617'], "('mean_chunk-144b6d366ef9128e14c94b0901404b47', 1)": ['tcp://10.148.11.80:43585'], "('mean_chunk-07c432d384bbcfe90858b91e8c4f6ffd', 1)": ['tcp://10.148.11.80:43585'], "('mean_chunk-5a59021099c5318fc861aa4889011687', 6)": ['tcp://10.148.11.80:44667'], "('mean_chunk-8f960eb99bc4de4350ad6d92d3d212d9', 7)": ['tcp://10.148.11.80:44667'], "('mean_chunk-0c09fde416886dd51d0fcd56e5749483', 1)": ['tcp://10.148.11.80:38413'], "('mean_chunk-c8e9b15ad6022ded13a3c3ddd3dd7eee', 6)": ['tcp://10.148.11.80:46325'], "('mean_chunk-2c2630d8242b78a1104ea055d127d51d', 6)": ['tcp://10.148.11.80:43585'], "('mean_chunk-4af846db80b6a0ca2f59b82ac531acd6', 7)": ['tcp://10.148.11.80:38413'], "('mean_chunk-b7d2eee69f0b9255d035bbb0875a86e4', 6)": ['tcp://10.148.11.80:38413'], "('mean_chunk-e72123da2ee07f8e1302965285ac50e4', 7)": ['tcp://10.148.11.80:44975'], "('mean_chunk-2c95d33328a36a108322d1dcb8b6cc08', 1)": ['tcp://10.148.11.80:44975'], "('mean_combine-partial-65344bd2aca3952c506dcc71cd0e14b1', 0)": ['tcp://10.148.11.80:43585'], "('mean_chunk-454a6aa2efe1b9ac311bd4f85c841088', 7)": ['tcp://10.148.11.80:44667'], "('mean_combine-partial-b3965d9f4625f672812f12b8680824d4', 0)": ['tcp://10.148.11.80:44975'], "('mean_chunk-230a60e23fb7402d7fbf780922fdad21', 1)": ['tcp://10.148.11.80:46325'], "('mean_chunk-0651015b6058b14f61a05a2e048fd03f', 6)": ['tcp://10.148.11.80:44975'], "('mean_chunk-6c6c04cf1e0951ad6d0262e718d18493', 6)": ['tcp://10.148.11.80:44667'], "('mean_chunk-9882c75c90f886e8c70cd6fd76e86aba', 7)": ['tcp://10.148.11.80:38413'], "('mean_chunk-6216c12d535e7b2ea66bccb3ce29852c', 7)": ['tcp://10.148.11.80:44667'], "('mean_chunk-667cae99659ff817dc631d47529962d8', 6)": ['tcp://10.148.11.80:38413'], "('mean_combine-partial-eba014d7eb2137c48ab78457cbbd6937', 0)": ['tcp://10.148.11.80:38413'], "('mean_combine-partial-5ea5bba0bdea7b8b50b84c7f86364282', 0)": ['tcp://10.148.11.80:43617'], "('mean_chunk-a56e4364bda28397f48ae38bd99a690c', 7)": ['tcp://10.148.11.80:43617'], "('mean_chunk-f348b4a53532849c0f8c1ebf6bf97180', 7)": ['tcp://10.148.11.80:44667'], "('mean_combine-partial-0074a4a4ada5e4633ad8e6aa72cc3cc9', 0)": ['tcp://10.148.11.80:43617'], "('mean_chunk-6464ca2b5fa8ea71be7c3e9a955d1f01', 7)": ['tcp://10.148.11.80:44667'], "('mean_chunk-8f960eb99bc4de4350ad6d92d3d212d9', 1)": ['tcp://10.148.11.80:38413'], "('mean_chunk-e891a4d7d7e95c2faf51ec834fa8e694', 6)": ['tcp://10.148.11.80:43585'], "('mean_combine-partial-363a3568bc4b2bce792265eb7587cd71', 0)": ['tcp://10.148.11.80:43617']})
+distributed.worker - WARNING - Could not find data: {"('mean_chunk-8f960eb99bc4de4350ad6d92d3d212d9', 2)": ['tcp://10.148.11.80:43585']} on workers: [] (who_has: {"('mean_combine-partial-6df18f2c145dbed6618a5c4e4fbf1c7c', 0)": ['tcp://10.148.11.80:46325'], "('mean_combine-partial-3edaa2397cc4bf7a11cc4809785dd960', 0)": ['tcp://10.148.11.80:44667'], "('mean_chunk-811eafa676c41d2ac85a02928100d130', 6)": ['tcp://10.148.11.80:46325'], "('mean_chunk-5a59021099c5318fc861aa4889011687', 45)": ['tcp://10.148.11.80:44667'], "('mean_chunk-49ae596dd1ca75ad3014c999d9294f8c', 7)": ['tcp://10.148.11.80:46325'], "('mean_chunk-669904cc5e962726d11205fd008b2e6d', 6)": ['tcp://10.148.11.80:43585'], "('mean_chunk-ac844e9dcbe0d06352245edbba3fb20e', 7)": ['tcp://10.148.11.80:44667'], "('mean_combine-partial-cc75aa55f90451db27c0f509f8e7bfa2', 0)": ['tcp://10.148.11.80:43585'], "('mean_combine-partial-33b408d1924adcc644d5d2fc2adc466f', 0)": ['tcp://10.148.11.80:43585'], "('mean_chunk-8f304de3cc07aacf087016b2c89a7e57', 6)": ['tcp://10.148.11.80:44975'], "('mean_chunk-2c2630d8242b78a1104ea055d127d51d', 0)": ['tcp://10.148.11.80:44667'], "('mean_chunk-c1767a8a144c2b96b4ca612f1d96da89', 6)": ['tcp://10.148.11.80:43585'], "('mean_chunk-e29c584f6b01f48fa6ce78a9b1b0bb4f', 7)": ['tcp://10.148.11.80:44667'], "('mean_combine-partial-699652367bd197f7acd8d078d059b186', 0)": ['tcp://10.148.11.80:38413'], "('mean_chunk-d0e555fbde1b339ae7c882ec7d2e1bbb', 6)": ['tcp://10.148.11.80:44667'], "('mean_chunk-b0eeba568b916d50040d3a752b0fbb58', 33)": ['tcp://10.148.11.80:46325'], "('mean_chunk-8f960eb99bc4de4350ad6d92d3d212d9', 2)": ['tcp://10.148.11.80:43585'], "('mean_combine-partial-02d439bd95532be785626ea8deb89119', 0)": ['tcp://10.148.11.80:38413'], "('mean_chunk-bd0f7678273040be861816e7bd80996b', 7)": ['tcp://10.148.11.80:44667'], "('mean_chunk-b0eeba568b916d50040d3a752b0fbb58', 6)": ['tcp://10.148.11.80:44667'], "('mean_chunk-049fa269f24a54cde4ccf5e638428418', 1)": ['tcp://10.148.11.80:44975'], "('mean_chunk-18bea244660257a187376279aecd863b', 6)": ['tcp://10.148.11.80:44975'], "('mean_chunk-1b30ab7fe06b2196cf85b1b2e21f7f28', 6)": ['tcp://10.148.11.80:46325'], "('mean_chunk-7718e57c191e5d5ec017d49b8cc1a673', 7)": ['tcp://10.148.11.80:43617'], "('mean_chunk-efe0a40ec0ffaa5ba895951adb0fbe59', 3)": ['tcp://10.148.11.80:38413'], "('mean_combine-partial-5902e13c3c9cda817457790308129aac', 0)": ['tcp://10.148.11.80:44667'], "('mean_chunk-7f7bdfc106abf62e018ff43d145bc7a9', 7)": ['tcp://10.148.11.80:44975'], "('mean_combine-partial-73cfa674b713353fa40c1d8fd81bd9eb', 0)": ['tcp://10.148.11.80:43585'], "('mean_chunk-1b30ab7fe06b2196cf85b1b2e21f7f28', 0)": ['tcp://10.148.11.80:43585'], "('mean_chunk-1eeee5dc774f3592464bc790b3e12813', 7)": ['tcp://10.148.11.80:44667'], "('mean_combine-partial-c6fab3994ab02246c04e29dc6ebcea4a', 0)": ['tcp://10.148.11.80:38413'], "('mean_chunk-0e32703c272d6c685bab2879f888bff8', 7)": ['tcp://10.148.11.80:46325'], "('mean_combine-partial-1ed0b7bf36f670776dc9f6e25faf0692', 0)": ['tcp://10.148.11.80:43617'], "('mean_chunk-b0d89a6e0f8092803b59a8e8f0d38f33', 6)": ['tcp://10.148.11.80:46325'], "('mean_chunk-593c0ebdb593c24c38987532176fb190', 6)": ['tcp://10.148.11.80:44975'], "('mean_chunk-19e9eab2f85bf476aa3df2452382cb86', 7)": ['tcp://10.148.11.80:46325'], "('mean_chunk-0b99208bb91c29a0fb4509962acb6bff', 1)": ['tcp://10.148.11.80:46325'], "('mean_chunk-2cc1d1da59f21a560a71d53fdd8e8407', 6)": ['tcp://10.148.11.80:44975'], "('mean_chunk-19b92f5efe03ae422f1fd8ddeee74488', 0)": ['tcp://10.148.11.80:38413'], "('mean_chunk-144b6d366ef9128e14c94b0901404b47', 6)": ['tcp://10.148.11.80:43585'], "('mean_chunk-20ca828cadb3af69808dd3c815036049', 6)": ['tcp://10.148.11.80:44975'], "('mean_combine-partial-03ef4cf14644e09cbacba456185c54bd', 0)": ['tcp://10.148.11.80:44975'], "('mean_chunk-e3df5836c9fc262d258513563f96e24a', 6)": ['tcp://10.148.11.80:38413'], "('mean_chunk-c5efc0b54995346fa46bc12322bd5acb', 6)": ['tcp://10.148.11.80:44975'], "('mean_chunk-d4389c7dd0c3034cca85c29bffc62589', 7)": ['tcp://10.148.11.80:43585'], "('mean_chunk-df25df134d6e6515c1f64bc5c6bf6d5f', 3)": ['tcp://10.148.11.80:46325'], "('mean_chunk-725275ad14a1668822f860242a44358c', 6)": ['tcp://10.148.11.80:43585'], "('mean_chunk-9129ca9c9d48bf3deebb1afdbe9e1356', 1)": ['tcp://10.148.11.80:44667'], "('mean_chunk-17550172eec6da0e62c4d9f043254259', 6)": ['tcp://10.148.11.80:44975'], "('mean_chunk-08c144958f839870361d34f6d40e854d', 0)": ['tcp://10.148.11.80:43617'], "('mean_combine-partial-85eb6fbe9b646b4371ea48a1d609df6c', 0)": ['tcp://10.148.11.80:38413'], "('mean_chunk-e938bc5727d9a9bccb29df59c79a5862', 7)": ['tcp://10.148.11.80:46325'], "('mean_combine-partial-5959e363b91ebcf8c080264672d5ceee', 0)": ['tcp://10.148.11.80:43617'], "('mean_chunk-f7c37fca0fc7f3810013e86236bf4ffd', 6)": ['tcp://10.148.11.80:43585'], "('mean_chunk-07a1aa1512cd9e1fcf0027c05daa8577', 1)": ['tcp://10.148.11.80:43585'], "('mean_combine-partial-e2c3e4e3215c63d264aa010f3dfcfbce', 0)": ['tcp://10.148.11.80:44975'], "('mean_chunk-e147f1842c9e9117d151d98a4f4a43e7', 7)": ['tcp://10.148.11.80:46325'], "('mean_chunk-c8aca8a047f7ac1fb8963d88a6dfa74c', 7)": ['tcp://10.148.11.80:43617'], "('mean_chunk-e147555739d47ee000ee9f456c422866', 7)": ['tcp://10.148.11.80:44667'], "('mean_combine-partial-21cf13e773bbfbdfb4bc122ecc77b780', 0)": ['tcp://10.148.11.80:38413'], "('mean_combine-partial-fc0a59394168c277e186af849f72c49a', 10)": ['tcp://10.148.11.80:46325'], "('mean_chunk-0caed0808fb81f4fa35bb11528e0ffa4', 6)": ['tcp://10.148.11.80:44975'], "('mean_chunk-0caed0808fb81f4fa35bb11528e0ffa4', 0)": ['tcp://10.148.11.80:44667'], "('mean_chunk-b003b96b891f6dc5f13e283e0a05403e', 7)": ['tcp://10.148.11.80:38413'], "('mean_chunk-0d8b16ab0bc988993745aa28956c322a', 6)": ['tcp://10.148.11.80:43585'], "('mean_chunk-89ca1a3914f92b9c5e3aa81a63a776cc', 7)": ['tcp://10.148.11.80:38413'], "('mean_chunk-0abdd13d4950ca0f3f3fd2456a5f6db8', 0)": ['tcp://10.148.11.80:44667'], "('mean_chunk-68015cff96e36aa04974b02ee869935e', 6)": ['tcp://10.148.11.80:43617'], "('mean_chunk-10b7b2d9232a0e08e347b7ecb17a18eb', 0)": ['tcp://10.148.11.80:43617'], "('mean_chunk-07a1aa1512cd9e1fcf0027c05daa8577', 0)": ['tcp://10.148.11.80:38413'], "('mean_chunk-24da417b6b06004d8c654b5abbdac56e', 6)": ['tcp://10.148.11.80:46325']})
+distributed.utils_perf - INFO - full garbage collection released 110.55 MB from 1156 reference cycles (threshold: 10.00 MB)
+distributed.utils_perf - INFO - full garbage collection released 110.44 MB from 1620 reference cycles (threshold: 10.00 MB)
+distributed.utils_perf - INFO - full garbage collection released 110.35 MB from 568 reference cycles (threshold: 10.00 MB)
+distributed.dask_worker - INFO - Exiting on signal 15
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.10.222:40757'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.10.222:41133'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.10.222:40579'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.10.222:38513'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.10.222:37873'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.10.222:35715'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.10.222:44527'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.10.222:42755'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.10.222:37797'
+/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/multiprocessing/semaphore_tracker.py:144: UserWarning: semaphore_tracker: There appear to be 54 leaked semaphores to clean up at shutdown
+  len(cache))

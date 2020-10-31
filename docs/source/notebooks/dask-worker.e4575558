@@ -1,0 +1,34 @@
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.7.45:45615'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.7.45:46691'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.7.45:35993'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.7.45:33051'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.7.45:42923'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.7.45:45225'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.7.45:35241'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.7.45:33269'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.7.45:45559'
+distributed.diskutils - INFO - Found stale lock file and directory '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-a0l2j16d', purging
+distributed.diskutils - INFO - Found stale lock file and directory '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-kvpiqc7c', purging
+distributed.diskutils - INFO - Found stale lock file and directory '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-prmzpd1k', purging
+distributed.diskutils - INFO - Found stale lock file and directory '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-w0t4azfo', purging
+distributed.diskutils - INFO - Found stale lock file and directory '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-86zmr4vr', purging
+distributed.dask_worker - INFO - Exiting on signal 15
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.7.45:45615'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.7.45:46691'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.7.45:35993'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.7.45:33051'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.7.45:42923'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.7.45:45225'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.7.45:35241'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.7.45:33269'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.7.45:45559'
+distributed.nanny - INFO - Worker process 33714 was killed by signal 15
+distributed.nanny - INFO - Worker process 33712 was killed by signal 15
+distributed.nanny - INFO - Worker process 33716 was killed by signal 15
+distributed.nanny - INFO - Worker process 33710 was killed by signal 15
+distributed.nanny - INFO - Worker process 33708 was killed by signal 15
+distributed.nanny - INFO - Worker process 33703 was killed by signal 15
+distributed.nanny - INFO - Worker process 33702 was killed by signal 15
+distributed.nanny - INFO - Worker process 33706 was killed by signal 15
+distributed.nanny - INFO - Worker process 33718 was killed by signal 15
+distributed.dask_worker - INFO - End worker

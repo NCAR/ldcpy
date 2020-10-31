@@ -1,0 +1,481 @@
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.10.8:37801'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.10.8:32901'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.10.8:33333'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.10.8:39439'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.10.8:44595'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.10.8:42735'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.10.8:45887'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.10.8:33893'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.10.8:36619'
+distributed.worker - INFO -       Start worker at:    tcp://10.148.10.8:34691
+distributed.worker - INFO -       Start worker at:    tcp://10.148.10.8:41219
+distributed.worker - INFO -          Listening to:    tcp://10.148.10.8:34691
+distributed.worker - INFO -          Listening to:    tcp://10.148.10.8:41219
+distributed.worker - INFO -          dashboard at:          10.148.10.8:44639
+distributed.worker - INFO - Waiting to connect to:   tcp://10.148.10.15:45903
+distributed.worker - INFO -          dashboard at:          10.148.10.8:37411
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO - Waiting to connect to:   tcp://10.148.10.15:45903
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -               Threads:                          4
+distributed.worker - INFO -                Memory:                   12.11 GB
+distributed.worker - INFO -               Threads:                          4
+distributed.worker - INFO -       Local Directory: /glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-3jbqmto3
+distributed.worker - INFO -                Memory:                   12.11 GB
+distributed.worker - INFO -       Local Directory: /glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-2z4t2z_g
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -       Start worker at:    tcp://10.148.10.8:45625
+distributed.worker - INFO -          Listening to:    tcp://10.148.10.8:45625
+distributed.worker - INFO -          dashboard at:          10.148.10.8:42281
+distributed.worker - INFO - Waiting to connect to:   tcp://10.148.10.15:45903
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -               Threads:                          4
+distributed.worker - INFO -                Memory:                   12.11 GB
+distributed.worker - INFO -       Local Directory: /glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-am1bhncb
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -         Registered to:   tcp://10.148.10.15:45903
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -       Start worker at:    tcp://10.148.10.8:36569
+distributed.worker - INFO -          Listening to:    tcp://10.148.10.8:36569
+distributed.worker - INFO -          dashboard at:          10.148.10.8:42035
+distributed.worker - INFO - Waiting to connect to:   tcp://10.148.10.15:45903
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -               Threads:                          4
+distributed.worker - INFO -                Memory:                   12.11 GB
+distributed.core - INFO - Starting established connection
+distributed.worker - INFO -       Local Directory: /glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-yat1lrno
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -         Registered to:   tcp://10.148.10.15:45903
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -       Start worker at:    tcp://10.148.10.8:41655
+distributed.worker - INFO -          Listening to:    tcp://10.148.10.8:41655
+distributed.core - INFO - Starting established connection
+distributed.worker - INFO -          dashboard at:          10.148.10.8:37875
+distributed.worker - INFO - Waiting to connect to:   tcp://10.148.10.15:45903
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -               Threads:                          4
+distributed.worker - INFO -                Memory:                   12.11 GB
+distributed.worker - INFO -       Local Directory: /glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-2dte3f5c
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -       Start worker at:    tcp://10.148.10.8:43091
+distributed.worker - INFO -          Listening to:    tcp://10.148.10.8:43091
+distributed.worker - INFO -          dashboard at:          10.148.10.8:42173
+distributed.worker - INFO - Waiting to connect to:   tcp://10.148.10.15:45903
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -               Threads:                          4
+distributed.worker - INFO -                Memory:                   12.11 GB
+distributed.worker - INFO -       Local Directory: /glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-z9sq7d26
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -       Start worker at:    tcp://10.148.10.8:36687
+distributed.worker - INFO -          Listening to:    tcp://10.148.10.8:36687
+distributed.worker - INFO -       Start worker at:    tcp://10.148.10.8:34537
+distributed.worker - INFO -          dashboard at:          10.148.10.8:37741
+distributed.worker - INFO -         Registered to:   tcp://10.148.10.15:45903
+distributed.worker - INFO -          Listening to:    tcp://10.148.10.8:34537
+distributed.worker - INFO - Waiting to connect to:   tcp://10.148.10.15:45903
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -          dashboard at:          10.148.10.8:46859
+distributed.worker - INFO - Waiting to connect to:   tcp://10.148.10.15:45903
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -               Threads:                          4
+distributed.worker - INFO -                Memory:                   12.11 GB
+distributed.worker - INFO -               Threads:                          4
+distributed.worker - INFO -       Local Directory: /glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-2z90xu8w
+distributed.worker - INFO -                Memory:                   12.11 GB
+distributed.worker - INFO -       Local Directory: /glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-79pbzzke
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO - -------------------------------------------------
+distributed.core - INFO - Starting established connection
+distributed.worker - INFO -         Registered to:   tcp://10.148.10.15:45903
+distributed.worker - INFO - -------------------------------------------------
+distributed.core - INFO - Starting established connection
+distributed.worker - INFO -         Registered to:   tcp://10.148.10.15:45903
+distributed.worker - INFO - -------------------------------------------------
+distributed.core - INFO - Starting established connection
+distributed.worker - INFO -         Registered to:   tcp://10.148.10.15:45903
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -       Start worker at:    tcp://10.148.10.8:36339
+distributed.worker - INFO -          Listening to:    tcp://10.148.10.8:36339
+distributed.worker - INFO -          dashboard at:          10.148.10.8:44429
+distributed.worker - INFO - Waiting to connect to:   tcp://10.148.10.15:45903
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -               Threads:                          4
+distributed.worker - INFO -                Memory:                   12.11 GB
+distributed.core - INFO - Starting established connection
+distributed.worker - INFO -       Local Directory: /glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-9z8tytca
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -         Registered to:   tcp://10.148.10.15:45903
+distributed.worker - INFO - -------------------------------------------------
+distributed.core - INFO - Starting established connection
+distributed.worker - INFO -         Registered to:   tcp://10.148.10.15:45903
+distributed.worker - INFO - -------------------------------------------------
+distributed.core - INFO - Starting established connection
+distributed.worker - INFO -         Registered to:   tcp://10.148.10.15:45903
+distributed.worker - INFO - -------------------------------------------------
+distributed.core - INFO - Starting established connection
+distributed.worker - ERROR - failed during get data with tcp://10.148.10.8:45625 -> tcp://10.148.10.14:41445
+Traceback (most recent call last):
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/comm/tcp.py", line 188, in read
+    n_frames = await stream.read_bytes(8)
+tornado.iostream.StreamClosedError: Stream is closed
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/worker.py", line 1249, in get_data
+    response = await comm.read(deserializers=serializers)
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/comm/tcp.py", line 208, in read
+    convert_stream_closed_error(self, e)
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/comm/tcp.py", line 123, in convert_stream_closed_error
+    raise CommClosedError("in %s: %s" % (obj, exc))
+distributed.comm.core.CommClosedError: in <closed TCP>: Stream is closed
+distributed.core - INFO - Lost connection to 'tcp://10.148.10.14:34830': in <closed TCP>: Stream is closed
+distributed.worker - ERROR - failed during get data with tcp://10.148.10.8:34537 -> tcp://10.148.10.14:41445
+Traceback (most recent call last):
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/comm/tcp.py", line 188, in read
+    n_frames = await stream.read_bytes(8)
+tornado.iostream.StreamClosedError: Stream is closed
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/worker.py", line 1249, in get_data
+    response = await comm.read(deserializers=serializers)
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/comm/tcp.py", line 208, in read
+    convert_stream_closed_error(self, e)
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/comm/tcp.py", line 123, in convert_stream_closed_error
+    raise CommClosedError("in %s: %s" % (obj, exc))
+distributed.comm.core.CommClosedError: in <closed TCP>: Stream is closed
+distributed.core - INFO - Lost connection to 'tcp://10.148.10.14:57614': in <closed TCP>: Stream is closed
+distributed.worker - ERROR - failed during get data with tcp://10.148.10.8:34537 -> tcp://10.148.10.14:35997
+Traceback (most recent call last):
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/comm/tcp.py", line 188, in read
+    n_frames = await stream.read_bytes(8)
+tornado.iostream.StreamClosedError: Stream is closed
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/worker.py", line 1249, in get_data
+    response = await comm.read(deserializers=serializers)
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/comm/tcp.py", line 208, in read
+    convert_stream_closed_error(self, e)
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/comm/tcp.py", line 121, in convert_stream_closed_error
+    raise CommClosedError("in %s: %s: %s" % (obj, exc.__class__.__name__, exc))
+distributed.comm.core.CommClosedError: in <closed TCP>: BrokenPipeError: [Errno 32] Broken pipe
+distributed.core - INFO - Lost connection to 'tcp://10.148.10.14:57780': in <closed TCP>: BrokenPipeError: [Errno 32] Broken pipe
+distributed.worker - ERROR - failed during get data with tcp://10.148.10.8:34537 -> tcp://10.148.10.99:32791
+Traceback (most recent call last):
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/comm/tcp.py", line 188, in read
+    n_frames = await stream.read_bytes(8)
+tornado.iostream.StreamClosedError: Stream is closed
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/worker.py", line 1249, in get_data
+    response = await comm.read(deserializers=serializers)
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/comm/tcp.py", line 208, in read
+    convert_stream_closed_error(self, e)
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/comm/tcp.py", line 123, in convert_stream_closed_error
+    raise CommClosedError("in %s: %s" % (obj, exc))
+distributed.comm.core.CommClosedError: in <closed TCP>: Stream is closed
+distributed.core - INFO - Lost connection to 'tcp://10.148.10.99:47140': in <closed TCP>: Stream is closed
+distributed.worker - ERROR - failed during get data with tcp://10.148.10.8:34537 -> tcp://10.148.10.99:46703
+Traceback (most recent call last):
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/comm/tcp.py", line 188, in read
+    n_frames = await stream.read_bytes(8)
+tornado.iostream.StreamClosedError: Stream is closed
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/worker.py", line 1249, in get_data
+    response = await comm.read(deserializers=serializers)
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/comm/tcp.py", line 208, in read
+    convert_stream_closed_error(self, e)
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/comm/tcp.py", line 123, in convert_stream_closed_error
+    raise CommClosedError("in %s: %s" % (obj, exc))
+distributed.comm.core.CommClosedError: in <closed TCP>: Stream is closed
+distributed.core - INFO - Lost connection to 'tcp://10.148.10.99:47166': in <closed TCP>: Stream is closed
+distributed.worker - ERROR - failed during get data with tcp://10.148.10.8:34537 -> tcp://10.148.10.99:32885
+Traceback (most recent call last):
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/comm/tcp.py", line 188, in read
+    n_frames = await stream.read_bytes(8)
+tornado.iostream.StreamClosedError: Stream is closed
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/worker.py", line 1249, in get_data
+    response = await comm.read(deserializers=serializers)
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/comm/tcp.py", line 208, in read
+    convert_stream_closed_error(self, e)
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/comm/tcp.py", line 121, in convert_stream_closed_error
+    raise CommClosedError("in %s: %s: %s" % (obj, exc.__class__.__name__, exc))
+distributed.comm.core.CommClosedError: in <closed TCP>: ConnectionResetError: [Errno 104] Connection reset by peer
+distributed.core - INFO - Lost connection to 'tcp://10.148.10.99:47128': in <closed TCP>: ConnectionResetError: [Errno 104] Connection reset by peer
+distributed.worker - ERROR - failed during get data with tcp://10.148.10.8:34537 -> tcp://10.148.10.99:45445
+Traceback (most recent call last):
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/comm/tcp.py", line 188, in read
+    n_frames = await stream.read_bytes(8)
+tornado.iostream.StreamClosedError: Stream is closed
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/worker.py", line 1249, in get_data
+    response = await comm.read(deserializers=serializers)
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/comm/tcp.py", line 208, in read
+    convert_stream_closed_error(self, e)
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/comm/tcp.py", line 121, in convert_stream_closed_error
+    raise CommClosedError("in %s: %s: %s" % (obj, exc.__class__.__name__, exc))
+distributed.comm.core.CommClosedError: in <closed TCP>: ConnectionResetError: [Errno 104] Connection reset by peer
+distributed.core - INFO - Lost connection to 'tcp://10.148.10.99:47032': in <closed TCP>: ConnectionResetError: [Errno 104] Connection reset by peer
+distributed.worker - ERROR - failed during get data with tcp://10.148.10.8:41655 -> tcp://10.148.10.14:41597
+Traceback (most recent call last):
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/comm/tcp.py", line 188, in read
+    n_frames = await stream.read_bytes(8)
+tornado.iostream.StreamClosedError: Stream is closed
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/worker.py", line 1249, in get_data
+    response = await comm.read(deserializers=serializers)
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/comm/tcp.py", line 208, in read
+    convert_stream_closed_error(self, e)
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/comm/tcp.py", line 121, in convert_stream_closed_error
+    raise CommClosedError("in %s: %s: %s" % (obj, exc.__class__.__name__, exc))
+distributed.comm.core.CommClosedError: in <closed TCP>: ConnectionResetError: [Errno 104] Connection reset by peer
+distributed.core - INFO - Lost connection to 'tcp://10.148.10.14:58924': in <closed TCP>: ConnectionResetError: [Errno 104] Connection reset by peer
+distributed.worker - WARNING - Worker is at 81% memory usage. Pausing worker.  Process memory: 9.81 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 68% memory usage. Resuming worker. Process memory: 8.35 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 81% memory usage. Pausing worker.  Process memory: 9.82 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 83% memory usage. Pausing worker.  Process memory: 10.07 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 73% memory usage. Resuming worker. Process memory: 8.94 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 79% memory usage. Resuming worker. Process memory: 9.57 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 82% memory usage. Pausing worker.  Process memory: 10.02 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 69% memory usage. Resuming worker. Process memory: 8.45 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 81% memory usage. Pausing worker.  Process memory: 9.88 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 80% memory usage. Pausing worker.  Process memory: 9.78 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 80% memory usage. Pausing worker.  Process memory: 9.69 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 72% memory usage. Resuming worker. Process memory: 8.74 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 67% memory usage. Resuming worker. Process memory: 8.18 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 59% memory usage. Resuming worker. Process memory: 7.25 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 81% memory usage. Pausing worker.  Process memory: 9.81 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 71% memory usage. Resuming worker. Process memory: 8.63 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 80% memory usage. Pausing worker.  Process memory: 9.76 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 75% memory usage. Resuming worker. Process memory: 9.19 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 80% memory usage. Pausing worker.  Process memory: 9.73 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 80% memory usage. Pausing worker.  Process memory: 9.73 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 76% memory usage. Resuming worker. Process memory: 9.23 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 71% memory usage. Resuming worker. Process memory: 8.70 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 80% memory usage. Pausing worker.  Process memory: 9.72 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 74% memory usage. Resuming worker. Process memory: 9.08 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 81% memory usage. Pausing worker.  Process memory: 9.92 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 77% memory usage. Resuming worker. Process memory: 9.35 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 80% memory usage. Pausing worker.  Process memory: 9.79 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 79% memory usage. Resuming worker. Process memory: 9.65 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 80% memory usage. Pausing worker.  Process memory: 9.70 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 78% memory usage. Resuming worker. Process memory: 9.56 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 80% memory usage. Pausing worker.  Process memory: 9.79 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 82% memory usage. Pausing worker.  Process memory: 9.96 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 68% memory usage. Resuming worker. Process memory: 8.25 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 74% memory usage. Resuming worker. Process memory: 9.07 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 81% memory usage. Pausing worker.  Process memory: 9.84 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 77% memory usage. Resuming worker. Process memory: 9.38 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 80% memory usage. Pausing worker.  Process memory: 9.70 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 78% memory usage. Resuming worker. Process memory: 9.48 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 80% memory usage. Pausing worker.  Process memory: 9.75 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 77% memory usage. Resuming worker. Process memory: 9.34 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 80% memory usage. Pausing worker.  Process memory: 9.70 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 79% memory usage. Resuming worker. Process memory: 9.59 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 81% memory usage. Pausing worker.  Process memory: 9.87 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 82% memory usage. Pausing worker.  Process memory: 10.01 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 72% memory usage. Resuming worker. Process memory: 8.77 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 76% memory usage. Resuming worker. Process memory: 9.25 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 80% memory usage. Pausing worker.  Process memory: 9.76 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 78% memory usage. Resuming worker. Process memory: 9.46 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 80% memory usage. Pausing worker.  Process memory: 9.69 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 80% memory usage. Pausing worker.  Process memory: 9.77 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 72% memory usage. Resuming worker. Process memory: 8.77 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 73% memory usage. Resuming worker. Process memory: 8.87 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 80% memory usage. Pausing worker.  Process memory: 9.78 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 68% memory usage. Resuming worker. Process memory: 8.31 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 80% memory usage. Pausing worker.  Process memory: 9.73 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 80% memory usage. Pausing worker.  Process memory: 9.72 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 81% memory usage. Pausing worker.  Process memory: 9.82 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 81% memory usage. Pausing worker.  Process memory: 9.93 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 77% memory usage. Resuming worker. Process memory: 9.38 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 71% memory usage. Resuming worker. Process memory: 8.63 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 73% memory usage. Resuming worker. Process memory: 8.95 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 71% memory usage. Resuming worker. Process memory: 8.70 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 82% memory usage. Pausing worker.  Process memory: 9.99 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 80% memory usage. Pausing worker.  Process memory: 9.72 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 74% memory usage. Resuming worker. Process memory: 8.98 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 71% memory usage. Resuming worker. Process memory: 8.67 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 81% memory usage. Pausing worker.  Process memory: 9.84 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 79% memory usage. Resuming worker. Process memory: 9.61 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 81% memory usage. Pausing worker.  Process memory: 9.86 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 79% memory usage. Resuming worker. Process memory: 9.65 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 81% memory usage. Pausing worker.  Process memory: 9.86 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 80% memory usage. Pausing worker.  Process memory: 9.74 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 77% memory usage. Resuming worker. Process memory: 9.39 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 68% memory usage. Resuming worker. Process memory: 8.26 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 81% memory usage. Pausing worker.  Process memory: 9.87 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 80% memory usage. Pausing worker.  Process memory: 9.77 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 73% memory usage. Resuming worker. Process memory: 8.92 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 71% memory usage. Resuming worker. Process memory: 8.67 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 82% memory usage. Pausing worker.  Process memory: 10.00 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 81% memory usage. Pausing worker.  Process memory: 9.85 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 74% memory usage. Resuming worker. Process memory: 9.04 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 71% memory usage. Resuming worker. Process memory: 8.67 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 81% memory usage. Pausing worker.  Process memory: 9.82 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 84% memory usage. Pausing worker.  Process memory: 10.18 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 76% memory usage. Resuming worker. Process memory: 9.32 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 74% memory usage. Resuming worker. Process memory: 8.97 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 81% memory usage. Pausing worker.  Process memory: 9.83 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 75% memory usage. Resuming worker. Process memory: 9.16 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 81% memory usage. Pausing worker.  Process memory: 9.90 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 80% memory usage. Pausing worker.  Process memory: 9.76 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 72% memory usage. Resuming worker. Process memory: 8.73 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 69% memory usage. Resuming worker. Process memory: 8.40 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 80% memory usage. Pausing worker.  Process memory: 9.72 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 76% memory usage. Resuming worker. Process memory: 9.26 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 81% memory usage. Pausing worker.  Process memory: 9.91 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 78% memory usage. Resuming worker. Process memory: 9.53 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 80% memory usage. Pausing worker.  Process memory: 9.71 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 75% memory usage. Resuming worker. Process memory: 9.12 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 81% memory usage. Pausing worker.  Process memory: 9.86 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 81% memory usage. Pausing worker.  Process memory: 9.81 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 77% memory usage. Resuming worker. Process memory: 9.34 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 77% memory usage. Resuming worker. Process memory: 9.38 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 81% memory usage. Pausing worker.  Process memory: 9.91 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 67% memory usage. Resuming worker. Process memory: 8.22 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 80% memory usage. Pausing worker.  Process memory: 9.80 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 80% memory usage. Pausing worker.  Process memory: 9.69 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 80% memory usage. Pausing worker.  Process memory: 9.76 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 80% memory usage. Pausing worker.  Process memory: 9.70 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 80% memory usage. Pausing worker.  Process memory: 9.78 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 71% memory usage. Resuming worker. Process memory: 8.61 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 68% memory usage. Resuming worker. Process memory: 8.31 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 72% memory usage. Resuming worker. Process memory: 8.79 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 64% memory usage. Resuming worker. Process memory: 7.85 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 62% memory usage. Resuming worker. Process memory: 7.53 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 80% memory usage. Pausing worker.  Process memory: 9.80 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 70% memory usage. Resuming worker. Process memory: 8.52 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 80% memory usage. Pausing worker.  Process memory: 9.80 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 76% memory usage. Resuming worker. Process memory: 9.24 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 80% memory usage. Pausing worker.  Process memory: 9.69 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 80% memory usage. Pausing worker.  Process memory: 9.79 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 82% memory usage. Pausing worker.  Process memory: 9.94 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 79% memory usage. Resuming worker. Process memory: 9.65 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 74% memory usage. Resuming worker. Process memory: 8.96 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 77% memory usage. Resuming worker. Process memory: 9.36 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 80% memory usage. Pausing worker.  Process memory: 9.70 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 74% memory usage. Resuming worker. Process memory: 8.99 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 81% memory usage. Pausing worker.  Process memory: 9.88 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 80% memory usage. Pausing worker.  Process memory: 9.69 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 82% memory usage. Pausing worker.  Process memory: 10.00 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 69% memory usage. Resuming worker. Process memory: 8.36 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 74% memory usage. Resuming worker. Process memory: 9.03 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 67% memory usage. Resuming worker. Process memory: 8.22 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 80% memory usage. Pausing worker.  Process memory: 9.70 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 79% memory usage. Resuming worker. Process memory: 9.61 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 80% memory usage. Pausing worker.  Process memory: 9.75 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 79% memory usage. Resuming worker. Process memory: 9.62 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 81% memory usage. Pausing worker.  Process memory: 9.84 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 80% memory usage. Pausing worker.  Process memory: 9.71 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 80% memory usage. Pausing worker.  Process memory: 9.74 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 79% memory usage. Resuming worker. Process memory: 9.66 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 78% memory usage. Resuming worker. Process memory: 9.54 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 80% memory usage. Pausing worker.  Process memory: 9.74 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 79% memory usage. Resuming worker. Process memory: 9.60 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 80% memory usage. Pausing worker.  Process memory: 9.72 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 79% memory usage. Resuming worker. Process memory: 9.65 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 79% memory usage. Resuming worker. Process memory: 9.69 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 82% memory usage. Pausing worker.  Process memory: 9.98 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 76% memory usage. Resuming worker. Process memory: 9.27 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 80% memory usage. Pausing worker.  Process memory: 9.70 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 79% memory usage. Resuming worker. Process memory: 9.65 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 80% memory usage. Pausing worker.  Process memory: 9.71 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 76% memory usage. Resuming worker. Process memory: 9.27 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 80% memory usage. Pausing worker.  Process memory: 9.74 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 80% memory usage. Pausing worker.  Process memory: 9.69 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 76% memory usage. Resuming worker. Process memory: 9.22 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 78% memory usage. Resuming worker. Process memory: 9.45 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 82% memory usage. Pausing worker.  Process memory: 9.95 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 81% memory usage. Pausing worker.  Process memory: 9.85 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 73% memory usage. Resuming worker. Process memory: 8.86 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 67% memory usage. Resuming worker. Process memory: 8.19 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 83% memory usage. Pausing worker.  Process memory: 10.05 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 81% memory usage. Pausing worker.  Process memory: 9.91 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 77% memory usage. Resuming worker. Process memory: 9.39 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 77% memory usage. Resuming worker. Process memory: 9.42 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 80% memory usage. Pausing worker.  Process memory: 9.76 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 78% memory usage. Resuming worker. Process memory: 9.45 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 80% memory usage. Pausing worker.  Process memory: 9.71 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 80% memory usage. Pausing worker.  Process memory: 9.74 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 79% memory usage. Resuming worker. Process memory: 9.58 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 84% memory usage. Pausing worker.  Process memory: 10.18 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 79% memory usage. Resuming worker. Process memory: 9.68 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 80% memory usage. Pausing worker.  Process memory: 9.78 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 79% memory usage. Resuming worker. Process memory: 9.58 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 75% memory usage. Resuming worker. Process memory: 9.14 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 81% memory usage. Pausing worker.  Process memory: 9.84 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 77% memory usage. Resuming worker. Process memory: 9.40 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 80% memory usage. Pausing worker.  Process memory: 9.69 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 81% memory usage. Pausing worker.  Process memory: 9.86 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 71% memory usage. Resuming worker. Process memory: 8.71 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 75% memory usage. Resuming worker. Process memory: 9.11 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 80% memory usage. Pausing worker.  Process memory: 9.76 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 76% memory usage. Resuming worker. Process memory: 9.32 GB -- Worker memory limit: 12.11 GB
+distributed.worker - INFO - Connection to scheduler broken.  Reconnecting...
+distributed.worker - INFO - Connection to scheduler broken.  Reconnecting...
+distributed.worker - INFO - Connection to scheduler broken.  Reconnecting...
+distributed.worker - INFO - Connection to scheduler broken.  Reconnecting...
+distributed.worker - INFO - Connection to scheduler broken.  Reconnecting...
+distributed.worker - INFO - Connection to scheduler broken.  Reconnecting...
+distributed.worker - INFO - Connection to scheduler broken.  Reconnecting...
+distributed.worker - INFO - Connection to scheduler broken.  Reconnecting...
+distributed.worker - INFO - Connection to scheduler broken.  Reconnecting...
+distributed.worker - INFO - Stopping worker at tcp://10.148.10.8:34537
+distributed.worker - INFO - Stopping worker at tcp://10.148.10.8:36569
+distributed.worker - INFO - Stopping worker at tcp://10.148.10.8:41219
+distributed.worker - INFO - Stopping worker at tcp://10.148.10.8:43091
+distributed.worker - INFO - Stopping worker at tcp://10.148.10.8:34691
+distributed.worker - INFO - Stopping worker at tcp://10.148.10.8:45625
+distributed.worker - INFO - Stopping worker at tcp://10.148.10.8:41655
+distributed.worker - INFO - Stopping worker at tcp://10.148.10.8:36687
+distributed.worker - INFO - Stopping worker at tcp://10.148.10.8:36339
+distributed.diskutils - ERROR - Failed to remove '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-am1bhncb' (failed in <built-in function lstat>): [Errno 2] No such file or directory: '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-am1bhncb'
+distributed.diskutils - ERROR - Failed to remove '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-z9sq7d26' (failed in <built-in function lstat>): [Errno 2] No such file or directory: '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-z9sq7d26'
+distributed.diskutils - ERROR - Failed to remove '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-3jbqmto3' (failed in <built-in function lstat>): [Errno 2] No such file or directory: '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-3jbqmto3'
+distributed.diskutils - ERROR - Failed to remove '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-79pbzzke' (failed in <built-in function lstat>): [Errno 2] No such file or directory: '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-79pbzzke'
+distributed.diskutils - ERROR - Failed to remove '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-9z8tytca' (failed in <built-in function lstat>): [Errno 2] No such file or directory: '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-9z8tytca'
+distributed.diskutils - ERROR - Failed to remove '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-2z4t2z_g' (failed in <built-in function lstat>): [Errno 2] No such file or directory: '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-2z4t2z_g'
+distributed.diskutils - ERROR - Failed to remove '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-2dte3f5c' (failed in <built-in function lstat>): [Errno 2] No such file or directory: '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-2dte3f5c'
+distributed.diskutils - ERROR - Failed to remove '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-yat1lrno' (failed in <built-in function lstat>): [Errno 2] No such file or directory: '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-yat1lrno'
+distributed.diskutils - ERROR - Failed to remove '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-2z90xu8w' (failed in <built-in function lstat>): [Errno 2] No such file or directory: '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-2z90xu8w'
+distributed.nanny - INFO - Worker closed
+distributed.nanny - INFO - Worker closed
+distributed.nanny - INFO - Worker closed
+distributed.nanny - INFO - Worker closed
+distributed.nanny - INFO - Worker closed
+distributed.nanny - INFO - Worker closed
+distributed.nanny - INFO - Worker closed
+distributed.nanny - INFO - Worker closed
+distributed.nanny - INFO - Worker closed
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.10.8:33333'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.10.8:36619'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.10.8:39439'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.10.8:32901'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.10.8:44595'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.10.8:37801'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.10.8:33893'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.10.8:42735'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.10.8:45887'
+distributed.dask_worker - INFO - End worker

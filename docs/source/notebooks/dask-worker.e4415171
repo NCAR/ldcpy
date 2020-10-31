@@ -1,0 +1,174 @@
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.11.3:35657'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.11.3:46493'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.11.3:34493'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.11.3:36077'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.11.3:43527'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.11.3:41095'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.11.3:34739'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.11.3:39377'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.11.3:33039'
+distributed.worker - INFO -       Start worker at:    tcp://10.148.11.3:44333
+distributed.worker - INFO -          Listening to:    tcp://10.148.11.3:44333
+distributed.worker - INFO -          dashboard at:          10.148.11.3:38169
+distributed.worker - INFO - Waiting to connect to:   tcp://10.148.10.15:36859
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -               Threads:                          4
+distributed.worker - INFO -                Memory:                   12.11 GB
+distributed.worker - INFO -       Local Directory: /glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-qcspd8ku
+distributed.worker - INFO -       Start worker at:    tcp://10.148.11.3:44885
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -       Start worker at:    tcp://10.148.11.3:42915
+distributed.worker - INFO -       Start worker at:    tcp://10.148.11.3:42463
+distributed.worker - INFO -          Listening to:    tcp://10.148.11.3:44885
+distributed.worker - INFO -          Listening to:    tcp://10.148.11.3:42463
+distributed.worker - INFO -          Listening to:    tcp://10.148.11.3:42915
+distributed.worker - INFO -          dashboard at:          10.148.11.3:35629
+distributed.worker - INFO -          dashboard at:          10.148.11.3:33523
+distributed.worker - INFO -          dashboard at:          10.148.11.3:34181
+distributed.worker - INFO - Waiting to connect to:   tcp://10.148.10.15:36859
+distributed.worker - INFO - Waiting to connect to:   tcp://10.148.10.15:36859
+distributed.worker - INFO - Waiting to connect to:   tcp://10.148.10.15:36859
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -       Start worker at:    tcp://10.148.11.3:41341
+distributed.worker - INFO -               Threads:                          4
+distributed.worker - INFO -          Listening to:    tcp://10.148.11.3:41341
+distributed.worker - INFO -               Threads:                          4
+distributed.worker - INFO -               Threads:                          4
+distributed.worker - INFO -                Memory:                   12.11 GB
+distributed.worker - INFO -          dashboard at:          10.148.11.3:36821
+distributed.worker - INFO -                Memory:                   12.11 GB
+distributed.worker - INFO -       Local Directory: /glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-m9f4e74j
+distributed.worker - INFO -                Memory:                   12.11 GB
+distributed.worker - INFO -       Local Directory: /glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-xrm6sq02
+distributed.worker - INFO - Waiting to connect to:   tcp://10.148.10.15:36859
+distributed.worker - INFO -       Local Directory: /glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-7g8s_rii
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -               Threads:                          4
+distributed.worker - INFO -                Memory:                   12.11 GB
+distributed.worker - INFO -       Local Directory: /glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-zw_rm18x
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -       Start worker at:    tcp://10.148.11.3:46819
+distributed.worker - INFO -          Listening to:    tcp://10.148.11.3:46819
+distributed.worker - INFO -          dashboard at:          10.148.11.3:34741
+distributed.worker - INFO - Waiting to connect to:   tcp://10.148.10.15:36859
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -               Threads:                          4
+distributed.worker - INFO -                Memory:                   12.11 GB
+distributed.worker - INFO -       Local Directory: /glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-sqju0u58
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -       Start worker at:    tcp://10.148.11.3:33377
+distributed.worker - INFO -          Listening to:    tcp://10.148.11.3:33377
+distributed.worker - INFO -          dashboard at:          10.148.11.3:39885
+distributed.worker - INFO -       Start worker at:    tcp://10.148.11.3:34959
+distributed.worker - INFO - Waiting to connect to:   tcp://10.148.10.15:36859
+distributed.worker - INFO -          Listening to:    tcp://10.148.11.3:34959
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -          dashboard at:          10.148.11.3:34043
+distributed.worker - INFO - Waiting to connect to:   tcp://10.148.10.15:36859
+distributed.worker - INFO -               Threads:                          4
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -                Memory:                   12.11 GB
+distributed.worker - INFO -       Local Directory: /glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-fr4p0roo
+distributed.worker - INFO -               Threads:                          4
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -                Memory:                   12.11 GB
+distributed.worker - INFO -       Local Directory: /glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-vzv44wpu
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -       Start worker at:    tcp://10.148.11.3:40685
+distributed.worker - INFO -          Listening to:    tcp://10.148.11.3:40685
+distributed.worker - INFO -          dashboard at:          10.148.11.3:37005
+distributed.worker - INFO - Waiting to connect to:   tcp://10.148.10.15:36859
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -               Threads:                          4
+distributed.worker - INFO -                Memory:                   12.11 GB
+distributed.worker - INFO -       Local Directory: /glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-o190lq8i
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -         Registered to:   tcp://10.148.10.15:36859
+distributed.worker - INFO - -------------------------------------------------
+distributed.core - INFO - Starting established connection
+distributed.worker - INFO -         Registered to:   tcp://10.148.10.15:36859
+distributed.worker - INFO - -------------------------------------------------
+distributed.core - INFO - Starting established connection
+distributed.worker - INFO -         Registered to:   tcp://10.148.10.15:36859
+distributed.worker - INFO - -------------------------------------------------
+distributed.core - INFO - Starting established connection
+distributed.worker - INFO -         Registered to:   tcp://10.148.10.15:36859
+distributed.worker - INFO - -------------------------------------------------
+distributed.core - INFO - Starting established connection
+distributed.worker - INFO -         Registered to:   tcp://10.148.10.15:36859
+distributed.worker - INFO - -------------------------------------------------
+distributed.core - INFO - Starting established connection
+distributed.worker - INFO -         Registered to:   tcp://10.148.10.15:36859
+distributed.worker - INFO - -------------------------------------------------
+distributed.core - INFO - Starting established connection
+distributed.worker - INFO -         Registered to:   tcp://10.148.10.15:36859
+distributed.worker - INFO - -------------------------------------------------
+distributed.core - INFO - Starting established connection
+distributed.worker - INFO -         Registered to:   tcp://10.148.10.15:36859
+distributed.worker - INFO - -------------------------------------------------
+distributed.core - INFO - Starting established connection
+distributed.worker - INFO -         Registered to:   tcp://10.148.10.15:36859
+distributed.worker - INFO - -------------------------------------------------
+distributed.core - INFO - Starting established connection
+distributed.utils_perf - INFO - full garbage collection released 35.08 MB from 1773 reference cycles (threshold: 10.00 MB)
+/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/dask/core.py:121: RuntimeWarning: divide by zero encountered in true_divide
+  return func(*(_execute_task(a, cache) for a in args))
+/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/dask/core.py:121: RuntimeWarning: invalid value encountered in true_divide
+  return func(*(_execute_task(a, cache) for a in args))
+distributed.utils_perf - INFO - full garbage collection released 52.19 MB from 1630 reference cycles (threshold: 10.00 MB)
+distributed.utils_perf - INFO - full garbage collection released 326.62 MB from 2025 reference cycles (threshold: 10.00 MB)
+distributed.utils_perf - INFO - full garbage collection released 16.31 MB from 2355 reference cycles (threshold: 10.00 MB)
+distributed.worker - INFO - Connection to scheduler broken.  Reconnecting...
+distributed.worker - INFO - Connection to scheduler broken.  Reconnecting...
+distributed.worker - INFO - Connection to scheduler broken.  Reconnecting...
+distributed.worker - INFO - Connection to scheduler broken.  Reconnecting...
+distributed.worker - INFO - Connection to scheduler broken.  Reconnecting...
+/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/dask/core.py:121: RuntimeWarning: invalid value encountered in log10
+  return func(*(_execute_task(a, cache) for a in args))
+distributed.worker - INFO - Connection to scheduler broken.  Reconnecting...
+distributed.worker - INFO - Connection to scheduler broken.  Reconnecting...
+/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/dask/core.py:121: RuntimeWarning: divide by zero encountered in log10
+  return func(*(_execute_task(a, cache) for a in args))
+distributed.worker - INFO - Connection to scheduler broken.  Reconnecting...
+/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/dask/core.py:121: RuntimeWarning: divide by zero encountered in true_divide
+  return func(*(_execute_task(a, cache) for a in args))
+/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/dask/core.py:121: RuntimeWarning: invalid value encountered in true_divide
+  return func(*(_execute_task(a, cache) for a in args))
+/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/dask/core.py:121: RuntimeWarning: divide by zero encountered in log10
+  return func(*(_execute_task(a, cache) for a in args))
+/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/dask/core.py:121: RuntimeWarning: invalid value encountered in log10
+  return func(*(_execute_task(a, cache) for a in args))
+distributed.worker - INFO - Connection to scheduler broken.  Reconnecting...
+distributed.worker - INFO - Stopping worker at tcp://10.148.11.3:46819
+distributed.worker - INFO - Stopping worker at tcp://10.148.11.3:44885
+distributed.worker - INFO - Stopping worker at tcp://10.148.11.3:33377
+distributed.worker - INFO - Stopping worker at tcp://10.148.11.3:40685
+distributed.worker - INFO - Stopping worker at tcp://10.148.11.3:34959
+distributed.worker - INFO - Stopping worker at tcp://10.148.11.3:41341
+distributed.worker - INFO - Stopping worker at tcp://10.148.11.3:42463
+distributed.worker - INFO - Stopping worker at tcp://10.148.11.3:42915
+distributed.worker - INFO - Stopping worker at tcp://10.148.11.3:44333
+distributed.nanny - INFO - Worker closed
+distributed.nanny - INFO - Worker closed
+distributed.nanny - INFO - Worker closed
+distributed.nanny - INFO - Worker closed
+distributed.nanny - INFO - Worker closed
+distributed.nanny - INFO - Worker closed
+distributed.nanny - INFO - Worker closed
+distributed.nanny - INFO - Worker closed
+distributed.nanny - INFO - Worker closed
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.11.3:46493'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.11.3:34493'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.11.3:33039'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.11.3:41095'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.11.3:43527'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.11.3:39377'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.11.3:34739'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.11.3:35657'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.11.3:36077'
+distributed.dask_worker - INFO - End worker

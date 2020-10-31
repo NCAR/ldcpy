@@ -1,0 +1,337 @@
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.10.99:39173'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.10.99:36199'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.10.99:36787'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.10.99:44315'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.10.99:34431'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.10.99:43301'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.10.99:45929'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.10.99:42161'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.10.99:34429'
+distributed.diskutils - INFO - Found stale lock file and directory '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-vb26twlw', purging
+distributed.diskutils - INFO - Found stale lock file and directory '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-v9dtbu84', purging
+distributed.diskutils - INFO - Found stale lock file and directory '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-dp58id3o', purging
+distributed.diskutils - INFO - Found stale lock file and directory '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-z52mhoxd', purging
+distributed.diskutils - INFO - Found stale lock file and directory '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-jret9hdo', purging
+distributed.diskutils - INFO - Found stale lock file and directory '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-cazxrxnm', purging
+distributed.diskutils - INFO - Found stale lock file and directory '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-iojmffy2', purging
+distributed.diskutils - INFO - Found stale lock file and directory '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-qw9dw15t', purging
+distributed.diskutils - INFO - Found stale lock file and directory '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-78s5qjwl', purging
+distributed.worker - INFO -       Start worker at:   tcp://10.148.10.99:42465
+distributed.worker - INFO -       Start worker at:   tcp://10.148.10.99:36763
+distributed.worker - INFO -          Listening to:   tcp://10.148.10.99:42465
+distributed.worker - INFO -          Listening to:   tcp://10.148.10.99:36763
+distributed.worker - INFO -          dashboard at:         10.148.10.99:44043
+distributed.worker - INFO -          dashboard at:         10.148.10.99:46149
+distributed.worker - INFO - Waiting to connect to:   tcp://10.148.10.15:38289
+distributed.worker - INFO - Waiting to connect to:   tcp://10.148.10.15:38289
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -               Threads:                          4
+distributed.worker - INFO -               Threads:                          4
+distributed.worker - INFO -                Memory:                   12.11 GB
+distributed.worker - INFO -                Memory:                   12.11 GB
+distributed.worker - INFO -       Start worker at:   tcp://10.148.10.99:42377
+distributed.worker - INFO -       Local Directory: /glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-z_54onjp
+distributed.worker - INFO -       Local Directory: /glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-kn32ajdb
+distributed.worker - INFO -          Listening to:   tcp://10.148.10.99:42377
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -          dashboard at:         10.148.10.99:34585
+distributed.worker - INFO - Waiting to connect to:   tcp://10.148.10.15:38289
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -               Threads:                          4
+distributed.worker - INFO -                Memory:                   12.11 GB
+distributed.worker - INFO -       Local Directory: /glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-l1n39l02
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -         Registered to:   tcp://10.148.10.15:38289
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -       Start worker at:   tcp://10.148.10.99:32865
+distributed.worker - INFO -          Listening to:   tcp://10.148.10.99:32865
+distributed.core - INFO - Starting established connection
+distributed.worker - INFO -          dashboard at:         10.148.10.99:38183
+distributed.worker - INFO - Waiting to connect to:   tcp://10.148.10.15:38289
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -               Threads:                          4
+distributed.worker - INFO -                Memory:                   12.11 GB
+distributed.worker - INFO -       Local Directory: /glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-opvupco9
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -         Registered to:   tcp://10.148.10.15:38289
+distributed.worker - INFO - -------------------------------------------------
+distributed.core - INFO - Starting established connection
+distributed.worker - INFO -         Registered to:   tcp://10.148.10.15:38289
+distributed.worker - INFO - -------------------------------------------------
+distributed.core - INFO - Starting established connection
+distributed.worker - INFO -         Registered to:   tcp://10.148.10.15:38289
+distributed.worker - INFO - -------------------------------------------------
+distributed.core - INFO - Starting established connection
+distributed.worker - INFO -       Start worker at:   tcp://10.148.10.99:34789
+distributed.worker - INFO -          Listening to:   tcp://10.148.10.99:34789
+distributed.worker - INFO -          dashboard at:         10.148.10.99:36389
+distributed.worker - INFO - Waiting to connect to:   tcp://10.148.10.15:38289
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -               Threads:                          4
+distributed.worker - INFO -                Memory:                   12.11 GB
+distributed.worker - INFO -       Local Directory: /glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-21rkjsmf
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -       Start worker at:   tcp://10.148.10.99:38243
+distributed.worker - INFO -          Listening to:   tcp://10.148.10.99:38243
+distributed.worker - INFO -          dashboard at:         10.148.10.99:38493
+distributed.worker - INFO -         Registered to:   tcp://10.148.10.15:38289
+distributed.worker - INFO - Waiting to connect to:   tcp://10.148.10.15:38289
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -               Threads:                          4
+distributed.worker - INFO -                Memory:                   12.11 GB
+distributed.worker - INFO -       Local Directory: /glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-hwbzyedm
+distributed.worker - INFO - -------------------------------------------------
+distributed.core - INFO - Starting established connection
+distributed.worker - INFO -         Registered to:   tcp://10.148.10.15:38289
+distributed.worker - INFO - -------------------------------------------------
+distributed.core - INFO - Starting established connection
+distributed.worker - INFO -       Start worker at:   tcp://10.148.10.99:33107
+distributed.worker - INFO -          Listening to:   tcp://10.148.10.99:33107
+distributed.worker - INFO -          dashboard at:         10.148.10.99:34149
+distributed.worker - INFO - Waiting to connect to:   tcp://10.148.10.15:38289
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -               Threads:                          4
+distributed.worker - INFO -                Memory:                   12.11 GB
+distributed.worker - INFO -       Local Directory: /glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-59ks800x
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -         Registered to:   tcp://10.148.10.15:38289
+distributed.worker - INFO - -------------------------------------------------
+distributed.core - INFO - Starting established connection
+distributed.worker - INFO -       Start worker at:   tcp://10.148.10.99:40737
+distributed.worker - INFO -          Listening to:   tcp://10.148.10.99:40737
+distributed.worker - INFO -          dashboard at:         10.148.10.99:33689
+distributed.worker - INFO - Waiting to connect to:   tcp://10.148.10.15:38289
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -               Threads:                          4
+distributed.worker - INFO -                Memory:                   12.11 GB
+distributed.worker - INFO -       Local Directory: /glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-46ub8kci
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -         Registered to:   tcp://10.148.10.15:38289
+distributed.worker - INFO - -------------------------------------------------
+distributed.core - INFO - Starting established connection
+distributed.worker - INFO -       Start worker at:   tcp://10.148.10.99:41551
+distributed.worker - INFO -          Listening to:   tcp://10.148.10.99:41551
+distributed.worker - INFO -          dashboard at:         10.148.10.99:45659
+distributed.worker - INFO - Waiting to connect to:   tcp://10.148.10.15:38289
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -               Threads:                          4
+distributed.worker - INFO -                Memory:                   12.11 GB
+distributed.worker - INFO -       Local Directory: /glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-heq_gqdc
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -         Registered to:   tcp://10.148.10.15:38289
+distributed.worker - INFO - -------------------------------------------------
+distributed.core - INFO - Starting established connection
+distributed.worker - WARNING - Worker is at 81% memory usage. Pausing worker.  Process memory: 9.82 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 80% memory usage. Pausing worker.  Process memory: 9.71 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 79% memory usage. Resuming worker. Process memory: 9.63 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 81% memory usage. Pausing worker.  Process memory: 9.82 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 77% memory usage. Resuming worker. Process memory: 9.44 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 79% memory usage. Resuming worker. Process memory: 9.57 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 81% memory usage. Pausing worker.  Process memory: 9.82 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 80% memory usage. Pausing worker.  Process memory: 9.73 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 79% memory usage. Resuming worker. Process memory: 9.59 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 82% memory usage. Pausing worker.  Process memory: 9.93 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 78% memory usage. Resuming worker. Process memory: 9.53 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 79% memory usage. Resuming worker. Process memory: 9.65 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 80% memory usage. Pausing worker.  Process memory: 9.79 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 80% memory usage. Pausing worker.  Process memory: 9.70 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 70% memory usage. Resuming worker. Process memory: 8.53 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 63% memory usage. Resuming worker. Process memory: 7.65 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 82% memory usage. Pausing worker.  Process memory: 10.00 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 81% memory usage. Pausing worker.  Process memory: 9.86 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 79% memory usage. Resuming worker. Process memory: 9.66 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 86% memory usage. Pausing worker.  Process memory: 10.47 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 76% memory usage. Resuming worker. Process memory: 9.32 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 70% memory usage. Resuming worker. Process memory: 8.53 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 80% memory usage. Pausing worker.  Process memory: 9.69 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 81% memory usage. Pausing worker.  Process memory: 9.93 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 79% memory usage. Resuming worker. Process memory: 9.68 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 81% memory usage. Pausing worker.  Process memory: 9.83 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 79% memory usage. Resuming worker. Process memory: 9.68 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 71% memory usage. Resuming worker. Process memory: 8.68 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 80% memory usage. Pausing worker.  Process memory: 9.78 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 83% memory usage. Pausing worker.  Process memory: 10.08 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 80% memory usage. Pausing worker.  Process memory: 9.76 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 78% memory usage. Resuming worker. Process memory: 9.50 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 81% memory usage. Pausing worker.  Process memory: 9.89 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 79% memory usage. Resuming worker. Process memory: 9.61 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 79% memory usage. Resuming worker. Process memory: 9.65 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 79% memory usage. Resuming worker. Process memory: 9.62 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 81% memory usage. Pausing worker.  Process memory: 9.86 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 75% memory usage. Resuming worker. Process memory: 9.19 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 80% memory usage. Pausing worker.  Process memory: 9.73 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 76% memory usage. Resuming worker. Process memory: 9.21 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 80% memory usage. Pausing worker.  Process memory: 9.69 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 79% memory usage. Resuming worker. Process memory: 9.59 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 82% memory usage. Pausing worker.  Process memory: 10.01 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 81% memory usage. Pausing worker.  Process memory: 9.91 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 76% memory usage. Resuming worker. Process memory: 9.27 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 72% memory usage. Resuming worker. Process memory: 8.80 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 80% memory usage. Pausing worker.  Process memory: 9.74 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 79% memory usage. Resuming worker. Process memory: 9.61 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 80% memory usage. Pausing worker.  Process memory: 9.74 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 80% memory usage. Pausing worker.  Process memory: 9.81 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 79% memory usage. Resuming worker. Process memory: 9.62 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 79% memory usage. Resuming worker. Process memory: 9.61 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 83% memory usage. Pausing worker.  Process memory: 10.12 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 72% memory usage. Resuming worker. Process memory: 8.80 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 80% memory usage. Pausing worker.  Process memory: 9.78 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 78% memory usage. Resuming worker. Process memory: 9.52 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 80% memory usage. Pausing worker.  Process memory: 9.73 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 79% memory usage. Resuming worker. Process memory: 9.57 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 80% memory usage. Pausing worker.  Process memory: 9.72 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 80% memory usage. Pausing worker.  Process memory: 9.69 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 76% memory usage. Resuming worker. Process memory: 9.29 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 78% memory usage. Resuming worker. Process memory: 9.45 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 81% memory usage. Pausing worker.  Process memory: 9.84 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 79% memory usage. Resuming worker. Process memory: 9.66 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 83% memory usage. Pausing worker.  Process memory: 10.12 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 72% memory usage. Resuming worker. Process memory: 8.80 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 81% memory usage. Pausing worker.  Process memory: 9.83 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 79% memory usage. Resuming worker. Process memory: 9.64 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 80% memory usage. Pausing worker.  Process memory: 9.71 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 76% memory usage. Resuming worker. Process memory: 9.24 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 80% memory usage. Pausing worker.  Process memory: 9.75 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 79% memory usage. Resuming worker. Process memory: 9.62 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 82% memory usage. Pausing worker.  Process memory: 9.94 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 79% memory usage. Resuming worker. Process memory: 9.57 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 83% memory usage. Pausing worker.  Process memory: 10.09 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 72% memory usage. Resuming worker. Process memory: 8.82 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 81% memory usage. Pausing worker.  Process memory: 9.83 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 79% memory usage. Resuming worker. Process memory: 9.61 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 83% memory usage. Pausing worker.  Process memory: 10.09 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 79% memory usage. Resuming worker. Process memory: 9.65 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 80% memory usage. Pausing worker.  Process memory: 9.78 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 79% memory usage. Resuming worker. Process memory: 9.65 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 80% memory usage. Pausing worker.  Process memory: 9.75 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 79% memory usage. Resuming worker. Process memory: 9.66 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 80% memory usage. Pausing worker.  Process memory: 9.69 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 79% memory usage. Resuming worker. Process memory: 9.60 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 80% memory usage. Pausing worker.  Process memory: 9.76 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 79% memory usage. Resuming worker. Process memory: 9.62 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 80% memory usage. Pausing worker.  Process memory: 9.69 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 77% memory usage. Resuming worker. Process memory: 9.39 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 80% memory usage. Pausing worker.  Process memory: 9.73 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 79% memory usage. Resuming worker. Process memory: 9.60 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 80% memory usage. Pausing worker.  Process memory: 9.80 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 79% memory usage. Resuming worker. Process memory: 9.66 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 81% memory usage. Pausing worker.  Process memory: 9.81 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 78% memory usage. Resuming worker. Process memory: 9.55 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 81% memory usage. Pausing worker.  Process memory: 9.87 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 78% memory usage. Resuming worker. Process memory: 9.45 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 80% memory usage. Pausing worker.  Process memory: 9.71 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 78% memory usage. Resuming worker. Process memory: 9.45 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 80% memory usage. Pausing worker.  Process memory: 9.80 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 79% memory usage. Resuming worker. Process memory: 9.66 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 82% memory usage. Pausing worker.  Process memory: 9.99 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 79% memory usage. Resuming worker. Process memory: 9.61 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 81% memory usage. Pausing worker.  Process memory: 9.87 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 78% memory usage. Resuming worker. Process memory: 9.56 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 80% memory usage. Pausing worker.  Process memory: 9.72 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 79% memory usage. Resuming worker. Process memory: 9.67 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 81% memory usage. Pausing worker.  Process memory: 9.83 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 81% memory usage. Pausing worker.  Process memory: 9.82 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 78% memory usage. Resuming worker. Process memory: 9.56 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 78% memory usage. Resuming worker. Process memory: 9.54 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 80% memory usage. Pausing worker.  Process memory: 9.73 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 77% memory usage. Resuming worker. Process memory: 9.44 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 80% memory usage. Pausing worker.  Process memory: 9.77 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 79% memory usage. Resuming worker. Process memory: 9.64 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 80% memory usage. Pausing worker.  Process memory: 9.75 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 77% memory usage. Resuming worker. Process memory: 9.44 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 80% memory usage. Pausing worker.  Process memory: 9.78 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 79% memory usage. Resuming worker. Process memory: 9.59 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 82% memory usage. Pausing worker.  Process memory: 9.95 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 78% memory usage. Resuming worker. Process memory: 9.52 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 81% memory usage. Pausing worker.  Process memory: 9.88 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 78% memory usage. Resuming worker. Process memory: 9.52 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 80% memory usage. Pausing worker.  Process memory: 9.69 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 78% memory usage. Resuming worker. Process memory: 9.53 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 81% memory usage. Pausing worker.  Process memory: 9.83 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 79% memory usage. Resuming worker. Process memory: 9.64 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 83% memory usage. Pausing worker.  Process memory: 10.11 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 74% memory usage. Resuming worker. Process memory: 8.99 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 80% memory usage. Pausing worker.  Process memory: 9.72 GB -- Worker memory limit: 12.11 GB
+distributed.utils_perf - INFO - full garbage collection released 136.40 MB from 1759 reference cycles (threshold: 10.00 MB)
+distributed.worker - WARNING - Worker is at 78% memory usage. Resuming worker. Process memory: 9.52 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 80% memory usage. Pausing worker.  Process memory: 9.78 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 78% memory usage. Resuming worker. Process memory: 9.56 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 80% memory usage. Pausing worker.  Process memory: 9.75 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 78% memory usage. Resuming worker. Process memory: 9.49 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 82% memory usage. Pausing worker.  Process memory: 10.03 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 80% memory usage. Pausing worker.  Process memory: 9.76 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 73% memory usage. Resuming worker. Process memory: 8.90 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 79% memory usage. Resuming worker. Process memory: 9.67 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 80% memory usage. Pausing worker.  Process memory: 9.76 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 79% memory usage. Resuming worker. Process memory: 9.65 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 80% memory usage. Pausing worker.  Process memory: 9.73 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 79% memory usage. Resuming worker. Process memory: 9.63 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 80% memory usage. Pausing worker.  Process memory: 9.76 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 79% memory usage. Resuming worker. Process memory: 9.62 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 80% memory usage. Pausing worker.  Process memory: 9.75 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 79% memory usage. Resuming worker. Process memory: 9.62 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 80% memory usage. Pausing worker.  Process memory: 9.72 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 79% memory usage. Resuming worker. Process memory: 9.67 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 81% memory usage. Pausing worker.  Process memory: 9.87 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 79% memory usage. Resuming worker. Process memory: 9.64 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 80% memory usage. Pausing worker.  Process memory: 9.71 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 78% memory usage. Resuming worker. Process memory: 9.55 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 81% memory usage. Pausing worker.  Process memory: 9.90 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Heartbeat to scheduler failed
+distributed.worker - WARNING - Heartbeat to scheduler failed
+distributed.worker - WARNING - Heartbeat to scheduler failed
+distributed.worker - WARNING - Heartbeat to scheduler failed
+distributed.worker - WARNING - Heartbeat to scheduler failed
+distributed.worker - WARNING - Heartbeat to scheduler failed
+distributed.worker - WARNING - Heartbeat to scheduler failed
+distributed.worker - WARNING - Heartbeat to scheduler failed
+distributed.worker - INFO - Connection to scheduler broken.  Reconnecting...
+distributed.worker - INFO - Connection to scheduler broken.  Reconnecting...
+distributed.worker - INFO - Connection to scheduler broken.  Reconnecting...
+distributed.worker - INFO - Connection to scheduler broken.  Reconnecting...
+distributed.worker - WARNING - Heartbeat to scheduler failed
+distributed.worker - INFO - Connection to scheduler broken.  Reconnecting...
+distributed.worker - INFO - Connection to scheduler broken.  Reconnecting...
+distributed.worker - INFO - Connection to scheduler broken.  Reconnecting...
+distributed.worker - INFO - Connection to scheduler broken.  Reconnecting...
+distributed.worker - INFO - Connection to scheduler broken.  Reconnecting...
+distributed.worker - INFO - Stopping worker at tcp://10.148.10.99:40737
+distributed.worker - INFO - Stopping worker at tcp://10.148.10.99:42377
+distributed.worker - INFO - Stopping worker at tcp://10.148.10.99:34789
+distributed.worker - INFO - Stopping worker at tcp://10.148.10.99:36763
+distributed.worker - INFO - Stopping worker at tcp://10.148.10.99:42465
+distributed.worker - INFO - Stopping worker at tcp://10.148.10.99:32865
+distributed.worker - INFO - Stopping worker at tcp://10.148.10.99:41551
+distributed.worker - INFO - Stopping worker at tcp://10.148.10.99:33107
+distributed.worker - INFO - Stopping worker at tcp://10.148.10.99:38243
+distributed.diskutils - ERROR - Failed to remove '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-l1n39l02' (failed in <built-in function lstat>): [Errno 2] No such file or directory: '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-l1n39l02'
+distributed.diskutils - ERROR - Failed to remove '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-46ub8kci' (failed in <built-in function lstat>): [Errno 2] No such file or directory: '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-46ub8kci'
+distributed.diskutils - ERROR - Failed to remove '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-heq_gqdc' (failed in <built-in function lstat>): [Errno 2] No such file or directory: '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-heq_gqdc'
+distributed.diskutils - ERROR - Failed to remove '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-opvupco9' (failed in <built-in function lstat>): [Errno 2] No such file or directory: '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-opvupco9'
+distributed.diskutils - ERROR - Failed to remove '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-z_54onjp' (failed in <built-in function lstat>): [Errno 2] No such file or directory: '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-z_54onjp'
+distributed.diskutils - ERROR - Failed to remove '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-kn32ajdb' (failed in <built-in function lstat>): [Errno 2] No such file or directory: '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-kn32ajdb'
+distributed.diskutils - ERROR - Failed to remove '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-21rkjsmf' (failed in <built-in function lstat>): [Errno 2] No such file or directory: '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-21rkjsmf'
+distributed.diskutils - ERROR - Failed to remove '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-59ks800x' (failed in <built-in function lstat>): [Errno 2] No such file or directory: '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-59ks800x'
+distributed.diskutils - ERROR - Failed to remove '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-hwbzyedm' (failed in <built-in function lstat>): [Errno 2] No such file or directory: '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-hwbzyedm'
+distributed.nanny - INFO - Worker closed
+distributed.nanny - INFO - Worker closed
+distributed.nanny - INFO - Worker closed
+distributed.nanny - INFO - Worker closed
+distributed.nanny - INFO - Worker closed
+distributed.nanny - INFO - Worker closed
+distributed.nanny - INFO - Worker closed
+distributed.nanny - INFO - Worker closed
+distributed.nanny - INFO - Worker closed
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.10.99:36787'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.10.99:34429'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.10.99:34431'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.10.99:44315'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.10.99:39173'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.10.99:42161'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.10.99:43301'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.10.99:45929'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.10.99:36199'
+distributed.dask_worker - INFO - End worker

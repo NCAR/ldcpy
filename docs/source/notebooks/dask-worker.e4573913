@@ -1,0 +1,30 @@
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.9.39:34009'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.9.39:41321'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.9.39:43973'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.9.39:37727'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.9.39:33105'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.9.39:34035'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.9.39:34651'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.9.39:39837'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.9.39:43595'
+distributed.diskutils - INFO - Found stale lock file and directory '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-j5luh4v7', purging
+distributed.dask_worker - INFO - Exiting on signal 15
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.9.39:34009'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.9.39:41321'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.9.39:43973'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.9.39:37727'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.9.39:33105'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.9.39:34035'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.9.39:34651'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.9.39:39837'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.9.39:43595'
+distributed.nanny - INFO - Worker process 46928 was killed by signal 15
+distributed.nanny - INFO - Worker process 46916 was killed by signal 15
+distributed.nanny - INFO - Worker process 46920 was killed by signal 15
+distributed.nanny - INFO - Worker process 46915 was killed by signal 15
+distributed.nanny - INFO - Worker process 46922 was killed by signal 15
+distributed.nanny - INFO - Worker process 46912 was killed by signal 15
+distributed.nanny - INFO - Worker process 46914 was killed by signal 15
+distributed.nanny - INFO - Worker process 46926 was killed by signal 15
+distributed.nanny - INFO - Worker process 46910 was killed by signal 15
+distributed.dask_worker - INFO - End worker

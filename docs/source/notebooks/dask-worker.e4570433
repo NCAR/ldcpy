@@ -1,0 +1,654 @@
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.9.128:34967'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.9.128:37999'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.9.128:37367'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.9.128:44693'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.9.128:37623'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.9.128:34499'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.9.128:40257'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.9.128:33069'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.9.128:37671'
+distributed.worker - INFO -       Start worker at:   tcp://10.148.9.128:46781
+distributed.worker - INFO -          Listening to:   tcp://10.148.9.128:46781
+distributed.worker - INFO -          dashboard at:         10.148.9.128:46401
+distributed.worker - INFO - Waiting to connect to:   tcp://10.148.10.15:36219
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -       Start worker at:   tcp://10.148.9.128:33861
+distributed.worker - INFO -          Listening to:   tcp://10.148.9.128:33861
+distributed.worker - INFO -               Threads:                          4
+distributed.worker - INFO -          dashboard at:         10.148.9.128:43569
+distributed.worker - INFO -                Memory:                   12.11 GB
+distributed.worker - INFO - Waiting to connect to:   tcp://10.148.10.15:36219
+distributed.worker - INFO -       Local Directory: /glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-ezv7nxxy
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -               Threads:                          4
+distributed.worker - INFO -                Memory:                   12.11 GB
+distributed.worker - INFO -       Local Directory: /glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-u9k6wu2a
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -         Registered to:   tcp://10.148.10.15:36219
+distributed.worker - INFO - -------------------------------------------------
+distributed.core - INFO - Starting established connection
+distributed.worker - INFO -         Registered to:   tcp://10.148.10.15:36219
+distributed.worker - INFO - -------------------------------------------------
+distributed.core - INFO - Starting established connection
+distributed.worker - INFO -       Start worker at:   tcp://10.148.9.128:44023
+distributed.worker - INFO -          Listening to:   tcp://10.148.9.128:44023
+distributed.worker - INFO -          dashboard at:         10.148.9.128:46459
+distributed.worker - INFO - Waiting to connect to:   tcp://10.148.10.15:36219
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -               Threads:                          4
+distributed.worker - INFO -                Memory:                   12.11 GB
+distributed.worker - INFO -       Local Directory: /glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-y4fqseiw
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -         Registered to:   tcp://10.148.10.15:36219
+distributed.worker - INFO - -------------------------------------------------
+distributed.core - INFO - Starting established connection
+distributed.worker - INFO -       Start worker at:   tcp://10.148.9.128:42815
+distributed.worker - INFO -          Listening to:   tcp://10.148.9.128:42815
+distributed.worker - INFO -          dashboard at:         10.148.9.128:40811
+distributed.worker - INFO - Waiting to connect to:   tcp://10.148.10.15:36219
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -               Threads:                          4
+distributed.worker - INFO -                Memory:                   12.11 GB
+distributed.worker - INFO -       Local Directory: /glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-tc2wd7fq
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -         Registered to:   tcp://10.148.10.15:36219
+distributed.worker - INFO - -------------------------------------------------
+distributed.core - INFO - Starting established connection
+distributed.worker - INFO -       Start worker at:   tcp://10.148.9.128:41077
+distributed.worker - INFO -          Listening to:   tcp://10.148.9.128:41077
+distributed.worker - INFO -          dashboard at:         10.148.9.128:46655
+distributed.worker - INFO - Waiting to connect to:   tcp://10.148.10.15:36219
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -               Threads:                          4
+distributed.worker - INFO -                Memory:                   12.11 GB
+distributed.worker - INFO -       Local Directory: /glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-97m2zuo3
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -       Start worker at:   tcp://10.148.9.128:43561
+distributed.worker - INFO -          Listening to:   tcp://10.148.9.128:43561
+distributed.worker - INFO -          dashboard at:         10.148.9.128:41805
+distributed.worker - INFO - Waiting to connect to:   tcp://10.148.10.15:36219
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -               Threads:                          4
+distributed.worker - INFO -                Memory:                   12.11 GB
+distributed.worker - INFO -       Local Directory: /glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-0sa2jyal
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -         Registered to:   tcp://10.148.10.15:36219
+distributed.worker - INFO - -------------------------------------------------
+distributed.core - INFO - Starting established connection
+distributed.worker - INFO -         Registered to:   tcp://10.148.10.15:36219
+distributed.worker - INFO - -------------------------------------------------
+distributed.core - INFO - Starting established connection
+distributed.worker - INFO -       Start worker at:   tcp://10.148.9.128:41265
+distributed.worker - INFO -          Listening to:   tcp://10.148.9.128:41265
+distributed.worker - INFO -          dashboard at:         10.148.9.128:38269
+distributed.worker - INFO - Waiting to connect to:   tcp://10.148.10.15:36219
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -               Threads:                          4
+distributed.worker - INFO -                Memory:                   12.11 GB
+distributed.worker - INFO -       Local Directory: /glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-a_fl4zx4
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -       Start worker at:   tcp://10.148.9.128:36909
+distributed.worker - INFO -          Listening to:   tcp://10.148.9.128:36909
+distributed.worker - INFO -          dashboard at:         10.148.9.128:36649
+distributed.worker - INFO - Waiting to connect to:   tcp://10.148.10.15:36219
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -               Threads:                          4
+distributed.worker - INFO -                Memory:                   12.11 GB
+distributed.worker - INFO -       Local Directory: /glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-lwxfhdwv
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -       Start worker at:   tcp://10.148.9.128:42851
+distributed.worker - INFO -          Listening to:   tcp://10.148.9.128:42851
+distributed.worker - INFO -          dashboard at:         10.148.9.128:46167
+distributed.worker - INFO - Waiting to connect to:   tcp://10.148.10.15:36219
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -               Threads:                          4
+distributed.worker - INFO -                Memory:                   12.11 GB
+distributed.worker - INFO -       Local Directory: /glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-r45lx35o
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -         Registered to:   tcp://10.148.10.15:36219
+distributed.worker - INFO - -------------------------------------------------
+distributed.core - INFO - Starting established connection
+distributed.worker - INFO -         Registered to:   tcp://10.148.10.15:36219
+distributed.worker - INFO - -------------------------------------------------
+distributed.core - INFO - Starting established connection
+distributed.worker - INFO -         Registered to:   tcp://10.148.10.15:36219
+distributed.worker - INFO - -------------------------------------------------
+distributed.core - INFO - Starting established connection
+distributed.worker - INFO - Failed to put key in memory
+Traceback (most recent call last):
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/worker.py", line 1671, in transition_executing_done
+    self.put_key_in_memory(key, value, transition=False)
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/worker.py", line 1894, in put_key_in_memory
+    self.data[key] = value
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/zict/buffer.py", line 87, in __setitem__
+    self.fast[key] = value
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/zict/lru.py", line 70, in __setitem__
+    self.evict()
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/zict/lru.py", line 89, in evict
+    cb(k, v)
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/zict/buffer.py", line 60, in fast_to_slow
+    self.slow[key] = value
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/zict/func.py", line 41, in __setitem__
+    self.d[key] = self.dump(value)
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/zict/file.py", line 82, in __setitem__
+    f.write(v)
+OSError: [Errno 122] Disk quota exceeded
+distributed.core - INFO - Event loop was unresponsive in Worker for 6.40s.  This is often caused by long-running GIL-holding functions or moving large chunks of data. This can cause timeouts and instability.
+distributed.worker - INFO - Failed to put key in memory
+Traceback (most recent call last):
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/worker.py", line 1671, in transition_executing_done
+    self.put_key_in_memory(key, value, transition=False)
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/worker.py", line 1894, in put_key_in_memory
+    self.data[key] = value
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/zict/buffer.py", line 87, in __setitem__
+    self.fast[key] = value
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/zict/lru.py", line 70, in __setitem__
+    self.evict()
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/zict/lru.py", line 89, in evict
+    cb(k, v)
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/zict/buffer.py", line 60, in fast_to_slow
+    self.slow[key] = value
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/zict/func.py", line 41, in __setitem__
+    self.d[key] = self.dump(value)
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/zict/file.py", line 82, in __setitem__
+    f.write(v)
+OSError: [Errno 122] Disk quota exceeded
+distributed.core - INFO - Event loop was unresponsive in Worker for 6.74s.  This is often caused by long-running GIL-holding functions or moving large chunks of data. This can cause timeouts and instability.
+distributed.worker - WARNING - Worker is at 80% memory usage. Pausing worker.  Process memory: 9.77 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 80% memory usage. Pausing worker.  Process memory: 9.77 GB -- Worker memory limit: 12.11 GB
+distributed.nanny - WARNING - Worker exceeded 95% memory budget. Restarting
+distributed.nanny - WARNING - Worker exceeded 95% memory budget. Restarting
+distributed.nanny - INFO - Worker process 34237 was killed by signal 15
+distributed.nanny - WARNING - Restarting worker
+distributed.nanny - INFO - Worker process 34253 was killed by signal 15
+distributed.nanny - WARNING - Restarting worker
+distributed.worker - INFO -       Start worker at:   tcp://10.148.9.128:40017
+distributed.worker - INFO -          Listening to:   tcp://10.148.9.128:40017
+distributed.worker - INFO -          dashboard at:         10.148.9.128:34303
+distributed.worker - INFO - Waiting to connect to:   tcp://10.148.10.15:36219
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -               Threads:                          4
+distributed.worker - INFO -                Memory:                   12.11 GB
+distributed.worker - INFO -       Local Directory: /glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-u95xof_w
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -         Registered to:   tcp://10.148.10.15:36219
+distributed.worker - INFO - -------------------------------------------------
+distributed.core - INFO - Starting established connection
+distributed.worker - INFO -       Start worker at:   tcp://10.148.9.128:43803
+distributed.worker - INFO -          Listening to:   tcp://10.148.9.128:43803
+distributed.worker - INFO -          dashboard at:         10.148.9.128:46729
+distributed.worker - INFO - Waiting to connect to:   tcp://10.148.10.15:36219
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -               Threads:                          4
+distributed.worker - INFO -                Memory:                   12.11 GB
+distributed.worker - INFO -       Local Directory: /glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-slsr4g9x
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -         Registered to:   tcp://10.148.10.15:36219
+distributed.worker - INFO - -------------------------------------------------
+distributed.core - INFO - Starting established connection
+distributed.worker - INFO - Failed to put key in memory
+Traceback (most recent call last):
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/worker.py", line 1671, in transition_executing_done
+    self.put_key_in_memory(key, value, transition=False)
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/worker.py", line 1894, in put_key_in_memory
+    self.data[key] = value
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/zict/buffer.py", line 87, in __setitem__
+    self.fast[key] = value
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/zict/lru.py", line 70, in __setitem__
+    self.evict()
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/zict/lru.py", line 89, in evict
+    cb(k, v)
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/zict/buffer.py", line 60, in fast_to_slow
+    self.slow[key] = value
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/zict/func.py", line 41, in __setitem__
+    self.d[key] = self.dump(value)
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/zict/file.py", line 82, in __setitem__
+    f.write(v)
+OSError: [Errno 122] Disk quota exceeded
+distributed.core - INFO - Event loop was unresponsive in Worker for 6.40s.  This is often caused by long-running GIL-holding functions or moving large chunks of data. This can cause timeouts and instability.
+distributed.worker - INFO - Failed to put key in memory
+Traceback (most recent call last):
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/worker.py", line 1671, in transition_executing_done
+    self.put_key_in_memory(key, value, transition=False)
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/worker.py", line 1894, in put_key_in_memory
+    self.data[key] = value
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/zict/buffer.py", line 87, in __setitem__
+    self.fast[key] = value
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/zict/lru.py", line 70, in __setitem__
+    self.evict()
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/zict/lru.py", line 89, in evict
+    cb(k, v)
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/zict/buffer.py", line 60, in fast_to_slow
+    self.slow[key] = value
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/zict/func.py", line 41, in __setitem__
+    self.d[key] = self.dump(value)
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/zict/file.py", line 82, in __setitem__
+    f.write(v)
+OSError: [Errno 122] Disk quota exceeded
+distributed.core - INFO - Event loop was unresponsive in Worker for 5.03s.  This is often caused by long-running GIL-holding functions or moving large chunks of data. This can cause timeouts and instability.
+distributed.worker - INFO - Failed to put key in memory
+Traceback (most recent call last):
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/worker.py", line 1671, in transition_executing_done
+    self.put_key_in_memory(key, value, transition=False)
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/worker.py", line 1894, in put_key_in_memory
+    self.data[key] = value
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/zict/buffer.py", line 87, in __setitem__
+    self.fast[key] = value
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/zict/lru.py", line 70, in __setitem__
+    self.evict()
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/zict/lru.py", line 89, in evict
+    cb(k, v)
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/zict/buffer.py", line 60, in fast_to_slow
+    self.slow[key] = value
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/zict/func.py", line 41, in __setitem__
+    self.d[key] = self.dump(value)
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/zict/file.py", line 82, in __setitem__
+    f.write(v)
+OSError: [Errno 122] Disk quota exceeded
+distributed.core - INFO - Event loop was unresponsive in Worker for 6.71s.  This is often caused by long-running GIL-holding functions or moving large chunks of data. This can cause timeouts and instability.
+distributed.worker - WARNING - Worker is at 80% memory usage. Pausing worker.  Process memory: 9.74 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 81% memory usage. Pausing worker.  Process memory: 9.88 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 80% memory usage. Pausing worker.  Process memory: 9.80 GB -- Worker memory limit: 12.11 GB
+distributed.nanny - WARNING - Worker exceeded 95% memory budget. Restarting
+distributed.nanny - WARNING - Worker exceeded 95% memory budget. Restarting
+distributed.nanny - WARNING - Worker exceeded 95% memory budget. Restarting
+distributed.nanny - INFO - Worker process 34244 was killed by signal 15
+distributed.nanny - WARNING - Restarting worker
+distributed.nanny - INFO - Worker process 34255 was killed by signal 15
+distributed.nanny - WARNING - Restarting worker
+distributed.nanny - INFO - Worker process 34238 was killed by signal 15
+distributed.nanny - WARNING - Restarting worker
+distributed.worker - INFO -       Start worker at:   tcp://10.148.9.128:40859
+distributed.worker - INFO -       Start worker at:   tcp://10.148.9.128:35319
+distributed.worker - INFO -          Listening to:   tcp://10.148.9.128:40859
+distributed.worker - INFO -          Listening to:   tcp://10.148.9.128:35319
+distributed.worker - INFO -          dashboard at:         10.148.9.128:40425
+distributed.worker - INFO -          dashboard at:         10.148.9.128:45251
+distributed.worker - INFO - Waiting to connect to:   tcp://10.148.10.15:36219
+distributed.worker - INFO - Waiting to connect to:   tcp://10.148.10.15:36219
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -               Threads:                          4
+distributed.worker - INFO -               Threads:                          4
+distributed.worker - INFO -                Memory:                   12.11 GB
+distributed.worker - INFO -                Memory:                   12.11 GB
+distributed.worker - INFO -       Local Directory: /glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-c92tcj3p
+distributed.worker - INFO -       Local Directory: /glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-2tkdga2z
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -         Registered to:   tcp://10.148.10.15:36219
+distributed.worker - INFO - -------------------------------------------------
+distributed.core - INFO - Starting established connection
+distributed.worker - INFO -         Registered to:   tcp://10.148.10.15:36219
+distributed.worker - INFO - -------------------------------------------------
+distributed.core - INFO - Starting established connection
+distributed.worker - INFO -       Start worker at:   tcp://10.148.9.128:38801
+distributed.worker - INFO -          Listening to:   tcp://10.148.9.128:38801
+distributed.worker - INFO -          dashboard at:         10.148.9.128:40045
+distributed.worker - INFO - Waiting to connect to:   tcp://10.148.10.15:36219
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -               Threads:                          4
+distributed.worker - INFO -                Memory:                   12.11 GB
+distributed.worker - INFO -       Local Directory: /glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-8r1yf34d
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -         Registered to:   tcp://10.148.10.15:36219
+distributed.worker - INFO - -------------------------------------------------
+distributed.core - INFO - Starting established connection
+distributed.worker - INFO - Failed to put key in memory
+Traceback (most recent call last):
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/worker.py", line 1671, in transition_executing_done
+    self.put_key_in_memory(key, value, transition=False)
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/worker.py", line 1894, in put_key_in_memory
+    self.data[key] = value
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/zict/buffer.py", line 87, in __setitem__
+    self.fast[key] = value
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/zict/lru.py", line 70, in __setitem__
+    self.evict()
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/zict/lru.py", line 89, in evict
+    cb(k, v)
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/zict/buffer.py", line 60, in fast_to_slow
+    self.slow[key] = value
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/zict/func.py", line 41, in __setitem__
+    self.d[key] = self.dump(value)
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/zict/file.py", line 82, in __setitem__
+    f.write(v)
+OSError: [Errno 122] Disk quota exceeded
+distributed.core - INFO - Event loop was unresponsive in Worker for 5.03s.  This is often caused by long-running GIL-holding functions or moving large chunks of data. This can cause timeouts and instability.
+distributed.worker - INFO - Failed to put key in memory
+Traceback (most recent call last):
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/worker.py", line 1671, in transition_executing_done
+    self.put_key_in_memory(key, value, transition=False)
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/worker.py", line 1894, in put_key_in_memory
+    self.data[key] = value
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/zict/buffer.py", line 87, in __setitem__
+    self.fast[key] = value
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/zict/lru.py", line 70, in __setitem__
+    self.evict()
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/zict/lru.py", line 89, in evict
+    cb(k, v)
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/zict/buffer.py", line 60, in fast_to_slow
+    self.slow[key] = value
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/zict/func.py", line 41, in __setitem__
+    self.d[key] = self.dump(value)
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/zict/file.py", line 82, in __setitem__
+    f.write(v)
+OSError: [Errno 122] Disk quota exceeded
+distributed.core - INFO - Event loop was unresponsive in Worker for 11.55s.  This is often caused by long-running GIL-holding functions or moving large chunks of data. This can cause timeouts and instability.
+distributed.worker - INFO - Failed to put key in memory
+Traceback (most recent call last):
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/worker.py", line 1671, in transition_executing_done
+    self.put_key_in_memory(key, value, transition=False)
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/worker.py", line 1894, in put_key_in_memory
+    self.data[key] = value
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/zict/buffer.py", line 87, in __setitem__
+    self.fast[key] = value
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/zict/lru.py", line 70, in __setitem__
+    self.evict()
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/zict/lru.py", line 89, in evict
+    cb(k, v)
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/zict/buffer.py", line 60, in fast_to_slow
+    self.slow[key] = value
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/zict/func.py", line 41, in __setitem__
+    self.d[key] = self.dump(value)
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/zict/file.py", line 82, in __setitem__
+    f.write(v)
+OSError: [Errno 122] Disk quota exceeded
+distributed.core - INFO - Event loop was unresponsive in Worker for 5.16s.  This is often caused by long-running GIL-holding functions or moving large chunks of data. This can cause timeouts and instability.
+distributed.worker - INFO - Failed to put key in memory
+Traceback (most recent call last):
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/worker.py", line 1671, in transition_executing_done
+    self.put_key_in_memory(key, value, transition=False)
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/worker.py", line 1894, in put_key_in_memory
+    self.data[key] = value
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/zict/buffer.py", line 87, in __setitem__
+    self.fast[key] = value
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/zict/lru.py", line 70, in __setitem__
+    self.evict()
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/zict/lru.py", line 89, in evict
+    cb(k, v)
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/zict/buffer.py", line 60, in fast_to_slow
+    self.slow[key] = value
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/zict/func.py", line 41, in __setitem__
+    self.d[key] = self.dump(value)
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/zict/file.py", line 82, in __setitem__
+    f.write(v)
+OSError: [Errno 122] Disk quota exceeded
+distributed.core - INFO - Event loop was unresponsive in Worker for 7.88s.  This is often caused by long-running GIL-holding functions or moving large chunks of data. This can cause timeouts and instability.
+distributed.worker - INFO - Failed to put key in memory
+Traceback (most recent call last):
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/worker.py", line 1671, in transition_executing_done
+    self.put_key_in_memory(key, value, transition=False)
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/worker.py", line 1894, in put_key_in_memory
+    self.data[key] = value
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/zict/buffer.py", line 87, in __setitem__
+    self.fast[key] = value
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/zict/lru.py", line 70, in __setitem__
+    self.evict()
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/zict/lru.py", line 89, in evict
+    cb(k, v)
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/zict/buffer.py", line 60, in fast_to_slow
+    self.slow[key] = value
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/zict/func.py", line 41, in __setitem__
+    self.d[key] = self.dump(value)
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/zict/file.py", line 82, in __setitem__
+    f.write(v)
+OSError: [Errno 122] Disk quota exceeded
+distributed.core - INFO - Event loop was unresponsive in Worker for 8.66s.  This is often caused by long-running GIL-holding functions or moving large chunks of data. This can cause timeouts and instability.
+distributed.worker - WARNING - Worker is at 80% memory usage. Pausing worker.  Process memory: 9.73 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 80% memory usage. Pausing worker.  Process memory: 9.78 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 80% memory usage. Pausing worker.  Process memory: 9.75 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 81% memory usage. Pausing worker.  Process memory: 9.87 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 80% memory usage. Pausing worker.  Process memory: 9.78 GB -- Worker memory limit: 12.11 GB
+distributed.nanny - WARNING - Worker exceeded 95% memory budget. Restarting
+distributed.nanny - WARNING - Worker exceeded 95% memory budget. Restarting
+distributed.nanny - WARNING - Worker exceeded 95% memory budget. Restarting
+distributed.nanny - WARNING - Worker exceeded 95% memory budget. Restarting
+distributed.nanny - WARNING - Worker exceeded 95% memory budget. Restarting
+distributed.nanny - INFO - Worker process 34245 was killed by signal 15
+distributed.nanny - WARNING - Restarting worker
+distributed.nanny - INFO - Worker process 34249 was killed by signal 15
+distributed.nanny - WARNING - Restarting worker
+distributed.nanny - INFO - Worker process 34236 was killed by signal 15
+distributed.nanny - WARNING - Restarting worker
+distributed.nanny - INFO - Worker process 34239 was killed by signal 15
+distributed.nanny - WARNING - Restarting worker
+distributed.nanny - INFO - Worker process 34806 was killed by signal 15
+distributed.nanny - WARNING - Restarting worker
+distributed.worker - INFO -       Start worker at:   tcp://10.148.9.128:45989
+distributed.worker - INFO -          Listening to:   tcp://10.148.9.128:45989
+distributed.worker - INFO -          dashboard at:         10.148.9.128:41975
+distributed.worker - INFO - Waiting to connect to:   tcp://10.148.10.15:36219
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -               Threads:                          4
+distributed.worker - INFO -                Memory:                   12.11 GB
+distributed.worker - INFO -       Local Directory: /glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-579af225
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -         Registered to:   tcp://10.148.10.15:36219
+distributed.worker - INFO - -------------------------------------------------
+distributed.core - INFO - Starting established connection
+distributed.worker - INFO -       Start worker at:   tcp://10.148.9.128:43227
+distributed.worker - INFO -          Listening to:   tcp://10.148.9.128:43227
+distributed.worker - INFO -          dashboard at:         10.148.9.128:40821
+distributed.worker - INFO - Waiting to connect to:   tcp://10.148.10.15:36219
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -               Threads:                          4
+distributed.worker - INFO -                Memory:                   12.11 GB
+distributed.worker - INFO -       Local Directory: /glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-magk5hrx
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -         Registered to:   tcp://10.148.10.15:36219
+distributed.worker - INFO - -------------------------------------------------
+distributed.core - INFO - Starting established connection
+distributed.worker - INFO -       Start worker at:   tcp://10.148.9.128:45599
+distributed.worker - INFO -          Listening to:   tcp://10.148.9.128:45599
+distributed.worker - INFO -          dashboard at:         10.148.9.128:44985
+distributed.worker - INFO - Waiting to connect to:   tcp://10.148.10.15:36219
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -               Threads:                          4
+distributed.worker - INFO -                Memory:                   12.11 GB
+distributed.worker - INFO -       Local Directory: /glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-bc0we_9o
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -         Registered to:   tcp://10.148.10.15:36219
+distributed.worker - INFO - -------------------------------------------------
+distributed.core - INFO - Starting established connection
+distributed.worker - INFO -       Start worker at:   tcp://10.148.9.128:38549
+distributed.worker - INFO -          Listening to:   tcp://10.148.9.128:38549
+distributed.worker - INFO -          dashboard at:         10.148.9.128:38429
+distributed.worker - INFO - Waiting to connect to:   tcp://10.148.10.15:36219
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -               Threads:                          4
+distributed.worker - INFO -                Memory:                   12.11 GB
+distributed.worker - INFO -       Local Directory: /glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-f3sptqv_
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -         Registered to:   tcp://10.148.10.15:36219
+distributed.worker - INFO - -------------------------------------------------
+distributed.core - INFO - Starting established connection
+distributed.worker - INFO -       Start worker at:   tcp://10.148.9.128:35709
+distributed.worker - INFO -          Listening to:   tcp://10.148.9.128:35709
+distributed.worker - INFO -          dashboard at:         10.148.9.128:45651
+distributed.worker - INFO - Waiting to connect to:   tcp://10.148.10.15:36219
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -               Threads:                          4
+distributed.worker - INFO -                Memory:                   12.11 GB
+distributed.worker - INFO -       Local Directory: /glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-yi4ohlul
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -         Registered to:   tcp://10.148.10.15:36219
+distributed.worker - INFO - -------------------------------------------------
+distributed.core - INFO - Starting established connection
+distributed.worker - INFO - Failed to put key in memory
+Traceback (most recent call last):
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/worker.py", line 1671, in transition_executing_done
+    self.put_key_in_memory(key, value, transition=False)
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/worker.py", line 1894, in put_key_in_memory
+    self.data[key] = value
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/zict/buffer.py", line 87, in __setitem__
+    self.fast[key] = value
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/zict/lru.py", line 70, in __setitem__
+    self.evict()
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/zict/lru.py", line 89, in evict
+    cb(k, v)
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/zict/buffer.py", line 60, in fast_to_slow
+    self.slow[key] = value
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/zict/func.py", line 41, in __setitem__
+    self.d[key] = self.dump(value)
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/zict/file.py", line 82, in __setitem__
+    f.write(v)
+OSError: [Errno 122] Disk quota exceeded
+distributed.core - INFO - Event loop was unresponsive in Worker for 7.01s.  This is often caused by long-running GIL-holding functions or moving large chunks of data. This can cause timeouts and instability.
+distributed.worker - INFO - Failed to put key in memory
+Traceback (most recent call last):
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/worker.py", line 1671, in transition_executing_done
+    self.put_key_in_memory(key, value, transition=False)
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/worker.py", line 1894, in put_key_in_memory
+    self.data[key] = value
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/zict/buffer.py", line 87, in __setitem__
+    self.fast[key] = value
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/zict/lru.py", line 70, in __setitem__
+    self.evict()
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/zict/lru.py", line 89, in evict
+    cb(k, v)
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/zict/buffer.py", line 60, in fast_to_slow
+    self.slow[key] = value
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/zict/func.py", line 41, in __setitem__
+    self.d[key] = self.dump(value)
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/zict/file.py", line 82, in __setitem__
+    f.write(v)
+OSError: [Errno 122] Disk quota exceeded
+distributed.core - INFO - Event loop was unresponsive in Worker for 3.99s.  This is often caused by long-running GIL-holding functions or moving large chunks of data. This can cause timeouts and instability.
+distributed.worker - WARNING - Worker is at 80% memory usage. Pausing worker.  Process memory: 9.80 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 80% memory usage. Pausing worker.  Process memory: 9.73 GB -- Worker memory limit: 12.11 GB
+distributed.nanny - WARNING - Worker exceeded 95% memory budget. Restarting
+distributed.nanny - WARNING - Worker exceeded 95% memory budget. Restarting
+distributed.nanny - INFO - Worker process 34912 was killed by signal 15
+distributed.nanny - WARNING - Restarting worker
+distributed.nanny - INFO - Worker process 34810 was killed by signal 15
+distributed.nanny - WARNING - Restarting worker
+distributed.worker - INFO -       Start worker at:   tcp://10.148.9.128:37249
+distributed.worker - INFO -          Listening to:   tcp://10.148.9.128:37249
+distributed.worker - INFO -          dashboard at:         10.148.9.128:45305
+distributed.worker - INFO - Waiting to connect to:   tcp://10.148.10.15:36219
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -               Threads:                          4
+distributed.worker - INFO -                Memory:                   12.11 GB
+distributed.worker - INFO -       Local Directory: /glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-2z3fy_f_
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -         Registered to:   tcp://10.148.10.15:36219
+distributed.worker - INFO - -------------------------------------------------
+distributed.core - INFO - Starting established connection
+distributed.worker - INFO -       Start worker at:   tcp://10.148.9.128:46085
+distributed.worker - INFO -          Listening to:   tcp://10.148.9.128:46085
+distributed.worker - INFO -          dashboard at:         10.148.9.128:45591
+distributed.worker - INFO - Waiting to connect to:   tcp://10.148.10.15:36219
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -               Threads:                          4
+distributed.worker - INFO -                Memory:                   12.11 GB
+distributed.worker - INFO -       Local Directory: /glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-a57w9q4k
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -         Registered to:   tcp://10.148.10.15:36219
+distributed.worker - INFO - -------------------------------------------------
+distributed.core - INFO - Starting established connection
+distributed.nanny - WARNING - Worker exceeded 95% memory budget. Restarting
+distributed.nanny - INFO - Worker process 34915 was killed by signal 15
+distributed.nanny - WARNING - Restarting worker
+distributed.worker - INFO -       Start worker at:   tcp://10.148.9.128:43675
+distributed.worker - INFO -          Listening to:   tcp://10.148.9.128:43675
+distributed.worker - INFO -          dashboard at:         10.148.9.128:40749
+distributed.worker - INFO - Waiting to connect to:   tcp://10.148.10.15:36219
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -               Threads:                          4
+distributed.worker - INFO -                Memory:                   12.11 GB
+distributed.worker - INFO -       Local Directory: /glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-ei4hyuvf
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -         Registered to:   tcp://10.148.10.15:36219
+distributed.worker - INFO - -------------------------------------------------
+distributed.core - INFO - Starting established connection
+distributed.worker - INFO - Failed to put key in memory
+Traceback (most recent call last):
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/worker.py", line 1671, in transition_executing_done
+    self.put_key_in_memory(key, value, transition=False)
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/worker.py", line 1894, in put_key_in_memory
+    self.data[key] = value
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/zict/buffer.py", line 87, in __setitem__
+    self.fast[key] = value
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/zict/lru.py", line 70, in __setitem__
+    self.evict()
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/zict/lru.py", line 89, in evict
+    cb(k, v)
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/zict/buffer.py", line 60, in fast_to_slow
+    self.slow[key] = value
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/zict/func.py", line 41, in __setitem__
+    self.d[key] = self.dump(value)
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/zict/file.py", line 82, in __setitem__
+    f.write(v)
+OSError: [Errno 122] Disk quota exceeded
+distributed.core - INFO - Event loop was unresponsive in Worker for 3.29s.  This is often caused by long-running GIL-holding functions or moving large chunks of data. This can cause timeouts and instability.
+distributed.worker - INFO - Failed to put key in memory
+Traceback (most recent call last):
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/worker.py", line 1671, in transition_executing_done
+    self.put_key_in_memory(key, value, transition=False)
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/worker.py", line 1894, in put_key_in_memory
+    self.data[key] = value
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/zict/buffer.py", line 87, in __setitem__
+    self.fast[key] = value
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/zict/lru.py", line 70, in __setitem__
+    self.evict()
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/zict/lru.py", line 89, in evict
+    cb(k, v)
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/zict/buffer.py", line 60, in fast_to_slow
+    self.slow[key] = value
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/zict/func.py", line 41, in __setitem__
+    self.d[key] = self.dump(value)
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/zict/file.py", line 82, in __setitem__
+    f.write(v)
+OSError: [Errno 122] Disk quota exceeded
+distributed.core - INFO - Event loop was unresponsive in Worker for 8.52s.  This is often caused by long-running GIL-holding functions or moving large chunks of data. This can cause timeouts and instability.
+distributed.worker - WARNING - Worker is at 80% memory usage. Pausing worker.  Process memory: 9.70 GB -- Worker memory limit: 12.11 GB
+distributed.worker - WARNING - Worker is at 80% memory usage. Pausing worker.  Process memory: 9.80 GB -- Worker memory limit: 12.11 GB
+distributed.nanny - WARNING - Worker exceeded 95% memory budget. Restarting
+distributed.nanny - INFO - Worker process 34918 was killed by signal 15
+distributed.nanny - WARNING - Restarting worker
+distributed.worker - INFO -       Start worker at:   tcp://10.148.9.128:34023
+distributed.worker - INFO -          Listening to:   tcp://10.148.9.128:34023
+distributed.worker - INFO -          dashboard at:         10.148.9.128:35701
+distributed.worker - INFO - Waiting to connect to:   tcp://10.148.10.15:36219
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -               Threads:                          4
+distributed.worker - INFO -                Memory:                   12.11 GB
+distributed.worker - INFO -       Local Directory: /glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-t91q5hk3
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -         Registered to:   tcp://10.148.10.15:36219
+distributed.worker - INFO - -------------------------------------------------
+distributed.core - INFO - Starting established connection
+distributed.nanny - WARNING - Worker exceeded 95% memory budget. Restarting
+distributed.nanny - INFO - Worker process 35113 was killed by signal 15
+distributed.nanny - WARNING - Restarting worker
+distributed.worker - INFO -       Start worker at:   tcp://10.148.9.128:43121
+distributed.worker - INFO -          Listening to:   tcp://10.148.9.128:43121
+distributed.worker - INFO -          dashboard at:         10.148.9.128:44139
+distributed.worker - INFO - Waiting to connect to:   tcp://10.148.10.15:36219
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -               Threads:                          4
+distributed.worker - INFO -                Memory:                   12.11 GB
+distributed.worker - INFO -       Local Directory: /glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-0aoixqc1
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -         Registered to:   tcp://10.148.10.15:36219
+distributed.worker - INFO - -------------------------------------------------
+distributed.core - INFO - Starting established connection
+distributed.core - INFO - Event loop was unresponsive in Worker for 10.76s.  This is often caused by long-running GIL-holding functions or moving large chunks of data. This can cause timeouts and instability.
+distributed.dask_worker - INFO - Exiting on signal 15
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.9.128:34967'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.9.128:37999'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.9.128:37367'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.9.128:44693'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.9.128:37623'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.9.128:34499'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.9.128:40257'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.9.128:33069'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.9.128:37671'
+distributed.nanny - INFO - Worker process 35104 was killed by signal 15
+distributed.nanny - INFO - Worker process 35532 was killed by signal 15
+distributed.nanny - INFO - Worker process 35066 was killed by signal 15
+distributed.nanny - INFO - Worker process 35320 was killed by signal 15
+distributed.nanny - INFO - Worker process 35474 was killed by signal 15
+/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/multiprocessing/semaphore_tracker.py:144: UserWarning: semaphore_tracker: There appear to be 24 leaked semaphores to clean up at shutdown
+  len(cache))

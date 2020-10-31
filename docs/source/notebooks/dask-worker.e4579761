@@ -1,0 +1,30 @@
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.7.213:39971'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.7.213:41225'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.7.213:41121'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.7.213:39569'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.7.213:34387'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.7.213:37525'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.7.213:42767'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.7.213:37275'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.7.213:40655'
+distributed.diskutils - INFO - Found stale lock file and directory '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-rsm2ot7d', purging
+distributed.dask_worker - INFO - Exiting on signal 15
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.7.213:39971'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.7.213:41225'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.7.213:41121'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.7.213:39569'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.7.213:34387'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.7.213:37525'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.7.213:42767'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.7.213:37275'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.7.213:40655'
+distributed.nanny - INFO - Worker process 2036 was killed by signal 15
+distributed.nanny - INFO - Worker process 2009 was killed by signal 15
+distributed.nanny - INFO - Worker process 2013 was killed by signal 15
+distributed.nanny - INFO - Worker process 2008 was killed by signal 15
+distributed.nanny - INFO - Worker process 2033 was killed by signal 15
+distributed.nanny - INFO - Worker process 2012 was killed by signal 15
+distributed.nanny - INFO - Worker process 2016 was killed by signal 15
+distributed.nanny - INFO - Worker process 2031 was killed by signal 15
+distributed.nanny - INFO - Worker process 2017 was killed by signal 15
+distributed.dask_worker - INFO - End worker

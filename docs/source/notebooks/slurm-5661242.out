@@ -1,0 +1,319 @@
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.12.205.21:35891'
+distributed.diskutils - INFO - Found stale lock file and directory '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-0ufyvvyu', purging
+distributed.worker - INFO -       Start worker at:   tcp://10.12.205.21:44963
+distributed.worker - INFO -          Listening to:   tcp://10.12.205.21:44963
+distributed.worker - INFO -          dashboard at:         10.12.205.21:42319
+distributed.worker - INFO - Waiting to connect to:   tcp://10.12.205.30:38079
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -               Threads:                          4
+distributed.worker - INFO -                Memory:                   40.00 GB
+distributed.worker - INFO -       Local Directory: /glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-owcof3l_
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -         Registered to:   tcp://10.12.205.30:38079
+distributed.worker - INFO - -------------------------------------------------
+distributed.core - INFO - Starting established connection
+distributed.protocol.pickle - INFO - Failed to deserialize b'\x80\x04\x95W\x00\x00\x00\x00\x00\x00\x00\x8c\tfunctools\x94\x8c\x07partial\x94\x93\x94\x8c\nldcpy.util\x94\x8c\npreprocess\x94\x93\x94\x85\x94R\x94(h\x05)}\x94\x8c\x08varnames\x94]\x94\x8c\x02PS\x94asNt\x94b.'
+Traceback (most recent call last):
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/worker.py", line 3235, in loads_function
+    result = cache_loads[bytes_object]
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/utils.py", line 1518, in __getitem__
+    value = super().__getitem__(key)
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/collections/__init__.py", line 1027, in __getitem__
+    raise KeyError(key)
+KeyError: b'\x80\x04\x95W\x00\x00\x00\x00\x00\x00\x00\x8c\tfunctools\x94\x8c\x07partial\x94\x93\x94\x8c\nldcpy.util\x94\x8c\npreprocess\x94\x93\x94\x85\x94R\x94(h\x05)}\x94\x8c\x08varnames\x94]\x94\x8c\x02PS\x94asNt\x94b.'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/protocol/pickle.py", line 59, in loads
+    return pickle.loads(x)
+ModuleNotFoundError: No module named 'ldcpy'
+distributed.worker - WARNING - Could not deserialize task
+Traceback (most recent call last):
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/worker.py", line 3235, in loads_function
+    result = cache_loads[bytes_object]
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/utils.py", line 1518, in __getitem__
+    value = super().__getitem__(key)
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/collections/__init__.py", line 1027, in __getitem__
+    raise KeyError(key)
+KeyError: b'\x80\x04\x95W\x00\x00\x00\x00\x00\x00\x00\x8c\tfunctools\x94\x8c\x07partial\x94\x93\x94\x8c\nldcpy.util\x94\x8c\npreprocess\x94\x93\x94\x85\x94R\x94(h\x05)}\x94\x8c\x08varnames\x94]\x94\x8c\x02PS\x94asNt\x94b.'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/worker.py", line 2413, in _maybe_deserialize_task
+    function, args, kwargs = _deserialize(*self.tasks[key])
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/worker.py", line 3246, in _deserialize
+    function = loads_function(function)
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/worker.py", line 3237, in loads_function
+    result = pickle.loads(bytes_object)
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/protocol/pickle.py", line 59, in loads
+    return pickle.loads(x)
+ModuleNotFoundError: No module named 'ldcpy'
+distributed.protocol.pickle - INFO - Failed to deserialize b'\x80\x04\x95W\x00\x00\x00\x00\x00\x00\x00\x8c\tfunctools\x94\x8c\x07partial\x94\x93\x94\x8c\nldcpy.util\x94\x8c\npreprocess\x94\x93\x94\x85\x94R\x94(h\x05)}\x94\x8c\x08varnames\x94]\x94\x8c\x02PS\x94asNt\x94b.'
+Traceback (most recent call last):
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/worker.py", line 3235, in loads_function
+    result = cache_loads[bytes_object]
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/utils.py", line 1518, in __getitem__
+    value = super().__getitem__(key)
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/collections/__init__.py", line 1027, in __getitem__
+    raise KeyError(key)
+KeyError: b'\x80\x04\x95W\x00\x00\x00\x00\x00\x00\x00\x8c\tfunctools\x94\x8c\x07partial\x94\x93\x94\x8c\nldcpy.util\x94\x8c\npreprocess\x94\x93\x94\x85\x94R\x94(h\x05)}\x94\x8c\x08varnames\x94]\x94\x8c\x02PS\x94asNt\x94b.'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/protocol/pickle.py", line 59, in loads
+    return pickle.loads(x)
+ModuleNotFoundError: No module named 'ldcpy'
+distributed.worker - WARNING - Could not deserialize task
+Traceback (most recent call last):
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/worker.py", line 3235, in loads_function
+    result = cache_loads[bytes_object]
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/utils.py", line 1518, in __getitem__
+    value = super().__getitem__(key)
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/collections/__init__.py", line 1027, in __getitem__
+    raise KeyError(key)
+KeyError: b'\x80\x04\x95W\x00\x00\x00\x00\x00\x00\x00\x8c\tfunctools\x94\x8c\x07partial\x94\x93\x94\x8c\nldcpy.util\x94\x8c\npreprocess\x94\x93\x94\x85\x94R\x94(h\x05)}\x94\x8c\x08varnames\x94]\x94\x8c\x02PS\x94asNt\x94b.'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/worker.py", line 2413, in _maybe_deserialize_task
+    function, args, kwargs = _deserialize(*self.tasks[key])
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/worker.py", line 3246, in _deserialize
+    function = loads_function(function)
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/worker.py", line 3237, in loads_function
+    result = pickle.loads(bytes_object)
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/protocol/pickle.py", line 59, in loads
+    return pickle.loads(x)
+ModuleNotFoundError: No module named 'ldcpy'
+distributed.protocol.pickle - INFO - Failed to deserialize b'\x80\x04\x95W\x00\x00\x00\x00\x00\x00\x00\x8c\tfunctools\x94\x8c\x07partial\x94\x93\x94\x8c\nldcpy.util\x94\x8c\npreprocess\x94\x93\x94\x85\x94R\x94(h\x05)}\x94\x8c\x08varnames\x94]\x94\x8c\x02PS\x94asNt\x94b.'
+Traceback (most recent call last):
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/worker.py", line 3235, in loads_function
+    result = cache_loads[bytes_object]
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/utils.py", line 1518, in __getitem__
+    value = super().__getitem__(key)
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/collections/__init__.py", line 1027, in __getitem__
+    raise KeyError(key)
+KeyError: b'\x80\x04\x95W\x00\x00\x00\x00\x00\x00\x00\x8c\tfunctools\x94\x8c\x07partial\x94\x93\x94\x8c\nldcpy.util\x94\x8c\npreprocess\x94\x93\x94\x85\x94R\x94(h\x05)}\x94\x8c\x08varnames\x94]\x94\x8c\x02PS\x94asNt\x94b.'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/protocol/pickle.py", line 59, in loads
+    return pickle.loads(x)
+ModuleNotFoundError: No module named 'ldcpy'
+distributed.worker - WARNING - Could not deserialize task
+Traceback (most recent call last):
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/worker.py", line 3235, in loads_function
+    result = cache_loads[bytes_object]
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/utils.py", line 1518, in __getitem__
+    value = super().__getitem__(key)
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/collections/__init__.py", line 1027, in __getitem__
+    raise KeyError(key)
+KeyError: b'\x80\x04\x95W\x00\x00\x00\x00\x00\x00\x00\x8c\tfunctools\x94\x8c\x07partial\x94\x93\x94\x8c\nldcpy.util\x94\x8c\npreprocess\x94\x93\x94\x85\x94R\x94(h\x05)}\x94\x8c\x08varnames\x94]\x94\x8c\x02PS\x94asNt\x94b.'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/worker.py", line 2413, in _maybe_deserialize_task
+    function, args, kwargs = _deserialize(*self.tasks[key])
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/worker.py", line 3246, in _deserialize
+    function = loads_function(function)
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/worker.py", line 3237, in loads_function
+    result = pickle.loads(bytes_object)
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/protocol/pickle.py", line 59, in loads
+    return pickle.loads(x)
+ModuleNotFoundError: No module named 'ldcpy'
+distributed.protocol.pickle - INFO - Failed to deserialize b'\x80\x04\x95W\x00\x00\x00\x00\x00\x00\x00\x8c\tfunctools\x94\x8c\x07partial\x94\x93\x94\x8c\nldcpy.util\x94\x8c\npreprocess\x94\x93\x94\x85\x94R\x94(h\x05)}\x94\x8c\x08varnames\x94]\x94\x8c\x02PS\x94asNt\x94b.'
+Traceback (most recent call last):
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/worker.py", line 3235, in loads_function
+    result = cache_loads[bytes_object]
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/utils.py", line 1518, in __getitem__
+    value = super().__getitem__(key)
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/collections/__init__.py", line 1027, in __getitem__
+    raise KeyError(key)
+KeyError: b'\x80\x04\x95W\x00\x00\x00\x00\x00\x00\x00\x8c\tfunctools\x94\x8c\x07partial\x94\x93\x94\x8c\nldcpy.util\x94\x8c\npreprocess\x94\x93\x94\x85\x94R\x94(h\x05)}\x94\x8c\x08varnames\x94]\x94\x8c\x02PS\x94asNt\x94b.'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/protocol/pickle.py", line 59, in loads
+    return pickle.loads(x)
+ModuleNotFoundError: No module named 'ldcpy'
+distributed.worker - WARNING - Could not deserialize task
+Traceback (most recent call last):
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/worker.py", line 3235, in loads_function
+    result = cache_loads[bytes_object]
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/utils.py", line 1518, in __getitem__
+    value = super().__getitem__(key)
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/collections/__init__.py", line 1027, in __getitem__
+    raise KeyError(key)
+KeyError: b'\x80\x04\x95W\x00\x00\x00\x00\x00\x00\x00\x8c\tfunctools\x94\x8c\x07partial\x94\x93\x94\x8c\nldcpy.util\x94\x8c\npreprocess\x94\x93\x94\x85\x94R\x94(h\x05)}\x94\x8c\x08varnames\x94]\x94\x8c\x02PS\x94asNt\x94b.'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/worker.py", line 2413, in _maybe_deserialize_task
+    function, args, kwargs = _deserialize(*self.tasks[key])
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/worker.py", line 3246, in _deserialize
+    function = loads_function(function)
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/worker.py", line 3237, in loads_function
+    result = pickle.loads(bytes_object)
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/protocol/pickle.py", line 59, in loads
+    return pickle.loads(x)
+ModuleNotFoundError: No module named 'ldcpy'
+distributed.protocol.pickle - INFO - Failed to deserialize b'\x80\x04\x95W\x00\x00\x00\x00\x00\x00\x00\x8c\tfunctools\x94\x8c\x07partial\x94\x93\x94\x8c\nldcpy.util\x94\x8c\npreprocess\x94\x93\x94\x85\x94R\x94(h\x05)}\x94\x8c\x08varnames\x94]\x94\x8c\x02PS\x94asNt\x94b.'
+Traceback (most recent call last):
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/worker.py", line 3235, in loads_function
+    result = cache_loads[bytes_object]
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/utils.py", line 1518, in __getitem__
+    value = super().__getitem__(key)
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/collections/__init__.py", line 1027, in __getitem__
+    raise KeyError(key)
+KeyError: b'\x80\x04\x95W\x00\x00\x00\x00\x00\x00\x00\x8c\tfunctools\x94\x8c\x07partial\x94\x93\x94\x8c\nldcpy.util\x94\x8c\npreprocess\x94\x93\x94\x85\x94R\x94(h\x05)}\x94\x8c\x08varnames\x94]\x94\x8c\x02PS\x94asNt\x94b.'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/protocol/pickle.py", line 59, in loads
+    return pickle.loads(x)
+ModuleNotFoundError: No module named 'ldcpy'
+distributed.worker - WARNING - Could not deserialize task
+Traceback (most recent call last):
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/worker.py", line 3235, in loads_function
+    result = cache_loads[bytes_object]
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/utils.py", line 1518, in __getitem__
+    value = super().__getitem__(key)
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/collections/__init__.py", line 1027, in __getitem__
+    raise KeyError(key)
+KeyError: b'\x80\x04\x95W\x00\x00\x00\x00\x00\x00\x00\x8c\tfunctools\x94\x8c\x07partial\x94\x93\x94\x8c\nldcpy.util\x94\x8c\npreprocess\x94\x93\x94\x85\x94R\x94(h\x05)}\x94\x8c\x08varnames\x94]\x94\x8c\x02PS\x94asNt\x94b.'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/worker.py", line 2413, in _maybe_deserialize_task
+    function, args, kwargs = _deserialize(*self.tasks[key])
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/worker.py", line 3246, in _deserialize
+    function = loads_function(function)
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/worker.py", line 3237, in loads_function
+    result = pickle.loads(bytes_object)
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/protocol/pickle.py", line 59, in loads
+    return pickle.loads(x)
+ModuleNotFoundError: No module named 'ldcpy'
+distributed.protocol.pickle - INFO - Failed to deserialize b'\x80\x04\x95W\x00\x00\x00\x00\x00\x00\x00\x8c\tfunctools\x94\x8c\x07partial\x94\x93\x94\x8c\nldcpy.util\x94\x8c\npreprocess\x94\x93\x94\x85\x94R\x94(h\x05)}\x94\x8c\x08varnames\x94]\x94\x8c\x02PS\x94asNt\x94b.'
+Traceback (most recent call last):
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/worker.py", line 3235, in loads_function
+    result = cache_loads[bytes_object]
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/utils.py", line 1518, in __getitem__
+    value = super().__getitem__(key)
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/collections/__init__.py", line 1027, in __getitem__
+    raise KeyError(key)
+KeyError: b'\x80\x04\x95W\x00\x00\x00\x00\x00\x00\x00\x8c\tfunctools\x94\x8c\x07partial\x94\x93\x94\x8c\nldcpy.util\x94\x8c\npreprocess\x94\x93\x94\x85\x94R\x94(h\x05)}\x94\x8c\x08varnames\x94]\x94\x8c\x02PS\x94asNt\x94b.'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/protocol/pickle.py", line 59, in loads
+    return pickle.loads(x)
+ModuleNotFoundError: No module named 'ldcpy'
+distributed.worker - WARNING - Could not deserialize task
+Traceback (most recent call last):
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/worker.py", line 3235, in loads_function
+    result = cache_loads[bytes_object]
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/utils.py", line 1518, in __getitem__
+    value = super().__getitem__(key)
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/collections/__init__.py", line 1027, in __getitem__
+    raise KeyError(key)
+KeyError: b'\x80\x04\x95W\x00\x00\x00\x00\x00\x00\x00\x8c\tfunctools\x94\x8c\x07partial\x94\x93\x94\x8c\nldcpy.util\x94\x8c\npreprocess\x94\x93\x94\x85\x94R\x94(h\x05)}\x94\x8c\x08varnames\x94]\x94\x8c\x02PS\x94asNt\x94b.'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/worker.py", line 2413, in _maybe_deserialize_task
+    function, args, kwargs = _deserialize(*self.tasks[key])
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/worker.py", line 3246, in _deserialize
+    function = loads_function(function)
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/worker.py", line 3237, in loads_function
+    result = pickle.loads(bytes_object)
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/protocol/pickle.py", line 59, in loads
+    return pickle.loads(x)
+ModuleNotFoundError: No module named 'ldcpy'
+distributed.protocol.pickle - INFO - Failed to deserialize b'\x80\x04\x95W\x00\x00\x00\x00\x00\x00\x00\x8c\tfunctools\x94\x8c\x07partial\x94\x93\x94\x8c\nldcpy.util\x94\x8c\npreprocess\x94\x93\x94\x85\x94R\x94(h\x05)}\x94\x8c\x08varnames\x94]\x94\x8c\x02PS\x94asNt\x94b.'
+Traceback (most recent call last):
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/worker.py", line 3235, in loads_function
+    result = cache_loads[bytes_object]
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/utils.py", line 1518, in __getitem__
+    value = super().__getitem__(key)
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/collections/__init__.py", line 1027, in __getitem__
+    raise KeyError(key)
+KeyError: b'\x80\x04\x95W\x00\x00\x00\x00\x00\x00\x00\x8c\tfunctools\x94\x8c\x07partial\x94\x93\x94\x8c\nldcpy.util\x94\x8c\npreprocess\x94\x93\x94\x85\x94R\x94(h\x05)}\x94\x8c\x08varnames\x94]\x94\x8c\x02PS\x94asNt\x94b.'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/protocol/pickle.py", line 59, in loads
+    return pickle.loads(x)
+ModuleNotFoundError: No module named 'ldcpy'
+distributed.worker - WARNING - Could not deserialize task
+Traceback (most recent call last):
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/worker.py", line 3235, in loads_function
+    result = cache_loads[bytes_object]
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/utils.py", line 1518, in __getitem__
+    value = super().__getitem__(key)
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/collections/__init__.py", line 1027, in __getitem__
+    raise KeyError(key)
+KeyError: b'\x80\x04\x95W\x00\x00\x00\x00\x00\x00\x00\x8c\tfunctools\x94\x8c\x07partial\x94\x93\x94\x8c\nldcpy.util\x94\x8c\npreprocess\x94\x93\x94\x85\x94R\x94(h\x05)}\x94\x8c\x08varnames\x94]\x94\x8c\x02PS\x94asNt\x94b.'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/worker.py", line 2413, in _maybe_deserialize_task
+    function, args, kwargs = _deserialize(*self.tasks[key])
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/worker.py", line 3246, in _deserialize
+    function = loads_function(function)
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/worker.py", line 3237, in loads_function
+    result = pickle.loads(bytes_object)
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/protocol/pickle.py", line 59, in loads
+    return pickle.loads(x)
+ModuleNotFoundError: No module named 'ldcpy'
+distributed.protocol.pickle - INFO - Failed to deserialize b'\x80\x04\x95W\x00\x00\x00\x00\x00\x00\x00\x8c\tfunctools\x94\x8c\x07partial\x94\x93\x94\x8c\nldcpy.util\x94\x8c\npreprocess\x94\x93\x94\x85\x94R\x94(h\x05)}\x94\x8c\x08varnames\x94]\x94\x8c\x02TS\x94asNt\x94b.'
+Traceback (most recent call last):
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/worker.py", line 3235, in loads_function
+    result = cache_loads[bytes_object]
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/utils.py", line 1518, in __getitem__
+    value = super().__getitem__(key)
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/collections/__init__.py", line 1027, in __getitem__
+    raise KeyError(key)
+KeyError: b'\x80\x04\x95W\x00\x00\x00\x00\x00\x00\x00\x8c\tfunctools\x94\x8c\x07partial\x94\x93\x94\x8c\nldcpy.util\x94\x8c\npreprocess\x94\x93\x94\x85\x94R\x94(h\x05)}\x94\x8c\x08varnames\x94]\x94\x8c\x02TS\x94asNt\x94b.'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/protocol/pickle.py", line 59, in loads
+    return pickle.loads(x)
+ModuleNotFoundError: No module named 'ldcpy'
+distributed.worker - WARNING - Could not deserialize task
+Traceback (most recent call last):
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/worker.py", line 3235, in loads_function
+    result = cache_loads[bytes_object]
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/utils.py", line 1518, in __getitem__
+    value = super().__getitem__(key)
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/collections/__init__.py", line 1027, in __getitem__
+    raise KeyError(key)
+KeyError: b'\x80\x04\x95W\x00\x00\x00\x00\x00\x00\x00\x8c\tfunctools\x94\x8c\x07partial\x94\x93\x94\x8c\nldcpy.util\x94\x8c\npreprocess\x94\x93\x94\x85\x94R\x94(h\x05)}\x94\x8c\x08varnames\x94]\x94\x8c\x02TS\x94asNt\x94b.'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/worker.py", line 2413, in _maybe_deserialize_task
+    function, args, kwargs = _deserialize(*self.tasks[key])
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/worker.py", line 3246, in _deserialize
+    function = loads_function(function)
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/worker.py", line 3237, in loads_function
+    result = pickle.loads(bytes_object)
+  File "/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/site-packages/distributed/protocol/pickle.py", line 59, in loads
+    return pickle.loads(x)
+ModuleNotFoundError: No module named 'ldcpy'
+slurmstepd: error: *** JOB 5661242 ON casper12 CANCELLED AT 2020-07-31T16:21:50 DUE TO TIME LIMIT ***

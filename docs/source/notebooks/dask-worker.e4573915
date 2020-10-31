@@ -1,0 +1,29 @@
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.7.166:33839'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.7.166:40377'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.7.166:43589'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.7.166:45001'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.7.166:38111'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.7.166:45433'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.7.166:42451'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.7.166:34437'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.7.166:33323'
+distributed.dask_worker - INFO - Exiting on signal 15
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.7.166:33839'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.7.166:40377'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.7.166:43589'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.7.166:45001'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.7.166:38111'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.7.166:45433'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.7.166:42451'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.7.166:34437'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.7.166:33323'
+distributed.nanny - INFO - Worker process 32724 was killed by signal 15
+distributed.nanny - INFO - Worker process 32710 was killed by signal 15
+distributed.nanny - INFO - Worker process 32715 was killed by signal 15
+distributed.nanny - INFO - Worker process 32718 was killed by signal 15
+distributed.nanny - INFO - Worker process 32707 was killed by signal 15
+distributed.nanny - INFO - Worker process 32721 was killed by signal 15
+distributed.nanny - INFO - Worker process 32705 was killed by signal 15
+distributed.nanny - INFO - Worker process 32704 was killed by signal 15
+distributed.nanny - INFO - Worker process 32708 was killed by signal 15
+distributed.dask_worker - INFO - End worker

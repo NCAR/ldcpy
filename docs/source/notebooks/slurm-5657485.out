@@ -1,0 +1,17 @@
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.12.205.19:34320'
+distributed.diskutils - INFO - Found stale lock file and directory '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-wcm304j2', purging
+distributed.worker - INFO -       Start worker at:   tcp://10.12.205.19:34067
+distributed.worker - INFO -          Listening to:   tcp://10.12.205.19:34067
+distributed.worker - INFO -          dashboard at:         10.12.205.19:43778
+distributed.worker - INFO - Waiting to connect to:   tcp://10.12.205.28:38128
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -               Threads:                          4
+distributed.worker - INFO -                Memory:                   40.00 GB
+distributed.worker - INFO -       Local Directory: /glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-4splr532
+distributed.worker - INFO - -------------------------------------------------
+distributed.worker - INFO -         Registered to:   tcp://10.12.205.28:38128
+distributed.worker - INFO - -------------------------------------------------
+distributed.core - INFO - Starting established connection
+distributed.worker - INFO - Stopping worker at tcp://10.12.205.19:34067
+distributed.diskutils - ERROR - Failed to remove '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-4splr532' (failed in <built-in function lstat>): [Errno 2] No such file or directory: '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-4splr532'
+slurmstepd: error: *** JOB 5657485 ON casper10 CANCELLED AT 2020-07-30T17:41:40 ***

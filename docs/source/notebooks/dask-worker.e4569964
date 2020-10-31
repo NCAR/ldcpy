@@ -1,0 +1,23 @@
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.7.60:34071'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.7.60:46833'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.7.60:42207'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.7.60:33469'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.7.60:44959'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.7.60:38719'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.7.60:41815'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.7.60:38041'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.7.60:36135'
+distributed.diskutils - INFO - Found stale lock file and directory '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-103c1s8c', purging
+distributed.dask_worker - INFO - Exiting on signal 15
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.7.60:34071'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.7.60:46833'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.7.60:42207'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.7.60:33469'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.7.60:44959'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.7.60:38719'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.7.60:41815'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.7.60:38041'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.7.60:36135'
+distributed.nanny - INFO - Worker process 7160 was killed by signal 15
+/ncar/usr/jupyterhub/envs/cmip6-201910/lib/python3.7/multiprocessing/semaphore_tracker.py:144: UserWarning: semaphore_tracker: There appear to be 48 leaked semaphores to clean up at shutdown
+  len(cache))

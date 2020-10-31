@@ -1,0 +1,29 @@
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.7.1:41299'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.7.1:38647'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.7.1:45953'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.7.1:35037'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.7.1:39973'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.7.1:33881'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.7.1:38679'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.7.1:38727'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.7.1:40647'
+distributed.dask_worker - INFO - Exiting on signal 15
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.7.1:41299'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.7.1:38647'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.7.1:45953'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.7.1:35037'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.7.1:39973'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.7.1:33881'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.7.1:38679'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.7.1:38727'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.7.1:40647'
+distributed.nanny - INFO - Worker process 65592 was killed by signal 15
+distributed.nanny - INFO - Worker process 65601 was killed by signal 15
+distributed.nanny - INFO - Worker process 65596 was killed by signal 15
+distributed.nanny - INFO - Worker process 65590 was killed by signal 15
+distributed.nanny - INFO - Worker process 65598 was killed by signal 15
+distributed.nanny - INFO - Worker process 65587 was killed by signal 15
+distributed.nanny - INFO - Worker process 65584 was killed by signal 15
+distributed.nanny - INFO - Worker process 65580 was killed by signal 15
+distributed.nanny - INFO - Worker process 65581 was killed by signal 15
+distributed.dask_worker - INFO - End worker

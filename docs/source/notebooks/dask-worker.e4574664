@@ -1,0 +1,36 @@
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.7.144:38971'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.7.144:41735'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.7.144:34827'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.7.144:45067'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.7.144:35677'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.7.144:42461'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.7.144:45663'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.7.144:40755'
+distributed.nanny - INFO -         Start Nanny at: 'tcp://10.148.7.144:36927'
+distributed.diskutils - INFO - Found stale lock file and directory '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-s0otq89h', purging
+distributed.diskutils - INFO - Found stale lock file and directory '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-eh0ss2r3', purging
+distributed.diskutils - INFO - Found stale lock file and directory '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-3wmuw3jf', purging
+distributed.diskutils - INFO - Found stale lock file and directory '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-rt2v6zby', purging
+distributed.diskutils - INFO - Found stale lock file and directory '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-b4gr42gi', purging
+distributed.diskutils - INFO - Found stale lock file and directory '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-7rw_35k9', purging
+distributed.diskutils - ERROR - Failed to remove '/glade/u/home/apinard/ldcpy/docs/source/notebooks/dask-worker-space/worker-7rw_35k9/storage' (failed in <built-in function rmdir>): [Errno 2] No such file or directory: 'storage'
+distributed.dask_worker - INFO - Exiting on signal 15
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.7.144:38971'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.7.144:41735'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.7.144:34827'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.7.144:45067'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.7.144:35677'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.7.144:42461'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.7.144:45663'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.7.144:40755'
+distributed.nanny - INFO - Closing Nanny at 'tcp://10.148.7.144:36927'
+distributed.nanny - INFO - Worker process 6701 was killed by signal 15
+distributed.nanny - INFO - Worker process 6692 was killed by signal 15
+distributed.nanny - INFO - Worker process 6687 was killed by signal 15
+distributed.nanny - INFO - Worker process 6689 was killed by signal 15
+distributed.nanny - INFO - Worker process 6684 was killed by signal 15
+distributed.nanny - INFO - Worker process 6683 was killed by signal 15
+distributed.nanny - INFO - Worker process 6698 was killed by signal 15
+distributed.nanny - INFO - Worker process 6695 was killed by signal 15
+distributed.nanny - INFO - Worker process 6690 was killed by signal 15
+distributed.dask_worker - INFO - End worker
