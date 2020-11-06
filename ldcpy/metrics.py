@@ -142,7 +142,7 @@ class DatasetMetrics(object):
         The mean along the aggregate dimensions
         """
         if not self._is_memoized('_mean'):
-            self._mean = self._ds.mean(self._agg_dims)
+            self._mean = self._ds.mean(self._agg_dims, skipna=True)
             self._mean.attrs = self._ds.attrs
 
         return self._mean
@@ -153,7 +153,7 @@ class DatasetMetrics(object):
         The mean of the absolute errors along the aggregate dimensions
         """
         if not self._is_memoized('_mean_abs'):
-            self._mean_abs = abs(self._ds).mean(self._agg_dims)
+            self._mean_abs = abs(self._ds).mean(self._agg_dims, skipna=True)
             self._mean_abs.attrs = self._ds.attrs
             if hasattr(self._ds, 'units'):
                 self._mean_abs.attrs['units'] = f'{self._ds.units}'
@@ -189,7 +189,7 @@ class DatasetMetrics(object):
     @property
     def sum(self) -> np.ndarray:
         if not self._is_memoized('_sum'):
-            self._sum = self._ds.sum(dim=self._agg_dims)
+            self._sum = self._ds.sum(dim=self._agg_dims, skipna=True)
             self._sum.attrs = self._ds.attrs
             if hasattr(self._ds, 'units'):
                 self._sum.attrs['units'] = f'{self._ds.units}'
@@ -212,7 +212,7 @@ class DatasetMetrics(object):
         The standard deviation along the aggregate dimensions
         """
         if not self._is_memoized('_std'):
-            self._std = self._ds.std(self._agg_dims, ddof=self._ddof)
+            self._std = self._ds.std(self._agg_dims, ddof=self._ddof, skipna=True)
             self._std.attrs = self._ds.attrs
             if hasattr(self._ds, 'units'):
                 self._std.attrs['units'] = ''
@@ -244,7 +244,7 @@ class DatasetMetrics(object):
         The variance along the aggregate dimensions
         """
         if not self._is_memoized('_variance'):
-            self._variance = self._ds.var(self._agg_dims)
+            self._variance = self._ds.var(self._agg_dims, skipna=True)
             self._variance.attrs = self._ds.attrs
             if hasattr(self._ds, 'units'):
                 self._variance.attrs['units'] = f'{self._ds.units}$^2$'
@@ -814,14 +814,19 @@ class DiffMetrics(object):
             # we can assign the 1.0 and avoid zero (couldn't figure another way)
             t1 = np.ravel(self._metrics1.get_metric('ds'))
             t2 = np.ravel(self._metrics2.get_metric('ds'))
-            tt = t1 - t2
             # check for zeros in t1 (if zero then change to 1 - which
             # does an absolute error at that point)
             z = np.where(abs(t1) == 0)
             t1[z] = 1.0
-            tt = tt / t1
-            a = len(tt[tt > sp_tol])
-            self._spatial_rel_error = (a / t1.shape[0]) * 100
+            # we don't want to use nan (ocassionally in cam data - often oin ocn)
+            m_t2 = np.ma.masked_invalid(t2).compressed()
+            m_t1 = np.ma.masked_invalid(t1).compressed()
+            m_tt = m_t1 - m_t2
+            m_tt = m_tt / m_t1
+            a = len(m_tt[m_tt > sp_tol])
+            sz = m_tt.shape[0]
+
+            self._spatial_rel_error = (a / sz) * 100
 
         return self._spatial_rel_error
 

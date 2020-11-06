@@ -157,18 +157,52 @@ def compare_stats(ds, varname, set1, set2, time=0, significant_digits=4):
     if time > time_mx:
         raise ValueError(f'specified time index exceeds max time dimension {time_mx}.')
 
-    ds0_metrics = DatasetMetrics(ds[varname].sel(collection=set1).isel(time=time), ['lat', 'lon'])
-    ds1_metrics = DatasetMetrics(ds[varname].sel(collection=set2).isel(time=time), ['lat', 'lon'])
-    d_metrics = DatasetMetrics(
-        ds[varname].sel(collection=set1).isel(time=time)
-        - ds[varname].sel(collection=set2).isel(time=time),
-        ['lat', 'lon'],
-    )
-    diff_metrics = DiffMetrics(
-        ds[varname].sel(collection=set1).isel(time=time),
-        ds[varname].sel(collection=set2).isel(time=time),
-        ['lat', 'lon'],
-    )
+    # check for names of lat/lon
+    # CAM-FV: dims = lat, lon; coords = lat, lon
+    # POP: dims = nlat, nlon; coords = ULAT,ULONG, TLAT, TLONG
+    # CAM-SE: to do
+
+    if 'lat' in list(ds.dims):
+        data_type = 'cam-fv'
+        print('CAM-FV data...')
+        ds0_metrics = DatasetMetrics(
+            ds[varname].sel(collection=set1).isel(time=time), ['lat', 'lon']
+        )
+        ds1_metrics = DatasetMetrics(
+            ds[varname].sel(collection=set2).isel(time=time), ['lat', 'lon']
+        )
+        d_metrics = DatasetMetrics(
+            ds[varname].sel(collection=set1).isel(time=time)
+            - ds[varname].sel(collection=set2).isel(time=time),
+            ['lat', 'lon'],
+        )
+        diff_metrics = DiffMetrics(
+            ds[varname].sel(collection=set1).isel(time=time),
+            ds[varname].sel(collection=set2).isel(time=time),
+            ['lat', 'lon'],
+        )
+    elif 'nlat' in list(ds.dims):
+        data_type = 'pop'
+        print('POP data...')
+        ds0_metrics = DatasetMetrics(
+            ds[varname].sel(collection=set1).isel(time=time), ['nlat', 'nlon']
+        )
+        ds1_metrics = DatasetMetrics(
+            ds[varname].sel(collection=set2).isel(time=time), ['nlat', 'nlon']
+        )
+        d_metrics = DatasetMetrics(
+            ds[varname].sel(collection=set1).isel(time=time)
+            - ds[varname].sel(collection=set2).isel(time=time),
+            ['nlat', 'nlon'],
+        )
+        diff_metrics = DiffMetrics(
+            ds[varname].sel(collection=set1).isel(time=time),
+            ds[varname].sel(collection=set2).isel(time=time),
+            ['nlat', 'nlon'],
+        )
+    else:
+        data_type = 'unk'
+        print('Type of data not recognized.')
 
     output = {}
 
@@ -214,7 +248,9 @@ def compare_stats(ds, varname, set1, set2, time=0, significant_digits=4):
     output['ks p-value'] = diff_metrics.get_diff_metric('ks_p_value')
     tmp = 'spatial relative error(% > ' + str(ds0_metrics.get_single_metric('spre_tol')) + ')'
     output[tmp] = diff_metrics.get_diff_metric('spatial_rel_error')
-    output['ssim'] = diff_metrics.get_diff_metric('ssim')
+    # don't do sim for pop
+    if not data_type == 'pop':
+        output['ssim'] = diff_metrics.get_diff_metric('ssim')
 
     for key, value in output.items():
         if key[:4] != 'skip':
