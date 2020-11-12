@@ -3,7 +3,7 @@ import pandas as pd
 import pytest
 import xarray as xr
 
-from ldcpy.dataarray_metrics import MetricsAccessor
+import ldcpy  # flake8: noqa
 
 times = pd.date_range('2000-01-01', periods=10)
 lats = [0, 1, 2, 3]
@@ -19,7 +19,7 @@ test_data_2 = xr.DataArray(
     dims=['lat', 'lon', 'time'],
 )
 
-test_overall_metrics = MetricsAccessor(test_data)(aggregate_dims=['time', 'lat', 'lon']).metrics
+test_overall_metrics = test_data.ldc(aggregate_dims=['time', 'lat', 'lon']).metrics
 expected_values = {
     'dyn_range': 199,
     'ew_con_var': 2500.0,
