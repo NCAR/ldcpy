@@ -1,0 +1,198 @@
+import collections
+import typing
+
+import numpy as np
+import pandas as pd
+import xarray as xr
+
+
+@xr.register_dataarray_accessor('ldc')
+class MetricsAccessor:
+    def __init__(self, xarray_obj):
+        self._obj = xarray_obj
+        keys = [
+            'ns_con_var',
+            'ew_con_var',
+            'mean',
+            'mean_abs',
+            'std',
+            'prob_positive',
+            'odds_positive',
+            'prob_negative',
+            'zscore',
+            'zscore_cutoff',
+            'mae_day_max',
+            'lag1',
+            'lag1_first_difference',
+            'quantile_value',
+            'mean_squared',
+            'root_mean_squared',
+            'sum',
+            'sum_squared',
+            'variance',
+            'pooled_variance',
+            'pooled_variance_ratio',
+            'standardized_mean',
+            'max_abs',
+            'max_abs',
+            'min_abs',
+            'dyn_range',
+            'min_val',
+            'max_val',
+            'annual_harmonic_relative_ratio',
+        ]
+        self._metrics = pd.Series(collections.OrderedDict.fromkeys(sorted(keys)))
+
+        self._aggregate_dims = None
+        self._is_computed = False
+
+    def __call__(
+        self,
+        aggregate_dims: typing.Union[typing.List, typing.Tuple],
+        grouping=None,
+        ddof: int = 1,
+        q: float = 0.5,
+        time_dim_name: str = 'time',
+    ):
+        self._aggregate_dims = aggregate_dims
+        self._frame_size = 1
+        if self._aggregate_dims:
+            for dim in self._aggregate_dims:
+                self._frame_size *= int(self._obj.sizes[dim])
+        self._grouping = grouping
+        self._ddof = ddof
+        self._q = q
+        self._time_dim_name = time_dim_name
+        return self
+
+    def _con_var(self, con_type):
+        if con_type == 'ns':
+            lat_length = self._obj.sizes['lat']
+            o_1, o_2 = xr.align(
+                self._obj.head({'lat': lat_length - 1}),
+                self._obj.tail({'lat': lat_length - 1}),
+                join='override',
+            )
+        elif con_type == 'ew':
+            lon_length = self._obj.sizes['lon']
+            o_1, o_2 = xr.align(
+                self._obj,
+                xr.concat(
+                    [self._obj.tail({'lon': lon_length - 1}), self._obj.head({'lon': 1})],
+                    dim='lon',
+                ),
+                join='override',
+            )
+
+        con_var = np.square((o_1 - o_2)).mean(self._aggregate_dims)
+        if 'units' in self._obj.attrs:
+            con_var.attrs['units'] = f'{self._obj.units}$^2$'
+        return con_var
+
+    def _pooled_variance(self):
+        pooled_variance = self._obj.var(self._aggregate_dims).mean()
+        if 'units' in self._obj.attrs:
+            pooled_variance.attrs['units'] = f'{self._obj.units}$^2$'
+        return pooled_variance
+
+    def _standardized_mean(self):
+        if self._grouping is None:
+            standardized_mean = (self._metrics.mean - self._obj.mean()) / self._obj.std(ddof=1)
+        else:
+            m = self._metrics.mean.groupby(self._grouping).mean()
+            standardized_mean = (m - m.mean()) / m.std(ddof=1)
+
+        return standardized_mean
+
+    def _odds_positive(self):
+        if self._grouping is None:
+            odds_positive = self._metrics.prob_positive / (1 - self._metrics.prob_positive)
+        else:
+            op = self._metrics.prob_positive.groupby(self._grouping).mean()
+            odds_positive = op / (1 - op)
+        return odds_positive
+
+    def _mae_day_max(self):
+        key = f'{self._time_dim_name}.dayofyear'
+        mae_day_max = np.abs(self._obj).groupby(key).mean().idxmax(dim='dayofyear')
+        return mae_day_max
+
+    def _lag_components(self):
+        key = f'{self._time_dim_name}.dayofyear'
+        grouped = self._obj.groupby(key)
+        deseas_resid = grouped - grouped.mean(dim=self._time_dim_name)
+        time_length = deseas_resid.sizes[self._time_dim_name]
+        current_val = deseas_resid.head({self._time_dim_name: time_length - 1})
+        next_val = deseas_resid.shift({self._time_dim_name: -1}).head(
+            {self._time_dim_name: time_length - 1}
+        )
+        return current_val, next_val, time_length
+
+    def _lag1_first_difference(self, current_val, next_val, time_length):
+        first_difference = next_val - current_val
+        first_difference_current = first_difference.head({self._time_dim_name: time_length - 1})
+        first_difference_next = first_difference.shift({self._time_dim_name: -1}).head(
+            {self._time_dim_name: time_length - 1}
+        )
+        num = (first_difference_current * first_difference_next).sum(
+            dim=self._time_dim_name, skipna=True
+        )
+        denom = first_difference_current.dot(first_difference_current, dims=self._time_dim_name)
+        lag1_first_difference = num / denom
+        return lag1_first_difference
+
+    def get_metrics(self):
+        self._metrics.ns_con_var = self._con_var('ew')
+        self._metrics.ew_con_var = self._con_var('ns')
+
+        self._metrics.pooled_variance = self._pooled_variance()
+        self._metrics.variance = self._obj.var(self._aggregate_dims, skipna=True)
+        self._metrics.pooled_variance_ratio = self._metrics.variance / self._metrics.pooled_variance
+
+        self._metrics.mean = self._obj.mean(self._aggregate_dims)
+        self._metrics.mean_squared = self._metrics.mean ** 2
+        self._metrics.mean_abs = np.abs(self._obj).mean(self._aggregate_dims, skipna=True)
+
+        self._metrics.root_mean_squared = np.sqrt((self._obj ** 2).mean(self._aggregate_dims))
+
+        self._metrics.sum = self._obj.sum(self._aggregate_dims)
+        self._metrics.sum_squared = self._metrics.sum ** 2
+
+        self._metrics.std = self._obj.std(self._aggregate_dims, ddof=self._ddof, skipna=True)
+        self._metrics.standardized_mean = self._standardized_mean()
+
+        self._metrics.prob_positive = (self._obj > 0).sum(self._aggregate_dims) / self._frame_size
+        self._metrics.prob_negative = (self._obj < 0).sum(self._aggregate_dims) / self._frame_size
+        self._metrics.odds_positive = self._odds_positive()
+
+        self._metrics.zscore = self._metrics.mean / (
+            self._metrics.std / np.sqrt(self._obj.sizes[self._time_dim_name])
+        )
+        self._metrics.mae_day_max = self._mae_day_max()
+
+        self._metrics.quantile_value = self._obj.quantile(self._q, dim=self._aggregate_dims)
+
+        abs_val = np.abs(self._obj)
+        self._metrics.max_abs = abs_val.max(dim=self._aggregate_dims)
+        self._metrics.min_abs = abs_val.min(dim=self._aggregate_dims)
+
+        self._metrics.max_val = self._obj.max(dim=self._aggregate_dims)
+        self._metrics.min_val = self._obj.min(dim=self._aggregate_dims)
+
+        self._metrics.dyn_range = np.abs(self._obj.max() - self._obj.min())
+
+        current_val, next_val, time_length = self._lag_components()
+        self._metrics.lag1 = current_val.dot(next_val, dims=self._time_dim_name) / current_val.dot(
+            current_val, dims=self._time_dim_name
+        )
+        self._metrics.lag1_first_difference = self._lag1_first_difference(
+            current_val, next_val, time_length
+        )
+
+        self._is_computed = True
+
+    @property
+    def metrics(self):
+        if not self._is_computed:
+            self.get_metrics()
+        return self._metrics
