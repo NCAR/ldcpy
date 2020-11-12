@@ -5,6 +5,8 @@ import numpy as np
 import pandas as pd
 import xarray as xr
 
+xr.set_options(keep_attrs=True)
+
 
 @xr.register_dataarray_accessor('ldc')
 class MetricsAccessor:
@@ -42,7 +44,7 @@ class MetricsAccessor:
             'annual_harmonic_relative_ratio',
         ]
         self._metrics = pd.Series(collections.OrderedDict.fromkeys(sorted(keys)))
-
+        self._attrs = self._obj.attrs.copy()
         self._aggregate_dims = None
         self._is_computed = False
 
@@ -53,6 +55,8 @@ class MetricsAccessor:
         ddof: int = 1,
         q: float = 0.5,
         time_dim_name: str = 'time',
+        lat_dim_name: str = 'lat',
+        lon_dim_name: str = 'lon',
     ):
         self._aggregate_dims = aggregate_dims
         self._frame_size = 1
@@ -63,37 +67,34 @@ class MetricsAccessor:
         self._ddof = ddof
         self._q = q
         self._time_dim_name = time_dim_name
+        self._lat_dim_name = lat_dim_name
+        self._lon_dim_name = lon_dim_name
         return self
 
     def _con_var(self, con_type):
         if con_type == 'ns':
-            lat_length = self._obj.sizes['lat']
+            lat_length = self._obj.sizes[self._lat_dim_name]
             o_1, o_2 = xr.align(
-                self._obj.head({'lat': lat_length - 1}),
-                self._obj.tail({'lat': lat_length - 1}),
+                self._obj.head({self._lat_dim_name: lat_length - 1}),
+                self._obj.tail({self._lat_dim_name: lat_length - 1}),
                 join='override',
             )
         elif con_type == 'ew':
-            lon_length = self._obj.sizes['lon']
+            lon_length = self._obj.sizes[self._lon_dim_name]
             o_1, o_2 = xr.align(
                 self._obj,
                 xr.concat(
-                    [self._obj.tail({'lon': lon_length - 1}), self._obj.head({'lon': 1})],
-                    dim='lon',
+                    [
+                        self._obj.tail({self._lon_dim_name: lon_length - 1}),
+                        self._obj.head({self._lon_dim_name: 1}),
+                    ],
+                    dim=self._lon_dim_name,
                 ),
                 join='override',
             )
 
         con_var = np.square((o_1 - o_2)).mean(self._aggregate_dims)
-        if 'units' in self._obj.attrs:
-            con_var.attrs['units'] = f'{self._obj.units}$^2$'
         return con_var
-
-    def _pooled_variance(self):
-        pooled_variance = self._obj.var(self._aggregate_dims).mean()
-        if 'units' in self._obj.attrs:
-            pooled_variance.attrs['units'] = f'{self._obj.units}$^2$'
-        return pooled_variance
 
     def _standardized_mean(self):
         if self._grouping is None:
@@ -145,7 +146,7 @@ class MetricsAccessor:
         self._metrics.ns_con_var = self._con_var('ew')
         self._metrics.ew_con_var = self._con_var('ns')
 
-        self._metrics.pooled_variance = self._pooled_variance()
+        self._metrics.pooled_variance = self._obj.var(self._aggregate_dims).mean()
         self._metrics.variance = self._obj.var(self._aggregate_dims, skipna=True)
         self._metrics.pooled_variance_ratio = self._metrics.variance / self._metrics.pooled_variance
 
