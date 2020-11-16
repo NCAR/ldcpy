@@ -9,6 +9,6 @@ jupyterlab
 xrft
 pip
 dask[complete]
-opencv-python==4.2.0.34
+opencv-python
 scikit-image
 nc-time-axis
