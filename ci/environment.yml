@@ -17,5 +17,5 @@ dependencies:
   - cython
   - nc-time-axis
   - scikit-image
-  - opencv=4.2.0
+  - opencv
   - matplotlib-base
