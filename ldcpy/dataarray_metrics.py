@@ -1,6 +1,7 @@
 import collections
 import typing
 
+import dask
 import numpy as np
 import pandas as pd
 import scipy.stats
@@ -246,6 +247,10 @@ class MetricsAccessor:
             self._metrics.zscore_cutoff,
             self._metrics.zscore_percent_significant,
         ) = self._zscore_cutoff_and_percent_sig()
+
+        if dask.is_dask_collection(self._obj):
+            # Compute all metrics
+            self._metrics = pd.Series(dask.compute(self._metrics.to_dict())[0])
 
         self._is_computed = True
 

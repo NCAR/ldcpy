@@ -5,7 +5,7 @@ import pandas as pd
 import scipy.stats
 import xarray as xr
 
-from .dataarray_metrics import MetricsAccessor
+from .dataarray_metrics import MetricsAccessor  # needed for the .ldc accessor to work
 
 
 class DiffMetrics:
@@ -29,6 +29,19 @@ class DiffMetrics:
         )
         self._is_computed = False
 
+    def _spatial_rel_error(self):
+        sp_tol = self._metrics1._spre_tol
+        t1 = np.ravel(self._metrics1._obj)
+        t2 = np.ravel(self._metrics2._obj)
+
+        # check for zeros in t1 (if zero then change to 1 - which
+        # does an absolute error at that point)
+        t1 = np.where(abs(t1) == 0.0, 1.0, t1)
+        m_tt = t1 - t2
+        m_tt = m_tt / t1
+        a = len(m_tt[m_tt > sp_tol])
+        return (a / m_tt.shape[0]) * 100
+
     def _compute_metrics(self):
         self._metrics.covariance = (
             (self._metrics2._obj - self._metrics2.metrics.mean_)
@@ -49,6 +62,9 @@ class DiffMetrics:
             np.sqrt(np.square(self._metrics1._obj - self._metrics2.metrics.mean_))
             / self._metrics1.metrics.dyn_range
         )
+
+        self._metrics.spatial_rel_error = self._spatial_rel_error()
+
         self._is_computed = True
 
     @property
