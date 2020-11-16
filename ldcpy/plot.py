@@ -13,13 +13,11 @@ import xarray as xr
 import xrft
 from cartopy import crs as ccrs
 from cartopy.util import add_cyclic_point
-from matplotlib import dates as mdates
-from matplotlib import pyplot as plt
+from matplotlib import dates as mdates, pyplot as plt
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 from numpy import inf
 
-from ldcpy import metrics as lm
-from ldcpy import util as lu
+from ldcpy import metrics as lm, util as lu
 
 
 def tex_escape(text):
