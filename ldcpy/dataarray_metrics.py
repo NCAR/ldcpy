@@ -191,7 +191,7 @@ class MetricsAccessor:
 
         return zscore_cutoff, percent_sig
 
-    def get_metrics(self):
+    def _compute_metrics(self):
         self._metrics.ns_con_var = self._con_var('ew')
         self._metrics.ew_con_var = self._con_var('ns')
 
@@ -252,5 +252,5 @@ class MetricsAccessor:
     @property
     def metrics(self):
         if not self._is_computed:
-            self.get_metrics()
+            self._compute_metrics()
         return self._metrics
