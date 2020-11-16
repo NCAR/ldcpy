@@ -408,3 +408,4 @@ dmypy.json
 .pyre/
 
 # End of https://www.gitignore.io/api/python,pycharm,pycharm+all,pycharm+iml
+.vscode/
