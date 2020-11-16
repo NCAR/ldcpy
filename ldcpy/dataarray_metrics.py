@@ -171,6 +171,8 @@ class MetricsAccessor:
     def _zscore_cutoff_and_percent_sig(self):
         # TODO: Find ways to Daskify this method
         pvals = 2 * (1 - scipy.stats.norm.cdf(np.abs(self._metrics.zscore)))
+        if isinstance(pvals, np.float64):
+            pvals = np.array(pvals)
         sorted_pvals = np.sort(pvals).flatten()
 
         fdr_szcore = 0.01

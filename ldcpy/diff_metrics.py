@@ -1,8 +1,16 @@
 import collections
+import copy
+import tempfile
 
+import cartopy.crs
+import cartopy.util
+import matplotlib
+import matplotlib.pyplot
 import numpy as np
 import pandas as pd
 import scipy.stats
+import skimage.io
+import skimage.metrics
 import xarray as xr
 
 from .dataarray_metrics import MetricsAccessor  # needed for the .ldc accessor to work
@@ -42,6 +50,93 @@ class DiffMetrics:
         a = len(m_tt[m_tt > sp_tol])
         return (a / m_tt.shape[0]) * 100
 
+    def _ssim_value(self):
+        with tempfile.TemporaryDirectory() as tmpdirname:
+            filename_1, filename_2 = f'{tmpdirname}/t_ssim1.png', f'{tmpdirname}/t_ssim2.png'
+            d1 = self._metrics1._obj
+            d2 = self._metrics2._obj
+            lat1 = d1[self._metrics1._lat_dim_name]
+            lat2 = d1[self._metrics2._lat_dim_name]
+            cy1, lon1 = cartopy.util.add_cyclic_point(d1, coord=d1[self._metrics1._lon_dim_name])
+            cy2, lon2 = cartopy.util.add_cyclic_point(d2, coord=d2[self._metrics2._lon_dim_name])
+
+            backend_ = matplotlib.get_backend()
+            matplotlib.use('Agg')
+
+            no_inf_d1 = np.nan_to_num(cy1, nan=np.nan)
+            no_inf_d2 = np.nan_to_num(cy2, nan=np.nan)
+
+            color_min = min(
+                np.min(d1.where(d1 != -np.inf)).min(), np.min(d2.where(d2 != -np.inf)).min()
+            )
+            color_max = max(
+                np.max(d1.where(d1 != np.inf)).max(), np.max(d2.where(d2 != np.inf)).max()
+            )
+
+            fig = matplotlib.pyplot.figure(dpi=300, figsize=(9, 2.5))
+            mymap = copy.copy(matplotlib.pyplot.cm.get_cmap('coolwarm'))
+            mymap.set_under(color='black')
+            mymap.set_over(color='white')
+            mymap.set_bad(alpha=0)
+
+            ax1 = matplotlib.pyplot.subplot(
+                1, 2, 1, projection=cartopy.crs.Robinson(central_longitude=0.0)
+            )
+            ax1.set_facecolor('#39ff14')
+
+            ax1.pcolormesh(
+                lon1,
+                lat1,
+                no_inf_d1,
+                transform=cartopy.crs.PlateCarree(),
+                cmap=mymap,
+                vmin=color_min,
+                vmax=color_max,
+            )
+            ax1.set_global()
+            ax1.coastlines(linewidth=0.5)
+            ax1.axis('off')
+            matplotlib.pyplot.margins(0, 0)
+            extent1 = ax1.get_window_extent().transformed(fig.dpi_scale_trans.inverted())
+            ax1.imshow
+            matplotlib.pyplot.savefig(
+                filename_1, bbox_inches=extent1, transparent=True, pad_inches=0
+            )
+            ax1.axis('on')
+
+            ax2 = matplotlib.pyplot.subplot(
+                1, 2, 2, projection=cartopy.crs.Robinson(central_longitude=0.0)
+            )
+            ax2.set_facecolor('#39ff14')
+
+            ax2.pcolormesh(
+                lon2,
+                lat2,
+                no_inf_d2,
+                transform=cartopy.crs.PlateCarree(),
+                cmap=mymap,
+                vmin=color_min,
+                vmax=color_max,
+            )
+            ax2.set_global()
+            ax2.coastlines(linewidth=0.5)
+            matplotlib.pyplot.margins(0, 0)
+            ax2.imshow
+            ax2.axis('off')
+            extent2 = ax2.get_window_extent().transformed(fig.dpi_scale_trans.inverted())
+            matplotlib.pyplot.savefig(
+                filename_2, bbox_inches=extent2, transparent=True, pad_inches=0
+            )
+            ax2.axis('on')
+
+            img1 = skimage.io.imread(filename_1)
+            img2 = skimage.io.imread(filename_2)
+            s = skimage.metrics.structural_similarity(img1, img2, multichannel=True)
+
+            # Reset backend
+            matplotlib.use(backend_)
+            return s
+
     def _compute_metrics(self):
         self._metrics.covariance = (
             (self._metrics2._obj - self._metrics2.metrics.mean_)
@@ -64,6 +159,7 @@ class DiffMetrics:
         )
 
         self._metrics.spatial_rel_error = self._spatial_rel_error()
+        self._metrics.ssim_value = self._ssim_value()
 
         self._is_computed = True
 
