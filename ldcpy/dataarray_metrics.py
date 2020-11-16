@@ -4,6 +4,7 @@ import typing
 import numpy as np
 import pandas as pd
 import xarray as xr
+import xrft
 
 xr.set_options(keep_attrs=True)
 
@@ -40,6 +41,7 @@ class MetricsAccessor:
             'dyn_range',
             'min_val',
             'max_val',
+            'annual_harmonic_relative_ratio',
         ]
         self._metrics = pd.Series(collections.OrderedDict.fromkeys(sorted(keys)))
         self._attrs = self._obj.attrs.copy()
@@ -52,6 +54,7 @@ class MetricsAccessor:
         grouping: typing.Union[typing.List, typing.Tuple] = None,
         ddof: int = 1,
         q: float = 0.5,
+        spre_tol: float = 1.0e-4,
         time_dim_name: str = 'time',
         lat_dim_name: str = 'lat',
         lon_dim_name: str = 'lon',
@@ -64,6 +67,7 @@ class MetricsAccessor:
         self._grouping = grouping
         self._ddof = ddof
         self._q = q
+        self._spre_tol = spre_tol
         self._time_dim_name = time_dim_name
         self._lat_dim_name = lat_dim_name
         self._lon_dim_name = lon_dim_name
@@ -140,6 +144,26 @@ class MetricsAccessor:
         lag1_first_difference = num / denom
         return lag1_first_difference
 
+    def _annual_harmonic_relative_ratio(self):
+        new_index = [i for i in range(0, self._obj[self._time_dim_name].size)]
+        new_ds = self._obj.copy().assign_coords({self._time_dim_name: new_index})
+
+        DF = xrft.dft(new_ds, dim=[self._time_dim_name], detrend='constant')
+        S = np.real(DF * np.conj(DF) / self._obj.sizes[self._time_dim_name])
+        a = int(self._obj.sizes[self._time_dim_name] / 2)
+        b = int(self._obj.sizes[self._time_dim_name] / 365)
+        S_annual = S.isel(freq_time=a + b)
+        neighborhood = (a + b - 25, a + b + 25)
+        S_mean = xr.concat(
+            [
+                S.isel(freq_time=slice(max(0, neighborhood[0]), a + b - 1)),
+                S.isel(freq_time=slice(a + b + 1, neighborhood[1])),
+            ],
+            dim='freq_time',
+        ).mean(dim='freq_time')
+        ratio = S_annual / S_mean
+        return ratio
+
     def get_metrics(self):
         self._metrics.ns_con_var = self._con_var('ew')
         self._metrics.ew_con_var = self._con_var('ns')
@@ -189,6 +213,8 @@ class MetricsAccessor:
         self._metrics.lag1_first_difference = self._lag1_first_difference(
             current_val, next_val, time_length
         )
+
+        self._metrics.annual_harmonic_relative_ratio = self._annual_harmonic_relative_ratio()
 
         self._is_computed = True
 
