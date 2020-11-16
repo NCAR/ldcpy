@@ -224,8 +224,11 @@ class MetricsAccessor:
         # TODO: Find ways to Daskify this method
         pvals = 2 * (1 - scipy.stats.norm.cdf(np.abs(self._metrics.zscore)))
         if isinstance(pvals, np.float64):
-            pvals = np.array(pvals)
-        sorted_pvals = np.sort(pvals).flatten()
+            pvals_array = np.array(pvals)
+            sorted_pvals = pvals_array
+        else:
+            pvals_array = pvals
+            sorted_pvals = np.sort(pvals_array).flatten()
 
         fdr_szcore = 0.01
         p = np.argwhere(
