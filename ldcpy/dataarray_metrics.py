@@ -13,6 +13,10 @@ xr.set_options(keep_attrs=True)
 
 @xr.register_dataarray_accessor('ldc')
 class MetricsAccessor:
+    """
+    This class contains metrics for each point of a dataset after aggregating across one or more dimensions, and a method to access these metrics.
+    """
+
     def __init__(self, xarray_obj):
         self._obj = xarray_obj
         keys = [
@@ -44,6 +48,7 @@ class MetricsAccessor:
             'min_val',
             'max_val',
             'annual_harmonic_relative_ratio',
+            'annual_harmonic_relative_ratio_pct_sig',
             'zscore_cutoff',
             'zscore_percent_significant',
         ]
@@ -63,6 +68,33 @@ class MetricsAccessor:
         lat_dim_name: str = 'lat',
         lon_dim_name: str = 'lon',
     ):
+        """
+        [summary]
+
+        Parameters
+        ----------
+        aggregate_dims : typing.Union[typing.List, typing.Tuple]
+            [description]
+        grouping : typing.Union[typing.List, typing.Tuple], optional
+            [description], by default None
+        ddof : int, optional
+            [description], by default 1
+        q : float, optional
+            [description], by default 0.5
+        spre_tol : float, optional
+            [description], by default 1.0e-4
+        time_dim_name : str, optional
+            [description], by default 'time'
+        lat_dim_name : str, optional
+            [description], by default 'lat'
+        lon_dim_name : str, optional
+            [description], by default 'lon'
+
+        Returns
+        -------
+        [type]
+            [description]
+        """
         self._aggregate_dims = aggregate_dims
         self._frame_size = 1
         if self._aggregate_dims:
@@ -136,6 +168,11 @@ class MetricsAccessor:
         return current_val, next_val, time_length
 
     def _lag1_first_difference(self, current_val, next_val, time_length):
+        """
+        The deseasonalized lag-1 autocorrelation value of the first difference of the data by day of year
+        NOTE: This metric returns an array of spatial values as the data set regardless of aggregate dimensions,
+        so can only be plotted in a spatial plot.
+        """
         first_difference = next_val - current_val
         first_difference_current = first_difference.head({self._time_dim_name: time_length - 1})
         first_difference_next = first_difference.shift({self._time_dim_name: -1}).head(
@@ -149,6 +186,12 @@ class MetricsAccessor:
         return lag1_first_difference
 
     def _annual_harmonic_relative_ratio(self):
+        """
+        The annual harmonic relative to the average periodogram value
+        in a neighborhood of 50 frequencies around the annual frequency
+        NOTE: This assumes the values along the "time" dimension are equally spaced.
+        NOTE: This metric returns a lat-lon array regardless of aggregate dimensions, so can only be used in a spatial plot.
+        """
         new_index = [i for i in range(0, self._obj[self._time_dim_name].size)]
         new_ds = self._obj.copy().assign_coords({self._time_dim_name: new_index})
 
@@ -167,6 +210,15 @@ class MetricsAccessor:
         ).mean(dim='freq_time')
         ratio = S_annual / S_mean
         return ratio
+
+    def _annual_harmonic_relative_ratio_pct_sig(self):
+        pvals = 1 - scipy.stats.f.cdf(self._metrics.annual_harmonic_relative_ratio, 2, 100)
+        sorted_pvals = np.sort(pvals)
+        if len(sorted_pvals[sorted_pvals <= 0.01]) == 0:
+            return 0
+        sig_cutoff = scipy.stats.f.ppf(1 - max(sorted_pvals[sorted_pvals <= 0.01]), 2, 50)
+        pct_sig = 100 * np.mean(self._metrics.annual_harmonic_relative_ratio > sig_cutoff)
+        return pct_sig
 
     def _zscore_cutoff_and_percent_sig(self):
         # TODO: Find ways to Daskify this method
@@ -249,6 +301,10 @@ class MetricsAccessor:
             self._metrics.zscore_cutoff,
             self._metrics.zscore_percent_significant,
         ) = self._zscore_cutoff_and_percent_sig()
+
+        self._metrics.annual_harmonic_relative_ratio_pct_sig = (
+            self._annual_harmonic_relative_ratio_pct_sig()
+        )
 
         if dask.is_dask_collection(self._obj):
             # Compute all metrics
