@@ -3,6 +3,7 @@ import typing
 
 import numpy as np
 import pandas as pd
+import scipy.stats
 import xarray as xr
 import xrft
 
@@ -42,6 +43,8 @@ class MetricsAccessor:
             'min_val',
             'max_val',
             'annual_harmonic_relative_ratio',
+            'zscore_cutoff',
+            'zscore_percent_significant',
         ]
         self._metrics = pd.Series(collections.OrderedDict.fromkeys(sorted(keys)))
         self._attrs = self._obj.attrs.copy()
@@ -164,6 +167,30 @@ class MetricsAccessor:
         ratio = S_annual / S_mean
         return ratio
 
+    def _zscore_cutoff_and_percent_sig(self):
+        # TODO: Find ways to Daskify this method
+        pvals = 2 * (1 - scipy.stats.norm.cdf(np.abs(self._metrics.zscore)))
+        sorted_pvals = np.sort(pvals).flatten()
+
+        fdr_szcore = 0.01
+        p = np.argwhere(
+            sorted_pvals <= fdr_szcore * np.arange(1, sorted_pvals.size + 1) / sorted_pvals.size
+        )
+        if len(p) > 0:
+            pval_cutoff = sorted_pvals[p[len(p) - 1]]
+        else:
+            pval_cutoff = np.empty(0)
+
+        if pval_cutoff.size > 0:
+            zscore_cutoff = scipy.stats.norm.ppf(1 - pval_cutoff)
+            sig_locs = np.argwhere(pvals <= pval_cutoff)
+            percent_sig = 100.0 * np.size(sig_locs, 0) / pvals.size
+        else:
+            percent_sig = 0.0
+            zscore_cutoff = np.nan
+
+        return zscore_cutoff, percent_sig
+
     def get_metrics(self):
         self._metrics.ns_con_var = self._con_var('ew')
         self._metrics.ew_con_var = self._con_var('ns')
@@ -215,6 +242,10 @@ class MetricsAccessor:
         )
 
         self._metrics.annual_harmonic_relative_ratio = self._annual_harmonic_relative_ratio()
+        (
+            self._metrics.zscore_cutoff,
+            self._metrics.zscore_percent_significant,
+        ) = self._zscore_cutoff_and_percent_sig()
 
         self._is_computed = True
 
