@@ -1,4 +1,5 @@
 import collections
+import copy
 import typing
 
 import dask
@@ -18,7 +19,13 @@ class MetricsAccessor:
     """
 
     def __init__(self, xarray_obj):
-        self._obj = xarray_obj
+        self._obj = xarray_obj.copy()
+        self._attrs = self._obj.attrs.copy()
+        self._metrics = self._init_metrics()
+        self._aggregate_dims = None
+        self._is_computed = False
+
+    def _init_metrics(self):
         keys = [
             'ns_con_var',
             'ew_con_var',
@@ -32,7 +39,7 @@ class MetricsAccessor:
             'mae_day_max',
             'lag1',
             'lag1_first_difference',
-            'quantile_value',
+            'quantile_val',
             'mean_squared',
             'root_mean_squared',
             'sum_',
@@ -52,10 +59,7 @@ class MetricsAccessor:
             'zscore_cutoff',
             'zscore_percent_significant',
         ]
-        self._metrics = pd.Series(collections.OrderedDict.fromkeys(sorted(keys)))
-        self._attrs = self._obj.attrs.copy()
-        self._aggregate_dims = None
-        self._is_computed = False
+        return pd.Series(collections.OrderedDict.fromkeys(sorted(keys)))
 
     def __call__(
         self,
@@ -95,6 +99,9 @@ class MetricsAccessor:
         [type]
             [description]
         """
+        self = copy.copy(self)
+        self._metrics = self._init_metrics()
+        self._is_computed = False
         self._aggregate_dims = aggregate_dims
         self._frame_size = 1
         if self._aggregate_dims:
@@ -280,7 +287,7 @@ class MetricsAccessor:
         )
         self._metrics.mae_day_max = self._mae_day_max()
 
-        self._metrics.quantile_value = self._obj.quantile(self._q, dim=self._aggregate_dims)
+        self._metrics.quantile_val = self._obj.quantile(self._q, dim=self._aggregate_dims)
 
         abs_val = np.abs(self._obj)
         self._metrics.max_abs = abs_val.max(dim=self._aggregate_dims)
