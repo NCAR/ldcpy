@@ -7,7 +7,7 @@ from .datasets import test_data
 
 test_overall_metrics = test_data.ldc(aggregate_dims=['time', 'lat', 'lon']).metrics
 test_spatial_metrics = test_data.ldc(aggregate_dims=['time']).metrics
-test_time_series_metrics = test_data.ldc(aggregate_dims=['lat', 'lon']).metrics
+test_timeseries_metrics = test_data.ldc(aggregate_dims=['lat', 'lon']).metrics
 
 expected_overall_values = {
     'dyn_range': 199,
@@ -182,8 +182,87 @@ expected_spatial_values = {
     ),
 }
 
-expected_values = {'overall': expected_overall_values, 'spatial': expected_spatial_values}
-metrics = {'overall': test_overall_metrics, 'spatial': test_spatial_metrics}
+expected_timeseries_values = {
+    'mean_': np.array([-5.0, -4.0, -3.0, -2.0, -1.0, 0.0, 1.0, 2.0, 3.0, 4.0]),
+    'mean_abs': np.array([50.0, 50.0, 50.0, 50.0, 50.0, 50.0, 50.0, 50.0, 50.0, 50.0]),
+    'mean_squared': np.array([25.0, 16.0, 9.0, 4.0, 1.0, 0.0, 1.0, 4.0, 9.0, 16.0]),
+    'max_abs': np.array([100.0, 99.0, 98.0, 97.0, 96.0, 95.0, 96.0, 97.0, 98.0, 99.0]),
+    'max_val': np.array([90.0, 91.0, 92.0, 93.0, 94.0, 95.0, 96.0, 97.0, 98.0, 99.0]),
+    'min_abs': np.array([0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 4.0, 3.0, 2.0, 1.0]),
+    'min_val': np.array([-100.0, -99.0, -98.0, -97.0, -96.0, -95.0, -94.0, -93.0, -92.0, -91.0]),
+    'odds_positive': np.array([0.81818182, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]),
+    'prob_negative': np.array([0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]),
+    'prob_positive': np.array([0.45, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]),
+    'quantile_val': np.array([-5.0, -4.0, -3.0, -2.0, -1.0, 0.0, 1.0, 2.0, 3.0, 4.0]),
+    'root_mean_squared': np.array(
+        [
+            57.87918451,
+            57.80138407,
+            57.74080013,
+            57.69748695,
+            57.67148342,
+            57.66281297,
+            57.67148342,
+            57.69748695,
+            57.74080013,
+            57.80138407,
+        ]
+    ),
+    'standard_deviation': np.array(
+        [
+            59.16079783,
+            59.16079783,
+            59.16079783,
+            59.16079783,
+            59.16079783,
+            59.16079783,
+            59.16079783,
+            59.16079783,
+            59.16079783,
+            59.16079783,
+        ]
+    ),
+    'sum_': np.array([-100.0, -80.0, -60.0, -40.0, -20.0, 0.0, 20.0, 40.0, 60.0, 80.0]),
+    'variance': np.array(
+        [
+            3325.0,
+            3325.0,
+            3325.0,
+            3325.0,
+            3325.0,
+            3325.0,
+            3325.0,
+            3325.0,
+            3325.0,
+            3325.0,
+        ]
+    ),
+    'zscore': np.array(
+        [
+            -0.26726124,
+            -0.21380899,
+            -0.16035675,
+            -0.1069045,
+            -0.05345225,
+            0.0,
+            0.05345225,
+            0.1069045,
+            0.16035675,
+            0.21380899,
+        ]
+    ),
+}
+
+expected_values = {
+    'overall': expected_overall_values,
+    'spatial': expected_spatial_values,
+    'timeseries': expected_timeseries_values,
+}
+metrics = {
+    'overall': test_overall_metrics,
+    'spatial': test_spatial_metrics,
+    'timeseries': test_timeseries_metrics,
+}
 
 
 @pytest.mark.parametrize(
@@ -208,6 +287,6 @@ metrics = {'overall': test_overall_metrics, 'spatial': test_spatial_metrics}
         }
     ),
 )
-@pytest.mark.parametrize('k', ['overall', 'spatial'])
+@pytest.mark.parametrize('k', ['overall', 'spatial', 'timeseries'])
 def test_metrics(metric, k):
-    np.testing.assert_allclose(metrics[k][metric], expected_values[k][metric], rtol=2e-9, atol=2e-9)
+    np.testing.assert_allclose(metrics[k][metric], expected_values[k][metric], rtol=1e-9, atol=1e-8)
