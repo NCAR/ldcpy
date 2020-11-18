@@ -29,7 +29,7 @@ class MetricsAccessor:
         keys = [
             'ns_con_var',
             'ew_con_var',
-            'mean_',
+            'mean_val',
             'mean_abs',
             'standard_deviation',
             'prob_positive',
@@ -42,7 +42,7 @@ class MetricsAccessor:
             'quantile_val',
             'mean_squared',
             'root_mean_squared',
-            'sum_',
+            'sum_val',
             'sum_squared',
             'variance',
             'pooled_variance',
@@ -143,9 +143,9 @@ class MetricsAccessor:
 
     def _standardized_mean(self):
         if self._grouping is None:
-            standardized_mean = (self._metrics.mean_ - self._obj.mean()) / self._obj.std(ddof=1)
+            standardized_mean = (self._metrics.mean_val - self._obj.mean()) / self._obj.std(ddof=1)
         else:
-            m = self._metrics.mean_.groupby(self._grouping).mean()
+            m = self._metrics.mean_val.groupby(self._grouping).mean()
             standardized_mean = (m - m.mean()) / m.std(ddof=1)
 
         return standardized_mean
@@ -264,14 +264,14 @@ class MetricsAccessor:
         self._metrics.variance = self._obj.var(self._aggregate_dims, skipna=True)
         self._metrics.pooled_variance_ratio = self._metrics.variance / self._metrics.pooled_variance
 
-        self._metrics.mean_ = self._obj.mean(self._aggregate_dims)
-        self._metrics.mean_squared = self._metrics.mean_ ** 2
+        self._metrics.mean_val = self._obj.mean(self._aggregate_dims)
+        self._metrics.mean_squared = self._metrics.mean_val ** 2
         self._metrics.mean_abs = np.abs(self._obj).mean(self._aggregate_dims, skipna=True)
 
         self._metrics.root_mean_squared = np.sqrt((self._obj ** 2).mean(self._aggregate_dims))
 
-        self._metrics.sum_ = self._obj.sum(self._aggregate_dims)
-        self._metrics.sum_squared = self._metrics.sum_ ** 2
+        self._metrics.sum_val = self._obj.sum(self._aggregate_dims)
+        self._metrics.sum_squared = self._metrics.sum_val ** 2
 
         self._metrics.standard_deviation = self._obj.std(
             self._aggregate_dims, ddof=self._ddof, skipna=True
@@ -282,7 +282,7 @@ class MetricsAccessor:
         self._metrics.prob_negative = (self._obj < 0).sum(self._aggregate_dims) / self._frame_size
         self._metrics.odds_positive = self._odds_positive()
 
-        self._metrics.zscore = self._metrics.mean_ / (
+        self._metrics.zscore = self._metrics.mean_val / (
             self._metrics.standard_deviation / np.sqrt(self._obj.sizes[self._time_dim_name])
         )
         self._metrics.mae_day_max = self._mae_day_max()

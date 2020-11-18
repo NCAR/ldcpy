@@ -139,8 +139,8 @@ class DiffMetrics:
 
     def _compute_metrics(self):
         self._metrics.covariance = (
-            (self._metrics2._obj - self._metrics2.metrics.mean_)
-            * (self._metrics1._obj - self._metrics1.metrics.mean_)
+            (self._metrics2._obj - self._metrics2.metrics.mean_val)
+            * (self._metrics1._obj - self._metrics1.metrics.mean_val)
         ).mean()
         self._metrics.ks_p_value = scipy.stats.ks_2samp(
             np.ravel(self._metrics2._obj), np.ravel(self._metrics1._obj)
@@ -154,7 +154,7 @@ class DiffMetrics:
             abs(self._metrics1._obj - self._metrics2._obj.max()) / self._metrics1.metrics.dyn_range
         )
         self._metrics.normalized_root_mean_square = (
-            np.sqrt(np.square(self._metrics1._obj - self._metrics2.metrics.mean_))
+            np.sqrt(np.square(self._metrics1._obj - self._metrics2.metrics.mean_val))
             / self._metrics1.metrics.dyn_range
         )
 

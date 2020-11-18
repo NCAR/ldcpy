@@ -38,7 +38,7 @@ expected_overall_values = {
     ),
     'max_abs': 100,
     'max_val': 99,
-    'mean_': -0.5,
+    'mean_val': -0.5,
     'mean_abs': 50.0,
     'mean_squared': 0.25,
     'min_abs': 0,
@@ -53,14 +53,14 @@ expected_overall_values = {
     'root_mean_squared': 57.73647028,
     'standard_deviation': 57.87918451,
     'standardized_mean': 0.0,
-    'sum_': -100,
+    'sum_val': -100,
     'sum_squared': 10000,
     'variance': 3333.25,
     'zscore': -0.02731792,
 }
 
 expected_spatial_values = {
-    'mean_': np.array(
+    'mean_val': np.array(
         [
             [-95.5, -85.5, -75.5, -65.5, -55.5],
             [-45.5, -35.5, -25.5, -15.5, -5.5],
@@ -156,7 +156,7 @@ expected_spatial_values = {
             [3.02765035, 3.02765035, 3.02765035, 3.02765035, 3.02765035],
         ]
     ),
-    'sum_': np.array(
+    'sum_val': np.array(
         [
             [-955.0, -855.0, -755.0, -655.0, -555.0],
             [-455.0, -355.0, -255.0, -155.0, -55.0],
@@ -183,7 +183,7 @@ expected_spatial_values = {
 }
 
 expected_timeseries_values = {
-    'mean_': np.array([-5.0, -4.0, -3.0, -2.0, -1.0, 0.0, 1.0, 2.0, 3.0, 4.0]),
+    'mean_val': np.array([-5.0, -4.0, -3.0, -2.0, -1.0, 0.0, 1.0, 2.0, 3.0, 4.0]),
     'mean_abs': np.array([50.0, 50.0, 50.0, 50.0, 50.0, 50.0, 50.0, 50.0, 50.0, 50.0]),
     'mean_squared': np.array([25.0, 16.0, 9.0, 4.0, 1.0, 0.0, 1.0, 4.0, 9.0, 16.0]),
     'max_abs': np.array([100.0, 99.0, 98.0, 97.0, 96.0, 95.0, 96.0, 97.0, 98.0, 99.0]),
@@ -222,7 +222,7 @@ expected_timeseries_values = {
             59.16079783,
         ]
     ),
-    'sum_': np.array([-100.0, -80.0, -60.0, -40.0, -20.0, 0.0, 20.0, 40.0, 60.0, 80.0]),
+    'sum_val': np.array([-100.0, -80.0, -60.0, -40.0, -20.0, 0.0, 20.0, 40.0, 60.0, 80.0]),
     'variance': np.array(
         [
             3325.0,
@@ -269,7 +269,7 @@ metrics = {
     'metric',
     sorted(
         {
-            'mean_',
+            'mean_val',
             'mean_abs',
             'mean_squared',
             'min_abs',
@@ -281,7 +281,7 @@ metrics = {
             'quantile_val',
             'root_mean_squared',
             'standard_deviation',
-            'sum_',
+            'sum_val',
             'variance',
             'zscore',
         }
