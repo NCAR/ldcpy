@@ -210,4 +210,4 @@ metrics = {'overall': test_overall_metrics, 'spatial': test_spatial_metrics}
 )
 @pytest.mark.parametrize('k', ['overall', 'spatial'])
 def test_metrics(metric, k):
-    np.testing.assert_allclose(metrics[k][metric], expected_values[k][metric], rtol=1e-8)
+    np.testing.assert_allclose(metrics[k][metric], expected_values[k][metric], rtol=2e-9, atol=2e-9)
