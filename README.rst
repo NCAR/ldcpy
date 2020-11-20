@@ -3,7 +3,7 @@
     :alt: GitHub Workflow CI Status
 
 .. image:: https://img.shields.io/circleci/project/github/NCAR/ldcpy/master.svg?style=for-the-badge&logo=circleci
-    :target: https://circleci.com/gh/NCAR/ldcpy/tree/master
+    :target: https://circleci.com/gh/NCAR/ldcpy/tree/dev
 
 .. image:: https://img.shields.io/github/workflow/status/NCAR/ldcpy/code-style?label=Code%20Style&style=for-the-badge
     :target: https://github.com/NCAR/ldcpy/actions
@@ -13,7 +13,7 @@
     :target: https://codecov.io/gh/NCAR/ldcpy
 
 .. image:: https://img.shields.io/readthedocs/ldcpy/latest.svg?style=for-the-badge
-    :target: https://ldcpy.readthedocs.io/en/latest/?badge=latest
+    :target: https://ldcpy.readthedocs.io/en/dev/?badge=latest
     :alt: Documentation Status
 
 .. image:: https://img.shields.io/pypi/v/ldcpy.svg?style=for-the-badge
