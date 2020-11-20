@@ -16,5 +16,6 @@ dependencies:
   - intake-esm
   - cython
   - scikit-image
+  - scikit-build
   - opencv=4.2.0
   - nc-time-axis

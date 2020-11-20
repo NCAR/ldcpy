@@ -24,7 +24,7 @@
     :target: https://anaconda.org/conda-forge/ldcpy
     :alt: Conda Version
 
-.. image:: https://zenodo.org/badge/215409079.svg
+.. image:: https://zenodo.org/badge/215409079.svg?style=for-the-badge
    :target: https://zenodo.org/badge/latestdoi/215409079
 
 Large Data Comparison for Python
