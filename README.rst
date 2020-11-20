@@ -2,7 +2,7 @@
     :target: https://github.com/NCAR/ldcpy/actions
     :alt: GitHub Workflow CI Status
 
-.. image:: https://img.shields.io/circleci/project/github/NCAR/ldcpy/master.svg?style=for-the-badge&logo=circleci
+.. image:: https://img.shields.io/circleci/project/github/NCAR/ldcpy/dev.svg?style=for-the-badge&logo=circleci
     :target: https://circleci.com/gh/NCAR/ldcpy/tree/dev
 
 .. image:: https://img.shields.io/github/workflow/status/NCAR/ldcpy/code-style?label=Code%20Style&style=for-the-badge
