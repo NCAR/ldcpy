@@ -728,8 +728,9 @@ class DiffMetrics(object):
         self._ks_p_value = None
         self._n_rms = None
         self._n_emax = None
-        self._rel_spatial_error = None
+        self._spatial_rel_error = None
         self._ssim_value = None
+        self._max_spatial_rel_error = None
 
     def _is_memoized(self, metric_name: str) -> bool:
         return hasattr(self, metric_name) and (self.__getattribute__(metric_name) is not None)
@@ -818,17 +819,48 @@ class DiffMetrics(object):
             # does an absolute error at that point)
             z = np.where(abs(t1) == 0)
             t1[z] = 1.0
-            # we don't want to use nan (ocassionally in cam data - often oin ocn)
+            # we don't want to use nan (ocassionally in cam data - often in ocn)
             m_t2 = np.ma.masked_invalid(t2).compressed()
             m_t1 = np.ma.masked_invalid(t1).compressed()
             m_tt = m_t1 - m_t2
             m_tt = m_tt / m_t1
+
+            # find the max spatial error also if None
+            if self._max_spatial_rel_error is None:
+                max_spre = np.max(m_tt)
+                self._max_spatial_rel_error = max_spre
+
+            # percentage greater than the tolerance
             a = len(m_tt[m_tt > sp_tol])
             sz = m_tt.shape[0]
 
             self._spatial_rel_error = (a / sz) * 100
 
         return self._spatial_rel_error
+
+    @property
+    def max_spatial_rel_error(self):
+        """
+        We compute the relative error at each grid point and return the maximun.
+        """
+        # this is also computed as part of the spatial rel error
+        if not self._is_memoized('_max_spatial_rel_error'):
+            t1 = np.ravel(self._metrics1.get_metric('ds'))
+            t2 = np.ravel(self._metrics2.get_metric('ds'))
+            # check for zeros in t1 (if zero then change to 1 - which
+            # does an absolute error at that point)
+            z = np.where(abs(t1) == 0)
+            t1[z] = 1.0
+            # we don't want to use nan (ocassionally in cam data - often in ocn)
+            m_t2 = np.ma.masked_invalid(t2).compressed()
+            m_t1 = np.ma.masked_invalid(t1).compressed()
+            m_tt = m_t1 - m_t2
+            m_tt = m_tt / m_t1
+
+            max_spre = np.max(m_tt)
+            self._max_spatial_rel_error = max_spre
+
+        return self._max_spatial_rel_error
 
     @property
     def ssim_value(self):
@@ -954,6 +986,8 @@ class DiffMetrics(object):
                 return self.normalized_max_pointwise_error
             if name == 'spatial_rel_error':
                 return self.spatial_rel_error
+            if name == 'max_spatial_rel_error':
+                return self.max_spatial_rel_error
             if name == 'ssim':
                 return self.ssim_value
             raise ValueError(f'there is no metric with the name: {name}.')
