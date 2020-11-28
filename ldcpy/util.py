@@ -252,7 +252,9 @@ def compare_stats(full_ds, varname, set1, set2, time=0, lev=0, significant_digit
     output['ks p-value'] = diff_metrics.get_diff_metric('ks_p_value')
     tmp = 'spatial relative error(% > ' + str(ds0_metrics.get_single_metric('spre_tol')) + ')'
     output[tmp] = diff_metrics.get_diff_metric('spatial_rel_error')
-    # don't do sim for pop
+    output['max spatial relative error'] = diff_metrics.get_diff_metric('max_spatial_rel_error')
+
+    # don't do ssim for pop data
     if not data_type == 'pop':
         output['ssim'] = diff_metrics.get_diff_metric('ssim')
 
