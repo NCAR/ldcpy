@@ -141,6 +141,8 @@ def compare_stats(full_ds, varname, set1, set2, time=0, lev=0, significant_digit
         The collection label of the (1st) data to compare
     time : int, optional
         The time index used to compare the two netCDF files (default 0)
+    time : lev, optional
+        The level index of interest in a 3D dataset (default 0)
 
     significant_digits : int, optional
         The number of significant digits to use when printing stats, (default 4)
@@ -322,6 +324,8 @@ def check_metrics(
         The percentage threshold for failing grid points in the spatial relative error test (default = 5.0).
     ssim_tol: float, optional
          The threshold for the ssim test (default = .999950
+    time : lev, optional
+        The level index of interest in a 3D dataset (default 0)
 
     Returns
     =======
