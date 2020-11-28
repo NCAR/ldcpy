@@ -34,3 +34,7 @@ class TestPlot(TestCase):
     def test_compare_stats(self):
         ldcpy.compare_stats(ds, 'TS', set1='orig', set2='recon')
         self.assertTrue(True)
+
+    def test_compare_3Dstats(self):
+        ldcpy.compare_stats(ds3, 'T', set1='orig', set2='orig')
+        self.assertTrue(True)
