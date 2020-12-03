@@ -837,7 +837,7 @@ def plot(
         lev,
         color,
         quantile,
-        calc_ssim,
+        calc_ssim=calc_ssim,
         legend_loc=legend_loc,
         axes_symmetric=axes_symmetric,
         short_title=short_title,

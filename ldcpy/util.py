@@ -125,7 +125,7 @@ def preprocess(ds, varnames):
     return ds[varnames]
 
 
-def compare_stats(ds, varname, set1, set2, time=0, significant_digits=4):
+def compare_stats(full_ds, varname, set1, set2, time=0, lev=0, significant_digits=4):
     """
     Print error summary statistics of two DataArrays
 
@@ -141,6 +141,8 @@ def compare_stats(ds, varname, set1, set2, time=0, significant_digits=4):
         The collection label of the (1st) data to compare
     time : int, optional
         The time index used to compare the two netCDF files (default 0)
+    time : lev, optional
+        The level index of interest in a 3D dataset (default 0)
 
     significant_digits : int, optional
         The number of significant digits to use when printing stats, (default 4)
@@ -150,6 +152,10 @@ def compare_stats(ds, varname, set1, set2, time=0, significant_digits=4):
     out : None
 
     """
+
+    # subsets at lev=0 by default
+    ds = subset_data(full_ds, lev=lev)
+
     print('Comparing {} data (set1) to {} data (set2) at time = {}'.format(set1, set2, time))
 
     # Make sure we don't exceed time bound
@@ -248,7 +254,9 @@ def compare_stats(ds, varname, set1, set2, time=0, significant_digits=4):
     output['ks p-value'] = diff_metrics.get_diff_metric('ks_p_value')
     tmp = 'spatial relative error(% > ' + str(ds0_metrics.get_single_metric('spre_tol')) + ')'
     output[tmp] = diff_metrics.get_diff_metric('spatial_rel_error')
-    # don't do sim for pop
+    output['max spatial relative error'] = diff_metrics.get_diff_metric('max_spatial_rel_error')
+
+    # don't do ssim for pop data
     if not data_type == 'pop':
         output['ssim'] = diff_metrics.get_diff_metric('ssim')
 
@@ -261,7 +269,16 @@ def compare_stats(ds, varname, set1, set2, time=0, significant_digits=4):
 
 
 def check_metrics(
-    ds, varname, set1, set2, time=0, ks_tol=0.05, pcc_tol=0.99999, spre_tol=5.0, ssim_tol=0.99995
+    full_ds,
+    varname,
+    set1,
+    set2,
+    time=0,
+    lev=0,
+    ks_tol=0.05,
+    pcc_tol=0.99999,
+    spre_tol=5.0,
+    ssim_tol=0.99995,
 ):
     """
 
@@ -307,12 +324,16 @@ def check_metrics(
         The percentage threshold for failing grid points in the spatial relative error test (default = 5.0).
     ssim_tol: float, optional
          The threshold for the ssim test (default = .999950
+    time : lev, optional
+        The level index of interest in a 3D dataset (default 0)
 
     Returns
     =======
     out : Number of failing metrics
 
     """
+
+    ds = subset_data(full_ds, lev=lev)
 
     # count the number of failuress
     num_fail = 0
@@ -363,7 +384,7 @@ def check_metrics(
     return num_fail
 
 
-def subset_data(ds, subset, lat=None, lon=None, lev=0, start=None, end=None):
+def subset_data(ds, subset=None, lat=None, lon=None, lev=None, start=None, end=None):
     """
     Get a subset of the given dataArray, returns a dataArray
     """
@@ -372,20 +393,22 @@ def subset_data(ds, subset, lat=None, lon=None, lev=0, start=None, end=None):
     if start is not None and end is not None:
         ds_subset = ds_subset.isel(time=slice(start, end + 1))
 
-    if subset == 'winter':
-        ds_subset = ds_subset.where(ds.time.dt.season == 'DJF', drop=True)
-    elif subset == 'spring':
-        ds_subset = ds_subset.where(ds.time.dt.season == 'MAM', drop=True)
-    elif subset == 'summer':
-        ds_subset = ds_subset.where(ds.time.dt.season == 'JJA', drop=True)
-    elif subset == 'autumn':
-        ds_subset = ds_subset.where(ds.time.dt.season == 'SON', drop=True)
+    if subset is not None:
+        if subset == 'winter':
+            ds_subset = ds_subset.where(ds.time.dt.season == 'DJF', drop=True)
+        elif subset == 'spring':
+            ds_subset = ds_subset.where(ds.time.dt.season == 'MAM', drop=True)
+        elif subset == 'summer':
+            ds_subset = ds_subset.where(ds.time.dt.season == 'JJA', drop=True)
+        elif subset == 'autumn':
+            ds_subset = ds_subset.where(ds.time.dt.season == 'SON', drop=True)
 
-    elif subset == 'first5':
-        ds_subset = ds_subset.isel(time=slice(None, 5))
+        elif subset == 'first5':
+            ds_subset = ds_subset.isel(time=slice(None, 5))
 
-    if 'lev' in ds_subset.dims:
-        ds_subset = ds_subset.isel(lev=lev)
+    if lev is not None:
+        if 'lev' in ds_subset.dims:
+            ds_subset = ds_subset.isel(lev=lev)
 
     if lat is not None:
         ds_subset = ds_subset.sel(lat=lat, method='nearest')

@@ -9,3 +9,4 @@ Examples
     notebooks/AWSDataNotebook.ipynb
     notebooks/LargeDataGladeNotebook.ipynb
     notebooks/Using ZFP to compress.ipynb
+    notebooks/CompressionSamples.ipynb

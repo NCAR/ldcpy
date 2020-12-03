@@ -26,5 +26,6 @@ dependencies:
   - nc-time-axis
   - pandas
   - cython
+  - scikit-build
   - scikit-image
-  - opencv=4.2.0
+  - opencv
