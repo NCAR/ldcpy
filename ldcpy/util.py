@@ -227,18 +227,48 @@ def compare_stats(
 
 
 def check_metrics(
-    full_ds,
+    ds,
     varname,
     set1,
     set2,
-    time=0,
-    lev=0,
     ks_tol=0.05,
     pcc_tol=0.99999,
     spre_tol=5.0,
     ssim_tol=0.99995,
+    **metrics_kwargs,
 ):
     """
+
+    Check the K-S, Pearson Correlation, and Spatial Relative Error metrics
+
+    Parameters
+    ==========
+    ds : xarray.Dataset
+        An xarray dataset containing multiple netCDF files concatenated across a 'collection' dimension
+    varname : str
+        The variable of interest in the dataset
+    set1 : str
+        The collection label of the "control" data
+    set2 : str
+        The collection label of the (1st) data to compare
+    ks_tol : float, optional
+        The p-value threshold (significance level) for the K-S test (default = .05)
+    pcc_tol: float, optional
+        The default Pearson corrolation coefficient (default  = .99999)
+    spre_tol: float, optional
+        The percentage threshold for failing grid points in the spatial relative error test (default = 5.0).
+    ssim_tol: float, optional
+         The threshold for the ssim test (default = .999950
+    **metrics_kwargs :
+        Additional keyword arguments passed through to the
+        :py:class:`~ldcpy.DatasetMetrics` instance.
+
+    Returns
+    =======
+    out : Number of failing metrics
+
+    Notes
+    ======
 
     Check the K-S, Pearson Correlation, and Spatial Relative Error metrics from:
 
@@ -262,48 +292,19 @@ def check_metrics(
     Spatial relative error: fail if > 5% of grid points fail relative error
     SSIM: fail if SSIM < .99995
 
-    Parameters
-    ==========
-    ds : xarray.Dataset
-        An xarray dataset containing multiple netCDF files concatenated across a 'collection' dimension
-    varname : str
-        The variable of interest in the dataset
-    set1 : str
-        The collection label of the "control" data
-    set2 : str
-        The collection label of the (1st) data to compare
-    time : int, optional
-        The time index used t (default = 0)
-    ks_tol : float, optional
-        The p-value threshold (significance level) for the K-S test (default = .05)
-    pcc_tol: float, optional
-        The default Pearson corrolation coefficient (default  = .99999)
-    spre_tol: float, optional
-        The percentage threshold for failing grid points in the spatial relative error test (default = 5.0).
-    ssim_tol: float, optional
-         The threshold for the ssim test (default = .999950
-    time : lev, optional
-        The level index of interest in a 3D dataset (default 0)
-
-    Returns
-    =======
-    out : Number of failing metrics
-
     """
 
-    ds = subset_data(full_ds, lev=lev)
-
-    # count the number of failuress
-    num_fail = 0
-
-    print('Evaluating 4 metrics for {} data (set1) and {} data (set2)'.format(set1, set2), ':')
-
+    print(f'Evaluating 4 metrics for {set1} data (set1) and {set2} data (set2):')
+    aggregate_dims = metrics_kwargs.pop('aggregate_dims', None)
     diff_metrics = DiffMetrics(
-        ds[varname].sel(collection=set1).isel(time=time),
-        ds[varname].sel(collection=set2).isel(time=time),
-        ['lat', 'lon'],
+        ds[varname].sel(collection=set1),
+        ds[varname].sel(collection=set2),
+        aggregate_dims,
+        **metrics_kwargs,
     )
 
+    # count the number of failures
+    num_fail = 0
     # Pearson less than pcc_tol means fail
     pcc = diff_metrics.get_diff_metric('pearson_correlation_coefficient').data.compute()
     if pcc < pcc_tol:
@@ -311,7 +312,6 @@ def check_metrics(
         num_fail = num_fail + 1
     else:
         print('     PASSED pearson correlation coefficient test...(pcc = {0:.5f}'.format(pcc), ')')
-
     # K-S p-value less than ks_tol means fail (can reject null hypo)
     ks = diff_metrics.get_diff_metric('ks_p_value')
     if ks < ks_tol:
@@ -319,7 +319,6 @@ def check_metrics(
         num_fail = num_fail + 1
     else:
         print('     PASSED ks test...(ks p_val = {0:.4f}'.format(ks), ')')
-
     # Spatial rel error fails if more than spre_tol
     spre = diff_metrics.get_diff_metric('spatial_rel_error')
     if spre > spre_tol:
@@ -327,7 +326,6 @@ def check_metrics(
         num_fail = num_fail + 1
     else:
         print('     PASSED spatial relative error test ...(spre = {0:.2f}'.format(spre), ' %)')
-
     # SSIM less than of ssim_tol is failing
     ssim_val = diff_metrics.get_diff_metric('ssim')
     if ssim_val < ssim_tol:
@@ -335,10 +333,8 @@ def check_metrics(
         num_fail = num_fail + 1
     else:
         print('     PASSED SSIM test ... (ssim = {0:.5f}'.format(ssim_val), ')')
-
     if num_fail > 0:
-        print('WARNING: {} of 4 tests failed.'.format(num_fail))
-
+        print(f'WARNING: {num_fail} of 4 tests failed.')
     return num_fail
 
 
