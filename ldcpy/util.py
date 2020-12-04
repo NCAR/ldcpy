@@ -1,3 +1,6 @@
+import collections
+
+import dask
 import numpy as np
 import xarray as xr
 
@@ -125,7 +128,15 @@ def preprocess(ds, varnames):
     return ds[varnames]
 
 
-def compare_stats(full_ds, varname, set1, set2, time=0, lev=0, significant_digits=4):
+def compare_stats(
+    ds,
+    varname,
+    set1,
+    set2,
+    significant_digits=4,
+    include_ssim_metric=True,
+    **metrics_kwargs,
+):
     """
     Print error summary statistics of two DataArrays
 
@@ -139,13 +150,13 @@ def compare_stats(full_ds, varname, set1, set2, time=0, lev=0, significant_digit
         The collection label of the "control" data
     set2 : str
         The collection label of the (1st) data to compare
-    time : int, optional
-        The time index used to compare the two netCDF files (default 0)
-    time : lev, optional
-        The level index of interest in a 3D dataset (default 0)
-
     significant_digits : int, optional
         The number of significant digits to use when printing stats, (default 4)
+    include_ssim_metric : bool, optional
+        Whether or not to compute the ssim metric, (default: True)
+    **metrics_kwargs :
+        Additional keyword arguments passed through to the
+        :py:class:`~ldcpy.DatasetMetrics` instance.
 
     Returns
     =======
@@ -153,117 +164,64 @@ def compare_stats(full_ds, varname, set1, set2, time=0, lev=0, significant_digit
 
     """
 
-    # subsets at lev=0 by default
-    ds = subset_data(full_ds, lev=lev)
+    aggregate_dims = metrics_kwargs.pop('aggregate_dims', None)
+    ds0_metrics = DatasetMetrics(ds[varname].sel(collection=set1), aggregate_dims, **metrics_kwargs)
+    ds1_metrics = DatasetMetrics(ds[varname].sel(collection=set2), aggregate_dims, **metrics_kwargs)
+    d_metrics = DatasetMetrics(
+        ds[varname].sel(collection=set1) - ds[varname].sel(collection=set2),
+        aggregate_dims,
+        **metrics_kwargs,
+    )
 
-    print('Comparing {} data (set1) to {} data (set2) at time = {}'.format(set1, set2, time))
+    diff_metrics = DiffMetrics(
+        ds[varname].sel(collection=set1),
+        ds[varname].sel(collection=set2),
+        aggregate_dims,
+        **metrics_kwargs,
+    )
 
-    # Make sure we don't exceed time bound
-    time_mx = ds[varname].sel(collection=set1).sizes['time'] - 1
-    if time > time_mx:
-        raise ValueError(f'specified time index exceeds max time dimension {time_mx}.')
-
-    # check for names of lat/lon
-    # CAM-FV: dims = lat, lon; coords = lat, lon
-    # POP: dims = nlat, nlon; coords = ULAT,ULONG, TLAT, TLONG
-    # CAM-SE: to do
-
-    if 'lat' in list(ds.dims):
-        data_type = 'cam-fv'
-        print('CAM-FV data...')
-        ds0_metrics = DatasetMetrics(
-            ds[varname].sel(collection=set1).isel(time=time), ['lat', 'lon']
-        )
-        ds1_metrics = DatasetMetrics(
-            ds[varname].sel(collection=set2).isel(time=time), ['lat', 'lon']
-        )
-        d_metrics = DatasetMetrics(
-            ds[varname].sel(collection=set1).isel(time=time)
-            - ds[varname].sel(collection=set2).isel(time=time),
-            ['lat', 'lon'],
-        )
-        diff_metrics = DiffMetrics(
-            ds[varname].sel(collection=set1).isel(time=time),
-            ds[varname].sel(collection=set2).isel(time=time),
-            ['lat', 'lon'],
-        )
-    elif 'nlat' in list(ds.dims):
-        data_type = 'pop'
-        print('POP data...')
-        ds0_metrics = DatasetMetrics(
-            ds[varname].sel(collection=set1).isel(time=time), ['nlat', 'nlon']
-        )
-        ds1_metrics = DatasetMetrics(
-            ds[varname].sel(collection=set2).isel(time=time), ['nlat', 'nlon']
-        )
-        d_metrics = DatasetMetrics(
-            ds[varname].sel(collection=set1).isel(time=time)
-            - ds[varname].sel(collection=set2).isel(time=time),
-            ['nlat', 'nlon'],
-        )
-        diff_metrics = DiffMetrics(
-            ds[varname].sel(collection=set1).isel(time=time),
-            ds[varname].sel(collection=set2).isel(time=time),
-            ['nlat', 'nlon'],
-        )
-    else:
-        data_type = 'unk'
-        print('Type of data not recognized.')
-
-    output = {}
-
+    output = collections.OrderedDict()
     output['skip1'] = 0
-
-    output['mean set1'] = ds0_metrics.get_metric('mean').data.compute()
-    output['mean set2'] = ds1_metrics.get_metric('mean').data.compute()
-    output['mean diff'] = d_metrics.get_metric('mean').data.compute()
-
+    output[f'mean {set1}'] = ds0_metrics.get_metric('mean').data
+    output[f'mean {set2}'] = ds1_metrics.get_metric('mean').data
+    output['mean diff'] = d_metrics.get_metric('mean').data
     output['skip2'] = 0
-
-    output['variance set1'] = ds0_metrics.get_metric('variance').data.compute()
-    output['variance set2'] = ds1_metrics.get_metric('variance').data.compute()
-
+    output[f'variance {set1}'] = ds0_metrics.get_metric('variance').data
+    output[f'variance {set2}'] = ds1_metrics.get_metric('variance').data
     output['skip3'] = 0
-
-    output['standard deviation set1'] = ds0_metrics.get_metric('std').data.compute()
-    output['standard deviation set2'] = ds1_metrics.get_metric('std').data.compute()
-
+    output[f'standard deviation {set1}'] = ds0_metrics.get_metric('std').data
+    output[f'standard deviation {set2}'] = ds1_metrics.get_metric('std').data
     output['skip4'] = 0
-
-    output['max value set1'] = ds0_metrics.get_metric('max_val').data.compute()
-    output['max value set2'] = ds1_metrics.get_metric('max_val').data.compute()
-    output['min value set1'] = ds0_metrics.get_metric('min_val').data.compute()
-    output['min value set2'] = ds1_metrics.get_metric('min_val').data.compute()
-
+    output[f'max value {set1}'] = ds0_metrics.get_metric('max_val').data
+    output[f'max value {set2}'] = ds1_metrics.get_metric('max_val').data
+    output[f'min value {set1}'] = ds0_metrics.get_metric('min_val').data
+    output[f'min value {set2}'] = ds1_metrics.get_metric('min_val').data
     output['skip55'] = 0
-
-    output['max abs diff'] = d_metrics.get_metric('max_abs').data.compute()
-    output['min abs diff'] = d_metrics.get_metric('min_abs').data.compute()
-    output['mean abs diff'] = d_metrics.get_metric('mean_abs').data.compute()
-
-    output['mean squared diff'] = d_metrics.get_metric('mean_squared').data.compute()
-    output['root mean squared diff'] = d_metrics.get_metric('rms').data.compute()
-
-    output['normalized root mean squared diff'] = diff_metrics.get_diff_metric(
-        'n_rms'
-    ).data.compute()
-    output['normalized max pointwise error'] = diff_metrics.get_diff_metric('n_emax').data.compute()
+    output['max abs diff'] = d_metrics.get_metric('max_abs').data
+    output['min abs diff'] = d_metrics.get_metric('min_abs').data
+    output['mean abs diff'] = d_metrics.get_metric('mean_abs').data
+    output['mean squared diff'] = d_metrics.get_metric('mean_squared').data
+    output['root mean squared diff'] = d_metrics.get_metric('rms').data
+    output['normalized root mean squared diff'] = diff_metrics.get_diff_metric('n_rms').data
+    output['normalized max pointwise error'] = diff_metrics.get_diff_metric('n_emax').data
     output['pearson correlation coefficient'] = diff_metrics.get_diff_metric(
         'pearson_correlation_coefficient'
-    ).data.compute()
+    ).data
     output['ks p-value'] = diff_metrics.get_diff_metric('ks_p_value')
     tmp = 'spatial relative error(% > ' + str(ds0_metrics.get_single_metric('spre_tol')) + ')'
     output[tmp] = diff_metrics.get_diff_metric('spatial_rel_error')
     output['max spatial relative error'] = diff_metrics.get_diff_metric('max_spatial_rel_error')
 
-    # don't do ssim for pop data
-    if not data_type == 'pop':
+    if include_ssim_metric:
         output['ssim'] = diff_metrics.get_diff_metric('ssim')
+
+    if dask.is_dask_collection(ds):
+        output = dask.compute(output)[0]
 
     for key, value in output.items():
         if key[:4] != 'skip':
             rounded_value = f'{float(f"{value:.{significant_digits}g}"):g}'
-            print(f'{key}: {rounded_value}')
+            print(f'{key:<35}:', f'{rounded_value}')
         else:
             print(' ')
 

@@ -730,9 +730,7 @@ class DiffMetrics:
         ds1: xr.DataArray,
         ds2: xr.DataArray,
         aggregate_dims: Optional[list] = None,
-        time_dim_name: str = 'time',
-        lat_dim_name: str = 'lat',
-        lon_dim_name: str = 'lon',
+        **metrics_kwargs,
     ) -> None:
         if isinstance(ds1, xr.DataArray) and isinstance(ds2, xr.DataArray):
             # Datasets
@@ -743,20 +741,8 @@ class DiffMetrics:
                 f'ds must be of type xarray.DataArray. Type(s): {str(type(ds1))} {str(type(ds2))}'
             )
 
-        self._metrics1 = DatasetMetrics(
-            self._ds1,
-            aggregate_dims,
-            time_dim_name=time_dim_name,
-            lat_dim_name=lat_dim_name,
-            lon_dim_name=lon_dim_name,
-        )
-        self._metrics2 = DatasetMetrics(
-            self._ds2,
-            aggregate_dims,
-            time_dim_name=time_dim_name,
-            lat_dim_name=lat_dim_name,
-            lon_dim_name=lon_dim_name,
-        )
+        self._metrics1 = DatasetMetrics(self._ds1, aggregate_dims, **metrics_kwargs)
+        self._metrics2 = DatasetMetrics(self._ds2, aggregate_dims, **metrics_kwargs)
         self._aggregate_dims = aggregate_dims
         self._pcc = None
         self._covariance = None
