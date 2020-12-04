@@ -491,7 +491,7 @@ class DatasetMetrics:
         if not self._is_memoized('_annual_harmonic_relative_ratio'):
             # drop time coordinate labels or else it will try to parse them as numbers to check spacing and fail
             ds_copy = self._ds
-            new_index = [i for i in range(0, self._ds.time.size)]
+            new_index = [i for i in range(0, self._ds[self._time_dim_name].size)]
             new_ds = ds_copy.assign_coords({self._time_dim_name: new_index})
 
             DF = dft(new_ds, dim=[self._time_dim_name], detrend='constant')
@@ -840,7 +840,6 @@ class DiffMetrics:
         """
 
         if not self._is_memoized('_spatial_rel_error'):
-            # print(self._metrics1.get_metric('ds').shape)
             sp_tol = self._metrics1.spre_tol
             # unraveling converts the dask array to numpy, but then
             # we can assign the 1.0 and avoid zero (couldn't figure another way)
@@ -882,7 +881,7 @@ class DiffMetrics:
             # does an absolute error at that point)
             z = np.where(abs(t1) == 0)
             t1[z] = 1.0
-            # we don't want to use nan (ocassionally in cam data - often in ocn)
+            # we don't want to use nan (occassionally in cam data - often in ocn)
             m_t2 = np.ma.masked_invalid(t2).compressed()
             m_t1 = np.ma.masked_invalid(t1).compressed()
             m_tt = m_t1 - m_t2
@@ -910,8 +909,8 @@ class DiffMetrics:
                 filename_1, filename_2 = f'{tmpdirname}/t_ssim1.png', f'{tmpdirname}/t_ssim2.png'
                 d1 = self._metrics1.get_metric('ds')
                 d2 = self._metrics2.get_metric('ds')
-                lat1 = d1[self._lat_dim_name]
-                lat2 = d2[self._lat_dim_name]
+                lat1 = d1[self._metrics1._lat_dim_name]
+                lat2 = d2[self._metrics2._lat_dim_name]
                 cy1, lon1 = add_cyclic_point(d1, coord=d1[self._lon_dim_name])
                 cy2, lon2 = add_cyclic_point(d2, coord=d2[self._lon_dim_name])
 
