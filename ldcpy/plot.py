@@ -15,7 +15,6 @@ from cartopy import crs as ccrs
 from cartopy.util import add_cyclic_point
 from matplotlib import dates as mdates, pyplot as plt
 from mpl_toolkits.axes_grid1 import make_axes_locatable
-from numpy import inf
 
 from ldcpy import metrics as lm, util as lu
 
@@ -318,8 +317,8 @@ class MetricsPlot(object):
                 all_nan_flag = 1
 
             if not np.isinf(cy_datas).all():
-                cmin.append(np.min(cy_datas.where(cy_datas != -inf).min()))
-                cmax.append(np.max(cy_datas.where(cy_datas != inf).max()))
+                cmin.append(np.min(cy_datas.where(cy_datas != -np.inf).min()))
+                cmax.append(np.max(cy_datas.where(cy_datas != np.inf).max()))
 
             no_inf_data_set = np.nan_to_num(cy_datas, nan=np.nan)
 
@@ -430,12 +429,12 @@ class MetricsPlot(object):
         if self._calc_ssim:
             import os
 
-            import cv2
+            import skimage.io
             from skimage.metrics import structural_similarity as ssim
 
             for i in range(1, len(da_sets)):
-                img1 = cv2.imread('tmp_ssim1.png')
-                img2 = cv2.imread(f'tmp_ssim{i+1}.png')
+                img1 = skimage.io.imread('tmp_ssim1.png')
+                img2 = skimage.io.imread(f'tmp_ssim{i+1}.png')
                 # print(img1.shape)
                 # print(img2.shape)
                 ssim_val = ssim(img1, img2, multichannel=True)
