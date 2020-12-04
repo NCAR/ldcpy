@@ -338,38 +338,50 @@ def check_metrics(
     return num_fail
 
 
-def subset_data(ds, subset=None, lat=None, lon=None, lev=None, start=None, end=None):
+def subset_data(
+    ds,
+    subset=None,
+    lat=None,
+    lon=None,
+    lev=None,
+    start=None,
+    end=None,
+    time_dim_name='time',
+    vertical_dim_name='lev',
+    lat_dim_name='lat',
+    lon_dim_name='lon',
+):
     """
     Get a subset of the given dataArray, returns a dataArray
     """
     ds_subset = ds
 
     if start is not None and end is not None:
-        ds_subset = ds_subset.isel(time=slice(start, end + 1))
+        ds_subset = ds_subset.isel({time_dim_name: slice(start, end + 1)})
 
     if subset is not None:
         if subset == 'winter':
-            ds_subset = ds_subset.where(ds.time.dt.season == 'DJF', drop=True)
+            ds_subset = ds_subset.where(ds[time_dim_name].dt.season == 'DJF', drop=True)
         elif subset == 'spring':
-            ds_subset = ds_subset.where(ds.time.dt.season == 'MAM', drop=True)
+            ds_subset = ds_subset.where(ds[time_dim_name].dt.season == 'MAM', drop=True)
         elif subset == 'summer':
-            ds_subset = ds_subset.where(ds.time.dt.season == 'JJA', drop=True)
+            ds_subset = ds_subset.where(ds[time_dim_name].dt.season == 'JJA', drop=True)
         elif subset == 'autumn':
-            ds_subset = ds_subset.where(ds.time.dt.season == 'SON', drop=True)
+            ds_subset = ds_subset.where(ds[time_dim_name].dt.season == 'SON', drop=True)
 
         elif subset == 'first5':
-            ds_subset = ds_subset.isel(time=slice(None, 5))
+            ds_subset = ds_subset.isel({time_dim_name: slice(None, 5)})
 
     if lev is not None:
-        if 'lev' in ds_subset.dims:
-            ds_subset = ds_subset.isel(lev=lev)
+        if vertical_dim_name in ds_subset.dims:
+            ds_subset = ds_subset.isel({vertical_dim_name: lev})
 
     if lat is not None:
-        ds_subset = ds_subset.sel(lat=lat, method='nearest')
-        ds_subset = ds_subset.expand_dims('lat')
+        ds_subset = ds_subset.sel(**{lat_dim_name: lat, 'method': 'nearest'})
+        ds_subset = ds_subset.expand_dims(lat_dim_name)
 
     if lon is not None:
-        ds_subset = ds_subset.sel(lon=lon + 180, method='nearest')
-        ds_subset = ds_subset.expand_dims('lon')
+        ds_subset = ds_subset.sel(**{lon_dim_name: lon + 180, 'method': 'nearest'})
+        ds_subset = ds_subset.expand_dims(lon_dim_name)
 
     return ds_subset

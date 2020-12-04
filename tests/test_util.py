@@ -1,6 +1,8 @@
 import pytest
+import xarray as xr
 
 import ldcpy
+from ldcpy.util import subset_data
 
 ds = ldcpy.open_datasets(
     ['TS'],
@@ -21,6 +23,7 @@ ds2 = ldcpy.open_datasets(
     ['orig', 'recon', 'recon_2'],
 )
 ds3 = ldcpy.open_datasets(['T'], ['data/cam-fv/cam-fv.T.3months.nc'], ['orig'])
+air_temp = xr.tutorial.open_dataset('air_temperature')
 
 
 @pytest.mark.parametrize(
@@ -32,3 +35,12 @@ ds3 = ldcpy.open_datasets(['T'], ['data/cam-fv/cam-fv.T.3months.nc'], ['orig'])
 )
 def test_compare_stats(ds, varname, set1, set2, metrics_kwargs):
     ldcpy.compare_stats(ds, varname, set1, set2, **metrics_kwargs)
+
+
+@pytest.mark.parametrize(
+    'ds, kwargs',
+    [(air_temp, {'subset': 'winter', 'lat': 10}), (ds3, {'lev': 10, 'lat': 10, 'lon': 20})],
+)
+def test_subset_data(ds, kwargs):
+    s = subset_data(ds, **kwargs)
+    assert isinstance(s, xr.Dataset)
