@@ -13,20 +13,20 @@ workflows:
   nightly:
     triggers:
       - schedule:
-          cron: "0 0 * * *"
+          cron: '0 0 * * *'
           filters:
             branches:
               only:
                 - master
     jobs:
-      - "python-3.6"
-      - "python-3.7"
-      - "python-3.8"
+      - 'python-3.6'
+      - 'python-3.7'
+      - 'python-3.8'
   default:
     jobs:
-      - "python-3.6"
-      - "python-3.7"
-      - "python-3.8"
+      - 'python-3.6'
+      - 'python-3.7'
+      - 'python-3.8'
 
 shared: &shared
   steps:
@@ -61,38 +61,36 @@ shared: &shared
     - save_cache:
         key: deps-{{ checksum "./ci/environment.yml" }}
         paths:
-          - "/opt/conda/pkgs"
-
+          - '/opt/conda/pkgs'
 
 jobs:
-
-  "python-3.6":
+  'python-3.6':
     <<: *shared
     docker:
       - image: ncarxdev/miniconda:3.6
     environment:
-      ENV_FILE: "./ci/environment.yml"
+      ENV_FILE: './ci/environment.yml'
 
-  "python-3.7":
+  'python-3.7':
     <<: *shared
     docker:
       - image: ncarxdev/miniconda:3.7
     environment:
-      ENV_FILE: "./ci/environment.yml"
+      ENV_FILE: './ci/environment.yml'
 
-  "python-3.8":
+  'python-3.8':
     <<: *shared
     docker:
       - image: ncarxdev/miniconda:3.8
     environment:
-      ENV_FILE: "./ci/environment.yml"
+      ENV_FILE: './ci/environment.yml'
 
   deploy:
     <<: *shared
     docker:
       - image: ncarxdev/miniconda:3.6
     environment:
-      ENV_FILE: "./ci/environment.yml"
+      ENV_FILE: './ci/environment.yml'
     steps:
       - checkout
       - restore_cache:
@@ -118,6 +116,6 @@ jobs:
             pip install twine
             /opt/conda/bin/twine upload dist/*
       - save_cache:
-              key: deps-{{ checksum "./ci/environment.yml" }}
-              paths:
-                - "/opt/conda/pkgs"
+          key: deps-{{ checksum "./ci/environment.yml" }}
+          paths:
+            - '/opt/conda/pkgs'
