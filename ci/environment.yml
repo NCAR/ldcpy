@@ -7,6 +7,7 @@ dependencies:
   - codecov
   - dask
   - intake-esm
+  - jupyterlab
   - matplotlib-base
   - nc-time-axis
   - netcdf4

@@ -3,29 +3,29 @@ channels:
   - conda-forge
 dependencies:
   - cartopy=0.18
-  - netcdf4
-  - pip
-  - xarray
-  - zfpy
-  - xrft
   - cmocean
-  - numpy
-  - scipy
-  - matplotlib-base
-  - pre-commit
-  - setuptools
-  - jupyterlab
-  - jupyter_contrib_nbextensions
-  - graphviz
   - codecov
+  - cython
+  - dask
+  - graphviz
+  - intake-esm
+  - jupyter_contrib_nbextensions
+  - jupyterlab
+  - matplotlib-base
+  - nc-time-axis
+  - netcdf4
+  - numpy
+  - opencv
+  - pandas
+  - pip
+  - pre-commit
   - pytest
   - pytest-cov
   - pytest-xdist
-  - dask
-  - intake-esm
-  - nc-time-axis
-  - pandas
-  - cython
   - scikit-build
   - scikit-image
-  - opencv
+  - scipy
+  - setuptools
+  - xarray
+  - xrft
+  - zfpy
