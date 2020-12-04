@@ -26,18 +26,14 @@
     "format": "zarr"
   },
   "aggregation_control": {
-      "variable_column_name": "variable",
-      "groupby_attrs": [
-        "component",
-        "experiment",
-        "frequency"
-      ],
-      "aggregations": [
-        {
-          "type": "union",
-          "attribute_name": "variable",
-          "options": {"compat": "override"}
-        }
-      ]
-    }
+    "variable_column_name": "variable",
+    "groupby_attrs": ["component", "experiment", "frequency"],
+    "aggregations": [
+      {
+        "type": "union",
+        "attribute_name": "variable",
+        "options": { "compat": "override" }
+      }
+    ]
+  }
 }
