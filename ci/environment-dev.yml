@@ -1,20 +1,31 @@
-name: ldcpy
+name: ldcpy_dev
 channels:
   - conda-forge
 dependencies:
   - cartopy=0.18
   - cmocean
   - codecov
+  - cython
   - dask
+  - graphviz
   - intake-esm
+  - jupyter_contrib_nbextensions
   - jupyterlab
   - matplotlib-base
   - nc-time-axis
   - netcdf4
+  - numpy
+  - opencv
+  - pandas
   - pip
+  - pre-commit
   - pytest
   - pytest-cov
+  - pytest-xdist
+  - scikit-build
   - scikit-image
+  - scipy
+  - setuptools
   - xarray
   - xrft
   - zfpy

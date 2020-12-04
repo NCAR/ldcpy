@@ -1,27 +1,15 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 """The setup script."""
 
-import os
-import sys
-from os.path import exists
-
 from setuptools import find_packages, setup
-from setuptools.command.install import install
-
-VERSION = 'v0.12'
 
 with open('requirements.txt') as f:
     install_requires = f.read().strip().split('\n')
 
-# with open('requirements-dev.txt') as f:
-#    dev_requires = f.read().strip().split('\n')
+with open('README.rst') as f:
+    long_description = f.read()
 
-if exists('README.rst'):
-    with open('README.rst') as f:
-        long_description = f.read()
-else:
-    long_description = ''
 
 CLASSIFIERS = [
     'Operating System :: OS Independent',
@@ -35,23 +23,8 @@ CLASSIFIERS = [
     'Topic :: Scientific/Engineering',
 ]
 
-
-class VerifyVersionCommand(install):
-    """Custom command to verify that the git tag matches our version"""
-
-    description = 'verify that the git tag matches our version'
-
-    def run(self):
-        tag = os.getenv('CIRCLE_TAG')
-
-        if tag != VERSION:
-            info = 'Git tag: {0} does not match the version of this app: {1}'.format(tag, VERSION)
-            sys.exit(info)
-
-
 setup(
     name='ldcpy',
-    version=VERSION,
     description='A library for lossy compression of netCDF files using xarray',
     long_description=long_description,
     python_requires='>=3.6',
@@ -68,11 +41,9 @@ setup(
     package_dir={'ldcpy': 'ldcpy'},
     include_package_data=True,
     install_requires=install_requires,
-    #    extras_require={'dev': dev_requires},
     license='Apache 2.0',
     zip_safe=False,
     keywords='compression, xarray',
     use_scm_version={'version_scheme': 'post-release', 'local_scheme': 'dirty-tag'},
     setup_requires=['setuptools_scm', 'setuptools>=30.3.0'],
-    cmdclass={'verify': VerifyVersionCommand},
 )
