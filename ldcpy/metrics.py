@@ -911,8 +911,8 @@ class DiffMetrics:
                 d2 = self._metrics2.get_metric('ds')
                 lat1 = d1[self._metrics1._lat_dim_name]
                 lat2 = d2[self._metrics2._lat_dim_name]
-                cy1, lon1 = add_cyclic_point(d1, coord=d1[self._lon_dim_name])
-                cy2, lon2 = add_cyclic_point(d2, coord=d2[self._lon_dim_name])
+                cy1, lon1 = add_cyclic_point(d1, coord=d1[self._metrics1._lon_dim_name])
+                cy2, lon2 = add_cyclic_point(d2, coord=d2[self._metrics2._lon_dim_name])
 
                 # Prevent showing stuff
                 backend_ = mpl.get_backend()
