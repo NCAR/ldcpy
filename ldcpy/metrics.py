@@ -953,6 +953,8 @@ class DiffMetrics(object):
             # Reset backend
             mpl.use(backend_)
 
+            mpl.close()
+
             self._ssim_value = s
 
         return self._ssim_value

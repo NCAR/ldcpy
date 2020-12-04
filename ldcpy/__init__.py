@@ -5,7 +5,7 @@ from pkg_resources import DistributionNotFound, get_distribution
 
 from .metrics import DatasetMetrics, DiffMetrics
 from .plot import plot
-from .util import check_metrics, collect_datasets, compare_stats, open_datasets
+from .util import check_metrics, collect_datasets, compare_stats, open_datasets, save_metrics
 
 try:
     __version__ = get_distribution(__name__).version
