@@ -1,16 +1,12 @@
 import copy
-import os
 from typing import Optional
 
-import cftime
-import cv2
 import matplotlib as mpl
 import numpy as np
 import xarray as xr
 from cartopy import crs as ccrs
 from cartopy.util import add_cyclic_point
 from matplotlib import pyplot as plt
-from numpy import inf
 from scipy import stats as ss
 from xrft import dft
 
@@ -867,91 +863,92 @@ class DiffMetrics(object):
         """
         We compute the SSIM (structural similarity index) on the visualization of the spatial data.
         """
+
+        import tempfile
+
+        import skimage.io
+        import skimage.metrics
+        from skimage.metrics import structural_similarity as ssim
+
         if not self._is_memoized('_ssim'):
-            d1 = self._metrics1.get_metric('ds')
-            d2 = self._metrics2.get_metric('ds')
-            lat1 = d1['lat']
-            lat2 = d2['lat']
-            cy1, lon1 = add_cyclic_point(d1, coord=d1['lon'])
-            cy2, lon2 = add_cyclic_point(d2, coord=d2['lon'])
+            with tempfile.TemporaryDirectory() as tmpdirname:
+                filename_1, filename_2 = f'{tmpdirname}/t_ssim1.png', f'{tmpdirname}/t_ssim2.png'
+                d1 = self._metrics1.get_metric('ds')
+                d2 = self._metrics2.get_metric('ds')
+                lat1 = d1['lat']
+                lat2 = d2['lat']
+                cy1, lon1 = add_cyclic_point(d1, coord=d1['lon'])
+                cy2, lon2 = add_cyclic_point(d2, coord=d2['lon'])
 
-            # Prevent showing stuff
-            backend_ = mpl.get_backend()
-            mpl.use('Agg')
+                # Prevent showing stuff
+                backend_ = mpl.get_backend()
+                mpl.use('Agg')
 
-            no_inf_d1 = np.nan_to_num(cy1, nan=np.nan)
-            no_inf_d2 = np.nan_to_num(cy2, nan=np.nan)
+                no_inf_d1 = np.nan_to_num(cy1, nan=np.nan)
+                no_inf_d2 = np.nan_to_num(cy2, nan=np.nan)
 
-            color_min = min(
-                np.min(d1.where(d1 != -inf)).values.min(),
-                np.min(d2.where(d2 != -inf)).values.min(),
-            )
-            color_max = max(
-                np.max(d1.where(d1 != inf)).values.max(),
-                np.max(d2.where(d2 != inf)).values.max(),
-            )
+                color_min = min(
+                    np.min(d1.where(d1 != -np.inf)).values.min(),
+                    np.min(d2.where(d2 != -np.inf)).values.min(),
+                )
+                color_max = max(
+                    np.max(d1.where(d1 != np.inf)).values.max(),
+                    np.max(d2.where(d2 != np.inf)).values.max(),
+                )
 
-            fig = plt.figure(dpi=300, figsize=(9, 2.5))
+                fig = plt.figure(dpi=300, figsize=(9, 2.5))
 
-            mymap = copy.copy(plt.cm.get_cmap('coolwarm'))
-            mymap.set_under(color='black')
-            mymap.set_over(color='white')
-            mymap.set_bad(alpha=0)
+                mymap = copy.copy(plt.cm.get_cmap('coolwarm'))
+                mymap.set_under(color='black')
+                mymap.set_over(color='white')
+                mymap.set_bad(alpha=0)
 
-            ax1 = plt.subplot(1, 2, 1, projection=ccrs.Robinson(central_longitude=0.0))
-            ax1.set_facecolor('#39ff14')
+                ax1 = plt.subplot(1, 2, 1, projection=ccrs.Robinson(central_longitude=0.0))
+                ax1.set_facecolor('#39ff14')
 
-            ax1.pcolormesh(
-                lon1,
-                lat1,
-                no_inf_d1,
-                transform=ccrs.PlateCarree(),
-                cmap=mymap,
-                vmin=color_min,
-                vmax=color_max,
-            )
-            ax1.set_global()
-            ax1.coastlines(linewidth=0.5)
-            ax1.axis('off')
-            plt.margins(0, 0)
-            extent1 = ax1.get_window_extent().transformed(fig.dpi_scale_trans.inverted())
-            ax1.imshow
-            plt.savefig('t_ssim1', bbox_inches=extent1, transparent=True, pad_inches=0)
-            ax1.axis('on')
+                ax1.pcolormesh(
+                    lon1,
+                    lat1,
+                    no_inf_d1,
+                    transform=ccrs.PlateCarree(),
+                    cmap=mymap,
+                    vmin=color_min,
+                    vmax=color_max,
+                )
+                ax1.set_global()
+                ax1.coastlines(linewidth=0.5)
+                ax1.axis('off')
+                plt.margins(0, 0)
+                extent1 = ax1.get_window_extent().transformed(fig.dpi_scale_trans.inverted())
+                ax1.imshow
+                plt.savefig(filename_1, bbox_inches=extent1, transparent=True, pad_inches=0)
+                ax1.axis('on')
 
-            ax2 = plt.subplot(1, 2, 2, projection=ccrs.Robinson(central_longitude=0.0))
-            ax2.set_facecolor('#39ff14')
+                ax2 = plt.subplot(1, 2, 2, projection=ccrs.Robinson(central_longitude=0.0))
+                ax2.set_facecolor('#39ff14')
 
-            ax2.pcolormesh(
-                lon2,
-                lat2,
-                no_inf_d2,
-                transform=ccrs.PlateCarree(),
-                cmap=mymap,
-                vmin=color_min,
-                vmax=color_max,
-            )
-            ax2.set_global()
-            ax2.coastlines(linewidth=0.5)
-            plt.margins(0, 0)
-            ax2.imshow
-            ax2.axis('off')
-            extent2 = ax2.get_window_extent().transformed(fig.dpi_scale_trans.inverted())
-            plt.savefig('t_ssim2', bbox_inches=extent2, transparent=True, pad_inches=0)
+                ax2.pcolormesh(
+                    lon2,
+                    lat2,
+                    no_inf_d2,
+                    transform=ccrs.PlateCarree(),
+                    cmap=mymap,
+                    vmin=color_min,
+                    vmax=color_max,
+                )
+                ax2.set_global()
+                ax2.coastlines(linewidth=0.5)
+                plt.margins(0, 0)
+                ax2.imshow
+                ax2.axis('off')
+                extent2 = ax2.get_window_extent().transformed(fig.dpi_scale_trans.inverted())
+                plt.savefig(filename_2, bbox_inches=extent2, transparent=True, pad_inches=0)
 
-            ax2.axis('on')
+                ax2.axis('on')
 
-            from skimage.metrics import structural_similarity as ssim
-
-            img1 = cv2.imread('t_ssim1.png')
-            img2 = cv2.imread('t_ssim2.png')
-            # print(img1.shape)
-            # print(img2.shape)
-            s = ssim(img1, img2, multichannel=True)
-            if os.path.exists('t_ssim1.png'):
-                os.remove('t_ssim1.png')
-            if os.path.exists('t_ssim2.png'):
-                os.remove('t_ssim2.png')
+                img1 = skimage.io.imread(filename_1)
+                img2 = skimage.io.imread(filename_2)
+                s = ssim(img1, img2, multichannel=True)
 
             # Reset backend
             mpl.use(backend_)

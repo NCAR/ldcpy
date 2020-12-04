@@ -3,20 +3,17 @@ channels:
   - conda-forge
 dependencies:
   - cartopy=0.18
+  - cmocean
   - codecov
+  - dask
+  - intake-esm
+  - matplotlib-base
+  - nc-time-axis
   - netcdf4
   - pip
   - pytest
   - pytest-cov
-  - xarray
-  - zfpy
-  - xrft
-  - cmocean
-  - dask
-  - intake-esm
-  - cython
-  - nc-time-axis
   - scikit-image
-  - scikit-build
-  - opencv
-  - matplotlib-base
+  - xarray
+  - xrft
+  - zfpy

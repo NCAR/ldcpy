@@ -9,7 +9,5 @@ jupyterlab
 xrft
 pip
 dask[complete]
-scikit-build
-opencv-python
 scikit-image
 nc-time-axis
