@@ -11,7 +11,7 @@ from scipy import stats as ss
 from xrft import dft
 
 
-class DatasetMetrics(object):
+class DatasetMetrics:
     """
     This class contains metrics for each point of a dataset after aggregating across one or more dimensions, and a method to access these metrics.
     """
@@ -20,10 +20,17 @@ class DatasetMetrics(object):
         self,
         ds: xr.DataArray,
         aggregate_dims: list,
+        time_dim_name: str = 'time',
+        lat_dim_name: str = 'lat',
+        lon_dim_name: str = 'lon',
     ):
         self._ds = ds if (ds.dtype == np.float64) else ds.astype(np.float64)
         # For some reason, casting to float64 removes all attrs from the dataset
         self._ds.attrs = ds.attrs
+
+        self._time_dim_name = time_dim_name
+        self._lat_dim_name = lat_dim_name
+        self._lon_dim_name = lon_dim_name
 
         # array metrics
         self._ns_con_var = None
@@ -73,19 +80,22 @@ class DatasetMetrics(object):
 
     def _con_var(self, dir, dataset) -> np.ndarray:
         if dir == 'ns':
-            lat_length = dataset.sizes['lat']
+            lat_length = dataset.sizes[self._lat_dim_name]
             o_1, o_2 = xr.align(
-                dataset.head({'lat': lat_length - 1}),
-                dataset.tail({'lat': lat_length - 1}),
+                dataset.head({self._lat_dim_name: lat_length - 1}),
+                dataset.tail({self._lat_dim_name: lat_length - 1}),
                 join='override',
             )
         elif dir == 'ew':
-            lon_length = dataset.sizes['lon']
+            lon_length = dataset.sizes[self._lon_dim_name]
             o_1, o_2 = xr.align(
                 dataset,
                 xr.concat(
-                    [dataset.tail({'lon': lon_length - 1}), dataset.head({'lon': 1})],
-                    dim='lon',
+                    [
+                        dataset.tail({self._lon_dim_name: lon_length - 1}),
+                        dataset.head({self._lon_dim_name: 1}),
+                    ],
+                    dim=self._lon_dim_name,
                 ),
                 join='override',
             )
@@ -308,7 +318,9 @@ class DatasetMetrics(object):
         NOTE: currently assumes we are aggregating along the time dimension so is only suitable for a spatial plot.
         """
         if not self._is_memoized('_zscore'):
-            self._zscore = np.divide(self.mean, self.std / np.sqrt(self._ds.sizes['time']))
+            self._zscore = np.divide(
+                self.mean, self.std / np.sqrt(self._ds.sizes[self._time_dim_name])
+            )
             self._zscore.attrs = self._ds.attrs
             if hasattr(self._ds, 'units'):
                 self._zscore.attrs['units'] = ''
@@ -322,8 +334,9 @@ class DatasetMetrics(object):
         NOTE: only available in spatial and spatial comparison plots
         """
         if not self._is_memoized('_mae_day_max'):
+            key = f'{self._time_dim_name}.dayofyear'
             self._mae_day_max = 0
-            self._test = abs(self._ds).groupby('time.dayofyear').mean()
+            self._test = abs(self._ds).groupby(key).mean()
             self._mae_day_max = self._test.idxmax(dim='dayofyear')
             self._mae_day_max.attrs = self._ds.attrs
             if hasattr(self._ds, 'units'):
@@ -414,16 +427,17 @@ class DatasetMetrics(object):
         so can only be plotted in a spatial plot.
         """
         if not self._is_memoized('_lag1'):
-            self._deseas_resid = self._ds.groupby('time.dayofyear') - self._ds.groupby(
-                'time.dayofyear'
-            ).mean(dim='time')
+            key = f'{self._time_dim_name}.dayofyear'
+            grouped = self._ds.groupby(key)
+            self._deseas_resid = grouped - grouped.mean(dim=self._time_dim_name)
+            time_length = self._deseas_resid.sizes[self._time_dim_name]
+            current = self._deseas_resid.head({self._time_dim_name: time_length - 1})
+            next = self._deseas_resid.shift({self._time_dim_name: -1}).head(
+                {self._time_dim_name: time_length - 1}
+            )
 
-            time_length = self._deseas_resid.sizes['time']
-            current = self._deseas_resid.head({'time': time_length - 1})
-            next = self._deseas_resid.shift({'time': -1}).head({'time': time_length - 1})
-
-            num = current.dot(next, dims='time')
-            denom = current.dot(current, dims='time')
+            num = current.dot(next, dims=self._time_dim_name)
+            denom = current.dot(current, dims=self._time_dim_name)
             self._lag1 = num / denom
 
             self._lag1.attrs = self._ds.attrs
@@ -440,23 +454,24 @@ class DatasetMetrics(object):
         so can only be plotted in a spatial plot.
         """
         if not self._is_memoized('_lag1_first_difference'):
-            self._deseas_resid = self._ds.groupby('time.dayofyear') - self._ds.groupby(
-                'time.dayofyear'
-            ).mean(dim='time')
-            # self._deseas_resid=self._ds
-
-            time_length = self._deseas_resid.sizes['time']
-            current = self._deseas_resid.head({'time': time_length - 1})
-            next = self._deseas_resid.shift({'time': -1}).head({'time': time_length - 1})
+            key = f'{self._time_dim_name}.dayofyear'
+            grouped = self._ds.groupby(key)
+            self._deseas_resid = grouped - grouped.mean(dim=self._time_dim_name)
+            time_length = self._deseas_resid.sizes[self._time_dim_name]
+            current = self._deseas_resid.head({self._time_dim_name: time_length - 1})
+            next = self._deseas_resid.shift({self._time_dim_name: -1}).head(
+                {self._time_dim_name: time_length - 1}
+            )
             first_difference = next - current
-            first_difference_current = first_difference.head({'time': time_length - 1})
-            first_difference_next = first_difference.shift({'time': -1}).head(
-                {'time': time_length - 1}
+            first_difference_current = first_difference.head({self._time_dim_name: time_length - 1})
+            first_difference_next = first_difference.shift({self._time_dim_name: -1}).head(
+                {self._time_dim_name: time_length - 1}
             )
 
-            # num = first_difference_current.dot(first_difference_next, dims='time')
-            num = (first_difference_current * first_difference_next).sum(dim=['time'], skipna=True)
-            denom = first_difference_current.dot(first_difference_current, dims='time')
+            num = (first_difference_current * first_difference_next).sum(
+                dim=[self._time_dim_name], skipna=True
+            )
+            denom = first_difference_current.dot(first_difference_current, dims=self._time_dim_name)
             self._lag1_first_difference = num / denom
 
             self._lag1_first_difference.attrs = self._ds.attrs
@@ -476,29 +491,38 @@ class DatasetMetrics(object):
         if not self._is_memoized('_annual_harmonic_relative_ratio'):
             # drop time coordinate labels or else it will try to parse them as numbers to check spacing and fail
             ds_copy = self._ds
-            new_index = [i for i in range(0, self._ds.time.size)]
-            new_ds = ds_copy.assign_coords({'time': new_index})
+            new_index = [i for i in range(0, self._ds[self._time_dim_name].size)]
+            new_ds = ds_copy.assign_coords({self._time_dim_name: new_index})
 
-            DF = dft(new_ds, dim=['time'], detrend='constant')
-            S = np.real(DF * np.conj(DF) / self._ds.sizes['time'])
+            DF = dft(new_ds, dim=[self._time_dim_name], detrend='constant')
+            S = np.real(DF * np.conj(DF) / self._ds.sizes[self._time_dim_name])
             S_annual = S.isel(
-                freq_time=int(self._ds.sizes['time'] / 2) + int(self._ds.sizes['time'] / 365)
+                freq_time=int(self._ds.sizes[self._time_dim_name] / 2)
+                + int(self._ds.sizes[self._time_dim_name] / 365)
             )  # annual power
             neighborhood = (
-                int(self._ds.sizes['time'] / 2) + int(self._ds.sizes['time'] / 365) - 25,
-                int(self._ds.sizes['time'] / 2) + int(self._ds.sizes['time'] / 365) + 25,
+                int(self._ds.sizes[self._time_dim_name] / 2)
+                + int(self._ds.sizes[self._time_dim_name] / 365)
+                - 25,
+                int(self._ds.sizes[self._time_dim_name] / 2)
+                + int(self._ds.sizes[self._time_dim_name] / 365)
+                + 25,
             )
             S_mean = xr.concat(
                 [
                     S.isel(
                         freq_time=slice(
                             max(0, neighborhood[0]),
-                            int(self._ds.sizes['time'] / 2) + int(self._ds.sizes['time'] / 365) - 1,
+                            int(self._ds.sizes[self._time_dim_name] / 2)
+                            + int(self._ds.sizes[self._time_dim_name] / 365)
+                            - 1,
                         )
                     ),
                     S.isel(
                         freq_time=slice(
-                            int(self._ds.sizes['time'] / 2) + int(self._ds.sizes['time'] / 365) + 1,
+                            int(self._ds.sizes[self._time_dim_name] / 2)
+                            + int(self._ds.sizes[self._time_dim_name] / 365)
+                            + 1,
                             neighborhood[1],
                         )
                     ),
@@ -692,7 +716,7 @@ class DatasetMetrics(object):
             raise TypeError('name must be a string.')
 
 
-class DiffMetrics(object):
+class DiffMetrics:
     """
     This class contains metrics on the overall dataset that require more than one input dataset to compute
     """
@@ -702,22 +726,33 @@ class DiffMetrics(object):
         ds1: xr.DataArray,
         ds2: xr.DataArray,
         aggregate_dims: Optional[list] = None,
+        time_dim_name: str = 'time',
+        lat_dim_name: str = 'lat',
+        lon_dim_name: str = 'lon',
     ) -> None:
-        if isinstance(ds1, xr.DataArray):
+        if isinstance(ds1, xr.DataArray) and isinstance(ds2, xr.DataArray):
             # Datasets
             self._ds1 = ds1
-
-        if isinstance(ds2, xr.DataArray):
-            # Datasets
             self._ds2 = ds2
-
         else:
             raise TypeError(
                 f'ds must be of type xarray.DataArray. Type(s): {str(type(ds1))} {str(type(ds2))}'
             )
 
-        self._metrics1 = DatasetMetrics(self._ds1, aggregate_dims)
-        self._metrics2 = DatasetMetrics(self._ds2, aggregate_dims)
+        self._metrics1 = DatasetMetrics(
+            self._ds1,
+            aggregate_dims,
+            time_dim_name=time_dim_name,
+            lat_dim_name=lat_dim_name,
+            lon_dim_name=lon_dim_name,
+        )
+        self._metrics2 = DatasetMetrics(
+            self._ds2,
+            aggregate_dims,
+            time_dim_name=time_dim_name,
+            lat_dim_name=lat_dim_name,
+            lon_dim_name=lon_dim_name,
+        )
         self._aggregate_dims = aggregate_dims
         self._pcc = None
         self._covariance = None
@@ -805,7 +840,6 @@ class DiffMetrics(object):
         """
 
         if not self._is_memoized('_spatial_rel_error'):
-            # print(self._metrics1.get_metric('ds').shape)
             sp_tol = self._metrics1.spre_tol
             # unraveling converts the dask array to numpy, but then
             # we can assign the 1.0 and avoid zero (couldn't figure another way)
@@ -847,7 +881,7 @@ class DiffMetrics(object):
             # does an absolute error at that point)
             z = np.where(abs(t1) == 0)
             t1[z] = 1.0
-            # we don't want to use nan (ocassionally in cam data - often in ocn)
+            # we don't want to use nan (occassionally in cam data - often in ocn)
             m_t2 = np.ma.masked_invalid(t2).compressed()
             m_t1 = np.ma.masked_invalid(t1).compressed()
             m_tt = m_t1 - m_t2
@@ -875,10 +909,10 @@ class DiffMetrics(object):
                 filename_1, filename_2 = f'{tmpdirname}/t_ssim1.png', f'{tmpdirname}/t_ssim2.png'
                 d1 = self._metrics1.get_metric('ds')
                 d2 = self._metrics2.get_metric('ds')
-                lat1 = d1['lat']
-                lat2 = d2['lat']
-                cy1, lon1 = add_cyclic_point(d1, coord=d1['lon'])
-                cy2, lon2 = add_cyclic_point(d2, coord=d2['lon'])
+                lat1 = d1[self._metrics1._lat_dim_name]
+                lat2 = d2[self._metrics2._lat_dim_name]
+                cy1, lon1 = add_cyclic_point(d1, coord=d1[self._metrics1._lon_dim_name])
+                cy2, lon2 = add_cyclic_point(d2, coord=d2[self._metrics2._lon_dim_name])
 
                 # Prevent showing stuff
                 backend_ = mpl.get_backend()
