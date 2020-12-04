@@ -1,5 +1,3 @@
-from unittest import TestCase
-
 import pytest
 
 import ldcpy
@@ -25,16 +23,12 @@ ds2 = ldcpy.open_datasets(
 ds3 = ldcpy.open_datasets(['T'], ['data/cam-fv/cam-fv.T.3months.nc'], ['orig'])
 
 
-class TestPlot(TestCase):
-    """
-    Note: The tests in this class currently only test the plot() function in ldcpy.plot for a variety of different
-    parameters. Tests still need to be written for the methods in the plot.py class.
-    """
-
-    def test_compare_stats(self):
-        ldcpy.compare_stats(ds, 'TS', set1='orig', set2='recon')
-        self.assertTrue(True)
-
-    def test_compare_3Dstats(self):
-        ldcpy.compare_stats(ds3, 'T', set1='orig', set2='orig')
-        self.assertTrue(True)
+@pytest.mark.parametrize(
+    'ds, varname, set1, set2, metrics_kwargs',
+    [
+        (ds.isel(time=0), 'TS', 'orig', 'recon', {'aggregate_dims': ['lat', 'lon']}),
+        (ds3.isel(time=0, lev=0), 'T', 'orig', 'orig', {'aggregate_dims': ['lat', 'lon']}),
+    ],
+)
+def test_compare_stats(ds, varname, set1, set2, metrics_kwargs):
+    ldcpy.compare_stats(ds, varname, set1, set2, **metrics_kwargs)
