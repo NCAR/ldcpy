@@ -470,6 +470,13 @@ def save_metrics(
         ['lat', 'lon'],
     )
 
+    reg_metrics = DatasetMetrics(
+        ds[varname].sel(collection=set1).isel(time=time)
+        - ds[varname].sel(collection=set2).isel(time=time),
+        ['lat', 'lon'],
+    )
+    max_abs = reg_metrics.get_metric('max_abs')
+
     # Pearson less than pcc_tol means fail
     pcc = diff_metrics.get_diff_metric('pearson_correlation_coefficient').data.compute()
 
@@ -504,6 +511,7 @@ def save_metrics(
             {
                 'set': set2,
                 'time': time,
+                'max_abs': max_abs,
                 'pcc': pcc,
                 'ks_p_value': ks,
                 'spatial_rel_error': spre,
