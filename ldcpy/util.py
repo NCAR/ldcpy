@@ -467,7 +467,7 @@ def save_metrics(
     diff_metrics = DiffMetrics(
         ds[varname].sel(collection=set1).isel(time=time),
         ds[varname].sel(collection=set2).isel(time=time),
-        ['lat', 'lon'],
+        ['lat', 'lon', 'time'],
     )
 
     reg_metrics = DatasetMetrics(
