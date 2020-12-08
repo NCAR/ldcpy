@@ -475,7 +475,7 @@ def save_metrics(
         - ds[varname].sel(collection=set2).isel(time=time),
         ['lat', 'lon'],
     )
-    max_abs = reg_metrics.get_metric('max_abs')
+    max_abs = reg_metrics.get_metric('max_abs').data.compute()
 
     max_rel_error = diff_metrics.get_diff_metric('max_spatial_rel_error')
 
