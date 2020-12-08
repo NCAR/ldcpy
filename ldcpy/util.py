@@ -473,7 +473,7 @@ def save_metrics(
     reg_metrics = DatasetMetrics(
         ds[varname].sel(collection=set1).isel(time=time)
         - ds[varname].sel(collection=set2).isel(time=time),
-        ['lat', 'lon', 'time'],
+        ['lat', 'lon'],
     )
     max_abs = reg_metrics.get_metric('max_abs')
 
