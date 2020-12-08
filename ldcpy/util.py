@@ -477,6 +477,8 @@ def save_metrics(
     )
     max_abs = reg_metrics.get_metric('max_abs')
 
+    max_rel_error = diff_metrics.get_diff_metric('max_spatial_rel_error')
+
     # Pearson less than pcc_tol means fail
     pcc = diff_metrics.get_diff_metric('pearson_correlation_coefficient').data.compute()
 
@@ -494,6 +496,8 @@ def save_metrics(
         fieldnames = [
             'set',
             'time',
+            'max_abs',
+            'max_rel_error',
             'pcc',
             'ks_p_value',
             'spatial_rel_error',
@@ -512,6 +516,7 @@ def save_metrics(
                 'set': set2,
                 'time': time,
                 'max_abs': max_abs,
+                'max_rel_error': max_rel_error,
                 'pcc': pcc,
                 'ks_p_value': ks,
                 'spatial_rel_error': spre,
