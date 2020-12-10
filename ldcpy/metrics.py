@@ -23,6 +23,8 @@ class DatasetMetrics:
         time_dim_name: str = 'time',
         lat_dim_name: str = 'lat',
         lon_dim_name: str = 'lon',
+        q: float = 0.5,
+        spre_tol: float = 1.0e-4,
     ):
         self._ds = ds if (ds.dtype == np.float64) else ds.astype(np.float64)
         # For some reason, casting to float64 removes all attrs from the dataset
@@ -31,6 +33,11 @@ class DatasetMetrics:
         self._time_dim_name = time_dim_name
         self._lat_dim_name = lat_dim_name
         self._lon_dim_name = lon_dim_name
+
+        self._quantile = q
+        self._spre_tol = spre_tol
+        self._agg_dims = aggregate_dims
+        self._frame_size = 1
 
         # array metrics
         self._ns_con_var = None
@@ -46,7 +53,6 @@ class DatasetMetrics:
         self._mae_day_max = None
         self._lag1 = None
         self._lag1_first_difference = None
-        self._agg_dims = aggregate_dims
         self._quantile_value = None
         self._mean_squared = None
         self._root_mean_squared = None
@@ -56,8 +62,6 @@ class DatasetMetrics:
         self._pooled_variance = None
         self._pooled_variance_ratio = None
         self._standardized_mean = None
-        self._quantile = 0.5
-        self._spre_tol = 1.0e-4
         self._max_abs = None
         self._min_abs = None
         self._d_range = None
@@ -70,7 +74,6 @@ class DatasetMetrics:
         self._zscore_cutoff = None
         self._zscore_percent_significant = None
 
-        self._frame_size = 1
         if aggregate_dims is not None:
             for dim in aggregate_dims:
                 self._frame_size *= int(self._ds.sizes[dim])
@@ -78,7 +81,7 @@ class DatasetMetrics:
     def _is_memoized(self, metric_name: str) -> bool:
         return hasattr(self, metric_name) and (self.__getattribute__(metric_name) is not None)
 
-    def _con_var(self, dir, dataset) -> np.ndarray:
+    def _con_var(self, dir, dataset) -> xr.DataArray:
         if dir == 'ns':
             lat_length = dataset.sizes[self._lat_dim_name]
             o_1, o_2 = xr.align(
@@ -104,7 +107,7 @@ class DatasetMetrics:
         return con_var
 
     @property
-    def pooled_variance(self) -> np.ndarray:
+    def pooled_variance(self) -> xr.DataArray:
         """
         The overall variance of the dataset
         """
@@ -117,7 +120,7 @@ class DatasetMetrics:
         return self._pooled_variance
 
     @property
-    def ns_con_var(self) -> np.ndarray:
+    def ns_con_var(self) -> xr.DataArray:
         """
         The North-South Contrast Variance averaged along the aggregate dimensions
         """
@@ -130,7 +133,7 @@ class DatasetMetrics:
         return self._ns_con_var
 
     @property
-    def ew_con_var(self) -> np.ndarray:
+    def ew_con_var(self) -> xr.DataArray:
         """
         The East-West Contrast Variance averaged along the aggregate dimensions
         """
@@ -143,7 +146,7 @@ class DatasetMetrics:
         return self._ew_con_var
 
     @property
-    def mean(self) -> np.ndarray:
+    def mean(self) -> xr.DataArray:
         """
         The mean along the aggregate dimensions
         """
@@ -154,7 +157,7 @@ class DatasetMetrics:
         return self._mean
 
     @property
-    def mean_abs(self) -> np.ndarray:
+    def mean_abs(self) -> xr.DataArray:
         """
         The mean of the absolute errors along the aggregate dimensions
         """
@@ -167,7 +170,7 @@ class DatasetMetrics:
         return self._mean_abs
 
     @property
-    def mean_squared(self) -> np.ndarray:
+    def mean_squared(self) -> xr.DataArray:
         """
         The absolute value of the mean along the aggregate dimensions
         """
@@ -180,7 +183,7 @@ class DatasetMetrics:
         return self._mean_squared
 
     @property
-    def root_mean_squared(self) -> np.ndarray:
+    def root_mean_squared(self) -> xr.DataArray:
         """
         The absolute value of the mean along the aggregate dimensions
         """
@@ -193,7 +196,7 @@ class DatasetMetrics:
         return self._root_mean_squared
 
     @property
-    def sum(self) -> np.ndarray:
+    def sum(self) -> xr.DataArray:
         if not self._is_memoized('_sum'):
             self._sum = self._ds.sum(dim=self._agg_dims, skipna=True)
             self._sum.attrs = self._ds.attrs
@@ -203,7 +206,7 @@ class DatasetMetrics:
         return self._sum
 
     @property
-    def sum_squared(self) -> np.ndarray:
+    def sum_squared(self) -> xr.DataArray:
         if not self._is_memoized('_sum_squared'):
             self._sum_squared = np.square(self._sum_squared)
             self._sum_squared.attrs = self._ds.attrs
@@ -213,7 +216,7 @@ class DatasetMetrics:
         return self._sum_squared
 
     @property
-    def std(self) -> np.ndarray:
+    def std(self) -> xr.DataArray:
         """
         The standard deviation along the aggregate dimensions
         """
@@ -226,7 +229,7 @@ class DatasetMetrics:
         return self._std
 
     @property
-    def standardized_mean(self) -> np.ndarray:
+    def standardized_mean(self) -> xr.DataArray:
         """
         The mean at each point along the aggregate dimensions divided by the standard deviation
         NOTE: will always be 0 if aggregating over all dimensions
@@ -235,17 +238,18 @@ class DatasetMetrics:
             if self._grouping is None:
                 self._standardized_mean = (self.mean - self._ds.mean()) / self._ds.std(ddof=1)
             else:
-                self._standardized_mean = (
-                    self.mean.groupby(self._grouping).mean()
-                    - self.mean.groupby(self._grouping).mean().mean()
-                ) / self.mean.groupby(self._grouping).mean().std(ddof=1)
+                grouped = self.mean.groupby(self._grouping)
+                grouped_mean = grouped.mean()
+                self._standardized_mean = (grouped_mean - grouped_mean.mean()) / grouped_mean.std(
+                    ddof=1
+                )
             if hasattr(self._ds, 'units'):
                 self._standardized_mean.attrs['units'] = ''
 
         return self._standardized_mean
 
     @property
-    def variance(self) -> np.ndarray:
+    def variance(self) -> xr.DataArray:
         """
         The variance along the aggregate dimensions
         """
@@ -258,7 +262,7 @@ class DatasetMetrics:
         return self._variance
 
     @property
-    def pooled_variance_ratio(self) -> np.ndarray:
+    def pooled_variance_ratio(self) -> xr.DataArray:
         """
         The pooled variance along the aggregate dimensions
         """
@@ -271,7 +275,7 @@ class DatasetMetrics:
         return self._pooled_variance_ratio
 
     @property
-    def prob_positive(self) -> np.ndarray:
+    def prob_positive(self) -> xr.DataArray:
         """
         The probability that a point is positive
         """
@@ -283,7 +287,7 @@ class DatasetMetrics:
         return self._prob_positive
 
     @property
-    def prob_negative(self) -> np.ndarray:
+    def prob_negative(self) -> xr.DataArray:
         """
         The probability that a point is negative
         """
@@ -295,15 +299,15 @@ class DatasetMetrics:
         return self._prob_negative
 
     @property
-    def odds_positive(self) -> np.ndarray:
+    def odds_positive(self) -> xr.DataArray:
         """
         The odds that a point is positive = prob_positive/(1-prob_positive)
         """
         if not self._is_memoized('_odds_positive'):
             if self._grouping is not None:
-                self._odds_positive = self.prob_positive.groupby(self._grouping).mean() / (
-                    1 - self.prob_positive.groupby(self._grouping).mean()
-                )
+                grouped = self.prob_positive.groupby(self._grouping)
+                grouped_mean = grouped.mean()
+                self._odds_positive = grouped_mean / (1 - grouped_mean)
             else:
                 self._odds_positive = self.prob_positive / (1 - self.prob_positive)
             self._odds_positive.attrs = self._ds.attrs
@@ -312,7 +316,7 @@ class DatasetMetrics:
         return self._odds_positive
 
     @property
-    def zscore(self) -> np.ndarray:
+    def zscore(self) -> xr.DataArray:
         """
         The z-score of a point averaged along the aggregate dimensions under the null hypothesis that the true mean is zero.
         NOTE: currently assumes we are aggregating along the time dimension so is only suitable for a spatial plot.
@@ -726,9 +730,7 @@ class DiffMetrics:
         ds1: xr.DataArray,
         ds2: xr.DataArray,
         aggregate_dims: Optional[list] = None,
-        time_dim_name: str = 'time',
-        lat_dim_name: str = 'lat',
-        lon_dim_name: str = 'lon',
+        **metrics_kwargs,
     ) -> None:
         if isinstance(ds1, xr.DataArray) and isinstance(ds2, xr.DataArray):
             # Datasets
@@ -739,20 +741,8 @@ class DiffMetrics:
                 f'ds must be of type xarray.DataArray. Type(s): {str(type(ds1))} {str(type(ds2))}'
             )
 
-        self._metrics1 = DatasetMetrics(
-            self._ds1,
-            aggregate_dims,
-            time_dim_name=time_dim_name,
-            lat_dim_name=lat_dim_name,
-            lon_dim_name=lon_dim_name,
-        )
-        self._metrics2 = DatasetMetrics(
-            self._ds2,
-            aggregate_dims,
-            time_dim_name=time_dim_name,
-            lat_dim_name=lat_dim_name,
-            lon_dim_name=lon_dim_name,
-        )
+        self._metrics1 = DatasetMetrics(self._ds1, aggregate_dims, **metrics_kwargs)
+        self._metrics2 = DatasetMetrics(self._ds2, aggregate_dims, **metrics_kwargs)
         self._aggregate_dims = aggregate_dims
         self._pcc = None
         self._covariance = None
@@ -767,7 +757,7 @@ class DiffMetrics:
         return hasattr(self, metric_name) and (self.__getattribute__(metric_name) is not None)
 
     @property
-    def covariance(self) -> np.ndarray:
+    def covariance(self) -> xr.DataArray:
         """
         The covariance between the two datasets
         """
