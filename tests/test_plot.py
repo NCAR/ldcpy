@@ -332,3 +332,7 @@ class TestPlot(TestCase):
             tex_format=False,
         )
         self.assertTrue(True)
+
+    def test_vgram(self):
+        da = ds['TS'].sel(collection='orig').isel(time=0)
+        ldcpy.vgram(da)

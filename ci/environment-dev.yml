@@ -24,6 +24,8 @@ dependencies:
   - pytest-xdist
   - scikit-build
   - scikit-image
+  - scikit-gstat
+  - scikit-learn
   - scipy
   - setuptools
   - xarray

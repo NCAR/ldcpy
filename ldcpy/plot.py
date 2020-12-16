@@ -1,5 +1,7 @@
 import calendar
 import copy
+import csv
+import os
 import re
 import warnings
 
@@ -15,6 +17,8 @@ from cartopy import crs as ccrs
 from cartopy.util import add_cyclic_point
 from matplotlib import dates as mdates, pyplot as plt
 from mpl_toolkits.axes_grid1 import make_axes_locatable
+from skgstat import Variogram
+from sklearn.metrics.pairwise import haversine_distances
 
 from ldcpy import metrics as lm, util as lu
 
@@ -937,3 +941,79 @@ def plot(
         mp.hist_plot(plot_dataset, titles)
     elif plot_type == 'periodogram':
         mp.periodogram_plot(plot_dataset, titles)
+
+
+def _haversine(x):
+    a = haversine_distances(x)
+    ncols = a.shape[1]
+    return a[np.triu_indices(ncols, k=1)] * 6371
+
+
+def vgram(da: xr.DataArray, varname, time, csvpath):
+    """
+    Creates a variogram for the given xr.DataArray
+
+    Parameters
+    ==========
+    da : xarray.DataArray
+        The input data array
+
+    Returns
+    =======
+    out : None
+    """
+
+    np.random.seed(42)
+    n_samples = 100
+    coords_lat_index = np.random.randint(192, size=n_samples)
+    coords_lon_index = np.random.randint(288, size=n_samples)
+
+    coords_lat = da.isel(lat=coords_lat_index).lat.data
+    coords_lon = da.isel(lon=coords_lon_index).lon.data
+    coords = list(zip(np.radians(coords_lat), np.radians(coords_lon)))
+    values = [
+        da.isel(lat=coords_lat_index[c], lon=coords_lon_index[c]).data for c in range(n_samples)
+    ]
+    # speed this up https://stackoverflow.com/questions/29545704/fast-haversine-approximation-python-pandas
+    V = Variogram(coords, values, model='gaussian', dist_func=_haversine, use_nugget=True)
+    min_rmse = V.rmse
+    min_rmse_model = 'gaussian'
+    for model in ['spherical', 'matern', 'exponential']:
+        V.set_model(model)
+        V.fit(method='trf')
+        if V.rmse < min_rmse:
+            min_rmse = V.rmse
+            min_rmse_model = model
+
+    V.set_model(min_rmse_model)
+    V.fit(method='trf')
+    desc = V.describe()
+
+    file_exists = os.path.isfile(csvpath)
+    with open(csvpath, 'a', newline='') as csvfile:
+        fieldnames = [
+            'variable',
+            'time',
+            'vgram_func',
+            'range',
+            'sill',
+            'nugget',
+            'smoothness',
+            'rmse',
+        ]
+        writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+
+        if not file_exists:
+            writer.writeheader()
+        writer.writerow(
+            {
+                'variable': varname,
+                'time': time,
+                'vgram_func': desc.get('name'),
+                'range': desc.get('effective_range'),
+                'sill': desc.get('sill'),
+                'nugget': desc.get('nugget'),
+                'smoothness': desc.get('effective_range'),
+                'rmse': min_rmse,
+            }
+        )

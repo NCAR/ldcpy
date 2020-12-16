@@ -4,7 +4,7 @@
 from pkg_resources import DistributionNotFound, get_distribution
 
 from .metrics import DatasetMetrics, DiffMetrics
-from .plot import plot
+from .plot import plot, vgram
 from .util import check_metrics, collect_datasets, compare_stats, open_datasets
 
 try:
