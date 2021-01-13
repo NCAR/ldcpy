@@ -133,7 +133,7 @@ def compare_stats(
     varname,
     set1,
     set2,
-    significant_digits=4,
+    significant_digits=5,
     include_ssim_metric=True,
     **metrics_kwargs,
 ):
@@ -151,7 +151,7 @@ def compare_stats(
     set2 : str
         The collection label of the (1st) data to compare
     significant_digits : int, optional
-        The number of significant digits to use when printing stats, (default 4)
+        The number of significant digits to use when printing stats, (default 51)
     include_ssim_metric : bool, optional
         Whether or not to compute the ssim metric, (default: True)
     **metrics_kwargs :
@@ -214,13 +214,17 @@ def compare_stats(
 
     if include_ssim_metric:
         output['ssim'] = diff_metrics.get_diff_metric('ssim')
+        output['ssim_fp'] = diff_metrics.get_diff_metric('ssim_fp')
+        # output['ssim_fp_old'] = diff_metrics.get_diff_metric('ssim_fp_old')
 
     if dask.is_dask_collection(ds):
         output = dask.compute(output)[0]
 
     for key, value in output.items():
         if key[:4] != 'skip':
-            rounded_value = f'{float(f"{value:.{significant_digits}g}"):g}'
+            # rounded_value = f'{float(f"{value:.{significant_digits}g}"):g}'
+            rounded_value = f'{(f"{value:.{significant_digits}g}")}'
+
             print(f'{key:<35}:', f'{rounded_value}')
         else:
             print(' ')

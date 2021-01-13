@@ -1,6 +1,8 @@
 import copy
+from math import exp, pi, sqrt
 from typing import Optional
 
+import dask
 import matplotlib as mpl
 import numpy as np
 import xarray as xr
@@ -751,10 +753,18 @@ class DiffMetrics:
         self._n_emax = None
         self._spatial_rel_error = None
         self._ssim_value = None
+        self._ssim_value_fp = None
+        self._ssim_value_fp_old = None
         self._max_spatial_rel_error = None
 
     def _is_memoized(self, metric_name: str) -> bool:
         return hasattr(self, metric_name) and (self.__getattribute__(metric_name) is not None)
+
+    # n is the box width (1D)
+    # sigma is the radius for the gaussian
+    def _oned_gauss(self, n, sigma):
+        r = range(-int(n / 2), int(n / 2) + 1)
+        return [(1 / (sigma * sqrt(2 * pi))) * exp(-float(x) ** 2 / (2 * sigma ** 2)) for x in r]
 
     @property
     def covariance(self) -> xr.DataArray:
@@ -894,7 +904,7 @@ class DiffMetrics:
         import skimage.metrics
         from skimage.metrics import structural_similarity as ssim
 
-        if not self._is_memoized('_ssim'):
+        if not self._is_memoized('_ssim_value'):
             with tempfile.TemporaryDirectory() as tmpdirname:
                 filename_1, filename_2 = f'{tmpdirname}/t_ssim1.png', f'{tmpdirname}/t_ssim2.png'
                 d1 = self._metrics1.get_metric('ds')
@@ -972,7 +982,19 @@ class DiffMetrics:
 
                 img1 = skimage.io.imread(filename_1)
                 img2 = skimage.io.imread(filename_2)
-                s = ssim(img1, img2, multichannel=True)
+                # scikit is adding an alpha channel for some reason - get rid of it
+                img1 = img1[:, :, :3]
+                img2 = img2[:, :, :3]
+
+                # s = ssim(img1, img2, multichannel=True)
+                # the following version closer to matlab version (and orig ssim paper)
+                s = ssim(
+                    img1,
+                    img2,
+                    multichannel=True,
+                    gaussian_weights=True,
+                    use_sample_covariance=False,
+                )
 
             # Reset backend
             mpl.use(backend_)
@@ -980,6 +1002,213 @@ class DiffMetrics:
             self._ssim_value = s
 
         return self._ssim_value
+
+    @property
+    def ssim_value_fp(self):
+        """
+        We compute the SSIM (structural similarity index) on the spatial data - using the
+        data itself (we do not create an image).
+
+        Here we scale from [0,1] and set C1 and C2 by window - only if denom < eps = 1e-15
+
+        """
+        from math import exp, pi, sqrt
+
+        from skimage.util import crop
+
+        if not self._is_memoized('_ssim_value_fp'):
+            # get 2D arrays
+            a1 = self._metrics1.get_metric('ds').data
+            a2 = self._metrics2.get_metric('ds').data
+
+            if dask.is_dask_collection(a1):
+                a1 = a1.compute()
+            if dask.is_dask_collection(a2):
+                a2 = a2.compute()
+
+            # transform to [0,1]
+            from sklearn.preprocessing import MinMaxScaler
+
+            scaler = MinMaxScaler(feature_range=(0, 1))
+            sc_a1 = scaler.fit_transform(a1)
+            sc_a2 = scaler.fit_transform(a2)
+
+            # gaussian filter
+            n = 11  # recommended window size
+            k = 5
+            # extent
+            sigma = 1.5
+
+            X = sc_a1.shape[0]
+            Y = sc_a2.shape[1]
+            g_w = np.array(self._oned_gauss(n, sigma))
+
+            # 2D gauss weights
+            gg_w = np.outer(g_w, g_w)
+
+            # init ssim matrix
+            ssim_mat = np.zeros_like(sc_a1)
+
+            my_eps = 1.0e-15
+
+            # DATA LOOP
+            # go through 2D arrays - each grid point x0, y0  has
+            # a 2D window [x0 - k, x0+k]  [y0 - k, y0 + k]
+            for i in range(X):
+
+                # don't go over boundaries
+                imin = max(0, i - k)
+                imax = min(X, i + k)
+
+                for j in range(Y):
+                    jmin = max(0, j - k)
+                    jmax = min(Y, j + k)
+
+                    # WINDOW CALC
+                    a1_win = sc_a1[imin:imax, jmin:jmax]
+                    a2_win = sc_a2[imin:imax, jmin:jmax]
+
+                    # if window is by boundary, then it is not 11x11 and we must adjust weights also
+                    if min(a1_win.shape) < n:
+                        Wt = gg_w[imin + k - i : imax + k - i, jmin + k - j : jmax + k - j]
+                    else:
+                        Wt = gg_w
+
+                    # weighted means
+                    a1_mu = np.average(a1_win, weights=Wt)
+                    a2_mu = np.average(a2_win, weights=Wt)
+
+                    # weighted std squared (variance)
+                    a1_std_sq = np.average((a1_win - a1_mu) ** 2, weights=Wt)
+                    a2_std_sq = np.average((a2_win - a2_mu) ** 2, weights=Wt)
+
+                    # cov of a1 and a2
+                    a1a2_cov = np.average((a1_win - a1_mu) * (a2_win - a2_mu), weights=Wt)
+
+                    # SSIM for this window
+                    # first term
+                    ssim_t1 = 2 * a1_mu * a2_mu
+                    ssim_b1 = a1_mu * a1_mu + a2_mu * a2_mu
+                    # print("term1 t/b = ", ssim_t1, ssim_b1)
+                    if ssim_b1 < my_eps:
+                        C1 = my_eps
+                        # print("TERM 1 trigger for C1")
+                    else:
+                        C1 = 0.0
+                    ssim_t1 = ssim_t1 + C1
+                    ssim_b1 = ssim_b1 + C1
+
+                    # second term
+                    ssim_t2 = 2 * a1a2_cov
+                    ssim_b2 = a1_std_sq + a2_std_sq
+                    # print("term2 t/b= ", ssim_t2, ssim_b2)
+                    if abs(ssim_b2) < my_eps:
+                        C2 = my_eps
+                        # print("TERM 2 trigger for C2")
+                        if ssim_t2 < my_eps:
+                            C3 = my_eps
+                            # print("TERM 2 trigger for C3")
+                        else:
+                            C3 = 0.0
+                    else:
+                        C2 = 0.0
+                        C3 = 0.0
+                    ssim_t2 = ssim_t2 + C3
+                    ssim_b2 = ssim_b2 + C2
+
+                    ssim_1 = ssim_t1 / ssim_b1
+                    ssim_2 = ssim_t2 / ssim_b2
+                    ssim_mat[i, j] = ssim_1 * ssim_2
+
+            # mean_ssim = np.average(ssim_mat)
+            # to ignore edge effects (as in skimage)
+            mean_ssim = np.average(crop(ssim_mat, k))
+
+            self._ssim_value_fp = mean_ssim
+
+        return self._ssim_value_fp
+
+    @property
+    def ssim_value_fp_old(self):
+        """
+        We compute the SSIM (structural similarity index) on the spatial data - using the
+        data itself (we do not create an image). Similar to skimage implementation.
+
+        This transforms data, but keeps the old C1 and C2 definitions
+
+        """
+        from math import exp, pi, sqrt
+
+        import numpy as np
+        from scipy.ndimage import gaussian_filter
+        from skimage.util import crop
+
+        if not self._is_memoized('_ssim_value_fp_old'):
+            # get 2D arrays
+            a1 = self._metrics1.get_metric('ds').data
+            a2 = self._metrics2.get_metric('ds').data
+
+            if dask.is_dask_collection(a1):
+                a1 = a1.compute()
+            if dask.is_dask_collection(a2):
+                a2 = a2.compute()
+
+            # transform?
+            from sklearn.preprocessing import MinMaxScaler
+
+            scaler = MinMaxScaler(feature_range=(0, 1))
+            sc_a1 = scaler.fit_transform(a1)
+            sc_a2 = scaler.fit_transform(a2)
+
+            # if none
+            # sc_a1 = a1
+            # sc_a2 = a2
+
+            # range of data in a1
+            a1_R = sc_a1.max() - sc_a1.min()
+
+            # gaussian filter
+            # n = 11  # recommended window size
+            k = 5  # extent or radius
+            sigma = 1.5  # std dev for guasss weight
+            truncate = 3.5
+            filter_func = gaussian_filter
+            filter_args = {'sigma': sigma, 'truncate': truncate}
+
+            # weighted means
+            a1_mu = filter_func(sc_a1, **filter_args)
+            a2_mu = filter_func(sc_a2, **filter_args)
+
+            # weighted std
+            a1a1 = filter_func(sc_a1 * sc_a1, **filter_args)
+            a2a2 = filter_func(sc_a2 * sc_a2, **filter_args)
+            a1a2 = filter_func(sc_a1 * sc_a2, **filter_args)
+
+            var_a1 = a1a1 - a1_mu * a1_mu
+            var_a2 = a2a2 - a2_mu * a2_mu
+            cov_a1a2 = a1a2 - a1_mu * a2_mu
+
+            # ssim constants
+            K1 = 0.01
+            K2 = 0.03
+            C1 = K1 * K1 * a1_R * a1_R
+            C2 = K2 * K2 * a1_R * a1_R
+
+            ssim_t1 = 2 * a1_mu * a2_mu + C1
+            ssim_t2 = 2 * cov_a1a2 + C2
+            ssim_b1 = a1_mu * a1_mu + a2_mu * a2_mu + C1
+            ssim_b2 = var_a1 + var_a2 + C2
+            ssim_b = ssim_b1 * ssim_b2
+
+            ssim_mat = (ssim_t1 * ssim_t2) / ssim_b
+
+            # mean_ssim = np.average(ssim_mat)
+            # ignore edge effects? (as in skimage)
+            mean_ssim = np.average(crop(ssim_mat, k))
+
+            self._ssim_value_fp_old = mean_ssim
+
+        return self._ssim_value_fp_old
 
     def get_diff_metric(self, name: str):
         """
@@ -1011,6 +1240,10 @@ class DiffMetrics:
                 return self.max_spatial_rel_error
             if name == 'ssim':
                 return self.ssim_value
+            if name == 'ssim_fp':
+                return self.ssim_value_fp
+            if name == 'ssim_fp_old':
+                return self.ssim_value_fp_old
             raise ValueError(f'there is no metric with the name: {name}.')
         else:
             raise TypeError('name must be a string.')
