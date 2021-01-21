@@ -305,22 +305,31 @@ class MetricsPlot(object):
 
             axs[i].set_facecolor('#39ff14')
 
-            # cy_datas, lon_sets = add_cyclic_point(da_sets[i], coord=da_sets[i]['lon'])
-            cy_datas = da_sets[i]
-            cy_datas = cy_datas.persist()
-            lon_sets = da_sets[i]['lon']
+            cy_datas, lon_sets = add_cyclic_point(da_sets[i], coord=da_sets[i]['lon'])
+            # cy_datas = da_sets[i]
+            # cy_datas = cy_datas.persist()
+            # lon_sets = da_sets[i]['lon']
             lat_sets = da_sets[i]['lat']
+
+            # AB: convert back to reg. array (not masked)
+            cy_datas = cy_datas.filled()
 
             if np.isnan(cy_datas).any() or np.isinf(cy_datas).any():
                 nan_inf_flag = 1
             if np.isnan(cy_datas).all():
                 all_nan_flag = 1
 
-            if not np.isinf(cy_datas).all():
-                cmin.append(np.min(cy_datas.where(cy_datas != -np.inf).min()))
-                cmax.append(np.max(cy_datas.where(cy_datas != np.inf).max()))
+            cyxr = xr.DataArray(data=cy_datas)
 
-            no_inf_data_set = np.nan_to_num(cy_datas, nan=np.nan)
+            # if not np.isinf(cy_datas).all():
+            #    cmin.append(np.min(cy_datas.where(cy_datas != -np.inf).min()))
+            #    cmax.append(np.max(cy_datas.where(cy_datas != np.inf).max()))
+            if not np.isinf(cyxr).all():
+                cmin.append(np.min(cyxr.where(cyxr != -np.inf).min()))
+                cmax.append(np.max(cyxr.where(cyxr != np.inf).max()))
+
+            # no_inf_data_set = np.nan_to_num(cy_datas, nan=np.nan)
+            no_inf_data_set = np.nan_to_num(cyxr, nan=np.nan)
 
             # add a check here so ensure the dataset size is the same size as lon_sets * lat_sets[i]
             psets[i] = axs[i].pcolormesh(
