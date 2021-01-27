@@ -3,6 +3,7 @@ import copy
 import re
 import warnings
 
+import cf_xarray as cf
 import cmocean
 import matplotlib as mpl
 import matplotlib.patches as mpatches

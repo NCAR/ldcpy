@@ -2,6 +2,7 @@ import copy
 from math import exp, pi, sqrt
 from typing import Optional
 
+import cf_xarray as cf
 import dask
 import matplotlib as mpl
 import numpy as np
@@ -15,7 +16,8 @@ from xrft import dft
 
 class DatasetMetrics:
     """
-    This class contains metrics for each point of a dataset after aggregating across one or more dimensions, and a method to access these metrics.
+    This class contains metrics for each point of a dataset after aggregating across one or more dimensions, and a method to access these metrics. Expects a DataArray.
+
     """
 
     def __init__(
@@ -23,8 +25,9 @@ class DatasetMetrics:
         ds: xr.DataArray,
         aggregate_dims: list,
         time_dim_name: str = 'time',
-        lat_dim_name: str = 'lat',
-        lon_dim_name: str = 'lon',
+        lat_dim_name: str = None,
+        lon_dim_name: str = None,
+        vert_dim_name: str = None,
         q: float = 0.5,
         spre_tol: float = 1.0e-4,
     ):
@@ -32,9 +35,28 @@ class DatasetMetrics:
         # For some reason, casting to float64 removes all attrs from the dataset
         self._ds.attrs = ds.attrs
 
-        self._time_dim_name = time_dim_name
-        self._lat_dim_name = lat_dim_name
+        # print(ds)
+
+        # Let's just get all the lat/lon and time names from the file if they are None
+        # lon dimension
+        if lon_dim_name is None:
+            lon_dim_name = ds.cf['longitude'].name
         self._lon_dim_name = lon_dim_name
+
+        # lat dimension
+        if lat_dim_name is None:
+            lat_dim_name = ds.cf['latitude'].name
+        self._lat_dim_name = lat_dim_name
+
+        # vertical dimension?
+        if vert_dim_name is None:
+            vert = 'vertical' in ds.cf
+            if vert:
+                vert_dim_name = ds.cf['vertical'].name
+        self._vert_dim_name = vert_dim_name
+
+        # time dimension
+        self._time_dim_name = time_dim_name
 
         self._quantile = q
         self._spre_tol = spre_tol
@@ -784,10 +806,12 @@ class DiffMetrics:
         """
         The Kolmogorov-Smirnov p-value
         """
-        # Note: ravel() foces a compute for dask, but ks test in scipy can't
+        # Note: ravel() forces a compute for dask, but ks test in scipy can't
         # work with uncomputed dask arrays
         if not self._is_memoized('_ks_p_value'):
-            self._ks_p_value = np.asanyarray(ss.ks_2samp(np.ravel(self._ds2), np.ravel(self._ds1)))
+            d1_p = (np.ravel(self._ds1)).astype('float64')
+            d2_p = (np.ravel(self._ds2)).astype('float64')
+            self._ks_p_value = np.asanyarray(ss.ks_2samp(d2_p, d1_p))
         return self._ks_p_value[1]
 
     @property
@@ -845,15 +869,28 @@ class DiffMetrics:
             # we can assign the 1.0 and avoid zero (couldn't figure another way)
             t1 = np.ravel(self._metrics1.get_metric('ds'))
             t2 = np.ravel(self._metrics2.get_metric('ds'))
+
             # check for zeros in t1 (if zero then change to 1 - which
             # does an absolute error at that point)
-            z = np.where(abs(t1) == 0)
-            t1[z] = 1.0
-            # we don't want to use nan (ocassionally in cam data - often in ocn)
+            z = (np.where(abs(t1) == 0))[0]
+            if z.size > 0:
+                t1_denom = np.copy(t1)
+                t1_denom[z] = 1.0
+            else:
+                t1_denom = t1
+
+            # we don't want to use nan
+            # (ocassionally in cam data - often in ocn)
             m_t2 = np.ma.masked_invalid(t2).compressed()
             m_t1 = np.ma.masked_invalid(t1).compressed()
+
+            if z.size > 0:
+                m_t1_denom = np.ma.masked_invalid(t1_denom).compressed()
+            else:
+                m_t1_denom = m_t1
+
             m_tt = m_t1 - m_t2
-            m_tt = m_tt / m_t1
+            m_tt = m_tt / m_t1_denom
 
             # find the max spatial error also if None
             if self._max_spatial_rel_error is None:
@@ -861,7 +898,7 @@ class DiffMetrics:
                 self._max_spatial_rel_error = max_spre
 
             # percentage greater than the tolerance
-            a = len(m_tt[m_tt > sp_tol])
+            a = len(m_tt[abs(m_tt) > sp_tol])
             sz = m_tt.shape[0]
 
             self._spatial_rel_error = (a / sz) * 100
@@ -879,15 +916,27 @@ class DiffMetrics:
             t2 = np.ravel(self._metrics2.get_metric('ds'))
             # check for zeros in t1 (if zero then change to 1 - which
             # does an absolute error at that point)
-            z = np.where(abs(t1) == 0)
-            t1[z] = 1.0
-            # we don't want to use nan (occassionally in cam data - often in ocn)
+            z = (np.where(abs(t1) == 0))[0]
+            if z.size > 0:
+                t1_denom = np.copy(t1)
+                t1_denom[z] = 1.0
+            else:
+                t1_denom = t1
+
+            # we don't want to use nan
+            # (occassionally in cam data - often in ocn)
             m_t2 = np.ma.masked_invalid(t2).compressed()
             m_t1 = np.ma.masked_invalid(t1).compressed()
-            m_tt = m_t1 - m_t2
-            m_tt = m_tt / m_t1
 
-            max_spre = np.max(m_tt)
+            if z.size > 0:
+                m_t1_denom = np.ma.masked_invalid(t1_denom).compressed()
+            else:
+                m_t1_denom = m_t1
+
+            m_tt = m_t1 - m_t2
+            m_tt = m_tt / m_t1_denom
+
+            max_spre = np.max(abs(m_tt))
             self._max_spatial_rel_error = max_spre
 
         return self._max_spatial_rel_error
@@ -911,6 +960,12 @@ class DiffMetrics:
                 d2 = self._metrics2.get_metric('ds')
                 lat1 = d1[self._metrics1._lat_dim_name]
                 lat2 = d2[self._metrics2._lat_dim_name]
+                lon1 = self._metrics1._lon_dim_name
+                lon2 = self._metrics2._lon_dim_name
+                # print(lon1)
+                # co = d1[lon1]
+                # print(co)
+                # print(co.shape)
                 cy1, lon1 = add_cyclic_point(d1, coord=d1[self._metrics1._lon_dim_name])
                 cy2, lon2 = add_cyclic_point(d2, coord=d2[self._metrics2._lon_dim_name])
 
@@ -920,6 +975,14 @@ class DiffMetrics:
 
                 no_inf_d1 = np.nan_to_num(cy1, nan=np.nan)
                 no_inf_d2 = np.nan_to_num(cy2, nan=np.nan)
+
+                # is it 3D? if so, do lev = 0 for now
+                if self._metrics1._vert_dim_name is not None:
+                    # print('3d')
+                    no_inf_d1 = no_inf_d1[0, :, :]
+                    no_inf_d2 = no_inf_d2[0, :, :]
+
+                # print(no_inf_d1.shape)
 
                 color_min = min(
                     np.min(d1.where(d1 != -np.inf)).values.min(),
@@ -1025,6 +1088,15 @@ class DiffMetrics:
                 a1 = a1.compute()
             if dask.is_dask_collection(a2):
                 a2 = a2.compute()
+
+            # if this is a 3D variable, we will just do level 0 for now...
+            # (consider doing each level seperately)
+            if self._metrics1._vert_dim_name is not None:
+                # print('3d')
+                a1 = a1[0, :, :]
+                a2 = a2[0, :, :]
+
+            # print(a1.shape)
 
             # transform to [0,1]
             from sklearn.preprocessing import MinMaxScaler
