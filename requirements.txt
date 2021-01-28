@@ -5,6 +5,7 @@ nc-time-axis
 netcdf4
 numpy
 scikit-image
+scikit-learn
 scipy
 xarray
 xrft
