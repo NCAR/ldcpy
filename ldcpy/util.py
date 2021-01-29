@@ -363,6 +363,7 @@ def check_metrics(
     return num_fail
 
 
+# TO DO - update for ocn
 def subset_data(
     ds,
     subset=None,

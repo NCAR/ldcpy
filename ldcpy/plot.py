@@ -3,6 +3,7 @@ import copy
 import re
 import warnings
 
+import cartopy
 import cf_xarray as cf
 import cmocean
 import matplotlib as mpl
@@ -140,10 +141,22 @@ class MetricsPlot(object):
         da_data = da
         da_data.attrs = da.attrs
 
+        # lat/lon dim names are different for ocn and atm
+        if da_data.dims[0] == 'time':
+            lat_dim = da_data.dims[1]
+            lon_dim = da_data.dims[2]
+        else:
+            lat_dim = da_data.dims[0]
+            lon_dim = da_data.dims[1]
+
+        # print(lat_dim, lon_dim)
+
         if self._plot_type in ['spatial']:
             metrics_da = lm.DatasetMetrics(da_data, ['time'])
         elif self._plot_type in ['time_series', 'periodogram', 'histogram']:
-            metrics_da = lm.DatasetMetrics(da_data, ['lat', 'lon'])
+            # metrics_da = lm.DatasetMetrics(da_data, ['lat', 'lon'])
+            metrics_da = lm.DatasetMetrics(da_data, [lat_dim, lon_dim])
+
         else:
             raise ValueError(f'plot type {self._plot_type} not supported')
 
@@ -294,26 +307,49 @@ class MetricsPlot(object):
 
         cmax = []
         cmin = []
+
+        # lat/lon could be 1 or 2d and have different names
+        lon_coord_name = da_sets[0].cf['longitude'].name
+        lat_coord_name = da_sets[0].cf['latitude'].name
+        # print(lon_coord_name)
+        # print(lat_coord_name)
+
+        # is the lat/lon 1d or 2d (to do: set error if > 2)
+        latdim = da_sets[0].cf['longitude'].ndim
+
+        central = 0.0  # might make this a parameter later
+        if latdim == 2:  # probably pop
+            central = 300.0
+
         for i in range(da_sets.sets.size):
+
             if self.vert_plot:
                 axs[i] = plt.subplot(
-                    nrows, 1, i + 1, projection=ccrs.Robinson(central_longitude=0.0)
+                    nrows, 1, i + 1, projection=ccrs.Robinson(central_longitude=central)
                 )
             else:
                 axs[i] = plt.subplot(
-                    nrows, ncols, i + 1, projection=ccrs.Robinson(central_longitude=0.0)
+                    nrows, ncols, i + 1, projection=ccrs.Robinson(central_longitude=central)
                 )
 
             axs[i].set_facecolor('#39ff14')
 
-            cy_datas, lon_sets = add_cyclic_point(da_sets[i], coord=da_sets[i]['lon'])
-            # cy_datas = da_sets[i]
-            # cy_datas = cy_datas.persist()
-            # lon_sets = da_sets[i]['lon']
-            lat_sets = da_sets[i]['lat']
+            # da_sets[i].compute()
+            # make data periodic
+            if latdim == 2:
+                ylon = da_sets[i][lon_coord_name]
+                lon_sets = np.hstack((ylon, ylon[:, 0:1]))
+
+                xlat = da_sets[i][lat_coord_name]
+                lat_sets = np.hstack((xlat, xlat[:, 0:1]))
+
+                cy_datas = add_cyclic_point(da_sets[i])
+            else:  # 1d
+                cy_datas, lon_sets = add_cyclic_point(da_sets[i], coord=da_sets[i][lon_coord_name])
+                lat_sets = da_sets[i][lat_coord_name]
 
             # AB: convert back to reg. array (not masked)
-            cy_datas = cy_datas.filled()
+            # cy_datas = cy_datas.filled()
 
             if np.isnan(cy_datas).any() or np.isinf(cy_datas).any():
                 nan_inf_flag = 1
@@ -352,10 +388,25 @@ class MetricsPlot(object):
                 plt.savefig(f'tmp_ssim{i+1}', bbox_inches=extent1, transparent=True, pad_inches=0)
                 axs[i].axis('on')
 
-            axs[i].coastlines()
+            # may need to be modified for other components
+            if latdim == 1:
+                axs[i].coastlines()
+            else:
+                axs[i].add_feature(
+                    cartopy.feature.NaturalEarthFeature(
+                        'physical',
+                        'land',
+                        '110m',
+                        linewidth=0.5,
+                        edgecolor='black',
+                        facecolor='darkgray',
+                    )
+                )
 
             axs[i].set_title(tex_escape(titles[i]))
             del cy_datas
+
+            # end of for loopon plots
 
         if len(cmin) > 0:
             color_min = np.min(cmin)
@@ -863,14 +914,30 @@ def plot(
 
     mp.verify_plot_parameters()
 
-    # Subset data
+    # Subset data (by var and collection)
     dss = []
-    if 'collection' in ds[varname].dims:
-        if sets is not None:
-            for set in sets:
-                dss.append(ds[varname].sel(collection=set))
+
+    # update when new release of cf_xarray is released
+    if 'bounds' in ds['time'].attrs.keys():
+        ds['time'].attrs.pop('bounds')
+
+    if varname == 'T':  # work around for cf_xarray (until new tag that
+        # includes issue 130 updated to main on 1/27/21)
+        ds.T.attrs['standard_name'] = 'tt'
+        if 'collection' in ds[varname].dims:
+            if sets is not None:
+                for set in sets:
+                    dss.append(ds.cf['tt'].sel(collection=set))
+        else:
+            dss.append(ds.cf['tt'])
+
     else:
-        dss.append(ds[varname])
+        if 'collection' in ds[varname].dims:
+            if sets is not None:
+                for set in sets:
+                    dss.append(ds.cf[varname].sel(collection=set))
+        else:
+            dss.append(ds.cf[varname])
 
     subsets = []
     if sets is not None:

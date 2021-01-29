@@ -35,8 +35,6 @@ class DatasetMetrics:
         # For some reason, casting to float64 removes all attrs from the dataset
         self._ds.attrs = ds.attrs
 
-        # print(ds)
-
         # Let's just get all the lat/lon and time names from the file if they are None
         # lon dimension
         if lon_dim_name is None:
@@ -55,7 +53,7 @@ class DatasetMetrics:
                 vert_dim_name = ds.cf['vertical'].name
         self._vert_dim_name = vert_dim_name
 
-        # time dimension
+        # time dimension TO DO: check this (after cf_xarray update)
         self._time_dim_name = time_dim_name
 
         self._quantile = q
