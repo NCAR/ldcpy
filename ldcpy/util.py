@@ -236,7 +236,7 @@ def compare_stats(
     if include_ssim_metric:
         output['ssim'] = diff_metrics.get_diff_metric('ssim')
         output['ssim_fp'] = diff_metrics.get_diff_metric('ssim_fp')
-        # output['ssim_fp_old'] = diff_metrics.get_diff_metric('ssim_fp_old')
+        output['ssim_fp_old'] = diff_metrics.get_diff_metric('ssim_fp_old')
 
     if dask.is_dask_collection(ds):
         output = dask.compute(output)[0]
