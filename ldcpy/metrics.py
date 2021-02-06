@@ -47,7 +47,7 @@ class DatasetMetrics:
 
         # vertical dimension?
         if vert_dim_name is None:
-            vert_dim_name = 'lev'
+            vert_dim_name = None
         self._vert_dim_name = vert_dim_name
 
         # time dimension TO DO: check this (after cf_xarray update)
