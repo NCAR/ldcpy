@@ -64,7 +64,7 @@ Now you are ready to commit your code. pre-commit should automatically run black
     flake8 .
     isort .
 
-Adding new dependencies to the package
+Adding new package dependencies to ldcpy
 __________________________________
 
 1) Adding new package dependencies requires updating the code in the following three places:
