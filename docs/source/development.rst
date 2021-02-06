@@ -79,8 +79,10 @@ If the package dependency is specifically used for documentation, instead of add
 
 If this package is only used for documentation, skip the remaining steps.
 
-2) If the package is one that includes C code (such as numpy or scipy), update the autodoc_mock_imports list in /docs/source/conf.py. One way to tell if this is needed is to merge your code into the dev branch - if the DOCS badge at the top of the documentation changes to failing (within about 5 minutes), this may indicate that the package is incompatible with ReadTheDocs.
+2) If the package is one that includes C code (such as numpy or scipy), update the autodoc_mock_imports list in /docs/source/conf.py. The latest build of the documentation can be found at (https://readthedocs.org/projects/ldcpy/builds/), if the build fails and the error message indicates a problem with the newest package - try adding it to autodoc_mock_imports.
 
 3) Finally, update the ldcpy-feedstock repository (git clone https://github.com/conda-forge/ldcpy-feedstock.git), or manually create a branch and add the dependency in the browser.
 Name the branch add-<new_dependency_name>.
 In the file /recipe/meta.yaml, in the "requirements" section, under "run", add your dependency to the list.
+
+4) If the CI build encounters errors after adding a dependency, check the status of the CI workflow at (https://github.com/NCAR/ldcpy/actions?query=workflow%3ACI) to determine if the error is related to the new package.
