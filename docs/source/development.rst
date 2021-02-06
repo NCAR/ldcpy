@@ -63,3 +63,24 @@ Now you are ready to commit your code. pre-commit should automatically run black
     black --skip-string-normalization --line-length=100 .
     flake8 .
     isort .
+
+Adding new dependencies to the package
+__________________________________
+
+1) Adding new package dependencies requires updating the code in the following three places:
+
+    /ci/environment.yml
+    /ci/environment-dev.yml
+    /requirements.txt
+
+If the package dependency is specifically used for documentation, instead of adding it to /requirements.txt, add it to:
+
+    /docs/source/requirements.txt
+
+If this package is only used for documentation, skip the remaining steps.
+
+2) If the package is one that includes C code (such as numpy or scipy), update the autodoc_mock_imports list in /docs/source/conf.py. One way to tell if this is needed is to merge your code into the dev branch - if the DOCS badge at the top of the documentation changes to failing (within about 5 minutes), this may indicate that the package is incompatible with ReadTheDocs.
+
+3) Finally, update the ldcpy-feedstock repository (git clone https://github.com/conda-forge/ldcpy-feedstock.git), or manually create a branch and add the dependency in the browser.
+Name the branch add-<new_dependency_name>.
+In the file /recipe/meta.yaml, in the "requirements" section, under "run", add your dependency to the list.
