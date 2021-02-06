@@ -37,19 +37,17 @@ class DatasetMetrics:
         # Let's just get all the lat/lon and time names from the file if they are None
         # lon dimension
         if lon_dim_name is None:
-            lon_dim_name = ds.cf['longitude'].name
+            lon_dim_name = 'lon'
         self._lon_dim_name = lon_dim_name
 
         # lat dimension
         if lat_dim_name is None:
-            lat_dim_name = ds.cf['latitude'].name
+            lat_dim_name = 'lat'
         self._lat_dim_name = lat_dim_name
 
         # vertical dimension?
         if vert_dim_name is None:
-            vert = 'vertical' in ds.cf
-            if vert:
-                vert_dim_name = ds.cf['vertical'].name
+            vert_dim_name = 'lev'
         self._vert_dim_name = vert_dim_name
 
         # time dimension TO DO: check this (after cf_xarray update)
@@ -960,7 +958,7 @@ class DiffMetrics:
                 lon1 = d1[self._metrics1._lon_dim_name]
                 lon2 = d2[self._metrics2._lon_dim_name]
 
-                latdim = d1.cf['longitude'].ndim
+                latdim = 1
                 central = 0.0  # might make this a parameter later
                 if latdim == 2:  # probably pop
                     central = 300.0
