@@ -1,6 +1,7 @@
 from unittest import TestCase
 
 import pytest
+import xarray as xr
 
 import ldcpy
 
@@ -11,7 +12,7 @@ ds = ldcpy.open_datasets(
         'data/cam-fv/zfp1.0.TS.100days.nc',
         'data/cam-fv/zfp1e-1.TS.100days.nc',
     ],
-    ['orig', 'recon', 'recon2'],
+    ['origT', 'reconT', 'recon2T'],
 )
 ds2 = ldcpy.open_datasets(
     ['PRECT'],
@@ -20,9 +21,10 @@ ds2 = ldcpy.open_datasets(
         'data/cam-fv/zfp1e-7.PRECT.60days.nc',
         'data/cam-fv/zfp1e-11.PRECT.60days.nc',
     ],
-    ['orig', 'recon', 'recon_2'],
+    ['origP', 'reconP', 'recon_2P'],
 )
 ds3 = ldcpy.open_datasets(['T'], ['data/cam-fv/cam-fv.T.3months.nc'], ['orig'])
+ds_merged = xr.merge([ds, ds2])
 
 
 class TestPlot(TestCase):
@@ -33,6 +35,12 @@ class TestPlot(TestCase):
 
     def test_mean(self):
         ldcpy.plot(ds, 'TS', sets=['orig', 'recon'], calc='mean', vert_plot=True, tex_format=False)
+        self.assertTrue(True)
+
+    def test_merge(self):
+        ldcpy.plot(
+            ds_merged, sets=['origT', 'origP'], calc='mean', vert_plot=True, tex_format=False
+        )
         self.assertTrue(True)
 
     def test_standardized_mean(self):

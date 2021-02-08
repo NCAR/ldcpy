@@ -864,12 +864,14 @@ def plot(
             if sets is not None:
                 for set in sets:
                     if set in ds[key].collection.values:
-                        dss.append(ds[key].sel(collection=set))
+                        if ~np.isnan(ds[key].sel(collection=set)).all():
+                            dss.append(ds[key].sel(collection=set))
         else:
             if sets is not None:
                 for set in sets:
                     if set in ds[key].collection.values:
-                        dss.append(ds[key].sel(collection=set))
+                        if ~np.isnan(ds[key].sel(collection=set)).all():
+                            dss.append(ds[key].sel(collection=set))
 
     subsets = []
     if sets is not None:
