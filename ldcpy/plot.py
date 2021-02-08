@@ -53,7 +53,6 @@ class MetricsPlot(object):
     def __init__(
         self,
         ds,
-        varname,
         metric,
         sets,
         group_by=None,
@@ -81,7 +80,6 @@ class MetricsPlot(object):
         self._ds = ds
 
         # Metric settings used in plot titles
-        self._varname = varname
         self._sets = sets
         self._title_lat = None
         self._title_lon = None
@@ -207,9 +205,9 @@ class MetricsPlot(object):
             metric_full_name = metric_name
 
         if self._transform == 'log':
-            title = f'{self._varname}: log10 {metric_full_name}'
+            title = f': log10 {metric_full_name}'
         else:
-            title = f'{self._varname}: {metric_full_name}'
+            title = f': {metric_full_name}'
 
         if self._plot_type == 'spatial':
             title = f'{das}: {title}'
@@ -675,7 +673,6 @@ class MetricsPlot(object):
 
 def plot(
     ds,
-    varname,
     calc,
     sets,
     group_by=None,
@@ -707,8 +704,6 @@ def plot(
     ==========
     ds : xarray.Dataset
         The input dataset
-    varname : str
-        The name of the variable to be plotted
     calc : str
         The name of the metric to be plotted (must match a property name in the DatasetMetrics
         class in ldcpy.plot, for more information about the available metrics see ldcpy.DatasetMetrics)
@@ -831,7 +826,6 @@ def plot(
 
     mp = MetricsPlot(
         ds,
-        varname,
         calc,
         sets,
         group_by,
@@ -864,12 +858,18 @@ def plot(
 
     # Subset data
     dss = []
-    if 'collection' in ds[varname].dims:
-        if sets is not None:
-            for set in sets:
-                dss.append(ds[varname].sel(collection=set))
-    else:
-        dss.append(ds[varname])
+
+    for key in list(ds.data_vars.variables.mapping.keys()):
+        if 'collection' in ds[key].dims:
+            if sets is not None:
+                for set in sets:
+                    if set in ds[key].collection.values:
+                        dss.append(ds[key].sel(collection=set))
+        else:
+            if sets is not None:
+                for set in sets:
+                    if set in ds[key].collection.values:
+                        dss.append(ds[key].sel(collection=set))
 
     subsets = []
     if sets is not None:
