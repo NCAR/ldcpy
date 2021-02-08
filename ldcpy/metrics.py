@@ -961,7 +961,7 @@ class DiffMetrics:
                 lon1 = d1[self._metrics1._lon_dim_name]
                 lon2 = d2[self._metrics2._lon_dim_name]
 
-                latdim = d1.cf['longitude'].ndim
+                latdim = d1.cf[self._metrics1._lon_dim_name].ndim
                 central = 0.0  # might make this a parameter later
                 if latdim == 2:  # probably pop
                     central = 300.0
@@ -1094,21 +1094,21 @@ class DiffMetrics:
         from skimage.util import crop
 
         if not self._is_memoized('_ssim_value_fp'):
-            # get 2D arrays
-            a1 = self._metrics1.get_metric('ds').data
-            a2 = self._metrics2.get_metric('ds').data
+
+            # if this is a 3D variable, we will just do level 0 for now...
+            # (consider doing each level seperately)
+            if self._metrics1._vert_dim_name is not None:
+                vname = self._metrics1._vert_dim_name
+                a1 = self._metrics1.get_metric('ds').isel({vname: 0}).data
+                a2 = self._metrics2.get_metric('ds').isel({vname: 0}).data
+            else:
+                a1 = self._metrics1.get_metric('ds').data
+                a2 = self._metrics2.get_metric('ds').data
 
             if dask.is_dask_collection(a1):
                 a1 = a1.compute()
             if dask.is_dask_collection(a2):
                 a2 = a2.compute()
-
-            # if this is a 3D variable, we will just do level 0 for now...
-            # (consider doing each level seperately)
-            if self._metrics1._vert_dim_name is not None:
-                # print('3d')
-                a1 = a1[0, :, :]
-                a2 = a2[0, :, :]
 
             # re-scale  to [0,1] - if not constant
             smin = min(np.nanmin(a1), np.nanmin(a2))
@@ -1232,20 +1232,20 @@ class DiffMetrics:
 
         if not self._is_memoized('_ssim_value_fp_old'):
 
-            # get 2D arrays
-            a1 = self._metrics1.get_metric('ds').data
-            a2 = self._metrics2.get_metric('ds').data
+            # if this is a 3D variable, we will just do level 0 for now...
+            # (consider doing each level seperately)
+            if self._metrics1._vert_dim_name is not None:
+                vname = self._metrics1._vert_dim_name
+                a1 = self._metrics1.get_metric('ds').isel({vname: 0}).data
+                a2 = self._metrics2.get_metric('ds').isel({vname: 0}).data
+            else:
+                a1 = self._metrics1.get_metric('ds').data
+                a2 = self._metrics2.get_metric('ds').data
 
             if dask.is_dask_collection(a1):
                 a1 = a1.compute()
             if dask.is_dask_collection(a2):
                 a2 = a2.compute()
-
-            # if this is a 3D variable, we will just do level 0 for now...
-            # (consider doing each level seperately)
-            if self._metrics1._vert_dim_name is not None:
-                a1 = a1[0, :, :]
-                a2 = a2[0, :, :]
 
             maxr = max(a1.max(), a2.max())
             minr = min(a1.min(), a2.min())

@@ -311,11 +311,9 @@ class MetricsPlot(object):
         # lat/lon could be 1 or 2d and have different names
         lon_coord_name = da_sets[0].cf['longitude'].name
         lat_coord_name = da_sets[0].cf['latitude'].name
-        # print(lon_coord_name)
-        # print(lat_coord_name)
 
         # is the lat/lon 1d or 2d (to do: set error if > 2)
-        latdim = da_sets[0].cf['longitude'].ndim
+        latdim = da_sets[0].cf[lon_coord_name].ndim
 
         central = 0.0  # might make this a parameter later
         if latdim == 2:  # probably pop
@@ -349,7 +347,6 @@ class MetricsPlot(object):
                 lat_sets = da_sets[i][lat_coord_name]
 
             # AB: convert back to reg. array (not masked)
-            # cy_datas = cy_datas.filled()
 
             if np.isnan(cy_datas).any() or np.isinf(cy_datas).any():
                 nan_inf_flag = 1
