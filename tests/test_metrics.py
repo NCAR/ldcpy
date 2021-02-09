@@ -13,12 +13,20 @@ lats = [0, 1, 2, 3]
 lons = [0, 1, 2, 3, 4]
 test_data = xr.DataArray(
     np.arange(-100, 100).reshape(4, 5, 10),
-    coords=[lats, lons, times],
+    coords=[
+        ('lat', lats, {'standard_name': 'latitude', 'units': 'degrees_north'}),
+        ('lon', lons, {'standard_name': 'longitude', 'units': 'degrees_east'}),
+        ('time', times),
+    ],
     dims=['lat', 'lon', 'time'],
 )
 test_data_2 = xr.DataArray(
     np.arange(-99, 101).reshape(4, 5, 10),
-    coords=[lats, lons, times],
+    coords=[
+        ('lat', lats, {'standard_name': 'latitude', 'units': 'degrees_north'}),
+        ('lon', lons, {'standard_name': 'longitude', 'units': 'degrees_east'}),
+        ('time', times),
+    ],
     dims=['lat', 'lon', 'time'],
 )
 test_overall_metrics = ldcpy.DatasetMetrics(test_data, ['time', 'lat', 'lon'])
