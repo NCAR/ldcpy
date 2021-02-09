@@ -47,6 +47,7 @@ autodoc_mock_imports = [
     'scikit-build',
     'skbuild',
     'opencv',
+    'cf_xarray',
 ]
 
 # Add any paths that contain templates here, relative to this directory.

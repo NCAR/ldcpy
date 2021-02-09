@@ -8,3 +8,4 @@ scikit-image
 scipy
 xarray
 xrft
+cf_xarray
