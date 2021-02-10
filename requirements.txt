@@ -2,6 +2,7 @@ cmocean
 dask[complete]
 matplotlib
 nc-time-axis
+h5py
 netcdf4
 numpy
 scikit-build
