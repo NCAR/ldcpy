@@ -154,7 +154,6 @@ class MetricsPlot(object):
         if self._plot_type in ['spatial']:
             metrics_da = lm.DatasetMetrics(da_data, ['time'])
         elif self._plot_type in ['time_series', 'periodogram', 'histogram']:
-            # metrics_da = lm.DatasetMetrics(da_data, ['lat', 'lon'])
             metrics_da = lm.DatasetMetrics(da_data, [lat_dim, lon_dim])
 
         else:
@@ -957,6 +956,10 @@ def plot(
     for d in datas:
         raw_metrics.append(mp.get_metrics(d))
 
+    # get lat/lon coordinate names:
+    lon_coord_name = datas[0].cf['longitude'].name
+    lat_coord_name = datas[0].cf['latitude'].name
+
     # Get metric names/values for plot title
     # if metric == 'zscore':
     metric_names = []
@@ -967,14 +970,15 @@ def plot(
             metric_names.append(mp.get_metric_label(calc, datas[i]))
     # Get plot data and title
     if lat is not None and lon is not None:
-        mp.title_lat = subsets[0]['lat'].data[0]
-        mp.title_lon = subsets[0]['lon'].data[0] - 180
+        mp.title_lat = subsets[0][lat_coord_name].data[0]
+        mp.title_lon = subsets[0][lon_coord_name].data[0] - 180
     else:
         mp.title_lat = lat
         mp.title_lon = lon
 
     plot_datas = []
     set_names = []
+
     if calc_type in ['diff', 'ratio']:
         for i in range(1, len(raw_metrics)):
             plot_datas.append(mp.get_plot_data(raw_metrics[0], raw_metrics[i]))
