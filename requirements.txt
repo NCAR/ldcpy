@@ -7,5 +7,6 @@ numpy
 scikit-image
 scikit-learn
 scipy
+scikit-build
 xarray
 xrft
