@@ -38,11 +38,42 @@ test_diff_metrics = ldcpy.DiffMetrics(test_data, test_data_2, ['time', 'lat', 'l
 class TestErrorMetrics(TestCase):
     @classmethod
     def setUpClass(cls) -> None:
+        mylon = np.arange(0, 10)
+        mylat = np.arange(0, 10)
+        mydata = np.arange(0, 100, dtype='int64').reshape(10, 10)
+        myzero = np.zeros(100, dtype='int64').reshape(10, 10)
         cls._samples = [
             {
-                'measured': np.arange(0, 100, dtype='int64'),
-                'observed': np.arange(0, 100, dtype='int64'),
-                'expected_error': np.zeros(100, dtype='double'),
+                'measured': (
+                    xr.DataArray(
+                        mydata,
+                        coords=[
+                            ('lat', mylat, {'standard_name': 'latitude', 'units': 'degrees_north'}),
+                            ('lon', mylon, {'standard_name': 'longitude', 'units': 'degrees_east'}),
+                        ],
+                        dims=['lat', 'lon'],
+                    )
+                ),
+                'observed': (
+                    xr.DataArray(
+                        mydata,
+                        coords=[
+                            ('lat', mylat, {'standard_name': 'latitude', 'units': 'degrees_north'}),
+                            ('lon', mylon, {'standard_name': 'longitude', 'units': 'degrees_east'}),
+                        ],
+                        dims=['lat', 'lon'],
+                    )
+                ),
+                'expected_error': (
+                    xr.DataArray(
+                        myzero,
+                        coords=[
+                            ('lat', mylat, {'standard_name': 'latitude', 'units': 'degrees_north'}),
+                            ('lon', mylon, {'standard_name': 'longitude', 'units': 'degrees_east'}),
+                        ],
+                        dims=['lat', 'lon'],
+                    )
+                ),
             }
         ]
 
@@ -59,7 +90,7 @@ class TestErrorMetrics(TestCase):
             [],
         )
 
-        self.assertTrue(all(self._samples[0]['expected_error'] == em.sum))
+        self.assertTrue((self._samples[0]['expected_error'] == em.sum).all())
 
     def test_mean_error_01(self):
         em = DatasetMetrics(
