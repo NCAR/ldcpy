@@ -516,11 +516,22 @@ class DatasetMetrics:
         """
         if not self._is_memoized('_annual_harmonic_relative_ratio'):
             # drop time coordinate labels or else it will try to parse them as numbers to check spacing and fail
+
             ds_copy = self._ds
+
             new_index = [i for i in range(0, self._ds[self._time_dim_name].size)]
             new_ds = ds_copy.assign_coords({self._time_dim_name: new_index})
 
+            # get lat/lon coordinate names:
+            lon_coord_name = new_ds.cf['longitude'].name
+            lat_coord_name = new_ds.cf['latitude'].name
+
             DF = dft(new_ds, dim=[self._time_dim_name], detrend='constant')
+            # the above does not preserve the lat/lon attributes
+            DF[lon_coord_name].attrs = new_ds[lon_coord_name].attrs
+            DF[lat_coord_name].attrs = new_ds[lat_coord_name].attrs
+            DF.attrs = new_ds.attrs
+
             S = np.real(DF * np.conj(DF) / self._ds.sizes[self._time_dim_name])
             S_annual = S.isel(
                 freq_time=int(self._ds.sizes[self._time_dim_name] / 2)
@@ -556,6 +567,9 @@ class DatasetMetrics:
                 dim='freq_time',
             ).mean(dim='freq_time')
             ratio = S_annual / S_mean
+
+            # ratio.cf.describe()
+
             self._annual_harmonic_relative_ratio = ratio
 
             if hasattr(self._ds, 'units'):

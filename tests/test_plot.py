@@ -77,16 +77,16 @@ class TestPlot(TestCase):
         )
         self.assertTrue(True)
 
-    #    def test_annual_harmonic(self):
-    #        ldcpy.plot(
-    #            ds,
-    #            'TS',
-    #            sets=['orig', 'recon'],
-    #            calc='ann_harmonic_ratio',
-    #            calc_type='metric_of_diff',
-    #            tex_format=False,
-    #        )
-    #        self.assertTrue(True)
+    def test_annual_harmonic(self):
+        ldcpy.plot(
+            ds,
+            'TS',
+            sets=['orig', 'recon'],
+            calc='ann_harmonic_ratio',
+            calc_type='metric_of_diff',
+            tex_format=False,
+        )
+        self.assertTrue(True)
 
     def test_pooled_variance_ratio(self):
         ldcpy.plot(
