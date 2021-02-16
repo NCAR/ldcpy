@@ -21,7 +21,7 @@ sys.path.insert(0, os.path.abspath('../../'))
 
 project = 'ldcpy'
 copyright = u'2020, University Corporation for Atmospheric Research'
-author = u'Alex Pinard, Allison Baker, Dorit Hammerling'
+author = u'Alex Pinard, Allison Baker, Anderson Banihirwe, Dorit Hammerling'
 
 
 # The full version, including alpha/beta/rc tags
@@ -47,6 +47,7 @@ autodoc_mock_imports = [
     'scikit-build',
     'skbuild',
     'opencv',
+    'hdf5',
     'netcdf4',
 ]
 
