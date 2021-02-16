@@ -47,6 +47,7 @@ autodoc_mock_imports = [
     'scikit-build',
     'skbuild',
     'opencv',
+    'cf_xarray',
     'hdf5',
     'netcdf4',
 ]

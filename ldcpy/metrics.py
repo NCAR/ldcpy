@@ -2,6 +2,7 @@ import copy
 from math import exp, pi, sqrt
 from typing import Optional
 
+import cf_xarray as cf
 import dask
 import matplotlib as mpl
 import numpy as np
@@ -15,7 +16,8 @@ from xrft import dft
 
 class DatasetMetrics:
     """
-    This class contains metrics for each point of a dataset after aggregating across one or more dimensions, and a method to access these metrics.
+    This class contains metrics for each point of a dataset after aggregating across one or more dimensions, and a method to access these metrics. Expects a DataArray.
+
     """
 
     def __init__(
@@ -23,8 +25,9 @@ class DatasetMetrics:
         ds: xr.DataArray,
         aggregate_dims: list,
         time_dim_name: str = 'time',
-        lat_dim_name: str = 'lat',
-        lon_dim_name: str = 'lon',
+        lat_dim_name: str = None,
+        lon_dim_name: str = None,
+        vert_dim_name: str = None,
         q: float = 0.5,
         spre_tol: float = 1.0e-4,
     ):
@@ -32,9 +35,26 @@ class DatasetMetrics:
         # For some reason, casting to float64 removes all attrs from the dataset
         self._ds.attrs = ds.attrs
 
-        self._time_dim_name = time_dim_name
-        self._lat_dim_name = lat_dim_name
+        # Let's just get all the lat/lon and time names from the file if they are None
+        # lon dimension
+        if lon_dim_name is None:
+            lon_dim_name = ds.cf['longitude'].name
         self._lon_dim_name = lon_dim_name
+
+        # lat dimension
+        if lat_dim_name is None:
+            lat_dim_name = ds.cf['latitude'].name
+        self._lat_dim_name = lat_dim_name
+
+        # vertical dimension?
+        if vert_dim_name is None:
+            vert = 'vertical' in ds.cf
+            if vert:
+                vert_dim_name = ds.cf['vertical'].name
+        self._vert_dim_name = vert_dim_name
+
+        # time dimension TO DO: check this (after cf_xarray update)
+        self._time_dim_name = time_dim_name
 
         self._quantile = q
         self._spre_tol = spre_tol
@@ -496,11 +516,22 @@ class DatasetMetrics:
         """
         if not self._is_memoized('_annual_harmonic_relative_ratio'):
             # drop time coordinate labels or else it will try to parse them as numbers to check spacing and fail
+
             ds_copy = self._ds
+
             new_index = [i for i in range(0, self._ds[self._time_dim_name].size)]
             new_ds = ds_copy.assign_coords({self._time_dim_name: new_index})
 
+            # get lat/lon coordinate names:
+            lon_coord_name = new_ds.cf['longitude'].name
+            lat_coord_name = new_ds.cf['latitude'].name
+
             DF = dft(new_ds, dim=[self._time_dim_name], detrend='constant')
+            # the above does not preserve the lat/lon attributes
+            DF[lon_coord_name].attrs = new_ds[lon_coord_name].attrs
+            DF[lat_coord_name].attrs = new_ds[lat_coord_name].attrs
+            DF.attrs = new_ds.attrs
+
             S = np.real(DF * np.conj(DF) / self._ds.sizes[self._time_dim_name])
             S_annual = S.isel(
                 freq_time=int(self._ds.sizes[self._time_dim_name] / 2)
@@ -536,6 +567,9 @@ class DatasetMetrics:
                 dim='freq_time',
             ).mean(dim='freq_time')
             ratio = S_annual / S_mean
+
+            # ratio.cf.describe()
+
             self._annual_harmonic_relative_ratio = ratio
 
             if hasattr(self._ds, 'units'):
@@ -784,10 +818,12 @@ class DiffMetrics:
         """
         The Kolmogorov-Smirnov p-value
         """
-        # Note: ravel() foces a compute for dask, but ks test in scipy can't
+        # Note: ravel() forces a compute for dask, but ks test in scipy can't
         # work with uncomputed dask arrays
         if not self._is_memoized('_ks_p_value'):
-            self._ks_p_value = np.asanyarray(ss.ks_2samp(np.ravel(self._ds2), np.ravel(self._ds1)))
+            d1_p = (np.ravel(self._ds1)).astype('float64')
+            d2_p = (np.ravel(self._ds2)).astype('float64')
+            self._ks_p_value = np.asanyarray(ss.ks_2samp(d2_p, d1_p))
         return self._ks_p_value[1]
 
     @property
@@ -845,15 +881,28 @@ class DiffMetrics:
             # we can assign the 1.0 and avoid zero (couldn't figure another way)
             t1 = np.ravel(self._metrics1.get_metric('ds'))
             t2 = np.ravel(self._metrics2.get_metric('ds'))
+
             # check for zeros in t1 (if zero then change to 1 - which
             # does an absolute error at that point)
-            z = np.where(abs(t1) == 0)
-            t1[z] = 1.0
-            # we don't want to use nan (ocassionally in cam data - often in ocn)
+            z = (np.where(abs(t1) == 0))[0]
+            if z.size > 0:
+                t1_denom = np.copy(t1)
+                t1_denom[z] = 1.0
+            else:
+                t1_denom = t1
+
+            # we don't want to use nan
+            # (ocassionally in cam data - often in ocn)
             m_t2 = np.ma.masked_invalid(t2).compressed()
             m_t1 = np.ma.masked_invalid(t1).compressed()
+
+            if z.size > 0:
+                m_t1_denom = np.ma.masked_invalid(t1_denom).compressed()
+            else:
+                m_t1_denom = m_t1
+
             m_tt = m_t1 - m_t2
-            m_tt = m_tt / m_t1
+            m_tt = m_tt / m_t1_denom
 
             # find the max spatial error also if None
             if self._max_spatial_rel_error is None:
@@ -861,7 +910,7 @@ class DiffMetrics:
                 self._max_spatial_rel_error = max_spre
 
             # percentage greater than the tolerance
-            a = len(m_tt[m_tt > sp_tol])
+            a = len(m_tt[abs(m_tt) > sp_tol])
             sz = m_tt.shape[0]
 
             self._spatial_rel_error = (a / sz) * 100
@@ -879,15 +928,27 @@ class DiffMetrics:
             t2 = np.ravel(self._metrics2.get_metric('ds'))
             # check for zeros in t1 (if zero then change to 1 - which
             # does an absolute error at that point)
-            z = np.where(abs(t1) == 0)
-            t1[z] = 1.0
-            # we don't want to use nan (occassionally in cam data - often in ocn)
+            z = (np.where(abs(t1) == 0))[0]
+            if z.size > 0:
+                t1_denom = np.copy(t1)
+                t1_denom[z] = 1.0
+            else:
+                t1_denom = t1
+
+            # we don't want to use nan
+            # (occassionally in cam data - often in ocn)
             m_t2 = np.ma.masked_invalid(t2).compressed()
             m_t1 = np.ma.masked_invalid(t1).compressed()
-            m_tt = m_t1 - m_t2
-            m_tt = m_tt / m_t1
 
-            max_spre = np.max(m_tt)
+            if z.size > 0:
+                m_t1_denom = np.ma.masked_invalid(t1_denom).compressed()
+            else:
+                m_t1_denom = m_t1
+
+            m_tt = m_t1 - m_t2
+            m_tt = m_tt / m_t1_denom
+
+            max_spre = np.max(abs(m_tt))
             self._max_spatial_rel_error = max_spre
 
         return self._max_spatial_rel_error
@@ -911,8 +972,30 @@ class DiffMetrics:
                 d2 = self._metrics2.get_metric('ds')
                 lat1 = d1[self._metrics1._lat_dim_name]
                 lat2 = d2[self._metrics2._lat_dim_name]
-                cy1, lon1 = add_cyclic_point(d1, coord=d1[self._metrics1._lon_dim_name])
-                cy2, lon2 = add_cyclic_point(d2, coord=d2[self._metrics2._lon_dim_name])
+                lon1 = d1[self._metrics1._lon_dim_name]
+                lon2 = d2[self._metrics2._lon_dim_name]
+
+                latdim = d1.cf[self._metrics1._lon_dim_name].ndim
+                central = 0.0  # might make this a parameter later
+                if latdim == 2:  # probably pop
+                    central = 300.0
+
+                # make periodic
+                if latdim == 2:
+                    cy_lon1 = np.hstack((lon1, lon1[:, 0:1]))
+                    cy_lon2 = np.hstack((lon2, lon2[:, 0:1]))
+
+                    cy_lat1 = np.hstack((lat1, lat1[:, 0:1]))
+                    cy_lat2 = np.hstack((lat2, lat2[:, 0:1]))
+
+                    cy1 = add_cyclic_point(d1)
+                    cy2 = add_cyclic_point(d2)
+
+                else:  # 1d
+                    cy1, cy_lon1 = add_cyclic_point(d1, coord=lon1)
+                    cy2, cy_lon2 = add_cyclic_point(d2, coord=lon2)
+                    cy_lat1 = lat1
+                    cy_lat2 = lat2
 
                 # Prevent showing stuff
                 backend_ = mpl.get_backend()
@@ -920,6 +1003,14 @@ class DiffMetrics:
 
                 no_inf_d1 = np.nan_to_num(cy1, nan=np.nan)
                 no_inf_d2 = np.nan_to_num(cy2, nan=np.nan)
+
+                # is it 3D? if so, do lev = 0 for now
+                if self._metrics1._vert_dim_name is not None:
+                    # print('3d')
+                    no_inf_d1 = no_inf_d1[0, :, :]
+                    no_inf_d2 = no_inf_d2[0, :, :]
+
+                # print(no_inf_d1.shape)
 
                 color_min = min(
                     np.min(d1.where(d1 != -np.inf)).values.min(),
@@ -937,12 +1028,12 @@ class DiffMetrics:
                 mymap.set_over(color='white')
                 mymap.set_bad(alpha=0)
 
-                ax1 = plt.subplot(1, 2, 1, projection=ccrs.Robinson(central_longitude=0.0))
+                ax1 = plt.subplot(1, 2, 1, projection=ccrs.Robinson(central_longitude=central))
                 ax1.set_facecolor('#39ff14')
 
                 ax1.pcolormesh(
-                    lon1,
-                    lat1,
+                    cy_lon1,
+                    cy_lat1,
                     no_inf_d1,
                     transform=ccrs.PlateCarree(),
                     cmap=mymap,
@@ -958,12 +1049,12 @@ class DiffMetrics:
                 plt.savefig(filename_1, bbox_inches=extent1, transparent=True, pad_inches=0)
                 ax1.axis('on')
 
-                ax2 = plt.subplot(1, 2, 2, projection=ccrs.Robinson(central_longitude=0.0))
+                ax2 = plt.subplot(1, 2, 2, projection=ccrs.Robinson(central_longitude=central))
                 ax2.set_facecolor('#39ff14')
 
                 ax2.pcolormesh(
-                    lon2,
-                    lat2,
+                    cy_lon2,
+                    cy_lat2,
                     no_inf_d2,
                     transform=ccrs.PlateCarree(),
                     cmap=mymap,
@@ -1009,7 +1100,7 @@ class DiffMetrics:
         We compute the SSIM (structural similarity index) on the spatial data - using the
         data itself (we do not create an image).
 
-        Here we scale from [0,1] and set C1 and C2 by window - only if denom < eps = 1e-15
+        Here we scale from [0,1] - then quantize to 256 bins
 
         """
         from math import exp, pi, sqrt
@@ -1017,21 +1108,36 @@ class DiffMetrics:
         from skimage.util import crop
 
         if not self._is_memoized('_ssim_value_fp'):
-            # get 2D arrays
-            a1 = self._metrics1.get_metric('ds').data
-            a2 = self._metrics2.get_metric('ds').data
+
+            # if this is a 3D variable, we will just do level 0 for now...
+            # (consider doing each level seperately)
+            if self._metrics1._vert_dim_name is not None:
+                vname = self._metrics1._vert_dim_name
+                a1 = self._metrics1.get_metric('ds').isel({vname: 0}).data
+                a2 = self._metrics2.get_metric('ds').isel({vname: 0}).data
+            else:
+                a1 = self._metrics1.get_metric('ds').data
+                a2 = self._metrics2.get_metric('ds').data
 
             if dask.is_dask_collection(a1):
                 a1 = a1.compute()
             if dask.is_dask_collection(a2):
                 a2 = a2.compute()
 
-            # transform to [0,1]
-            from sklearn.preprocessing import MinMaxScaler
+            # re-scale  to [0,1] - if not constant
+            smin = min(np.nanmin(a1), np.nanmin(a2))
+            smax = max(np.nanmax(a1), np.nanmax(a2))
+            r = smax - smin
+            if r < 1.0e-15:  # scale by smax if it is a constant
+                sc_a1 = a1 / smax
+                sc_a2 = a2 / smax
+            else:
+                sc_a1 = (a1 - smin) / r
+                sc_a2 = (a2 - smin) / r
 
-            scaler = MinMaxScaler(feature_range=(0, 1))
-            sc_a1 = scaler.fit_transform(a1)
-            sc_a2 = scaler.fit_transform(a2)
+            # now quantize to 256 bins
+            sc_a1 = np.round(sc_a1 * 255) / 255
+            sc_a2 = np.round(sc_a2 * 255) / 255
 
             # gaussian filter
             n = 11  # recommended window size
@@ -1041,8 +1147,8 @@ class DiffMetrics:
 
             X = sc_a1.shape[0]
             Y = sc_a2.shape[1]
-            g_w = np.array(self._oned_gauss(n, sigma))
 
+            g_w = np.array(self._oned_gauss(n, sigma))
             # 2D gauss weights
             gg_w = np.outer(g_w, g_w)
 
@@ -1058,61 +1164,62 @@ class DiffMetrics:
 
                 # don't go over boundaries
                 imin = max(0, i - k)
-                imax = min(X, i + k)
+                imax = min(X - 1, i + k)
 
                 for j in range(Y):
+
+                    if np.isnan(sc_a1[i, j]):
+                        # SKIP IF gridpoint is nan
+                        ssim_mat[i, j] = np.nan
+                        continue
+
                     jmin = max(0, j - k)
-                    jmax = min(Y, j + k)
+                    jmax = min(Y - 1, j + k)
 
                     # WINDOW CALC
-                    a1_win = sc_a1[imin:imax, jmin:jmax]
-                    a2_win = sc_a2[imin:imax, jmin:jmax]
+                    a1_win = sc_a1[imin : imax + 1, jmin : jmax + 1]
+                    a2_win = sc_a2[imin : imax + 1, jmin : jmax + 1]
 
                     # if window is by boundary, then it is not 11x11 and we must adjust weights also
                     if min(a1_win.shape) < n:
-                        Wt = gg_w[imin + k - i : imax + k - i, jmin + k - j : jmax + k - j]
+                        Wt = gg_w[imin + k - i : imax + k - i + 1, jmin + k - j : jmax + k - j + 1]
                     else:
                         Wt = gg_w
 
-                    # weighted means
-                    a1_mu = np.average(a1_win, weights=Wt)
-                    a2_mu = np.average(a2_win, weights=Wt)
+                    # weighted means (TO DO: what if indices are not the same)
+                    indices1 = ~np.isnan(a1_win)
+                    indices2 = ~np.isnan(a2_win)
+
+                    if not np.all(indices1 == indices2):
+                        print('SSIM ERROR: indices are not the same!')
+
+                    a1_mu = np.average(a1_win[indices1], weights=Wt[indices1])
+                    a2_mu = np.average(a2_win[indices2], weights=Wt[indices2])
 
                     # weighted std squared (variance)
-                    a1_std_sq = np.average((a1_win - a1_mu) ** 2, weights=Wt)
-                    a2_std_sq = np.average((a2_win - a2_mu) ** 2, weights=Wt)
+                    a1_std_sq = np.average((a1_win[indices1] - a1_mu) ** 2, weights=Wt[indices1])
+                    a2_std_sq = np.average((a2_win[indices2] - a2_mu) ** 2, weights=Wt[indices2])
 
                     # cov of a1 and a2
-                    a1a2_cov = np.average((a1_win - a1_mu) * (a2_win - a2_mu), weights=Wt)
+                    a1a2_cov = np.average(
+                        (a1_win[indices1] - a1_mu) * (a2_win[indices2] - a2_mu),
+                        weights=Wt[indices1],
+                    )
 
                     # SSIM for this window
                     # first term
                     ssim_t1 = 2 * a1_mu * a2_mu
                     ssim_b1 = a1_mu * a1_mu + a2_mu * a2_mu
-                    # print("term1 t/b = ", ssim_t1, ssim_b1)
-                    if ssim_b1 < my_eps:
-                        C1 = my_eps
-                        # print("TERM 1 trigger for C1")
-                    else:
-                        C1 = 0.0
+                    C1 = my_eps
+
                     ssim_t1 = ssim_t1 + C1
                     ssim_b1 = ssim_b1 + C1
 
                     # second term
                     ssim_t2 = 2 * a1a2_cov
                     ssim_b2 = a1_std_sq + a2_std_sq
-                    # print("term2 t/b= ", ssim_t2, ssim_b2)
-                    if abs(ssim_b2) < my_eps:
-                        C2 = my_eps
-                        # print("TERM 2 trigger for C2")
-                        if ssim_t2 < my_eps:
-                            C3 = my_eps
-                            # print("TERM 2 trigger for C3")
-                        else:
-                            C3 = 0.0
-                    else:
-                        C2 = 0.0
-                        C3 = 0.0
+                    C2 = C3 = my_eps
+
                     ssim_t2 = ssim_t2 + C3
                     ssim_b2 = ssim_b2 + C2
 
@@ -1120,9 +1227,9 @@ class DiffMetrics:
                     ssim_2 = ssim_t2 / ssim_b2
                     ssim_mat[i, j] = ssim_1 * ssim_2
 
-            # mean_ssim = np.average(ssim_mat)
+            mean_ssim = np.nanmean(ssim_mat)
             # to ignore edge effects (as in skimage)
-            mean_ssim = np.average(crop(ssim_mat, k))
+            # mean_ssim = np.nanmean(crop(ssim_mat, k))
 
             self._ssim_value_fp = mean_ssim
 
@@ -1130,11 +1237,52 @@ class DiffMetrics:
 
     @property
     def ssim_value_fp_old(self):
+        """To mimc what zchecker does - the ssim on the fp data with
+        original constants and no scaling. This will return Nan on POP data.
+        """
+
+        import numpy as np
+        from skimage.metrics import structural_similarity as ssim
+
+        if not self._is_memoized('_ssim_value_fp_old'):
+
+            # if this is a 3D variable, we will just do level 0 for now...
+            # (consider doing each level seperately)
+            if self._metrics1._vert_dim_name is not None:
+                vname = self._metrics1._vert_dim_name
+                a1 = self._metrics1.get_metric('ds').isel({vname: 0}).data
+                a2 = self._metrics2.get_metric('ds').isel({vname: 0}).data
+            else:
+                a1 = self._metrics1.get_metric('ds').data
+                a2 = self._metrics2.get_metric('ds').data
+
+            if dask.is_dask_collection(a1):
+                a1 = a1.compute()
+            if dask.is_dask_collection(a2):
+                a2 = a2.compute()
+
+            maxr = max(a1.max(), a2.max())
+            minr = min(a1.min(), a2.min())
+            myrange = maxr - minr
+            mean_ssim = ssim(
+                a1,
+                a2,
+                multichannel=False,
+                data_range=myrange,
+                gaussian_weights=True,
+                use_sample_covariance=False,
+            )
+
+            self._ssim_value_fp_old = mean_ssim
+
+        return self._ssim_value_fp_old
+
+    @property
+    def ssim_value_fp_old_old(self):
         """
         We compute the SSIM (structural similarity index) on the spatial data - using the
         data itself (we do not create an image). Similar to skimage implementation.
-
-        This transforms data, but keeps the old C1 and C2 definitions
+        Not in use:  needs to process Nans
 
         """
         from math import exp, pi, sqrt
@@ -1148,41 +1296,32 @@ class DiffMetrics:
             a1 = self._metrics1.get_metric('ds').data
             a2 = self._metrics2.get_metric('ds').data
 
+            # a1 and a2 are doubles
+
             if dask.is_dask_collection(a1):
                 a1 = a1.compute()
             if dask.is_dask_collection(a2):
                 a2 = a2.compute()
 
-            # transform?
-            from sklearn.preprocessing import MinMaxScaler
-
-            scaler = MinMaxScaler(feature_range=(0, 1))
-            sc_a1 = scaler.fit_transform(a1)
-            sc_a2 = scaler.fit_transform(a2)
-
-            # if none
-            # sc_a1 = a1
-            # sc_a2 = a2
-
             # range of data in a1
-            a1_R = sc_a1.max() - sc_a1.min()
+            a1_R = a1.max() - a1.min()
 
             # gaussian filter
             # n = 11  # recommended window size
-            k = 5  # extent or radius
+            # k = 5  # extent or radius
             sigma = 1.5  # std dev for guasss weight
             truncate = 3.5
             filter_func = gaussian_filter
             filter_args = {'sigma': sigma, 'truncate': truncate}
 
             # weighted means
-            a1_mu = filter_func(sc_a1, **filter_args)
-            a2_mu = filter_func(sc_a2, **filter_args)
+            a1_mu = filter_func(a1, **filter_args)
+            a2_mu = filter_func(a2, **filter_args)
 
             # weighted std
-            a1a1 = filter_func(sc_a1 * sc_a1, **filter_args)
-            a2a2 = filter_func(sc_a2 * sc_a2, **filter_args)
-            a1a2 = filter_func(sc_a1 * sc_a2, **filter_args)
+            a1a1 = filter_func(a1 * a1, **filter_args)
+            a2a2 = filter_func(a2 * a2, **filter_args)
+            a1a2 = filter_func(a1 * a2, **filter_args)
 
             var_a1 = a1a1 - a1_mu * a1_mu
             var_a2 = a2a2 - a2_mu * a2_mu
@@ -1196,19 +1335,20 @@ class DiffMetrics:
 
             ssim_t1 = 2 * a1_mu * a2_mu + C1
             ssim_t2 = 2 * cov_a1a2 + C2
+
             ssim_b1 = a1_mu * a1_mu + a2_mu * a2_mu + C1
             ssim_b2 = var_a1 + var_a2 + C2
-            ssim_b = ssim_b1 * ssim_b2
 
+            ssim_b = ssim_b1 * ssim_b2
             ssim_mat = (ssim_t1 * ssim_t2) / ssim_b
 
-            # mean_ssim = np.average(ssim_mat)
+            mean_ssim = np.nanmean(ssim_mat)
             # ignore edge effects? (as in skimage)
-            mean_ssim = np.average(crop(ssim_mat, k))
+            # mean_ssim = np.average(crop(ssim_mat, k))
 
-            self._ssim_value_fp_old = mean_ssim
+            self._ssim_value_fp_old_old = mean_ssim
 
-        return self._ssim_value_fp_old
+        return self._ssim_value_fp_old_old
 
     def get_diff_metric(self, name: str):
         """

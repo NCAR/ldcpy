@@ -1,5 +1,6 @@
 import collections
 
+import cf_xarray as cf
 import dask
 import numpy as np
 import xarray as xr
@@ -130,11 +131,11 @@ def preprocess(ds, varnames):
 
 def compare_stats(
     ds,
-    varname,
-    set1,
-    set2,
-    significant_digits=5,
-    include_ssim_metric=True,
+    varname: str,
+    set1: str,
+    set2: str,
+    significant_digits: int = 5,
+    include_ssim_metric: bool = True,
     **metrics_kwargs,
 ):
     """
@@ -164,18 +165,38 @@ def compare_stats(
 
     """
 
+    # get a datarray for the variable of interest and get collections
+    # (this is done seperately to work with cf_xarray)
+
+    if varname == 'T':  # work around for cf_xarray (until new tag that
+        # includes issue 130 updated to main on 1/27/21)
+        ds.T.attrs['standard_name'] = 'tt'
+        da = ds.cf['tt']
+    else:
+        da = ds.cf[varname]
+
+    # use this after the update instead of above
+    # da = ds.cf.data_vars[varname]
+
+    da1 = da.sel(collection=set1)
+    da2 = da.sel(collection=set2)
+    dd = da1 - da2
+
     aggregate_dims = metrics_kwargs.pop('aggregate_dims', None)
-    ds0_metrics = DatasetMetrics(ds[varname].sel(collection=set1), aggregate_dims, **metrics_kwargs)
-    ds1_metrics = DatasetMetrics(ds[varname].sel(collection=set2), aggregate_dims, **metrics_kwargs)
+
+    ds0_metrics = DatasetMetrics(da1, aggregate_dims, **metrics_kwargs)
+
+    ds1_metrics = DatasetMetrics(da2, aggregate_dims, **metrics_kwargs)
+
     d_metrics = DatasetMetrics(
-        ds[varname].sel(collection=set1) - ds[varname].sel(collection=set2),
+        dd,
         aggregate_dims,
         **metrics_kwargs,
     )
 
     diff_metrics = DiffMetrics(
-        ds[varname].sel(collection=set1),
-        ds[varname].sel(collection=set2),
+        da1,
+        da2,
         aggregate_dims,
         **metrics_kwargs,
     )
@@ -215,7 +236,7 @@ def compare_stats(
     if include_ssim_metric:
         output['ssim'] = diff_metrics.get_diff_metric('ssim')
         output['ssim_fp'] = diff_metrics.get_diff_metric('ssim_fp')
-        # output['ssim_fp_old'] = diff_metrics.get_diff_metric('ssim_fp_old')
+        output['ssim_fp_old'] = diff_metrics.get_diff_metric('ssim_fp_old')
 
     if dask.is_dask_collection(ds):
         output = dask.compute(output)[0]
@@ -342,6 +363,7 @@ def check_metrics(
     return num_fail
 
 
+# TO DO - update for ocn
 def subset_data(
     ds,
     subset=None,
