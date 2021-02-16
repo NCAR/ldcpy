@@ -63,3 +63,26 @@ Now you are ready to commit your code. pre-commit should automatically run black
     black --skip-string-normalization --line-length=100 .
     flake8 .
     isort .
+
+Adding new package dependencies to ldcpy
+__________________________________
+
+1) Adding new package dependencies requires updating the code in the following three places:
+
+    /ci/environment.yml
+    /ci/environment-dev.yml
+    /requirements.txt
+
+If the package dependency is specifically used for documentation, instead of adding it to /requirements.txt, add it to:
+
+    /docs/source/requirements.txt
+
+If this package is only used for documentation, skip the remaining steps.
+
+2) If the package is one that includes C code (such as numpy or scipy), update the autodoc_mock_imports list in /docs/source/conf.py. The latest build of the documentation can be found at (https://readthedocs.org/projects/ldcpy/builds/), if the build fails and the error message indicates a problem with the newest package - try adding it to autodoc_mock_imports.
+
+3) Finally, update the ldcpy-feedstock repository (git clone https://github.com/conda-forge/ldcpy-feedstock.git), or manually create a branch and add the dependency in the browser.
+Name the branch add-<new_dependency_name>.
+In the file /recipe/meta.yaml, in the "requirements" section, under "run", add your dependency to the list.
+
+4) If the CI build encounters errors after adding a dependency, check the status of the CI workflow at (https://github.com/NCAR/ldcpy/actions?query=workflow%3ACI) to determine if the error is related to the new package.
