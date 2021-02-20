@@ -189,9 +189,6 @@ class DatasetMetrics:
         The East-West Contrast Variance averaged along the aggregate dimensions
         """
         if not self._is_memoized('_ew_con_var'):
-            print('self.ds')
-            print(self._ds.cf.describe())
-
             self._ew_con_var = self._con_var('ew', self._ds).mean(self._agg_dims)
             self._ew_con_var.attrs = self._ds.attrs
             if hasattr(self._ds, 'units'):
