@@ -129,7 +129,6 @@ class DatasetMetrics:
 
     def _con_var(self, dir, dataset) -> xr.DataArray:
         # NOT WORKING FOR OCEAN data (with lat, lon coords)
-
         if dir == 'ns':
             lat_length = dataset.sizes[self._lat_dim_name]
             o_1, o_2 = xr.align(
@@ -151,10 +150,7 @@ class DatasetMetrics:
                 join='override',
             )
         # con_var = xr.ufuncs.square((o_1 - o_2))
-        print(o_1)
         con_var = np.square((o_1 - o_2))
-
-        # con var looses the lat/lon coords - not right for the ocean data
         return con_var
 
     @property
