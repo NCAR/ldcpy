@@ -142,12 +142,21 @@ class MetricsPlot(object):
         da_data.attrs = da.attrs
 
         # lat/lon dim names are different for ocn and atm
-        if da_data.dims[0] == 'time':
-            lat_dim = da_data.dims[1]
-            lon_dim = da_data.dims[2]
-        else:
+        # for now, we assume 2-4 dims time, level, lat, lon
+        # (where lat and long are always present but the others are optional)
+        if len(da_data.dims) == 2:
             lat_dim = da_data.dims[0]
             lon_dim = da_data.dims[1]
+        elif len(da_data.dims) == 3:
+            lat_dim = da_data.dims[1]
+            lon_dim = da_data.dims[2]
+        elif len(da_data.dims) == 4:
+            lat_dim = da_data.dims[3]
+            lon_dim = da_data.dims[4]
+        else:
+            print('WARNING lat/lon dims may be  off - assuming locations')
+            lat_dim = da_data.dims[3]
+            lon_dim = da_data.dims[4]
 
         # print(lat_dim, lon_dim)
 
@@ -155,7 +164,6 @@ class MetricsPlot(object):
             metrics_da = lm.DatasetMetrics(da_data, ['time'])
         elif self._plot_type in ['time_series', 'periodogram', 'histogram']:
             metrics_da = lm.DatasetMetrics(da_data, [lat_dim, lon_dim])
-
         else:
             raise ValueError(f'plot type {self._plot_type} not supported')
 
@@ -165,6 +173,7 @@ class MetricsPlot(object):
             )
 
         raw_data = metrics_da.get_metric(self._metric, self._quantile, self._group_by)
+
         return raw_data
 
     def get_plot_data(self, raw_data_1, raw_data_2=None):
@@ -275,6 +284,7 @@ class MetricsPlot(object):
         return
 
     def spatial_plot(self, da_sets, titles):
+
         if self.vert_plot:
             nrows = int((da_sets.sets.size))
         else:
@@ -331,7 +341,6 @@ class MetricsPlot(object):
 
             axs[i].set_facecolor('#39ff14')
 
-            # da_sets[i].compute()
             # make data periodic
             if latdim == 2:
                 ylon = da_sets[i][lon_coord_name]
@@ -344,8 +353,6 @@ class MetricsPlot(object):
             else:  # 1d
                 cy_datas, lon_sets = add_cyclic_point(da_sets[i], coord=da_sets[i][lon_coord_name])
                 lat_sets = da_sets[i][lat_coord_name]
-
-            # AB: convert back to reg. array (not masked)
 
             if np.isnan(cy_datas).any() or np.isinf(cy_datas).any():
                 nan_inf_flag = 1
@@ -632,6 +639,7 @@ class MetricsPlot(object):
                 # mpl.pyplot.plot_date(
                 #    da_sets[i].time.data, da_sets[i], f'C{i}', label=f'{da_sets.sets.data[i]}'
                 # )
+                # print(da_sets[0])
                 dtindex = da_sets[i].indexes['time']
                 c_d_time = [nc_time_axis.CalendarDateTime(item, '365_day') for item in dtindex]
                 mpl.pyplot.plot(c_d_time, da_sets[i], f'C{i}', label=f'{da_sets.sets.data[i]}')
@@ -684,6 +692,7 @@ class MetricsPlot(object):
         mpl.pyplot.title(tex_escape(titles[0]))
 
     def get_metric_label(self, metric, data, weights=None):
+
         # Get special metric names
         if self._short_title is False:
             if metric == 'zscore':
@@ -695,13 +704,21 @@ class MetricsPlot(object):
                 )
                 metric_name = f'{metric}: cutoff {zscore_cutoff[0]:.2f}, % sig: {percent_sig:.2f}'
             elif metric == 'mean' and self._plot_type == 'spatial' and self._metric_type == 'raw':
-                o_wt_mean = np.average(
-                    np.average(
-                        lm.DatasetMetrics(data, ['time']).get_metric(metric),
-                        axis=0,
-                        weights=weights,
-                    )
-                )
+
+                a1_data = (lm.DatasetMetrics(data, ['time']).get_metric(metric)).data
+                # check for NANs
+                indices = ~np.isnan(a1_data)
+                if weights is not None:
+                    weights = weights[indices]
+
+                a2_data = np.average(
+                    a1_data[indices],
+                    axis=0,
+                    weights=weights,
+                ).compute()
+
+                o_wt_mean = np.nanmean(a2_data)
+
                 metric_name = f'{metric} = {o_wt_mean:.2f}'
             elif metric == 'pooled_var_ratio':
                 pooled_sd = np.sqrt(
@@ -716,6 +733,7 @@ class MetricsPlot(object):
                 metric_name = f'{metric}: % sig = {p:.2f}'
             else:
                 metric_name = metric
+
             return metric_name
         else:
             return ''
@@ -939,6 +957,7 @@ def plot(
     if sets is not None:
         for i in range(len(sets)):
             subsets.append(lu.subset_data(dss[i], subset, lat, lon, lev, start, end))
+            subsets[i].attrs = dss[i].attrs
 
     # Acquire raw metric values
     datas = []
@@ -953,6 +972,7 @@ def plot(
                 datas.append(subsets[i])
 
     raw_metrics = []
+
     for d in datas:
         raw_metrics.append(mp.get_metrics(d))
 
@@ -961,7 +981,6 @@ def plot(
     lat_coord_name = datas[0].cf['latitude'].name
 
     # Get metric names/values for plot title
-    # if metric == 'zscore':
     metric_names = []
     for i in range(len(datas)):
         if ds.variables.mapping.get('gw') is not None:
