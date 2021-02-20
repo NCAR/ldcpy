@@ -363,7 +363,6 @@ def check_metrics(
     return num_fail
 
 
-# TO DO - update for ocn
 def subset_data(
     ds,
     subset=None,
@@ -374,13 +373,21 @@ def subset_data(
     end=None,
     time_dim_name='time',
     vertical_dim_name='lev',
-    lat_dim_name='lat',
-    lon_dim_name='lon',
+    lat_coord_name=None,
+    lon_coord_name=None,
 ):
     """
     Get a subset of the given dataArray, returns a dataArray
     """
     ds_subset = ds
+
+    # print(ds)
+
+    if lon_coord_name is None:
+        lon_coord_name = ds.cf['longitude'].name
+    if lat_coord_name is None:
+        lat_coord_name = ds.cf['latitude'].name
+    # print(lat_coord_name, lon_coord_name)
 
     if start is not None and end is not None:
         ds_subset = ds_subset.isel({time_dim_name: slice(start, end + 1)})
@@ -403,11 +410,13 @@ def subset_data(
             ds_subset = ds_subset.isel({vertical_dim_name: lev})
 
     if lat is not None:
-        ds_subset = ds_subset.sel(**{lat_dim_name: lat, 'method': 'nearest'})
-        ds_subset = ds_subset.expand_dims(lat_dim_name)
+        ds_subset = ds_subset.sel(**{lat_coord_name: lat, 'method': 'nearest'})
+        ds_subset = ds_subset.expand_dims(lat_coord_name)
 
     if lon is not None:
-        ds_subset = ds_subset.sel(**{lon_dim_name: lon + 180, 'method': 'nearest'})
-        ds_subset = ds_subset.expand_dims(lon_dim_name)
+        ds_subset = ds_subset.sel(**{lon_coord_name: lon + 180, 'method': 'nearest'})
+        ds_subset = ds_subset.expand_dims(lon_coord_name)
+
+    # print(ds_subset)
 
     return ds_subset

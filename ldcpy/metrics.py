@@ -28,6 +28,8 @@ class DatasetMetrics:
         lat_dim_name: str = None,
         lon_dim_name: str = None,
         vert_dim_name: str = None,
+        lat_coord_name: str = None,
+        lon_coord_name: str = None,
         q: float = 0.5,
         spre_tol: float = 1.0e-4,
     ):
@@ -35,16 +37,38 @@ class DatasetMetrics:
         # For some reason, casting to float64 removes all attrs from the dataset
         self._ds.attrs = ds.attrs
 
-        # Let's just get all the lat/lon and time names from the file if they are None
-        # lon dimension
-        if lon_dim_name is None:
-            lon_dim_name = ds.cf['longitude'].name
-        self._lon_dim_name = lon_dim_name
+        # Let's just get all the lat/lon and time
+        # names from the file if they are None
+        # lon coord
+        if lon_coord_name is None:
+            lon_coord_name = ds.cf['longitude'].name
+        # print(lon_coord_name)
+        self._lon_coord_name = lon_coord_name
 
-        # lat dimension
+        # lat coord
+        if lat_coord_name is None:
+            lat_coord_name = ds.cf['latitude'].name
+        self._lat_coord_name = lat_coord_name
+
+        # assum lat/lon (andorider:  time, level, lat, lon -
+        # where time and level may be missing)
         if lat_dim_name is None:
-            lat_dim_name = ds.cf['latitude'].name
+            if len(ds.dims) == 2:
+                lat_dim_name = ds.dims[0]
+            elif len(ds.dims) == 3:
+                lat_dim_name = ds.dims[1]
+            elif len(ds.dims) > 3:
+                lat_dim_name = ds.dims[3]
         self._lat_dim_name = lat_dim_name
+
+        if lon_dim_name is None:
+            if len(ds.dims) == 2:
+                lon_dim_name = ds.dims[1]
+            elif len(ds.dims) == 3:
+                lon_dim_name = ds.dims[2]
+            elif len(ds.dims) > 3:
+                lon_dim_name = ds.dims[4]
+        self._lon_dim_name = lon_dim_name
 
         # vertical dimension?
         if vert_dim_name is None:
@@ -104,6 +128,8 @@ class DatasetMetrics:
         return hasattr(self, metric_name) and (self.__getattribute__(metric_name) is not None)
 
     def _con_var(self, dir, dataset) -> xr.DataArray:
+        # NOT WORKING FOR OCEAN data (with lat, lon coords)
+
         if dir == 'ns':
             lat_length = dataset.sizes[self._lat_dim_name]
             o_1, o_2 = xr.align(
@@ -125,7 +151,10 @@ class DatasetMetrics:
                 join='override',
             )
         # con_var = xr.ufuncs.square((o_1 - o_2))
+        print(o_1)
         con_var = np.square((o_1 - o_2))
+
+        # con var looses the lat/lon coords - not right for the ocean data
         return con_var
 
     @property
@@ -160,6 +189,9 @@ class DatasetMetrics:
         The East-West Contrast Variance averaged along the aggregate dimensions
         """
         if not self._is_memoized('_ew_con_var'):
+            print('self.ds')
+            print(self._ds.cf.describe())
+
             self._ew_con_var = self._con_var('ew', self._ds).mean(self._agg_dims)
             self._ew_con_var.attrs = self._ds.attrs
             if hasattr(self._ds, 'units'):
@@ -172,10 +204,10 @@ class DatasetMetrics:
         """
         The mean along the aggregate dimensions
         """
+        # print("mean")
         if not self._is_memoized('_mean'):
             self._mean = self._ds.mean(self._agg_dims, skipna=True)
             self._mean.attrs = self._ds.attrs
-
         return self._mean
 
     @property
@@ -522,9 +554,8 @@ class DatasetMetrics:
             new_index = [i for i in range(0, self._ds[self._time_dim_name].size)]
             new_ds = ds_copy.assign_coords({self._time_dim_name: new_index})
 
-            # get lat/lon coordinate names:
-            lon_coord_name = new_ds.cf['longitude'].name
-            lat_coord_name = new_ds.cf['latitude'].name
+            lon_coord_name = self._lon_coord_name
+            lat_coord_name = self._lat_coord_name
 
             DF = dft(new_ds, dim=[self._time_dim_name], detrend='constant')
             # the above does not preserve the lat/lon attributes
@@ -970,12 +1001,12 @@ class DiffMetrics:
                 filename_1, filename_2 = f'{tmpdirname}/t_ssim1.png', f'{tmpdirname}/t_ssim2.png'
                 d1 = self._metrics1.get_metric('ds')
                 d2 = self._metrics2.get_metric('ds')
-                lat1 = d1[self._metrics1._lat_dim_name]
-                lat2 = d2[self._metrics2._lat_dim_name]
-                lon1 = d1[self._metrics1._lon_dim_name]
-                lon2 = d2[self._metrics2._lon_dim_name]
+                lat1 = d1[self._metrics1._lat_coord_name]
+                lat2 = d2[self._metrics2._lat_coord_name]
+                lon1 = d1[self._metrics1._lon_coord_name]
+                lon2 = d2[self._metrics2._lon_coord_name]
 
-                latdim = d1.cf[self._metrics1._lon_dim_name].ndim
+                latdim = d1.cf[self._metrics1._lon_coord_name].ndim
                 central = 0.0  # might make this a parameter later
                 if latdim == 2:  # probably pop
                     central = 300.0

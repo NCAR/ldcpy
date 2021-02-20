@@ -20,9 +20,20 @@ ds2 = ldcpy.open_datasets(
         'data/cam-fv/zfp1e-7.PRECT.60days.nc',
         'data/cam-fv/zfp1e-11.PRECT.60days.nc',
     ],
-    ['orig', 'recon', 'recon_2'],
+    ['orig', 'recon', 'recon2'],
 )
 ds3 = ldcpy.open_datasets(['T'], ['data/cam-fv/cam-fv.T.3months.nc'], ['orig'])
+
+ds_pop = ldcpy.open_datasets(
+    ['SST'],
+    [
+        'data/pop/pop.SST.100days.nc',
+        'data/pop/zfp1.0.pop.SST.100days.nc',
+        'data/pop/zfp1e-1.pop.SST.100days.nc',
+        'data/pop/zfp1e-2.pop.SST.100days.nc',
+    ],
+    ['orig', 'recon', 'recon2', 'recon3'],
+)
 
 
 class TestPlot(TestCase):
