@@ -61,16 +61,11 @@ jobs:
   upstream-dev:
     if: |
       github.repository == 'NCAR/ldcpy'
-    name: upstream-dev (${{ matrix.python-version }}, ${{ matrix.os }})
-    runs-on: ${{ matrix.os }}
+    name: upstream-dev-py39
+    runs-on: ubuntu-latest
     defaults:
       run:
         shell: bash -l {0}
-    strategy:
-      fail-fast: false
-      matrix:
-        os: ['ubuntu-latest']
-        python-version: ['3.7', '3.8', '3.9']
     steps:
       - name: Cancel previous runs
         uses: styfle/cancel-workflow-action@0.8.0
@@ -84,7 +79,7 @@ jobs:
           mamba-version: '*'
           activate-environment: ldcpy # Defined in ci/environment.yml
           auto-update-conda: false
-          python-version: ${{ matrix.python-version }}
+          python-version: 3.9
           environment-file: ci/upstream-dev-environment.yml
 
       - name: Install ldcpy
