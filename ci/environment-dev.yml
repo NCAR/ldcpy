@@ -1,33 +1,22 @@
-name: ldcpy_dev
+name: ldcpy
 channels:
   - conda-forge
 dependencies:
   - cartopy=0.18
   - cmocean
   - codecov
-  - cython
   - dask
-  - graphviz
   - intake-esm
-  - jupyter_contrib_nbextensions
-  - jupyterlab
   - matplotlib-base
   - nc-time-axis
   - netcdf4
-  - numpy
-  - opencv
-  - pandas
   - pip
-  - pre-commit
   - pytest
   - pytest-cov
-  - pytest-xdist
-  - scikit-build
   - scikit-image
   - scikit-learn
-  - scipy
-  - setuptools
-  - xarray
-  - xrft
   - zfpy
-  - cf_xarray
+  - pip:
+      - git+https://github.com/pydata/xarray.git
+      - git+https://github.com/xarray-contrib/cf-xarray.git
+      - git+https://github.com/xgcm/xrft.git
