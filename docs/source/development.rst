@@ -16,7 +16,7 @@ For a development install, do the following in the ldcpy repository directory:
 
 .. code-block:: bash
 
-    conda env update -f environment-dev.yml
+    conda env update -f environment.yml
     conda activate ldcpy
     python -m pip install -e .
 
@@ -70,7 +70,7 @@ __________________________________
 1) Adding new package dependencies requires updating the code in the following three places:
 
     /ci/environment.yml
-    /ci/environment-dev.yml
+    /ci/upstream-dev-environment.yml
     /requirements.txt
 
 If the package dependency is specifically used for documentation, instead of adding it to /requirements.txt, add it to:
