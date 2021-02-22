@@ -61,7 +61,7 @@ jobs:
   upstream-dev:
     if: |
       github.repository == 'NCAR/ldcpy'
-    name: Build (${{ matrix.python-version }}, ${{ matrix.os }})
+    name: upstream-dev (${{ matrix.python-version }}, ${{ matrix.os }})
     runs-on: ${{ matrix.os }}
     defaults:
       run:
