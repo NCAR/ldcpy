@@ -308,13 +308,13 @@ class MetricsPlot(object):
         cmin = []
 
         # lat/lon could be 1 or 2d and have different names
-        lon_coord_name = da_sets[0].cf['longitude'].name
-        lat_coord_name = da_sets[0].cf['latitude'].name
+        lon_coord_name = "lon"
+        lat_coord_name = "lat"
         # print(lon_coord_name)
         # print(lat_coord_name)
 
         # is the lat/lon 1d or 2d (to do: set error if > 2)
-        latdim = da_sets[0].cf['longitude'].ndim
+        latdim = 1
 
         central = 0.0  # might make this a parameter later
         if latdim == 2:  # probably pop
