@@ -934,9 +934,9 @@ def plot(
         if 'collection' in ds[varname].dims:
             if sets is not None:
                 for set in sets:
-                    dss.append(ds.cf[varname].sel(collection=set))
+                    dss.append(ds[varname].sel(collection=set))
         else:
-            dss.append(ds.cf[varname])
+            dss.append(ds[varname])
 
     subsets = []
     if sets is not None:
