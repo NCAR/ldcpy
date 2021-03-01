@@ -112,9 +112,9 @@ class TestErrorMetrics(TestCase):
         self.assertTrue(em.mean.all() == 0.0)
 
     def test_dim_names(self):
-        self.assertTrue(test_spatial_metrics._lat_dim_name == "lat")
-        self.assertTrue(test_spatial_metrics._lon_dim_name == "lon")
-        self.assertTrue(test_spatial_metrics._time_dim_name == "time")
+        self.assertTrue(test_spatial_metrics._lat_dim_name == 'lat')
+        self.assertTrue(test_spatial_metrics._lon_dim_name == 'lon')
+        self.assertTrue(test_spatial_metrics._time_dim_name == 'time')
 
     def test_TS_02(self):
         import xarray as xr
