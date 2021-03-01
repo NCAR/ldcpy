@@ -50,24 +50,20 @@ class DatasetMetrics:
             lat_coord_name = ds.cf['latitude'].name
         self._lat_coord_name = lat_coord_name
 
-        # assum lat/lon (andorider:  time, level, lat, lon -
-        # where time and level may be missing)
-        if lat_dim_name is None:
-            if len(ds.dims) == 2:
-                lat_dim_name = ds.dims[0]
-            elif len(ds.dims) == 3:
-                lat_dim_name = ds.dims[1]
-            elif len(ds.dims) > 3:
-                lat_dim_name = ds.dims[3]
-        self._lat_dim_name = lat_dim_name
+        dd = ds.cf['latitude'].dims
+        ll = len(dd)
+        if ll == 1:
+            if lat_dim_name is None:
+                lat_dim_name = dd[0]
+            if lon_dim_name is None:
+                lon_dim_name = ds.cf['longitude'].dims[0]
+        elif ll == 2:
+            if lat_dim_name is None:
+                lat_dim_name = dd[0]
+            if lon_dim_name is None:
+                lon_dim_name = dd[1]
 
-        if lon_dim_name is None:
-            if len(ds.dims) == 2:
-                lon_dim_name = ds.dims[1]
-            elif len(ds.dims) == 3:
-                lon_dim_name = ds.dims[2]
-            elif len(ds.dims) > 3:
-                lon_dim_name = ds.dims[4]
+        self._lat_dim_name = lat_dim_name
         self._lon_dim_name = lon_dim_name
 
         # vertical dimension?
@@ -150,6 +146,7 @@ class DatasetMetrics:
                 join='override',
             )
         # con_var = xr.ufuncs.square((o_1 - o_2))
+        # print(o_1-o_2)
         con_var = np.square((o_1 - o_2))
         return con_var
 

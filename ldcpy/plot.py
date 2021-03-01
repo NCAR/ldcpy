@@ -142,23 +142,18 @@ class MetricsPlot(object):
         da_data.attrs = da.attrs
 
         # lat/lon dim names are different for ocn and atm
-        # for now, we assume 2-4 dims time, level, lat, lon
-        # (where lat and long are always present but the others are optional)
-        if len(da_data.dims) == 2:
-            lat_dim = da_data.dims[0]
-            lon_dim = da_data.dims[1]
-        elif len(da_data.dims) == 3:
-            lat_dim = da_data.dims[1]
-            lon_dim = da_data.dims[2]
-        elif len(da_data.dims) == 4:
-            lat_dim = da_data.dims[3]
-            lon_dim = da_data.dims[4]
-        else:
-            print('WARNING lat/lon dims may be  off - assuming locations')
-            lat_dim = da_data.dims[3]
-            lon_dim = da_data.dims[4]
+        dd = da_data.cf['latitude'].dims
 
-        # print(lat_dim, lon_dim)
+        ll = len(dd)
+        if ll == 1:
+            lat_dim = dd[0]
+            lon_dim = da_data.cf['longitude'].dims[0]
+        elif ll == 2:
+            lat_dim = dd[0]
+            lon_dim = dd[1]
+        # if ll = 0, then no lat/lon dims
+
+        # print("here", lat_dim, lon_dim)
 
         if self._plot_type in ['spatial']:
             metrics_da = lm.DatasetMetrics(da_data, ['time'])
