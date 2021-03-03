@@ -41,13 +41,12 @@ class DatasetMetrics:
         # names from the file if they are None
         # lon coord
         if lon_coord_name is None:
-            lon_coord_name = ds.cf['longitude'].name
-        # print(lon_coord_name)
+            lon_coord_name = ds.cf.coordinates['longitude'][0]
         self._lon_coord_name = lon_coord_name
 
         # lat coord
         if lat_coord_name is None:
-            lat_coord_name = ds.cf['latitude'].name
+            lat_coord_name = ds.cf.coordinates['latitude'][0]
         self._lat_coord_name = lat_coord_name
 
         dd = ds.cf['latitude'].dims

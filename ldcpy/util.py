@@ -402,13 +402,13 @@ def subset_data(
 
     if subset is not None:
         if subset == 'winter':
-            ds_subset = ds_subset.where(ds[time_dim_name].dt.season == 'DJF', drop=True)
+            ds_subset = ds_subset.cf.sel(time=ds.cf['time'].dt.season == 'DJF')
         elif subset == 'spring':
-            ds_subset = ds_subset.where(ds[time_dim_name].dt.season == 'MAM', drop=True)
+            ds_subset = ds_subset.cf.sel(time=ds.cf['time'].dt.season == 'MAM')
         elif subset == 'summer':
-            ds_subset = ds_subset.where(ds[time_dim_name].dt.season == 'JJA', drop=True)
+            ds_subset = ds_subset.cf.sel(time=ds.cf['time'].dt.season == 'JJA')
         elif subset == 'autumn':
-            ds_subset = ds_subset.where(ds[time_dim_name].dt.season == 'SON', drop=True)
+            ds_subset = ds_subset.cf.sel(time=ds.cf['time'].dt.season == 'SON')
 
         elif subset == 'first5':
             ds_subset = ds_subset.isel({time_dim_name: slice(None, 5)})
@@ -420,14 +420,13 @@ def subset_data(
     if latdim == 1:
 
         if lat is not None:
-            ds_subset = ds_subset.sel(**{lat_coord_name: lat, 'method': 'nearest'})
-            ds_subset = ds_subset.expand_dims(lat_dim_name)
-
+            ds_subset = ds_subset.sel(**{lat_coord_name: [lat], 'method': 'nearest'})
         if lon is not None:
-            ds_subset = ds_subset.sel(**{lon_coord_name: lon + 180, 'method': 'nearest'})
-            ds_subset = ds_subset.expand_dims(lon_dim_name)
+            ds_subset = ds_subset.sel(**{lon_coord_name: [lon + 180], 'method': 'nearest'})
 
     elif latdim == 2:
+
+        # print(ds_subset)
 
         if lat is not None:
             if lon is not None:
@@ -445,14 +444,15 @@ def subset_data(
                 index = np.where(di == np.min(di))
                 xmin = index[0][0]
                 ymin = index[1][0]
-                ds_subset = ds_subset.isel({lat_dim_name: xmin, lon_dim_name: ymin})
 
-                ds_subset = ds_subset.expand_dims(lat_dim_name)
-                ds_subset = ds_subset.expand_dims(lon_dim_name)
+                # Don't want if it's a land point
+                check = ds_subset.isel(nlat=xmin, nlon=ymin, time=1).compute()
+                if np.isnan(check):
+                    print(
+                        'You have chosen a lat/lon point with Nan values (i.e., a land point). Plot will not make sense.'
+                    )
+                ds_subset = ds_subset.isel({lat_dim_name: [xmin], lon_dim_name: [ymin]})
 
-                # print(ds_subset)
-
-        # I need to have TLAT and TLON coords have dims (nlat, nlon) and I
-        # can't figure this out....
+                # ds_subset.compute()
 
     return ds_subset

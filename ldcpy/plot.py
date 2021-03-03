@@ -151,9 +151,6 @@ class MetricsPlot(object):
         elif ll == 2:
             lat_dim = dd[0]
             lon_dim = dd[1]
-        # if ll = 0, then no lat/lon dims
-
-        # print("here", lat_dim, lon_dim)
 
         if self._plot_type in ['spatial']:
             metrics_da = lm.DatasetMetrics(da_data, ['time'])
@@ -494,8 +491,6 @@ class MetricsPlot(object):
             for i in range(1, len(da_sets)):
                 img1 = skimage.io.imread('tmp_ssim1.png')
                 img2 = skimage.io.imread(f'tmp_ssim{i+1}.png')
-                # print(img1.shape)
-                # print(img2.shape)
                 ssim_val = ssim(img1, img2, multichannel=True)
                 print(f' SSIM 1 & {i+1} = % 5.5f\n' % (ssim_val))
             for i in range(len(da_sets) + 1):
@@ -984,8 +979,21 @@ def plot(
             metric_names.append(mp.get_metric_label(calc, datas[i]))
     # Get plot data and title
     if lat is not None and lon is not None:
-        mp.title_lat = subsets[0][lat_coord_name].data[0]
-        mp.title_lon = subsets[0][lon_coord_name].data[0] - 180
+        # is this a 1D of 2D lat/lon?
+        dd = subsets[0].cf['latitude'].dims
+        if len(dd) == 1:
+            mp.title_lat = subsets[0][lat_coord_name].data[0]
+            mp.title_lon = subsets[0][lon_coord_name].data[0] - 180
+        else:  # 2
+            # lon should be 0- 360
+            mylat = subsets[0][lat_coord_name].data[0]
+            mylon = subsets[0][lon_coord_name].data[0]
+            mylat = mylat[0].compute()
+            mylon = mylon[0].compute()
+            if mylon < 0:
+                mylon = mylon + 360
+            mp.title_lat = mylat
+            mp.title_lon = mylon
     else:
         mp.title_lat = lat
         mp.title_lon = lon
