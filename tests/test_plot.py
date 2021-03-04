@@ -46,20 +46,20 @@ class TestPlot(TestCase):
         ldcpy.plot(ds, 'TS', sets=['orig', 'recon'], calc='mean', vert_plot=True, tex_format=False)
         self.assertTrue(True)
 
-    #    def test_standardized_mean(self):
-    #        ldcpy.plot(
-    #            ds,
-    #            'TS',
-    #            sets=['orig', 'recon'],
-    #            calc='standardized_mean',
-    #            plot_type='time_series',
-    #            lat=90,
-    #            lon=0,
-    #            calc_type='diff',
-    #            vert_plot=True,
-    #            tex_format=False,
-    #        )
-    #        self.assertTrue(True)
+    def test_standardized_mean(self):
+        ldcpy.plot(
+            ds,
+            'TS',
+            sets=['orig', 'recon'],
+            calc='standardized_mean',
+            plot_type='time_series',
+            lat=90,
+            lon=0,
+            calc_type='diff',
+            vert_plot=True,
+            tex_format=False,
+        )
+        self.assertTrue(True)
 
     def test_prob_neg(self):
         ldcpy.plot(ds2, 'PRECT', sets=['orig', 'recon'], calc='prob_negative', tex_format=False)
@@ -198,37 +198,37 @@ class TestPlot(TestCase):
         )
         self.assertTrue(True is True)
 
-    #    @pytest.mark.nonsequential
-    #    def test_mean_diff_time_series_subset(self):
-    #        ldcpy.plot(
-    #            ds2,
-    #            'PRECT',
-    #            sets=['recon', 'orig'],
-    #            calc_type='diff',
-    #            calc='mean',
-    #            plot_type='time_series',
-    #            subset='first50',
-    #            lat=44.56,
-    #            lon=-123.26,
-    #            tex_format=False,
-    #        )
-    #        self.assertTrue(True)
+    @pytest.mark.nonsequential
+    def test_mean_diff_time_series_subset(self):
+        ldcpy.plot(
+            ds2,
+            'PRECT',
+            sets=['recon', 'orig'],
+            calc_type='diff',
+            calc='mean',
+            plot_type='time_series',
+            subset='first50',
+            lat=44.56,
+            lon=-123.26,
+            tex_format=False,
+        )
+        self.assertTrue(True)
 
-    #    def test_subset_lat_lon_ratio_time_series(self):
-    #        ldcpy.plot(
-    #            ds2,
-    #            'PRECT',
-    #            sets=['orig', 'recon'],
-    #            calc='mean',
-    #            calc_type='ratio',
-    #            group_by=None,
-    #            subset='first50',
-    #            lat=44.76,
-    #             lon=-93.75,
-    #            plot_type='time_series',
-    #            tex_format=False,
-    #        )
-    #        self.assertTrue(True is True)
+    def test_subset_lat_lon_ratio_time_series(self):
+        ldcpy.plot(
+            ds2,
+            'PRECT',
+            sets=['orig', 'recon'],
+            calc='mean',
+            calc_type='ratio',
+            group_by=None,
+            subset='first50',
+            lat=44.76,
+            lon=-93.75,
+            plot_type='time_series',
+            tex_format=False,
+        )
+        self.assertTrue(True is True)
 
     def test_periodogram_grouped(self):
         ldcpy.plot(
