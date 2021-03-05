@@ -62,6 +62,7 @@ class DatasetMetrics:
             if lon_dim_name is None:
                 lon_dim_name = dd[1]
 
+        self._latlon_dims = ll
         self._lat_dim_name = lat_dim_name
         self._lon_dim_name = lon_dim_name
 
@@ -123,30 +124,21 @@ class DatasetMetrics:
         return hasattr(self, metric_name) and (self.__getattribute__(metric_name) is not None)
 
     def _con_var(self, dir, dataset) -> xr.DataArray:
-        # NOT WORKING FOR OCEAN data (with lat, lon coords)
+
         if dir == 'ns':
-            lat_length = dataset.sizes[self._lat_dim_name]
-            o_1, o_2 = xr.align(
-                dataset.head({self._lat_dim_name: lat_length - 1}),
-                dataset.tail({self._lat_dim_name: lat_length - 1}),
-                join='override',
-            )
+            tt = dataset.diff(self._lat_dim_name, 1)
+
         elif dir == 'ew':
-            lon_length = dataset.sizes[self._lon_dim_name]
-            o_1, o_2 = xr.align(
-                dataset,
-                xr.concat(
-                    [
-                        dataset.tail({self._lon_dim_name: lon_length - 1}),
-                        dataset.head({self._lon_dim_name: 1}),
-                    ],
-                    dim=self._lon_dim_name,
-                ),
-                join='override',
+            ds_h = xr.concat(
+                [
+                    dataset,
+                    dataset.head({self._lon_dim_name: 1}),
+                ],
+                dim=self._lon_dim_name,
             )
-        # con_var = xr.ufuncs.square((o_1 - o_2))
-        # print(o_1-o_2)
-        con_var = np.square((o_1 - o_2))
+            tt = ds_h.diff(self._lon_dim_name, 1)
+
+        con_var = np.square(tt)
         return con_var
 
     @property

@@ -310,8 +310,8 @@ class MetricsPlot(object):
         cmin = []
 
         # lat/lon could be 1 or 2d and have different names
-        lon_coord_name = da_sets[0].cf['longitude'].name
-        lat_coord_name = da_sets[0].cf['latitude'].name
+        lon_coord_name = da_sets[0].cf.coordinates['longitude'][0]
+        lat_coord_name = da_sets[0].cf.coordinates['latitude'][0]
 
         # is the lat/lon 1d or 2d (to do: set error if > 2)
         latdim = da_sets[0].cf[lon_coord_name].ndim
@@ -343,7 +343,11 @@ class MetricsPlot(object):
 
                 cy_datas = add_cyclic_point(da_sets[i])
             else:  # 1d
-                cy_datas, lon_sets = add_cyclic_point(da_sets[i], coord=da_sets[i][lon_coord_name])
+
+                ylon = da_sets[i][lon_coord_name]
+                lon_sets = np.hstack((ylon, ylon[0]))
+                cy_datas = add_cyclic_point(da_sets[i])
+
                 lat_sets = da_sets[i][lat_coord_name]
 
             if np.isnan(cy_datas).any() or np.isinf(cy_datas).any():
@@ -353,14 +357,10 @@ class MetricsPlot(object):
 
             cyxr = xr.DataArray(data=cy_datas)
 
-            # if not np.isinf(cy_datas).all():
-            #    cmin.append(np.min(cy_datas.where(cy_datas != -np.inf).min()))
-            #    cmax.append(np.max(cy_datas.where(cy_datas != np.inf).max()))
             if not np.isinf(cyxr).all():
                 cmin.append(np.min(cyxr.where(cyxr != -np.inf).min()))
                 cmax.append(np.max(cyxr.where(cyxr != np.inf).max()))
 
-            # no_inf_data_set = np.nan_to_num(cy_datas, nan=np.nan)
             no_inf_data_set = np.nan_to_num(cyxr, nan=np.nan)
 
             # add a check here so ensure the dataset size is the same size as lon_sets * lat_sets[i]
