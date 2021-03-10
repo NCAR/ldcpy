@@ -125,8 +125,13 @@ class MetricsPlot(object):
             self._true_lat is not None or self._true_lon is not None
         ):
             raise ValueError('Cannot currently subset by latitude or longitude in a spatial plot')
-        if self._lev != 0 and 'lev' not in self._ds.dims:
-            raise ValueError('Cannot subset by lev in this dataset')
+        if self._lev != 0:  # and 'lev' not in self._ds.dims:
+            try:
+                vert = self._ds.cf['vertical']
+            except KeyError:
+                vert = None
+            if vert is None:
+                raise ValueError('Cannot subset by lev (vertical dimension) in this dataset')
         if self._quantile is not None and self._metric != 'quantile':
             raise ValueError('Cannot change quantile value if metric is not quantile')
         if self._quantile is None and self._metric == 'quantile':
@@ -315,6 +320,9 @@ class MetricsPlot(object):
 
         # is the lat/lon 1d or 2d (to do: set error if > 2)
         latdim = da_sets[0].cf[lon_coord_name].ndim
+
+        # print("DS:", da_sets[0])
+        # print(titles)
 
         central = 0.0  # might make this a parameter later
         if latdim == 2:  # probably pop
@@ -621,15 +629,6 @@ class MetricsPlot(object):
                 )
                 ax = plt.gca()
             else:
-                # plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%m-%d-%Y'))
-                # plt.gca().xaxis.set_major_locator(mdates.DayLocator())
-                # dtindex = da_sets[i].indexes['time'].to_datetimeindex()
-                # da_sets[i]['time'] = dtindex
-
-                # mpl.pyplot.plot_date(
-                #    da_sets[i].time.data, da_sets[i], f'C{i}', label=f'{da_sets.sets.data[i]}'
-                # )
-                # print(da_sets[0])
                 dtindex = da_sets[i].indexes['time']
                 c_d_time = [nc_time_axis.CalendarDateTime(item, '365_day') for item in dtindex]
                 mpl.pyplot.plot(c_d_time, da_sets[i], f'C{i}', label=f'{da_sets.sets.data[i]}')

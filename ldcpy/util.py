@@ -236,7 +236,7 @@ def compare_stats(
     if include_ssim_metric:
         output['ssim'] = diff_metrics.get_diff_metric('ssim')
         output['ssim_fp'] = diff_metrics.get_diff_metric('ssim_fp')
-        output['ssim_fp_old'] = diff_metrics.get_diff_metric('ssim_fp_old')
+        # output['ssim_fp_old'] = diff_metrics.get_diff_metric('ssim_fp_old')
 
     if dask.is_dask_collection(ds):
         output = dask.compute(output)[0]
@@ -372,7 +372,7 @@ def subset_data(
     start=None,
     end=None,
     time_dim_name='time',
-    vertical_dim_name='lev',
+    vertical_dim_name=None,
     lat_coord_name=None,
     lon_coord_name=None,
 ):
@@ -381,11 +381,21 @@ def subset_data(
     """
     ds_subset = ds
 
+    # print(ds.cf.describe())
+
     if lon_coord_name is None:
-        lon_coord_name = ds.cf['longitude'].name
+        lon_coord_name = ds.cf.coordinates['longitude'][0]
     if lat_coord_name is None:
-        lat_coord_name = ds.cf['latitude'].name
-    # print(lat_coord_name, lon_coord_name)
+        lat_coord_name = ds.cf.coordinates['latitude'][0]
+    if vertical_dim_name is None:
+        try:
+            vert = ds.cf['vertical']
+        except KeyError:
+            vert = None
+        if vert is not None:
+            vertical_dim_name = ds.cf.coordinates['vertical'][0]
+
+    # print(lat_coord_name, lon_coord_name, vertical_dim_name)
 
     latdim = ds_subset.cf[lon_coord_name].ndim
     # need dim names
