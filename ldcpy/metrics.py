@@ -1140,9 +1140,13 @@ class DiffMetrics:
             smin = min(np.nanmin(a1), np.nanmin(a2))
             smax = max(np.nanmax(a1), np.nanmax(a2))
             r = smax - smin
-            if r < 1.0e-15:  # scale by smax if it is a constant
-                sc_a1 = a1 / smax
-                sc_a2 = a2 / smax
+            if r == 0.0:  # scale by smax if fiels is a constant (and smax != 0)
+                if smax == 0.0:
+                    sc_a1 = a1
+                    sc_a2 = a2
+                else:
+                    sc_a1 = a1 / smax
+                    sc_a2 = a2 / smax
             else:
                 sc_a1 = (a1 - smin) / r
                 sc_a2 = (a2 - smin) / r

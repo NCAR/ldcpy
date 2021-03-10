@@ -125,8 +125,13 @@ class MetricsPlot(object):
             self._true_lat is not None or self._true_lon is not None
         ):
             raise ValueError('Cannot currently subset by latitude or longitude in a spatial plot')
-        if self._lev != 0 and 'lev' not in self._ds.dims:
-            raise ValueError('Cannot subset by lev in this dataset')
+        if self._lev != 0:  # and 'lev' not in self._ds.dims:
+            try:
+                vert = self._ds.cf['vertical']
+            except KeyError:
+                vert = None
+            if vert is None:
+                raise ValueError('Cannot subset by lev (vertical dimension) in this dataset')
         if self._quantile is not None and self._metric != 'quantile':
             raise ValueError('Cannot change quantile value if metric is not quantile')
         if self._quantile is None and self._metric == 'quantile':
