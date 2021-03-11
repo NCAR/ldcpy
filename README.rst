@@ -90,4 +90,16 @@ Start by enabling Hinterland for code completion and code hinting in Jupyter Not
     jupyter notebook
 
 
-The tutorial notebook can be found in docs/source/notebooks/SampleNotebook.ipynb, feel free to gather your own metrics or create your own plots in this notebook!
+The tutorial notebook can be found in docs/source/notebooks/TutorialNotebook.ipynb, feel free to gather your own metrics or create your own plots in this notebook!
+
+Re-create notebooks with Pangeo Binder
+--------------------------------------
+
+Try the notebooks hosted in this repo on Pangeo Binder. Note that the session is ephemeral.
+Your home directory will not persist, so remember to download your notebooks if you
+make changes that you need to use at a later time!
+
+(Note: The example notebooks are in docs/source/notebooks.)
+
+.. image:: https://binder.pangeo.io/badge_logo.svg
+  :target: https://binder.pangeo.io/v2/gh/NCAR/ldcpy/main
