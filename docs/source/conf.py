@@ -6,9 +6,12 @@
 import os
 import sys
 
-sys.path.insert(0, os.path.abspath('.'))
-sys.path.insert(0, os.path.abspath('../'))
-sys.path.insert(0, os.path.abspath('../../'))
+cwd = os.getcwd()
+parent = os.path.dirname(cwd)
+sys.path.insert(0, parent)
+
+import ldcpy
+
 # -- Path setup --------------------------------------------------------------
 
 # If extensions (or modules to document with autodoc) are in another directory,
@@ -24,8 +27,10 @@ copyright = u'2020, University Corporation for Atmospheric Research'
 author = u'Alex Pinard, Allison Baker, Anderson Banihirwe, Dorit Hammerling'
 
 
-# The full version, including alpha/beta/rc tags
-release = '0.6'
+# The short X.Y version.
+version = ldcpy.__version__.split('+')[0]
+# The full version, including alpha/beta/rc tags.
+release = ldcpy.__version__
 
 
 # -- General configuration ---------------------------------------------------
@@ -34,23 +39,20 @@ release = '0.6'
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 nbsphinx_execute = 'never'
-extensions = ['nbsphinx', 'sphinx.ext.autodoc', 'sphinx.ext.napoleon']
-autodoc_mock_imports = [
-    'cartopy',
-    'tlz',
-    'cmocean',
-    'xarray',
-    'xrft',
-    'scipy',
-    'opencv-python',
-    'scikit-image',
-    'scikit-build',
-    'skbuild',
-    'opencv',
-    'cf_xarray',
-    'hdf5',
-    'netcdf4',
+extensions = [
+    'nbsphinx',
+    'sphinx.ext.autodoc',
+    'sphinx.ext.viewcode',
+    'sphinx.ext.autosummary',
+    'sphinx.ext.doctest',
+    'sphinx.ext.intersphinx',
+    'sphinx.ext.extlinks',
+    'sphinx.ext.intersphinx',
+    'IPython.sphinxext.ipython_console_highlighting',
+    'IPython.sphinxext.ipython_directive',
+    'sphinx.ext.napoleon',
 ]
+autodoc_member_order = 'groupwise'
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
@@ -74,3 +76,13 @@ html_theme = 'sphinx_rtd_theme'
 html_static_path = ['_static']
 
 master_doc = 'index'
+
+# The name of the Pygments (syntax highlighting) style to use.
+pygments_style = 'sphinx'
+
+ipython_execlines = ['import xarray']
+
+intersphinx_mapping = {
+    'python': ('https://docs.python.org/3/', None),
+    'xarray': ('http://xarray.pydata.org/en/stable/', None),
+}
