@@ -2,6 +2,20 @@ name: myenv
 channels:
   - conda-forge
 dependencies:
-  - pangeo-notebook==2020.05.10
+  - pangeo-notebook==2021.03.06
   - xarray
-  - hvplot
+  - cartopy=0.18
+  - cmocean
+  - codecov
+  - dask
+  - intake-esm
+  - matplotlib-base
+  - nc-time-axis
+  - netcdf4
+  - pip
+  - pytest
+  - pytest-cov
+  - scikit-image
+  - xarray
+  - xrft
+  - cf_xarray
