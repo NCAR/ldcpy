@@ -7,8 +7,8 @@ netcdf4
 numpy
 scikit-build
 scikit-image
-scikit-learn
 scipy
 xarray
 xrft
 cf_xarray
+cartopy

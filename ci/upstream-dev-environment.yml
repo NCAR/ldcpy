@@ -14,7 +14,6 @@ dependencies:
   - pytest
   - pytest-cov
   - scikit-image
-  - scikit-learn
   - zfpy
   - pip:
       - git+https://github.com/pydata/xarray.git
