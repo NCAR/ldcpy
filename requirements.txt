@@ -12,3 +12,4 @@ xarray
 xrft
 cf_xarray
 cartopy
+nodejs
