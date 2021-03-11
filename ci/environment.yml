@@ -15,7 +15,6 @@ dependencies:
   - pytest
   - pytest-cov
   - scikit-image
-  - scikit-learn
   - xarray
   - xrft
   - zfpy
