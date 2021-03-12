@@ -31,7 +31,7 @@ ldcpy is a utility for gathering and plotting metrics from NetCDF or Zarr files 
 It also contains a number of statistical and visual tools for gathering metrics and comparing Earth System Model data files.
 
 
-:AUTHORS: Alex Pinard, Allison Baker, Dorit Hammerling
+:AUTHORS: Alex Pinard, Allison Baker, Anderson Banihirwe, Dorit Hammerling
 :COPYRIGHT: 2020 University Corporation for Atmospheric Research
 :LICENSE: Apache 2.0
 
