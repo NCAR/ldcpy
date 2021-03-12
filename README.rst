@@ -31,7 +31,7 @@ ldcpy is a utility for gathering and plotting metrics from NetCDF or Zarr files 
 It also contains a number of statistical and visual tools for gathering metrics and comparing Earth System Model data files.
 
 
-:AUTHORS: Alex Pinard, Allison Baker, Dorit Hammerling
+:AUTHORS: Alex Pinard, Allison Baker, Anderson Banihirwe, Dorit Hammerling
 :COPYRIGHT: 2020 University Corporation for Atmospheric Research
 :LICENSE: Apache 2.0
 
@@ -90,11 +90,23 @@ Start by enabling Hinterland for code completion and code hinting in Jupyter Not
     jupyter notebook
 
 
-The tutorial notebook can be found in docs/source/notebooks/TutorialNotebook.ipynb, feel free to gather your own metrics or create your own plots in this notebook!
+The tutorial notebook can be found in
+docs/source/notebooks/TutorialNotebook.ipynb, feel free to gather your
+own metrics or create your own plots in this notebook!
+
+Other example notebooks that use the sample data in this repository include
+PopData.ipynb and MetricsNotebook.ipynb.
+
+The AWSDataNotebook grabs data from AWS, so can be run on a laptop
+with the caveat that the files are large.
+
+The following notebooks asume that you are using NCAR's JupyterHub
+(https://jupyterhub.ucar.edu):
+LargeDataGladenotebook.ipynb, CompressionSamples.ipynb, and error_bias.ipynb
+
 
 Re-create notebooks with Pangeo Binder
---------------------------------------
-
+____________________________________________
 Try the notebooks hosted in this repo on Pangeo Binder. Note that the session is ephemeral.
 Your home directory will not persist, so remember to download your notebooks if you
 make changes that you need to use at a later time!
