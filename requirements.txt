@@ -1,4 +1,5 @@
 cmocean
+cartopy
 dask[complete]
 matplotlib
 nc-time-axis
