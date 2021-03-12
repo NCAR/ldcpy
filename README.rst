@@ -113,5 +113,7 @@ make changes that you need to use at a later time!
 
 (Note: The example notebooks are in docs/source/notebooks.)
 
-.. image:: https://binder.pangeo.io/badge_logo.svg
-  :target: https://binder.pangeo.io/v2/gh/NCAR/ldcpy/main
+
+.. image:: https://img.shields.io/static/v1.svg?logo=Jupyter&label=Pangeo+Binder&message=GCE+us-central1&color=blue&style=for-the-badge
+    :target: https://binder.pangeo.io/v2/gh/NCAR/ldcpy/main?urlpath=lab
+    :alt: Binder
