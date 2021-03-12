@@ -22,7 +22,6 @@ dependencies:
   - pytest
   - pytest-cov
   - pytest-xdist
-  - scikit-build
   - scikit-image
   - scipy
   - setuptools
