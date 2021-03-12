@@ -23,7 +23,6 @@ dependencies:
   - pytest-cov
   - pytest-xdist
   - scikit-image
-  - scikit-learn
   - scipy
   - setuptools
   - xarray

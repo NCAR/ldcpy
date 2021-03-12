@@ -41,33 +41,29 @@ class DatasetMetrics:
         # names from the file if they are None
         # lon coord
         if lon_coord_name is None:
-            lon_coord_name = ds.cf['longitude'].name
-        # print(lon_coord_name)
+            lon_coord_name = ds.cf.coordinates['longitude'][0]
         self._lon_coord_name = lon_coord_name
 
         # lat coord
         if lat_coord_name is None:
-            lat_coord_name = ds.cf['latitude'].name
+            lat_coord_name = ds.cf.coordinates['latitude'][0]
         self._lat_coord_name = lat_coord_name
 
-        # assum lat/lon (andorider:  time, level, lat, lon -
-        # where time and level may be missing)
-        if lat_dim_name is None:
-            if len(ds.dims) == 2:
-                lat_dim_name = ds.dims[0]
-            elif len(ds.dims) == 3:
-                lat_dim_name = ds.dims[1]
-            elif len(ds.dims) > 3:
-                lat_dim_name = ds.dims[3]
-        self._lat_dim_name = lat_dim_name
+        dd = ds.cf['latitude'].dims
+        ll = len(dd)
+        if ll == 1:
+            if lat_dim_name is None:
+                lat_dim_name = dd[0]
+            if lon_dim_name is None:
+                lon_dim_name = ds.cf['longitude'].dims[0]
+        elif ll == 2:
+            if lat_dim_name is None:
+                lat_dim_name = dd[0]
+            if lon_dim_name is None:
+                lon_dim_name = dd[1]
 
-        if lon_dim_name is None:
-            if len(ds.dims) == 2:
-                lon_dim_name = ds.dims[1]
-            elif len(ds.dims) == 3:
-                lon_dim_name = ds.dims[2]
-            elif len(ds.dims) > 3:
-                lon_dim_name = ds.dims[4]
+        self._latlon_dims = ll
+        self._lat_dim_name = lat_dim_name
         self._lon_dim_name = lon_dim_name
 
         # vertical dimension?
@@ -128,29 +124,21 @@ class DatasetMetrics:
         return hasattr(self, metric_name) and (self.__getattribute__(metric_name) is not None)
 
     def _con_var(self, dir, dataset) -> xr.DataArray:
-        # NOT WORKING FOR OCEAN data (with lat, lon coords)
+
         if dir == 'ns':
-            lat_length = dataset.sizes[self._lat_dim_name]
-            o_1, o_2 = xr.align(
-                dataset.head({self._lat_dim_name: lat_length - 1}),
-                dataset.tail({self._lat_dim_name: lat_length - 1}),
-                join='override',
-            )
+            tt = dataset.diff(self._lat_dim_name, 1)
+
         elif dir == 'ew':
-            lon_length = dataset.sizes[self._lon_dim_name]
-            o_1, o_2 = xr.align(
-                dataset,
-                xr.concat(
-                    [
-                        dataset.tail({self._lon_dim_name: lon_length - 1}),
-                        dataset.head({self._lon_dim_name: 1}),
-                    ],
-                    dim=self._lon_dim_name,
-                ),
-                join='override',
+            ds_h = xr.concat(
+                [
+                    dataset,
+                    dataset.head({self._lon_dim_name: 1}),
+                ],
+                dim=self._lon_dim_name,
             )
-        # con_var = xr.ufuncs.square((o_1 - o_2))
-        con_var = np.square((o_1 - o_2))
+            tt = ds_h.diff(self._lon_dim_name, 1)
+
+        con_var = np.square(tt)
         return con_var
 
     @property
@@ -1152,9 +1140,13 @@ class DiffMetrics:
             smin = min(np.nanmin(a1), np.nanmin(a2))
             smax = max(np.nanmax(a1), np.nanmax(a2))
             r = smax - smin
-            if r < 1.0e-15:  # scale by smax if it is a constant
-                sc_a1 = a1 / smax
-                sc_a2 = a2 / smax
+            if r == 0.0:  # scale by smax if fiels is a constant (and smax != 0)
+                if smax == 0.0:
+                    sc_a1 = a1
+                    sc_a2 = a2
+                else:
+                    sc_a1 = a1 / smax
+                    sc_a2 = a2 / smax
             else:
                 sc_a1 = (a1 - smin) / r
                 sc_a2 = (a2 - smin) / r

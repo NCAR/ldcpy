@@ -1,0 +1,18 @@
+name: myenv
+channels:
+  - conda-forge
+dependencies:
+  - pangeo-notebook==2021.03.06
+  - xarray
+  - cartopy=0.18
+  - cmocean
+  - dask
+  - intake-esm
+  - matplotlib-base
+  - nc-time-axis
+  - netcdf4
+  - scikit-image
+  - xarray
+  - xrft
+  - cf_xarray
+  - nodejs

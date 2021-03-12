@@ -111,6 +111,11 @@ class TestErrorMetrics(TestCase):
 
         self.assertTrue(em.mean.all() == 0.0)
 
+    def test_dim_names(self):
+        self.assertTrue(test_spatial_metrics._lat_dim_name == 'lat')
+        self.assertTrue(test_spatial_metrics._lon_dim_name == 'lon')
+        self.assertTrue(test_spatial_metrics._time_dim_name == 'time')
+
     def test_TS_02(self):
         import xarray as xr
         import zfpy
@@ -142,11 +147,11 @@ class TestErrorMetrics(TestCase):
     def test_max_val(self):
         self.assertTrue(test_overall_metrics.max_val == 99)
 
-    #    def test_ns_con_var(self):
-    #        self.assertTrue(test_overall_metrics.ns_con_var == 2500)  # is this right?
+    def test_ns_con_var(self):
+        self.assertTrue(test_overall_metrics.ns_con_var == 2500)  # is this right?
 
-    #    def test_ew_con_var(self):
-    #        self.assertTrue(test_overall_metrics.ew_con_var == 400)  # is this right?
+    def test_ew_con_var(self):
+        self.assertTrue(test_overall_metrics.ew_con_var == 400)  # is this right?
 
     def test_odds_positive(self):
         self.assertTrue(np.isclose(test_overall_metrics.odds_positive, 0.98019802, rtol=1e-09))
@@ -286,19 +291,19 @@ class TestErrorMetrics(TestCase):
             ).all()
         )
 
-    #    def test_ns_con_var_spatial(self):
-    #        self.assertTrue(
-    #            (
-    #                test_spatial_metrics.get_metric('ns_con_var')
-    #                == np.array(
-    #                    [
-    #                        [2500.0, 2500.0, 2500.0, 2500.0, 2500.0],
-    #                        [2500.0, 2500.0, 2500.0, 2500.0, 2500.0],
-    #                        [2500.0, 2500.0, 2500.0, 2500.0, 2500.0],
-    #                    ]
-    #                )
-    #            ).all()
-    #        )
+        def test_ns_con_var_spatial(self):
+            self.assertTrue(
+                (
+                    test_spatial_metrics.get_metric('ns_con_var')
+                    == np.array(
+                        [
+                            [2500.0, 2500.0, 2500.0, 2500.0, 2500.0],
+                            [2500.0, 2500.0, 2500.0, 2500.0, 2500.0],
+                            [2500.0, 2500.0, 2500.0, 2500.0, 2500.0],
+                        ]
+                    )
+                ).all()
+            )
 
     def test_odds_positive_spatial(self):
         self.assertTrue(
@@ -441,20 +446,20 @@ class TestErrorMetrics(TestCase):
             ).all()
         )
 
-    #    def test_ew_con_var_spatial(self):
-    #        self.assertTrue(
-    #            (
-    #                test_spatial_metrics.get_metric('ew_con_var')
-    #                == np.array(
-    #                    [
-    #                        [100.0, 100.0, 100.0, 100.0, 1600.0],
-    #                        [100.0, 100.0, 100.0, 100.0, 1600.0],
-    #                        [100.0, 100.0, 100.0, 100.0, 1600.0],
-    #                        [100.0, 100.0, 100.0, 100.0, 1600.0],
-    #                    ]
-    #                )
-    #            ).all()
-    #        )
+        def test_ew_con_var_spatial(self):
+            self.assertTrue(
+                (
+                    test_spatial_metrics.get_metric('ew_con_var')
+                    == np.array(
+                        [
+                            [100.0, 100.0, 100.0, 100.0, 1600.0],
+                            [100.0, 100.0, 100.0, 100.0, 1600.0],
+                            [100.0, 100.0, 100.0, 100.0, 1600.0],
+                            [100.0, 100.0, 100.0, 100.0, 1600.0],
+                        ]
+                    )
+                ).all()
+            )
 
     def test_mean_time_series(self):
         self.assertTrue(
@@ -519,27 +524,27 @@ class TestErrorMetrics(TestCase):
             ).all()
         )
 
-    #    def test_ns_con_var_time_series(self):
-    #        self.assertTrue(
-    #            np.isclose(
-    #                test_time_series_metrics.get_metric('ns_con_var'),
-    #                np.array(
-    #                    [
-    #                        2500.0,
-    #                        2500.0,
-    #                        2500.0,
-    #                        2500.0,
-    #                        2500.0,
-    #                        2500.0,
-    #                        2500.0,
-    #                        2500.0,
-    #                        2500.0,
-    #                        2500.0,
-    #                    ]
-    #                ),
-    #                rtol=1e-09,
-    #            ).all()
-    #        )
+        def test_ns_con_var_time_series(self):
+            self.assertTrue(
+                np.isclose(
+                    test_time_series_metrics.get_metric('ns_con_var'),
+                    np.array(
+                        [
+                            2500.0,
+                            2500.0,
+                            2500.0,
+                            2500.0,
+                            2500.0,
+                            2500.0,
+                            2500.0,
+                            2500.0,
+                            2500.0,
+                            2500.0,
+                        ]
+                    ),
+                    rtol=1e-09,
+                ).all()
+            )
 
     def test_odds_positive_time_series(self):
         self.assertTrue(
@@ -674,14 +679,16 @@ class TestErrorMetrics(TestCase):
             ).all()
         )
 
-    #    def test_ew_con_var_time_series(self):
-    #        self.assertTrue(
-    #            np.isclose(
-    #                test_time_series_metrics.get_metric('ew_con_var'),
-    #                np.array([400.0, 400.0, 400.0, 400.0, 400.0, 400.0, 400.0, 400.0, 400.0, 400.0]),
-    #                rtol=1e-09,
-    #            ).all()
-    #        )
+        def test_ew_con_var_time_series(self):
+            self.assertTrue(
+                np.isclose(
+                    test_time_series_metrics.get_metric('ew_con_var'),
+                    np.array(
+                        [400.0, 400.0, 400.0, 400.0, 400.0, 400.0, 400.0, 400.0, 400.0, 400.0]
+                    ),
+                    rtol=1e-09,
+                ).all()
+            )
 
     def test_diff_pcc(self):
         self.assertTrue(

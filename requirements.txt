@@ -7,8 +7,9 @@ h5py
 netcdf4
 numpy
 scikit-image
-scikit-learn
 scipy
 xarray
 xrft
 cf_xarray
+cartopy
+nodejs
