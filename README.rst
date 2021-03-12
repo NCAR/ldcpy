@@ -106,8 +106,7 @@ LargeDataGladenotebook.ipynb, CompressionSamples.ipynb, and error_bias.ipynb
 
 
 Re-create notebooks with Pangeo Binder
---------------------------------------
-
+____________________________________________
 Try the notebooks hosted in this repo on Pangeo Binder. Note that the session is ephemeral.
 Your home directory will not persist, so remember to download your notebooks if you
 make changes that you need to use at a later time!
