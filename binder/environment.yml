@@ -9,6 +9,7 @@ dependencies:
   - dask-gateway
   - dask-labextension
   - distributed
+  - fsspec
   - intake-esm
   - ipywidgets
   - jupyterlab>=3
@@ -16,10 +17,11 @@ dependencies:
   - nc-time-axis
   - netcdf4
   - nodejs
+  - pip
   - python=3.8
+  - s3fs
   - scikit-image
   - xarray
   - xrft
-  - pip
   - pip:
       - -e ..
