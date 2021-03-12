@@ -1,0 +1,20 @@
+name: ldcpy-docs
+channels:
+  - conda-forge
+dependencies:
+  - python=3.8
+  - numpy
+  - cartopy
+  - xarray
+  - scipy
+  - matplotlib
+  - pip
+  - pip:
+      - sphinx
+      - sphinx_rtd_theme
+      - nbsphinx
+      - sphinx-reload
+      - pillow
+      - ipython
+      - -r ../requirements.txt
+      - -e ..
