@@ -12,6 +12,7 @@ dependencies:
   - fsspec
   - intake-esm
   - ipywidgets
+  - jupyter-offlinenotebook
   - jupyterlab>=3
   - matplotlib-base
   - nc-time-axis
