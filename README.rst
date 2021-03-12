@@ -21,7 +21,7 @@
     :target: https://anaconda.org/conda-forge/ldcpy
     :alt: Conda Version
 
-.. image:: https://zenodo.org/badge/215409079.svg?style=for-the-badge
+.. image:: https://img.shields.io/badge/DOI-10.5281%20%2F%20zenodo.215409079-blue.svg?style=for-the-badge
    :target: https://zenodo.org/badge/latestdoi/215409079
 
 Large Data Comparison for Python
@@ -113,5 +113,7 @@ make changes that you need to use at a later time!
 
 (Note: The example notebooks are in docs/source/notebooks.)
 
-.. image:: https://binder.pangeo.io/badge_logo.svg
-  :target: https://binder.pangeo.io/v2/gh/NCAR/ldcpy/main
+
+.. image:: https://img.shields.io/static/v1.svg?logo=Jupyter&label=Pangeo+Binder&message=GCP+us-central1&color=blue&style=for-the-badge
+    :target: https://binder.pangeo.io/v2/gh/NCAR/ldcpy/main?urlpath=lab
+    :alt: Binder
