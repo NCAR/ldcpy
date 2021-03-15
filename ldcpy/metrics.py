@@ -27,6 +27,8 @@ class DatasetMetrics:
         lat_dim_name: str = None,
         lon_dim_name: str = None,
         vert_dim_name: str = None,
+        lat_coord_name: str = None,
+        lon_coord_name: str = None,
         q: float = 0.5,
         spre_tol: float = 1.0e-4,
     ):
@@ -34,16 +36,34 @@ class DatasetMetrics:
         # For some reason, casting to float64 removes all attrs from the dataset
         self._ds.attrs = ds.attrs
 
-        # Let's just get all the lat/lon and time names from the file if they are None
-        # lon dimension
-        if lon_dim_name is None:
-            lon_dim_name = 'lon'
-        self._lon_dim_name = lon_dim_name
+        # Let's just get all the lat/lon and time
+        # names from the file if they are None
+        # lon coord
+        if lon_coord_name is None:
+            lon_coord_name = ds.cf.coordinates['longitude'][0]
+        self._lon_coord_name = lon_coord_name
 
-        # lat dimension
-        if lat_dim_name is None:
-            lat_dim_name = 'lat'
+        # lat coord
+        if lat_coord_name is None:
+            lat_coord_name = ds.cf.coordinates['latitude'][0]
+        self._lat_coord_name = lat_coord_name
+
+        dd = ds.cf['latitude'].dims
+        ll = len(dd)
+        if ll == 1:
+            if lat_dim_name is None:
+                lat_dim_name = dd[0]
+            if lon_dim_name is None:
+                lon_dim_name = ds.cf['longitude'].dims[0]
+        elif ll == 2:
+            if lat_dim_name is None:
+                lat_dim_name = dd[0]
+            if lon_dim_name is None:
+                lon_dim_name = dd[1]
+
+        self._latlon_dims = ll
         self._lat_dim_name = lat_dim_name
+        self._lon_dim_name = lon_dim_name
 
         # vertical dimension?
         if vert_dim_name is None:
@@ -101,28 +121,21 @@ class DatasetMetrics:
         return hasattr(self, metric_name) and (self.__getattribute__(metric_name) is not None)
 
     def _con_var(self, dir, dataset) -> xr.DataArray:
+
         if dir == 'ns':
-            lat_length = dataset.sizes[self._lat_dim_name]
-            o_1, o_2 = xr.align(
-                dataset.head({self._lat_dim_name: lat_length - 1}),
-                dataset.tail({self._lat_dim_name: lat_length - 1}),
-                join='override',
-            )
+            tt = dataset.diff(self._lat_dim_name, 1)
+
         elif dir == 'ew':
-            lon_length = dataset.sizes[self._lon_dim_name]
-            o_1, o_2 = xr.align(
-                dataset,
-                xr.concat(
-                    [
-                        dataset.tail({self._lon_dim_name: lon_length - 1}),
-                        dataset.head({self._lon_dim_name: 1}),
-                    ],
-                    dim=self._lon_dim_name,
-                ),
-                join='override',
+            ds_h = xr.concat(
+                [
+                    dataset,
+                    dataset.head({self._lon_dim_name: 1}),
+                ],
+                dim=self._lon_dim_name,
             )
-        # con_var = xr.ufuncs.square((o_1 - o_2))
-        con_var = np.square((o_1 - o_2))
+            tt = ds_h.diff(self._lon_dim_name, 1)
+
+        con_var = np.square(tt)
         return con_var
 
     @property
@@ -169,10 +182,10 @@ class DatasetMetrics:
         """
         The mean along the aggregate dimensions
         """
+        # print("mean")
         if not self._is_memoized('_mean'):
             self._mean = self._ds.mean(self._agg_dims, skipna=True)
             self._mean.attrs = self._ds.attrs
-
         return self._mean
 
     @property
@@ -513,11 +526,21 @@ class DatasetMetrics:
         """
         if not self._is_memoized('_annual_harmonic_relative_ratio'):
             # drop time coordinate labels or else it will try to parse them as numbers to check spacing and fail
+
             ds_copy = self._ds
+
             new_index = [i for i in range(0, self._ds[self._time_dim_name].size)]
             new_ds = ds_copy.assign_coords({self._time_dim_name: new_index})
 
+            lon_coord_name = self._lon_coord_name
+            lat_coord_name = self._lat_coord_name
+
             DF = dft(new_ds, dim=[self._time_dim_name], detrend='constant')
+            # the above does not preserve the lat/lon attributes
+            DF[lon_coord_name].attrs = new_ds[lon_coord_name].attrs
+            DF[lat_coord_name].attrs = new_ds[lat_coord_name].attrs
+            DF.attrs = new_ds.attrs
+
             S = np.real(DF * np.conj(DF) / self._ds.sizes[self._time_dim_name])
             S_annual = S.isel(
                 freq_time=int(self._ds.sizes[self._time_dim_name] / 2)
@@ -553,6 +576,9 @@ class DatasetMetrics:
                 dim='freq_time',
             ).mean(dim='freq_time')
             ratio = S_annual / S_mean
+
+            # ratio.cf.describe()
+
             self._annual_harmonic_relative_ratio = ratio
 
             if hasattr(self._ds, 'units'):
@@ -949,126 +975,148 @@ class DiffMetrics:
         from skimage.metrics import structural_similarity as ssim
 
         if not self._is_memoized('_ssim_value'):
-            with tempfile.TemporaryDirectory() as tmpdirname:
-                filename_1, filename_2 = f'{tmpdirname}/t_ssim1.png', f'{tmpdirname}/t_ssim2.png'
-                d1 = self._metrics1.get_metric('ds')
-                d2 = self._metrics2.get_metric('ds')
-                lat1 = d1[self._metrics1._lat_dim_name]
-                lat2 = d2[self._metrics2._lat_dim_name]
-                lon1 = d1[self._metrics1._lon_dim_name]
-                lon2 = d2[self._metrics2._lon_dim_name]
 
-                latdim = 1
-                central = 0.0  # might make this a parameter later
-                if latdim == 2:  # probably pop
-                    central = 300.0
+            # Prevent showing stuff
+            backend_ = mpl.get_backend()
+            mpl.use('Agg')
 
-                # make periodic
-                if latdim == 2:
-                    cy_lon1 = np.hstack((lon1, lon1[:, 0:1]))
-                    cy_lon2 = np.hstack((lon2, lon2[:, 0:1]))
+            d1 = self._metrics1.get_metric('ds')
+            d2 = self._metrics2.get_metric('ds')
+            lat1 = d1[self._metrics1._lat_coord_name]
+            lat2 = d2[self._metrics2._lat_coord_name]
+            lon1 = d1[self._metrics1._lon_coord_name]
+            lon2 = d2[self._metrics2._lon_coord_name]
 
-                    cy_lat1 = np.hstack((lat1, lat1[:, 0:1]))
-                    cy_lat2 = np.hstack((lat2, lat2[:, 0:1]))
+            latdim = d1.cf[self._metrics1._lon_coord_name].ndim
+            central = 0.0  # might make this a parameter later
+            if latdim == 2:  # probably pop
+                central = 300.0
+            # make periodic
+            if latdim == 2:
+                cy_lon1 = np.hstack((lon1, lon1[:, 0:1]))
+                cy_lon2 = np.hstack((lon2, lon2[:, 0:1]))
 
-                    cy1 = add_cyclic_point(d1)
-                    cy2 = add_cyclic_point(d2)
+                cy_lat1 = np.hstack((lat1, lat1[:, 0:1]))
+                cy_lat2 = np.hstack((lat2, lat2[:, 0:1]))
 
-                else:  # 1d
-                    cy1, cy_lon1 = add_cyclic_point(d1, coord=lon1)
-                    cy2, cy_lon2 = add_cyclic_point(d2, coord=lon2)
-                    cy_lat1 = lat1
-                    cy_lat2 = lat2
+                cy1 = add_cyclic_point(d1)
+                cy2 = add_cyclic_point(d2)
 
-                # Prevent showing stuff
-                backend_ = mpl.get_backend()
-                mpl.use('Agg')
+            else:  # 1d
+                cy1, cy_lon1 = add_cyclic_point(d1, coord=lon1)
+                cy2, cy_lon2 = add_cyclic_point(d2, coord=lon2)
+                cy_lat1 = lat1
+                cy_lat2 = lat2
 
-                no_inf_d1 = np.nan_to_num(cy1, nan=np.nan)
-                no_inf_d2 = np.nan_to_num(cy2, nan=np.nan)
+            no_inf_d1 = np.nan_to_num(cy1, nan=np.nan)
+            no_inf_d2 = np.nan_to_num(cy2, nan=np.nan)
 
-                # is it 3D? if so, do lev = 0 for now
-                if self._metrics1._vert_dim_name is not None:
-                    # print('3d')
-                    no_inf_d1 = no_inf_d1[0, :, :]
-                    no_inf_d2 = no_inf_d2[0, :, :]
+            # is it 3D? must do each level
+            if self._metrics1._vert_dim_name is not None:
+                vname = self._metrics1._vert_dim_name
+                nlevels = self._metrics1.get_metric('ds').sizes[vname]
+            else:
+                nlevels = 1
 
-                # print(no_inf_d1.shape)
+            # print("nlevels = ", nlevels)
 
-                color_min = min(
-                    np.min(d1.where(d1 != -np.inf)).values.min(),
-                    np.min(d2.where(d2 != -np.inf)).values.min(),
-                )
-                color_max = max(
-                    np.max(d1.where(d1 != np.inf)).values.max(),
-                    np.max(d2.where(d2 != np.inf)).values.max(),
-                )
+            color_min = min(
+                np.min(d1.where(d1 != -np.inf)).values.min(),
+                np.min(d2.where(d2 != -np.inf)).values.min(),
+            )
+            color_max = max(
+                np.max(d1.where(d1 != np.inf)).values.max(),
+                np.max(d2.where(d2 != np.inf)).values.max(),
+            )
 
-                fig = plt.figure(dpi=300, figsize=(9, 2.5))
+            mymap = copy.copy(plt.cm.get_cmap('coolwarm'))
+            mymap.set_under(color='black')
+            mymap.set_over(color='white')
+            mymap.set_bad(alpha=0)
 
-                mymap = copy.copy(plt.cm.get_cmap('coolwarm'))
-                mymap.set_under(color='black')
-                mymap.set_over(color='white')
-                mymap.set_bad(alpha=0)
+            ssim_levs = np.zeros(nlevels)
 
-                ax1 = plt.subplot(1, 2, 1, projection=ccrs.Robinson(central_longitude=central))
-                ax1.set_facecolor('#39ff14')
+            for this_lev in range(nlevels):
 
-                ax1.pcolormesh(
-                    cy_lon1,
-                    cy_lat1,
-                    no_inf_d1,
-                    transform=ccrs.PlateCarree(),
-                    cmap=mymap,
-                    vmin=color_min,
-                    vmax=color_max,
-                )
-                ax1.set_global()
-                ax1.coastlines(linewidth=0.5)
-                ax1.axis('off')
-                plt.margins(0, 0)
-                extent1 = ax1.get_window_extent().transformed(fig.dpi_scale_trans.inverted())
-                ax1.imshow
-                plt.savefig(filename_1, bbox_inches=extent1, transparent=True, pad_inches=0)
-                ax1.axis('on')
+                with tempfile.TemporaryDirectory() as tmpdirname:
+                    filename_1, filename_2 = (
+                        f'{tmpdirname}/t_ssim1.png',
+                        f'{tmpdirname}/t_ssim2.png',
+                    )
 
-                ax2 = plt.subplot(1, 2, 2, projection=ccrs.Robinson(central_longitude=central))
-                ax2.set_facecolor('#39ff14')
+                    if nlevels == 1:
+                        this_no_inf_d1 = no_inf_d1
+                        this_no_inf_d2 = no_inf_d2
+                    else:
+                        # this assumes time level is first (TO DO: verify)
+                        this_no_inf_d1 = no_inf_d1[this_lev, :, :]
+                        this_no_inf_d2 = no_inf_d2[this_lev, :, :]
 
-                ax2.pcolormesh(
-                    cy_lon2,
-                    cy_lat2,
-                    no_inf_d2,
-                    transform=ccrs.PlateCarree(),
-                    cmap=mymap,
-                    vmin=color_min,
-                    vmax=color_max,
-                )
-                ax2.set_global()
-                ax2.coastlines(linewidth=0.5)
-                plt.margins(0, 0)
-                ax2.imshow
-                ax2.axis('off')
-                extent2 = ax2.get_window_extent().transformed(fig.dpi_scale_trans.inverted())
-                plt.savefig(filename_2, bbox_inches=extent2, transparent=True, pad_inches=0)
+                    fig = plt.figure(dpi=300, figsize=(9, 2.5))
 
-                ax2.axis('on')
+                    ax1 = plt.subplot(1, 2, 1, projection=ccrs.Robinson(central_longitude=central))
+                    ax1.set_facecolor('#39ff14')
 
-                img1 = skimage.io.imread(filename_1)
-                img2 = skimage.io.imread(filename_2)
-                # scikit is adding an alpha channel for some reason - get rid of it
-                img1 = img1[:, :, :3]
-                img2 = img2[:, :, :3]
+                    ax1.pcolormesh(
+                        cy_lon1,
+                        cy_lat1,
+                        this_no_inf_d1,
+                        transform=ccrs.PlateCarree(),
+                        cmap=mymap,
+                        vmin=color_min,
+                        vmax=color_max,
+                    )
+                    ax1.set_global()
+                    ax1.coastlines(linewidth=0.5)
+                    ax1.axis('off')
+                    plt.margins(0, 0)
+                    extent1 = ax1.get_window_extent().transformed(fig.dpi_scale_trans.inverted())
+                    ax1.imshow
+                    plt.savefig(filename_1, bbox_inches=extent1, transparent=True, pad_inches=0)
+                    ax1.axis('on')
 
-                # s = ssim(img1, img2, multichannel=True)
-                # the following version closer to matlab version (and orig ssim paper)
-                s = ssim(
-                    img1,
-                    img2,
-                    multichannel=True,
-                    gaussian_weights=True,
-                    use_sample_covariance=False,
-                )
+                    ax2 = plt.subplot(1, 2, 2, projection=ccrs.Robinson(central_longitude=central))
+                    ax2.set_facecolor('#39ff14')
+
+                    ax2.pcolormesh(
+                        cy_lon2,
+                        cy_lat2,
+                        this_no_inf_d2,
+                        transform=ccrs.PlateCarree(),
+                        cmap=mymap,
+                        vmin=color_min,
+                        vmax=color_max,
+                    )
+                    ax2.set_global()
+                    ax2.coastlines(linewidth=0.5)
+                    plt.margins(0, 0)
+                    ax2.imshow
+                    ax2.axis('off')
+                    extent2 = ax2.get_window_extent().transformed(fig.dpi_scale_trans.inverted())
+                    plt.savefig(filename_2, bbox_inches=extent2, transparent=True, pad_inches=0)
+
+                    ax2.axis('on')
+
+                    img1 = skimage.io.imread(filename_1)
+                    img2 = skimage.io.imread(filename_2)
+                    # scikit is adding an alpha channel for some reason - get rid of it
+                    img1 = img1[:, :, :3]
+                    img2 = img2[:, :, :3]
+
+                    # s = ssim(img1, img2, multichannel=True)
+                    # the following version closer to matlab version (and orig ssim paper)
+                    s = ssim(
+                        img1,
+                        img2,
+                        multichannel=True,
+                        gaussian_weights=True,
+                        use_sample_covariance=False,
+                    )
+                    # print(s)
+                    ssim_levs[this_lev] = s
+                    plt.close(fig)
+
+            return_ssim = ssim_levs.min()
 
             # Reset backend
             mpl.use(backend_)
@@ -1076,6 +1124,7 @@ class DiffMetrics:
             mpl.pyplot.close()
 
             self._ssim_value = s
+            self._ssim_value = return_ssim
 
         return self._ssim_value
 
@@ -1093,130 +1142,150 @@ class DiffMetrics:
         from skimage.util import crop
 
         if not self._is_memoized('_ssim_value_fp'):
-            # get 2D arrays
-            a1 = self._metrics1.get_metric('ds').data
-            a2 = self._metrics2.get_metric('ds').data
 
-            if dask.is_dask_collection(a1):
-                a1 = a1.compute()
-            if dask.is_dask_collection(a2):
-                a2 = a2.compute()
-
-            # if this is a 3D variable, we will just do level 0 for now...
-            # (consider doing each level seperately)
+            # if this is a 3D variable, we will do each level seperately
             if self._metrics1._vert_dim_name is not None:
-                # print('3d')
-                a1 = a1[0, :, :]
-                a2 = a2[0, :, :]
-
-            # re-scale  to [0,1] - if not constant
-            smin = min(np.nanmin(a1), np.nanmin(a2))
-            smax = max(np.nanmax(a1), np.nanmax(a2))
-            r = smax - smin
-            if r < 1.0e-15:  # scale by smax if it is a constant
-                sc_a1 = a1 / smax
-                sc_a2 = a2 / smax
+                vname = self._metrics1._vert_dim_name
+                nlevels = self._metrics1.get_metric('ds').sizes[vname]
+                # print("nlevels = ", nlevels)
             else:
-                sc_a1 = (a1 - smin) / r
-                sc_a2 = (a2 - smin) / r
+                nlevels = 1
 
-            # now quantize to 256 bins
-            sc_a1 = np.round(sc_a1 * 255) / 255
-            sc_a2 = np.round(sc_a2 * 255) / 255
+            ssim_levs = np.zeros(nlevels)
 
-            # gaussian filter
-            n = 11  # recommended window size
-            k = 5
-            # extent
-            sigma = 1.5
+            for this_lev in range(nlevels):
+                if nlevels == 1:
+                    a1 = self._metrics1.get_metric('ds').data
+                    a2 = self._metrics2.get_metric('ds').data
+                else:
+                    a1 = self._metrics1.get_metric('ds').isel({vname: this_lev}).data
+                    a2 = self._metrics2.get_metric('ds').isel({vname: this_lev}).data
 
-            X = sc_a1.shape[0]
-            Y = sc_a2.shape[1]
+                if dask.is_dask_collection(a1):
+                    a1 = a1.compute()
+                if dask.is_dask_collection(a2):
+                    a2 = a2.compute()
 
-            g_w = np.array(self._oned_gauss(n, sigma))
-            # 2D gauss weights
-            gg_w = np.outer(g_w, g_w)
-
-            # init ssim matrix
-            ssim_mat = np.zeros_like(sc_a1)
-
-            my_eps = 1.0e-15
-
-            # DATA LOOP
-            # go through 2D arrays - each grid point x0, y0  has
-            # a 2D window [x0 - k, x0+k]  [y0 - k, y0 + k]
-            for i in range(X):
-
-                # don't go over boundaries
-                imin = max(0, i - k)
-                imax = min(X - 1, i + k)
-
-                for j in range(Y):
-
-                    if np.isnan(sc_a1[i, j]):
-                        # SKIP IF gridpoint is nan
-                        ssim_mat[i, j] = np.nan
-                        continue
-
-                    jmin = max(0, j - k)
-                    jmax = min(Y - 1, j + k)
-
-                    # WINDOW CALC
-                    a1_win = sc_a1[imin : imax + 1, jmin : jmax + 1]
-                    a2_win = sc_a2[imin : imax + 1, jmin : jmax + 1]
-
-                    # if window is by boundary, then it is not 11x11 and we must adjust weights also
-                    if min(a1_win.shape) < n:
-                        Wt = gg_w[imin + k - i : imax + k - i + 1, jmin + k - j : jmax + k - j + 1]
+                # re-scale  to [0,1] - if not constant
+                smin = min(np.nanmin(a1), np.nanmin(a2))
+                smax = max(np.nanmax(a1), np.nanmax(a2))
+                r = smax - smin
+                if r == 0.0:  # scale by smax if fiels is a constant (and smax != 0)
+                    if smax == 0.0:
+                        sc_a1 = a1
+                        sc_a2 = a2
                     else:
-                        Wt = gg_w
+                        sc_a1 = a1 / smax
+                        sc_a2 = a2 / smax
+                else:
+                    sc_a1 = (a1 - smin) / r
+                    sc_a2 = (a2 - smin) / r
 
-                    # weighted means (TO DO: what if indices are not the same)
-                    indices1 = ~np.isnan(a1_win)
-                    indices2 = ~np.isnan(a2_win)
+                # now quantize to 256 bins
+                sc_a1 = np.round(sc_a1 * 255) / 255
+                sc_a2 = np.round(sc_a2 * 255) / 255
 
-                    if not np.all(indices1 == indices2):
-                        print('SSIM ERROR: indices are not the same!')
+                # gaussian filter
+                n = 11  # recommended window size
+                k = 5
+                # extent
+                sigma = 1.5
 
-                    a1_mu = np.average(a1_win[indices1], weights=Wt[indices1])
-                    a2_mu = np.average(a2_win[indices2], weights=Wt[indices2])
+                X = sc_a1.shape[0]
+                Y = sc_a2.shape[1]
 
-                    # weighted std squared (variance)
-                    a1_std_sq = np.average((a1_win[indices1] - a1_mu) ** 2, weights=Wt[indices1])
-                    a2_std_sq = np.average((a2_win[indices2] - a2_mu) ** 2, weights=Wt[indices2])
+                g_w = np.array(self._oned_gauss(n, sigma))
+                # 2D gauss weights
+                gg_w = np.outer(g_w, g_w)
 
-                    # cov of a1 and a2
-                    a1a2_cov = np.average(
-                        (a1_win[indices1] - a1_mu) * (a2_win[indices2] - a2_mu),
-                        weights=Wt[indices1],
-                    )
+                # init ssim matrix
+                ssim_mat = np.zeros_like(sc_a1)
 
-                    # SSIM for this window
-                    # first term
-                    ssim_t1 = 2 * a1_mu * a2_mu
-                    ssim_b1 = a1_mu * a1_mu + a2_mu * a2_mu
-                    C1 = my_eps
+                my_eps = 1.0e-15
 
-                    ssim_t1 = ssim_t1 + C1
-                    ssim_b1 = ssim_b1 + C1
+                # DATA LOOP
+                # go through 2D arrays - each grid point x0, y0  has
+                # a 2D window [x0 - k, x0+k]  [y0 - k, y0 + k]
+                for i in range(X):
 
-                    # second term
-                    ssim_t2 = 2 * a1a2_cov
-                    ssim_b2 = a1_std_sq + a2_std_sq
-                    C2 = C3 = my_eps
+                    # don't go over boundaries
+                    imin = max(0, i - k)
+                    imax = min(X - 1, i + k)
 
-                    ssim_t2 = ssim_t2 + C3
-                    ssim_b2 = ssim_b2 + C2
+                    for j in range(Y):
 
-                    ssim_1 = ssim_t1 / ssim_b1
-                    ssim_2 = ssim_t2 / ssim_b2
-                    ssim_mat[i, j] = ssim_1 * ssim_2
+                        if np.isnan(sc_a1[i, j]):
+                            # SKIP IF gridpoint is nan
+                            ssim_mat[i, j] = np.nan
+                            continue
 
-            mean_ssim = np.nanmean(ssim_mat)
-            # to ignore edge effects (as in skimage)
-            # mean_ssim = np.nanmean(crop(ssim_mat, k))
+                        jmin = max(0, j - k)
+                        jmax = min(Y - 1, j + k)
 
-            self._ssim_value_fp = mean_ssim
+                        # WINDOW CALC
+                        a1_win = sc_a1[imin : imax + 1, jmin : jmax + 1]
+                        a2_win = sc_a2[imin : imax + 1, jmin : jmax + 1]
+
+                        # if window is by boundary, then it is not 11x11 and we must adjust weights also
+                        if min(a1_win.shape) < n:
+                            Wt = gg_w[
+                                imin + k - i : imax + k - i + 1, jmin + k - j : jmax + k - j + 1
+                            ]
+                        else:
+                            Wt = gg_w
+
+                        # weighted means (TO DO: what if indices are not the same)
+                        indices1 = ~np.isnan(a1_win)
+                        indices2 = ~np.isnan(a2_win)
+
+                        if not np.all(indices1 == indices2):
+                            print('SSIM ERROR: indices are not the same!')
+
+                        a1_mu = np.average(a1_win[indices1], weights=Wt[indices1])
+                        a2_mu = np.average(a2_win[indices2], weights=Wt[indices2])
+
+                        # weighted std squared (variance)
+                        a1_std_sq = np.average(
+                            (a1_win[indices1] - a1_mu) ** 2, weights=Wt[indices1]
+                        )
+                        a2_std_sq = np.average(
+                            (a2_win[indices2] - a2_mu) ** 2, weights=Wt[indices2]
+                        )
+
+                        # cov of a1 and a2
+                        a1a2_cov = np.average(
+                            (a1_win[indices1] - a1_mu) * (a2_win[indices2] - a2_mu),
+                            weights=Wt[indices1],
+                        )
+
+                        # SSIM for this window
+                        # first term
+                        ssim_t1 = 2 * a1_mu * a2_mu
+                        ssim_b1 = a1_mu * a1_mu + a2_mu * a2_mu
+                        C1 = my_eps
+
+                        ssim_t1 = ssim_t1 + C1
+                        ssim_b1 = ssim_b1 + C1
+
+                        # second term
+                        ssim_t2 = 2 * a1a2_cov
+                        ssim_b2 = a1_std_sq + a2_std_sq
+                        C2 = C3 = my_eps
+
+                        ssim_t2 = ssim_t2 + C3
+                        ssim_b2 = ssim_b2 + C2
+
+                        ssim_1 = ssim_t1 / ssim_b1
+                        ssim_2 = ssim_t2 / ssim_b2
+                        ssim_mat[i, j] = ssim_1 * ssim_2
+
+                mean_ssim = np.nanmean(ssim_mat)
+                # to ignore edge effects (as in skimage)
+                # mean_ssim = np.nanmean(crop(ssim_mat, k))
+                ssim_levs[this_lev] = mean_ssim
+
+            return_ssim = ssim_levs.min()
+            self._ssim_value_fp = return_ssim
 
         return self._ssim_value_fp
 
@@ -1231,20 +1300,20 @@ class DiffMetrics:
 
         if not self._is_memoized('_ssim_value_fp_old'):
 
-            # get 2D arrays
-            a1 = self._metrics1.get_metric('ds').data
-            a2 = self._metrics2.get_metric('ds').data
+            # if this is a 3D variable, we will just do level 0 for now...
+            # (consider doing each level seperately)
+            if self._metrics1._vert_dim_name is not None:
+                vname = self._metrics1._vert_dim_name
+                a1 = self._metrics1.get_metric('ds').isel({vname: 0}).data
+                a2 = self._metrics2.get_metric('ds').isel({vname: 0}).data
+            else:
+                a1 = self._metrics1.get_metric('ds').data
+                a2 = self._metrics2.get_metric('ds').data
 
             if dask.is_dask_collection(a1):
                 a1 = a1.compute()
             if dask.is_dask_collection(a2):
                 a2 = a2.compute()
-
-            # if this is a 3D variable, we will just do level 0 for now...
-            # (consider doing each level seperately)
-            if self._metrics1._vert_dim_name is not None:
-                a1 = a1[0, :, :]
-                a2 = a2[0, :, :]
 
             maxr = max(a1.max(), a2.max())
             minr = min(a1.min(), a2.min())
@@ -1261,79 +1330,6 @@ class DiffMetrics:
             self._ssim_value_fp_old = mean_ssim
 
         return self._ssim_value_fp_old
-
-    @property
-    def ssim_value_fp_old_old(self):
-        """
-        We compute the SSIM (structural similarity index) on the spatial data - using the
-        data itself (we do not create an image). Similar to skimage implementation.
-        Not in use:  needs to process Nans
-
-        """
-        from math import exp, pi, sqrt
-
-        import numpy as np
-        from scipy.ndimage import gaussian_filter
-        from skimage.util import crop
-
-        if not self._is_memoized('_ssim_value_fp_old'):
-            # get 2D arrays
-            a1 = self._metrics1.get_metric('ds').data
-            a2 = self._metrics2.get_metric('ds').data
-
-            # a1 and a2 are doubles
-
-            if dask.is_dask_collection(a1):
-                a1 = a1.compute()
-            if dask.is_dask_collection(a2):
-                a2 = a2.compute()
-
-            # range of data in a1
-            a1_R = a1.max() - a1.min()
-
-            # gaussian filter
-            # n = 11  # recommended window size
-            # k = 5  # extent or radius
-            sigma = 1.5  # std dev for guasss weight
-            truncate = 3.5
-            filter_func = gaussian_filter
-            filter_args = {'sigma': sigma, 'truncate': truncate}
-
-            # weighted means
-            a1_mu = filter_func(a1, **filter_args)
-            a2_mu = filter_func(a2, **filter_args)
-
-            # weighted std
-            a1a1 = filter_func(a1 * a1, **filter_args)
-            a2a2 = filter_func(a2 * a2, **filter_args)
-            a1a2 = filter_func(a1 * a2, **filter_args)
-
-            var_a1 = a1a1 - a1_mu * a1_mu
-            var_a2 = a2a2 - a2_mu * a2_mu
-            cov_a1a2 = a1a2 - a1_mu * a2_mu
-
-            # ssim constants
-            K1 = 0.01
-            K2 = 0.03
-            C1 = K1 * K1 * a1_R * a1_R
-            C2 = K2 * K2 * a1_R * a1_R
-
-            ssim_t1 = 2 * a1_mu * a2_mu + C1
-            ssim_t2 = 2 * cov_a1a2 + C2
-
-            ssim_b1 = a1_mu * a1_mu + a2_mu * a2_mu + C1
-            ssim_b2 = var_a1 + var_a2 + C2
-
-            ssim_b = ssim_b1 * ssim_b2
-            ssim_mat = (ssim_t1 * ssim_t2) / ssim_b
-
-            mean_ssim = np.nanmean(ssim_mat)
-            # ignore edge effects? (as in skimage)
-            # mean_ssim = np.average(crop(ssim_mat, k))
-
-            self._ssim_value_fp_old_old = mean_ssim
-
-        return self._ssim_value_fp_old_old
 
     def get_diff_metric(self, name: str):
         """
