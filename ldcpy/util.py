@@ -429,7 +429,7 @@ def save_metrics(
 
     """
 
-    ds = subset_data(full_ds, lev=lev)
+    ds = full_ds
 
     # count the number of failuress
     num_fail = 0
@@ -447,14 +447,14 @@ def save_metrics(
         ['lat', 'lon'],
     )
 
-    reg_metrics = DatasetMetrics(
-        ds[varname].sel(collection=set1).isel(time=time)
-        - ds[varname].sel(collection=set2).isel(time=time),
-        ['lat', 'lon'],
-    )
-    max_abs = reg_metrics.get_metric('max_abs').data.compute()
+    #reg_metrics = DatasetMetrics(
+    #    ds[varname].sel(collection=set1).isel(time=time)
+    #    - ds[varname].sel(collection=set2).isel(time=time),
+    #    ['lat', 'lon'],
+    #)
+    #max_abs = reg_metrics.get_metric('max_abs').data.compute()
 
-    max_rel_error = diff_metrics.get_diff_metric('max_spatial_rel_error')
+    #max_rel_error = diff_metrics.get_diff_metric('max_spatial_rel_error')
 
     # Pearson less than pcc_tol means fail
     # pcc = diff_metrics.get_diff_metric('pearson_correlation_coefficient').data.compute()
@@ -468,7 +468,7 @@ def save_metrics(
     # SSIM less than of ssim_tol is failing
     ssim_val = diff_metrics.get_diff_metric('ssim')
 
-    ssim_fp_val = diff_metrics.get_diff_metric('ssim_fp')
+    #ssim_fp_val = diff_metrics.get_diff_metric('ssim_fp')
 
     #ssim_fp_old_val = diff_metrics.get_diff_metric('ssim_fp_old')
 
@@ -477,19 +477,19 @@ def save_metrics(
         fieldnames = [
             'set',
             'time',
-            'max_abs',
-            'max_rel_error',
+            #'max_abs',
+            #'max_rel_error',
             #            'pcc',
             #            'ks_p_value',
             #            'spatial_rel_error',
             'ssim',
-            'ssim_fp',
+            #'ssim_fp',
             #'ssim_fp_old',
             #            'pcc_pass',
             #            'ks_p_value_pass',
             #            'spatial_rel_error_pass',
             'ssim_pass',
-            'ssim_fp_pass',
+            #'ssim_fp_pass',
             #'ssim_fp_old_pass',
         ]
         writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
@@ -500,19 +500,19 @@ def save_metrics(
             {
                 'set': set2,
                 'time': time,
-                'max_abs': max_abs,
-                'max_rel_error': max_rel_error,
+                #'max_abs': max_abs,
+                #'max_rel_error': max_rel_error,
                 #                'pcc': pcc,
                 #                'ks_p_value': ks,
                 #                'spatial_rel_error': spre,
                 'ssim': ssim_val,
-                'ssim_fp': ssim_fp_val,
+                #'ssim_fp': ssim_fp_val,
                 #'ssim_fp_old': ssim_fp_old_val,
                 #                'pcc_pass': pcc >= pcc_tol,
                 #                'ks_p_value_pass': ks >= ks_tol,
                 #                'spatial_rel_error_pass': spre <= spre_tol,
                 'ssim_pass': ssim_val >= ssim_tol,
-                'ssim_fp_pass': ssim_fp_val >= ssim_tol,
+                #'ssim_fp_pass': ssim_fp_val >= ssim_tol,
                 #'ssim_fp_old_pass': ssim_fp_old_val >= ssim_tol,
             }
         )
