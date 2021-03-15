@@ -111,7 +111,8 @@ Try the notebooks hosted in this repo on Pangeo Binder. Note that the session is
 Your home directory will not persist, so remember to download your notebooks if you
 make changes that you need to use at a later time!
 
-(Note: The example notebooks are in docs/source/notebooks.)
+Note: All example notebooks are in docs/source/notebooks (the easiest
+ones to use in binder first are TutorialNotebook.ipynb and PopData.ipynb)
 
 
 .. image:: https://img.shields.io/static/v1.svg?logo=Jupyter&label=Pangeo+Binder&message=GCP+us-central1&color=blue&style=for-the-badge

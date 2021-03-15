@@ -135,7 +135,7 @@ def compare_stats(
     set1: str,
     set2: str,
     significant_digits: int = 5,
-    include_ssim_metric: bool = True,
+    include_ssim_metric: bool = False,
     **metrics_kwargs,
 ):
     """
@@ -152,9 +152,9 @@ def compare_stats(
     set2 : str
         The collection label of the (1st) data to compare
     significant_digits : int, optional
-        The number of significant digits to use when printing stats, (default 51)
+        The number of significant digits to use when printing stats, (default 5)
     include_ssim_metric : bool, optional
-        Whether or not to compute the ssim metric, (default: True)
+        Whether or not to compute the ssim metric, (default: False)
     **metrics_kwargs :
         Additional keyword arguments passed through to the
         :py:class:`~ldcpy.DatasetMetrics` instance.
