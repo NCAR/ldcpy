@@ -3,6 +3,7 @@ from math import exp, pi, sqrt
 from typing import Optional
 
 import dask
+import cf_xarray
 import matplotlib as mpl
 import numpy as np
 import xarray as xr

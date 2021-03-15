@@ -5,6 +5,7 @@ import warnings
 
 import cartopy
 import cmocean
+import cf_xarray
 import matplotlib as mpl
 import matplotlib.patches as mpatches
 import nc_time_axis
