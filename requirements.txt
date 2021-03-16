@@ -13,3 +13,4 @@ xrft
 cf_xarray
 cartopy
 nodejs
+pandas

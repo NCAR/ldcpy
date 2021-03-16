@@ -201,54 +201,75 @@ def compare_stats(
         **metrics_kwargs,
     )
 
-    output = collections.OrderedDict()
-    output['skip1'] = 0
-    output[f'mean {set1}'] = ds0_metrics.get_metric('mean').data
-    output[f'mean {set2}'] = ds1_metrics.get_metric('mean').data
-    output['mean diff'] = d_metrics.get_metric('mean').data
-    output['skip2'] = 0
-    output[f'variance {set1}'] = ds0_metrics.get_metric('variance').data
-    output[f'variance {set2}'] = ds1_metrics.get_metric('variance').data
-    output['skip3'] = 0
-    output[f'standard deviation {set1}'] = ds0_metrics.get_metric('std').data
-    output[f'standard deviation {set2}'] = ds1_metrics.get_metric('std').data
-    output['skip4'] = 0
-    output[f'max value {set1}'] = ds0_metrics.get_metric('max_val').data
-    output[f'max value {set2}'] = ds1_metrics.get_metric('max_val').data
-    output[f'min value {set1}'] = ds0_metrics.get_metric('min_val').data
-    output[f'min value {set2}'] = ds1_metrics.get_metric('min_val').data
-    output['skip55'] = 0
-    output['max abs diff'] = d_metrics.get_metric('max_abs').data
-    output['min abs diff'] = d_metrics.get_metric('min_abs').data
-    output['mean abs diff'] = d_metrics.get_metric('mean_abs').data
-    output['mean squared diff'] = d_metrics.get_metric('mean_squared').data
-    output['root mean squared diff'] = d_metrics.get_metric('rms').data
-    output['normalized root mean squared diff'] = diff_metrics.get_diff_metric('n_rms').data
-    output['normalized max pointwise error'] = diff_metrics.get_diff_metric('n_emax').data
-    output['pearson correlation coefficient'] = diff_metrics.get_diff_metric(
+    # DATA FRAME
+    import pandas as pd
+    from IPython.display import HTML, display
+
+    df_dict = {}
+    my_cols = [set1, set2]
+    df_dict['mean'] = [
+        ds0_metrics.get_metric('mean').data.compute(),
+        ds1_metrics.get_metric('mean').data.compute(),
+    ]
+    df_dict['variance'] = [
+        ds0_metrics.get_metric('variance').data.compute(),
+        ds1_metrics.get_metric('variance').data.compute(),
+    ]
+    df_dict['standard deviation'] = [
+        ds0_metrics.get_metric('variance').data.compute(),
+        ds1_metrics.get_metric('std').data.compute(),
+    ]
+    df_dict['max value'] = [
+        ds0_metrics.get_metric('max_val').data.compute(),
+        ds1_metrics.get_metric('max_val').data.compute(),
+    ]
+    df_dict['min value'] = [
+        ds0_metrics.get_metric('min_val').data.compute(),
+        ds1_metrics.get_metric('min_val').data.compute(),
+    ]
+
+    for d in df_dict.keys():
+        fo = [f'%.{significant_digits}g' % item for item in df_dict[d]]
+        df_dict[d] = fo
+    df = pd.DataFrame.from_dict(df_dict, orient='index', columns=my_cols)
+    display(HTML(' <span style="color:green">Comparison: </span>  '))
+    display(df)
+
+    df_dict2 = {}
+    my_cols2 = [' ']
+
+    df_dict2['max abs diff'] = d_metrics.get_metric('max_abs').data.compute()
+    df_dict2['min abs diff'] = d_metrics.get_metric('min_abs').data.compute()
+    df_dict2['mean abs diff'] = d_metrics.get_metric('mean_abs').data.compute()
+    df_dict2['mean squared diff'] = d_metrics.get_metric('mean_squared').data.compute()
+    df_dict2['root mean squared diff'] = d_metrics.get_metric('rms').data.compute()
+    df_dict2['normalized root mean squared diff'] = diff_metrics.get_diff_metric(
+        'n_rms'
+    ).data.compute()
+    df_dict2['normalized max pointwise error'] = diff_metrics.get_diff_metric(
+        'n_emax'
+    ).data.compute()
+    df_dict2['pearson correlation coefficient'] = diff_metrics.get_diff_metric(
         'pearson_correlation_coefficient'
-    ).data
-    output['ks p-value'] = diff_metrics.get_diff_metric('ks_p_value')
+    ).data.compute()
+    df_dict2['ks p-value'] = diff_metrics.get_diff_metric('ks_p_value')
     tmp = 'spatial relative error(% > ' + str(ds0_metrics.get_single_metric('spre_tol')) + ')'
-    output[tmp] = diff_metrics.get_diff_metric('spatial_rel_error')
-    output['max spatial relative error'] = diff_metrics.get_diff_metric('max_spatial_rel_error')
+    df_dict2[tmp] = diff_metrics.get_diff_metric('spatial_rel_error')
+    df_dict2['max spatial relative error'] = diff_metrics.get_diff_metric('max_spatial_rel_error')
 
     if include_ssim_metric:
-        output['ssim'] = diff_metrics.get_diff_metric('ssim')
-        output['ssim_fp'] = diff_metrics.get_diff_metric('ssim_fp')
-        # output['ssim_fp_old'] = diff_metrics.get_diff_metric('ssim_fp_old')
+        df_dict2['SSIM'] = diff_metrics.get_diff_metric('ssim')
+        df_dict2['Data SSIM'] = diff_metrics.get_diff_metric('ssim_fp')
 
-    if dask.is_dask_collection(ds):
-        output = dask.compute(output)[0]
+    for d in df_dict2.keys():
+        fo = [f'%.{significant_digits}g' % df_dict2[d]]
+        df_dict2[d] = fo
 
-    for key, value in output.items():
-        if key[:4] != 'skip':
-            # rounded_value = f'{float(f"{value:.{significant_digits}g}"):g}'
-            rounded_value = f'{(f"{value:.{significant_digits}g}")}'
+    df2 = pd.DataFrame.from_dict(df_dict2, orient='index', columns=my_cols2)
 
-            print(f'{key:<35}:', f'{rounded_value}')
-        else:
-            print(' ')
+    display(HTML('<br>'))
+    display(HTML('<span style="color:green">Difference metrics: </span>  '))
+    display(df2)
 
 
 def check_metrics(

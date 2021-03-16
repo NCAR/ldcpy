@@ -24,5 +24,6 @@ dependencies:
   - scikit-image
   - xarray
   - xrft
+  - pandas
   - pip:
       - -e ..
