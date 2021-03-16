@@ -1,6 +1,5 @@
 import calendar
 import copy
-import re
 import warnings
 
 import cartopy
