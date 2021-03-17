@@ -19,3 +19,4 @@ dependencies:
   - xrft
   - zfpy
   - cf_xarray
+  - pandas

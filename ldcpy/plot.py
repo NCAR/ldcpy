@@ -499,7 +499,14 @@ class MetricsPlot(object):
             for i in range(1, len(da_sets)):
                 img1 = skimage.io.imread('tmp_ssim1.png')
                 img2 = skimage.io.imread(f'tmp_ssim{i+1}.png')
-                ssim_val = ssim(img1, img2, multichannel=True)
+                # ssim_val = ssim(img1, img2, multichannel=True)
+                ssim_val = ssim(
+                    img1,
+                    img2,
+                    multichannel=True,
+                    gaussian_weights=True,
+                    use_sample_covariance=False,
+                )
                 print(f' SSIM 1 & {i+1} = % 5.5f\n' % (ssim_val))
             for i in range(len(da_sets) + 1):
                 if os.path.exists(f'tmp_ssim{i}.png'):
