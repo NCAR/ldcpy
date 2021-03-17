@@ -216,7 +216,7 @@ def compare_stats(
         ds1_metrics.get_metric('variance').data.compute(),
     ]
     df_dict['standard deviation'] = [
-        ds0_metrics.get_metric('variance').data.compute(),
+        ds0_metrics.get_metric('std').data.compute(),
         ds1_metrics.get_metric('std').data.compute(),
     ]
     df_dict['max value'] = [
