@@ -227,6 +227,14 @@ def compare_stats(
         ds0_metrics.get_metric('min_val').data.compute(),
         ds1_metrics.get_metric('min_val').data.compute(),
     ]
+    df_dict['probability positive'] = [
+        ds0_metrics.get_metric('prob_positive').data.compute(),
+        ds1_metrics.get_metric('prob_positive').data.compute(),
+    ]
+    df_dict['number of zeros'] = [
+        ds0_metrics.get_metric('num_zero').data.compute(),
+        ds1_metrics.get_metric('num_zero').data.compute(),
+    ]
 
     for d in df_dict.keys():
         fo = [f'%.{significant_digits}g' % item for item in df_dict[d]]

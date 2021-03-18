@@ -927,7 +927,8 @@ def plot(
     # Subset data (by var and collection)
     dss = []
 
-    # update when new release of cf_xarray is released
+    # update when new release of cf_xarray is released (won't need to do this - just trying to avoid
+    # an uneeded arror message for now)
     if 'bounds' in ds['time'].attrs.keys():
         ds['time'].attrs.pop('bounds')
 
