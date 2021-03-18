@@ -88,6 +88,9 @@ class DatasetMetrics:
         self._mean_abs = None
         self._std = None
         self._ddof = 1
+        self._num_positive = None
+        self._num_negative = None
+        self._num_zero = None
         self._prob_positive = None
         self._odds_positive = None
         self._prob_negative = None
@@ -116,9 +119,14 @@ class DatasetMetrics:
         self._zscore_cutoff = None
         self._zscore_percent_significant = None
 
+        # for probability functions, what is the size
         if aggregate_dims is not None:
             for dim in aggregate_dims:
                 self._frame_size *= int(self._ds.sizes[dim])
+        else:
+            dp = np.count_nonzero(~np.isnan(self._ds))
+            self._frame_size = dp
+            # print(self._frame_size)
 
     def _is_memoized(self, metric_name: str) -> bool:
         return hasattr(self, metric_name) and (self.__getattribute__(metric_name) is not None)
@@ -310,12 +318,40 @@ class DatasetMetrics:
         return self._pooled_variance_ratio
 
     @property
+    def num_positive(self) -> xr.DataArray:
+        """
+        The probability that a point is positive
+        """
+        if not self._is_memoized('_num_positive'):
+            self._num_positive = (self._ds > 0).sum(self._agg_dims)
+        return self._num_positive
+
+    @property
+    def num_negative(self) -> xr.DataArray:
+        """
+        The probability that a point is negative
+        """
+        if not self._is_memoized('_num_negative'):
+            self._num_negative = (self._ds < 0).sum(self._agg_dims)
+        return self._num_negative
+
+    @property
+    def num_zero(self) -> xr.DataArray:
+        """
+        The probability that a point is zero
+        """
+        if not self._is_memoized('_num_zero'):
+            self._num_zero = (self._ds == 0).sum(self._agg_dims)
+        return self._num_zero
+
+    @property
     def prob_positive(self) -> xr.DataArray:
         """
         The probability that a point is positive
         """
         if not self._is_memoized('_prob_positive'):
-            self._prob_positive = (self._ds > 0).sum(self._agg_dims) / self._frame_size
+            self._prob_positive = self.num_positive / self._frame_size
+            # print(self._frame_size)
             self._prob_positive.attrs = self._ds.attrs
             if hasattr(self._ds, 'units'):
                 self._prob_positive.attrs['units'] = ''
@@ -327,7 +363,7 @@ class DatasetMetrics:
         The probability that a point is negative
         """
         if not self._is_memoized('_prob_negative'):
-            self._prob_negative = (self._ds < 0).sum(self._agg_dims) / self._frame_size
+            self._prob_negative = self.num_negative / self._frame_size
             self._prob_negative.attrs = self._ds.attrs
             if hasattr(self._ds, 'units'):
                 self._prob_negative.attrs['units'] = ''
@@ -696,6 +732,12 @@ class DatasetMetrics:
                 return self.prob_positive
             if name == 'prob_negative':
                 return self.prob_negative
+            if name == 'num_positive':
+                return self.num_positive
+            if name == 'num_negative':
+                return self.num_negative
+            if name == 'num_zero':
+                return self.num_zero
             if name == 'odds_positive':
                 self._grouping = grouping
                 return self.odds_positive
