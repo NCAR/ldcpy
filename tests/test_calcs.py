@@ -6,7 +6,7 @@ import pytest
 import xarray as xr
 
 import ldcpy
-from ldcpy.calcs import DatasetMetrics, DiffMetrics
+from ldcpy.calcs import Datasetcalcs, Diffcalcs
 
 times = pd.date_range('2000-01-01', periods=10)
 lats = [0, 1, 2, 3]
@@ -29,13 +29,13 @@ test_data_2 = xr.DataArray(
     ],
     dims=['lat', 'lon', 'time'],
 )
-test_overall_metrics = ldcpy.DatasetMetrics(test_data, ['time', 'lat', 'lon'])
-test_spatial_metrics = ldcpy.DatasetMetrics(test_data, ['time'])
-test_time_series_metrics = ldcpy.DatasetMetrics(test_data, ['lat', 'lon'])
-test_diff_metrics = ldcpy.DiffMetrics(test_data, test_data_2, ['time', 'lat', 'lon'])
+test_overall_calcs = ldcpy.Datasetcalcs(test_data, ['time', 'lat', 'lon'])
+test_spatial_calcs = ldcpy.Datasetcalcs(test_data, ['time'])
+test_time_series_calcs = ldcpy.Datasetcalcs(test_data, ['lat', 'lon'])
+test_diff_calcs = ldcpy.Diffcalcs(test_data, test_data_2, ['time', 'lat', 'lon'])
 
 
-class TestErrorMetrics(TestCase):
+class TestErrorcalcs(TestCase):
     @classmethod
     def setUpClass(cls) -> None:
         mylon = np.arange(0, 10)
@@ -78,14 +78,14 @@ class TestErrorMetrics(TestCase):
         ]
 
     def test_creation_01(self):
-        DiffMetrics(
+        Diffcalcs(
             xr.DataArray(self._samples[0]['observed']),
             xr.DataArray(self._samples[0]['measured']),
             [],
         )
 
     def test_error_01(self):
-        em = DatasetMetrics(
+        em = Datasetcalcs(
             xr.DataArray(self._samples[0]['observed']) - xr.DataArray(self._samples[0]['measured']),
             [],
         )
@@ -93,14 +93,14 @@ class TestErrorMetrics(TestCase):
         self.assertTrue((self._samples[0]['expected_error'] == em.sum).all())
 
     def test_mean_error_01(self):
-        em = DatasetMetrics(
+        em = Datasetcalcs(
             xr.DataArray(self._samples[0]['observed']) - xr.DataArray(self._samples[0]['measured']),
             [],
         )
         self.assertTrue(em.mean.all() == 0.0)
 
     def test_mean_error_02(self):
-        em = DatasetMetrics(
+        em = Datasetcalcs(
             xr.DataArray(self._samples[0]['observed'] - xr.DataArray(self._samples[0]['measured'])),
             [],
         )
@@ -112,9 +112,9 @@ class TestErrorMetrics(TestCase):
         self.assertTrue(em.mean.all() == 0.0)
 
     def test_dim_names(self):
-        self.assertTrue(test_spatial_metrics._lat_dim_name == 'lat')
-        self.assertTrue(test_spatial_metrics._lon_dim_name == 'lon')
-        self.assertTrue(test_spatial_metrics._time_dim_name == 'time')
+        self.assertTrue(test_spatial_calcs._lat_dim_name == 'lat')
+        self.assertTrue(test_spatial_calcs._lon_dim_name == 'lon')
+        self.assertTrue(test_spatial_calcs._time_dim_name == 'time')
 
     def test_TS_02(self):
         import xarray as xr
@@ -127,68 +127,66 @@ class TestErrorMetrics(TestCase):
         print(type(TS))
 
     def test_mean(self):
-        self.assertTrue(test_overall_metrics.mean == -0.5)
+        self.assertTrue(test_overall_calcs.mean == -0.5)
 
     def test_mean_abs(self):
-        self.assertTrue(test_overall_metrics.mean_abs == 50)
+        self.assertTrue(test_overall_calcs.mean_abs == 50)
 
     def test_mean_squared(self):
-        self.assertTrue(np.isclose(test_overall_metrics.mean_squared, 0.25, rtol=1e-09))
+        self.assertTrue(np.isclose(test_overall_calcs.mean_squared, 0.25, rtol=1e-09))
 
     def test_min_abs(self):
-        self.assertTrue(test_overall_metrics.min_abs == 0)
+        self.assertTrue(test_overall_calcs.min_abs == 0)
 
     def test_max_abs(self):
-        self.assertTrue(test_overall_metrics.max_abs == 100)
+        self.assertTrue(test_overall_calcs.max_abs == 100)
 
     def test_min_val(self):
-        self.assertTrue(test_overall_metrics.min_val == -100)
+        self.assertTrue(test_overall_calcs.min_val == -100)
 
     def test_max_val(self):
-        self.assertTrue(test_overall_metrics.max_val == 99)
+        self.assertTrue(test_overall_calcs.max_val == 99)
 
     def test_ns_con_var(self):
-        self.assertTrue(test_overall_metrics.ns_con_var == 2500)  # is this right?
+        self.assertTrue(test_overall_calcs.ns_con_var == 2500)  # is this right?
 
     def test_ew_con_var(self):
-        self.assertTrue(test_overall_metrics.ew_con_var == 400)  # is this right?
+        self.assertTrue(test_overall_calcs.ew_con_var == 400)  # is this right?
 
     def test_odds_positive(self):
-        self.assertTrue(np.isclose(test_overall_metrics.odds_positive, 0.98019802, rtol=1e-09))
+        self.assertTrue(np.isclose(test_overall_calcs.odds_positive, 0.98019802, rtol=1e-09))
 
     def test_prob_negative(self):
-        self.assertTrue(test_overall_metrics.prob_negative == 0.5)
+        self.assertTrue(test_overall_calcs.prob_negative == 0.5)
 
     def test_prob_positive(self):
-        self.assertTrue(test_overall_metrics.prob_positive == 0.495)
+        self.assertTrue(test_overall_calcs.prob_positive == 0.495)
 
     def test_dyn_range(self):
-        self.assertTrue(test_overall_metrics.dyn_range == 199)
+        self.assertTrue(test_overall_calcs.dyn_range == 199)
 
     def test_median(self):
-        self.assertTrue(test_overall_metrics.get_metric('quantile', 0.5) == -0.5)
+        self.assertTrue(test_overall_calcs.get_calc('quantile', 0.5) == -0.5)
 
     def test_rms(self):
-        self.assertTrue(np.isclose(test_overall_metrics.get_metric('rms'), 57.73647028, rtol=1e-09))
+        self.assertTrue(np.isclose(test_overall_calcs.get_calc('rms'), 57.73647028, rtol=1e-09))
 
     def test_std(self):
-        self.assertTrue(np.isclose(test_overall_metrics.get_metric('std'), 57.87918451, rtol=1e-09))
+        self.assertTrue(np.isclose(test_overall_calcs.get_calc('std'), 57.87918451, rtol=1e-09))
 
     def test_sum(self):
-        self.assertTrue(test_overall_metrics.get_metric('sum') == -100)
+        self.assertTrue(test_overall_calcs.get_calc('sum') == -100)
 
     def test_variance(self):
-        self.assertTrue(test_overall_metrics.get_metric('variance') == 3333.25)
+        self.assertTrue(test_overall_calcs.get_calc('variance') == 3333.25)
 
     def test_zscore(self):
-        self.assertTrue(
-            np.isclose(test_overall_metrics.get_metric('zscore'), -0.02731792, rtol=1e-09)
-        )
+        self.assertTrue(np.isclose(test_overall_calcs.get_calc('zscore'), -0.02731792, rtol=1e-09))
 
     def test_mean_spatial(self):
         self.assertTrue(
             (
-                test_spatial_metrics.get_metric('mean')
+                test_spatial_calcs.get_calc('mean')
                 == np.array(
                     [
                         [-95.5, -85.5, -75.5, -65.5, -55.5],
@@ -203,7 +201,7 @@ class TestErrorMetrics(TestCase):
     def test_mean_abs_spatial(self):
         self.assertTrue(
             (
-                test_spatial_metrics.get_metric('mean_abs')
+                test_spatial_calcs.get_calc('mean_abs')
                 == np.array(
                     [
                         [95.5, 85.5, 75.5, 65.5, 55.5],
@@ -218,7 +216,7 @@ class TestErrorMetrics(TestCase):
     def test_mean_squared_spatial(self):
         self.assertTrue(
             np.isclose(
-                test_spatial_metrics.get_metric('mean_squared'),
+                test_spatial_calcs.get_calc('mean_squared'),
                 np.array(
                     [
                         [9120.25, 7310.25, 5700.25, 4290.25, 3080.25],
@@ -234,7 +232,7 @@ class TestErrorMetrics(TestCase):
     def test_min_abs_spatial(self):
         self.assertTrue(
             (
-                test_spatial_metrics.get_metric('min_abs')
+                test_spatial_calcs.get_calc('min_abs')
                 == np.array(
                     [
                         [91.0, 81.0, 71.0, 61.0, 51.0],
@@ -249,7 +247,7 @@ class TestErrorMetrics(TestCase):
     def test_max_abs_spatial(self):
         self.assertTrue(
             (
-                test_spatial_metrics.get_metric('max_abs')
+                test_spatial_calcs.get_calc('max_abs')
                 == np.array(
                     [
                         [100.0, 90.0, 80.0, 70.0, 60.0],
@@ -264,7 +262,7 @@ class TestErrorMetrics(TestCase):
     def test_min_val_spatial(self):
         self.assertTrue(
             (
-                test_spatial_metrics.get_metric('min_val')
+                test_spatial_calcs.get_calc('min_val')
                 == np.array(
                     [
                         [-100.0, -90.0, -80.0, -70.0, -60.0],
@@ -279,7 +277,7 @@ class TestErrorMetrics(TestCase):
     def test_max_val_spatial(self):
         self.assertTrue(
             (
-                test_spatial_metrics.get_metric('max_val')
+                test_spatial_calcs.get_calc('max_val')
                 == np.array(
                     [
                         [-91.0, -81.0, -71.0, -61.0, -51.0],
@@ -294,7 +292,7 @@ class TestErrorMetrics(TestCase):
         def test_ns_con_var_spatial(self):
             self.assertTrue(
                 (
-                    test_spatial_metrics.get_metric('ns_con_var')
+                    test_spatial_calcs.get_calc('ns_con_var')
                     == np.array(
                         [
                             [2500.0, 2500.0, 2500.0, 2500.0, 2500.0],
@@ -308,7 +306,7 @@ class TestErrorMetrics(TestCase):
     def test_odds_positive_spatial(self):
         self.assertTrue(
             np.isclose(
-                test_spatial_metrics.get_metric('odds_positive'),
+                test_spatial_calcs.get_calc('odds_positive'),
                 np.array(
                     [
                         [0.0, 0.0, 0.0, 0.0, 0.0],
@@ -324,7 +322,7 @@ class TestErrorMetrics(TestCase):
     def test_prob_positive_spatial(self):
         self.assertTrue(
             np.isclose(
-                test_spatial_metrics.get_metric('prob_positive'),
+                test_spatial_calcs.get_calc('prob_positive'),
                 np.array(
                     [
                         [0.0, 0.0, 0.0, 0.0, 0.0],
@@ -340,7 +338,7 @@ class TestErrorMetrics(TestCase):
     def test_prob_negative_spatial(self):
         self.assertTrue(
             np.isclose(
-                test_spatial_metrics.get_metric('prob_negative'),
+                test_spatial_calcs.get_calc('prob_negative'),
                 np.array(
                     [
                         [1.0, 1.0, 1.0, 1.0, 1.0],
@@ -356,7 +354,7 @@ class TestErrorMetrics(TestCase):
     def test_median_spatial(self):
         self.assertTrue(
             (
-                test_spatial_metrics.get_metric('quantile', 0.5)
+                test_spatial_calcs.get_calc('quantile', 0.5)
                 == np.array(
                     [
                         [-95.5, -85.5, -75.5, -65.5, -55.5],
@@ -371,7 +369,7 @@ class TestErrorMetrics(TestCase):
     def test_rms_spatial(self):
         self.assertTrue(
             np.isclose(
-                test_spatial_metrics.get_metric('rms'),
+                test_spatial_calcs.get_calc('rms'),
                 np.array(
                     [
                         [95.54318395, 85.54823201, 75.55461601, 65.56294685, 55.57427462],
@@ -387,7 +385,7 @@ class TestErrorMetrics(TestCase):
     def test_std_spatial(self):
         self.assertTrue(
             np.isclose(
-                test_spatial_metrics.get_metric('std'),
+                test_spatial_calcs.get_calc('std'),
                 np.array(
                     [
                         [3.02765035, 3.02765035, 3.02765035, 3.02765035, 3.02765035],
@@ -403,7 +401,7 @@ class TestErrorMetrics(TestCase):
     def test_sum_spatial(self):
         self.assertTrue(
             (
-                test_spatial_metrics.get_metric('sum')
+                test_spatial_calcs.get_calc('sum')
                 == np.array(
                     [
                         [-955.0, -855.0, -755.0, -655.0, -555.0],
@@ -418,7 +416,7 @@ class TestErrorMetrics(TestCase):
     def test_variance_spatial(self):
         self.assertTrue(
             (
-                test_spatial_metrics.get_metric('variance')
+                test_spatial_calcs.get_calc('variance')
                 == np.array(
                     [
                         [8.25, 8.25, 8.25, 8.25, 8.25],
@@ -433,7 +431,7 @@ class TestErrorMetrics(TestCase):
     def test_zscore_spatial(self):
         self.assertTrue(
             np.isclose(
-                test_spatial_metrics.get_metric('zscore'),
+                test_spatial_calcs.get_calc('zscore'),
                 np.array(
                     [
                         [-99.74649686, -89.30183751, -78.85717815, -68.41251879, -57.96785943],
@@ -449,7 +447,7 @@ class TestErrorMetrics(TestCase):
         def test_ew_con_var_spatial(self):
             self.assertTrue(
                 (
-                    test_spatial_metrics.get_metric('ew_con_var')
+                    test_spatial_calcs.get_calc('ew_con_var')
                     == np.array(
                         [
                             [100.0, 100.0, 100.0, 100.0, 1600.0],
@@ -464,7 +462,7 @@ class TestErrorMetrics(TestCase):
     def test_mean_time_series(self):
         self.assertTrue(
             np.isclose(
-                test_time_series_metrics.get_metric('mean'),
+                test_time_series_calcs.get_calc('mean'),
                 np.array([-5.0, -4.0, -3.0, -2.0, -1.0, 0.0, 1.0, 2.0, 3.0, 4.0]),
                 rtol=1e-09,
             ).all()
@@ -473,7 +471,7 @@ class TestErrorMetrics(TestCase):
     def test_mean_abs_time_series(self):
         self.assertTrue(
             np.isclose(
-                test_time_series_metrics.get_metric('mean_abs'),
+                test_time_series_calcs.get_calc('mean_abs'),
                 np.array([50.0, 50.0, 50.0, 50.0, 50.0, 50.0, 50.0, 50.0, 50.0, 50.0]),
                 rtol=1e-09,
             ).all()
@@ -482,7 +480,7 @@ class TestErrorMetrics(TestCase):
     def test_mean_squared_time_series(self):
         self.assertTrue(
             np.isclose(
-                test_time_series_metrics.get_metric('mean_squared'),
+                test_time_series_calcs.get_calc('mean_squared'),
                 np.array([25.0, 16.0, 9.0, 4.0, 1.0, 0.0, 1.0, 4.0, 9.0, 16.0]),
                 rtol=1e-09,
             ).all()
@@ -491,7 +489,7 @@ class TestErrorMetrics(TestCase):
     def test_max_abs_time_series(self):
         self.assertTrue(
             np.isclose(
-                test_time_series_metrics.get_metric('max_abs'),
+                test_time_series_calcs.get_calc('max_abs'),
                 np.array([100.0, 99.0, 98.0, 97.0, 96.0, 95.0, 96.0, 97.0, 98.0, 99.0]),
                 rtol=1e-09,
             ).all()
@@ -500,7 +498,7 @@ class TestErrorMetrics(TestCase):
     def test_max_val_time_series(self):
         self.assertTrue(
             np.isclose(
-                test_time_series_metrics.get_metric('max_val'),
+                test_time_series_calcs.get_calc('max_val'),
                 np.array([90.0, 91.0, 92.0, 93.0, 94.0, 95.0, 96.0, 97.0, 98.0, 99.0]),
                 rtol=1e-09,
             ).all()
@@ -509,7 +507,7 @@ class TestErrorMetrics(TestCase):
     def test_min_abs_time_series(self):
         self.assertTrue(
             np.isclose(
-                test_time_series_metrics.get_metric('min_abs'),
+                test_time_series_calcs.get_calc('min_abs'),
                 np.array([0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 4.0, 3.0, 2.0, 1.0]),
                 rtol=1e-09,
             ).all()
@@ -518,7 +516,7 @@ class TestErrorMetrics(TestCase):
     def test_min_val_time_series(self):
         self.assertTrue(
             np.isclose(
-                test_time_series_metrics.get_metric('min_val'),
+                test_time_series_calcs.get_calc('min_val'),
                 np.array([-100.0, -99.0, -98.0, -97.0, -96.0, -95.0, -94.0, -93.0, -92.0, -91.0]),
                 rtol=1e-09,
             ).all()
@@ -527,7 +525,7 @@ class TestErrorMetrics(TestCase):
         def test_ns_con_var_time_series(self):
             self.assertTrue(
                 np.isclose(
-                    test_time_series_metrics.get_metric('ns_con_var'),
+                    test_time_series_calcs.get_calc('ns_con_var'),
                     np.array(
                         [
                             2500.0,
@@ -549,7 +547,7 @@ class TestErrorMetrics(TestCase):
     def test_odds_positive_time_series(self):
         self.assertTrue(
             np.isclose(
-                test_time_series_metrics.get_metric('odds_positive'),
+                test_time_series_calcs.get_calc('odds_positive'),
                 np.array([0.81818182, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]),
                 rtol=1e-09,
             ).all()
@@ -558,7 +556,7 @@ class TestErrorMetrics(TestCase):
     def test_prob_negative_time_series(self):
         self.assertTrue(
             np.isclose(
-                test_time_series_metrics.get_metric('prob_negative'),
+                test_time_series_calcs.get_calc('prob_negative'),
                 np.array([0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]),
                 rtol=1e-09,
             ).all()
@@ -567,7 +565,7 @@ class TestErrorMetrics(TestCase):
     def test_prob_positive_time_series(self):
         self.assertTrue(
             np.isclose(
-                test_time_series_metrics.get_metric('prob_positive'),
+                test_time_series_calcs.get_calc('prob_positive'),
                 np.array([0.45, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]),
                 rtol=1e-09,
             ).all()
@@ -576,7 +574,7 @@ class TestErrorMetrics(TestCase):
     def test_median_time_series(self):
         self.assertTrue(
             np.isclose(
-                test_time_series_metrics.get_metric('quantile', 0.5),
+                test_time_series_calcs.get_calc('quantile', 0.5),
                 np.array([-5.0, -4.0, -3.0, -2.0, -1.0, 0.0, 1.0, 2.0, 3.0, 4.0]),
                 rtol=1e-09,
             ).all()
@@ -585,7 +583,7 @@ class TestErrorMetrics(TestCase):
     def test_rms_time_series(self):
         self.assertTrue(
             np.isclose(
-                test_time_series_metrics.get_metric('rms'),
+                test_time_series_calcs.get_calc('rms'),
                 np.array(
                     [
                         57.87918451,
@@ -607,7 +605,7 @@ class TestErrorMetrics(TestCase):
     def test_std_time_series(self):
         self.assertTrue(
             np.isclose(
-                test_time_series_metrics.get_metric('std'),
+                test_time_series_calcs.get_calc('std'),
                 np.array(
                     [
                         59.16079783,
@@ -629,7 +627,7 @@ class TestErrorMetrics(TestCase):
     def test_sum_time_series(self):
         self.assertTrue(
             np.isclose(
-                test_time_series_metrics.get_metric('sum'),
+                test_time_series_calcs.get_calc('sum'),
                 np.array([-100.0, -80.0, -60.0, -40.0, -20.0, 0.0, 20.0, 40.0, 60.0, 80.0]),
                 rtol=1e-09,
             ).all()
@@ -638,7 +636,7 @@ class TestErrorMetrics(TestCase):
     def test_variance_time_series(self):
         self.assertTrue(
             np.isclose(
-                test_time_series_metrics.get_metric('variance'),
+                test_time_series_calcs.get_calc('variance'),
                 np.array(
                     [
                         3325.0,
@@ -660,7 +658,7 @@ class TestErrorMetrics(TestCase):
     def test_zscore_time_series(self):
         self.assertTrue(
             np.isclose(
-                test_time_series_metrics.get_metric('zscore'),
+                test_time_series_calcs.get_calc('zscore'),
                 np.array(
                     [
                         -0.26726124,
@@ -682,7 +680,7 @@ class TestErrorMetrics(TestCase):
         def test_ew_con_var_time_series(self):
             self.assertTrue(
                 np.isclose(
-                    test_time_series_metrics.get_metric('ew_con_var'),
+                    test_time_series_calcs.get_calc('ew_con_var'),
                     np.array(
                         [400.0, 400.0, 400.0, 400.0, 400.0, 400.0, 400.0, 400.0, 400.0, 400.0]
                     ),
@@ -693,7 +691,7 @@ class TestErrorMetrics(TestCase):
     def test_diff_pcc(self):
         self.assertTrue(
             np.isclose(
-                test_diff_metrics.get_diff_metric('pearson_correlation_coefficient'),
+                test_diff_calcs.get_diff_calc('pearson_correlation_coefficient'),
                 np.array(1),
                 rtol=1e-09,
             ).all()
@@ -702,7 +700,7 @@ class TestErrorMetrics(TestCase):
     def test_diff_ksp(self):
         self.assertTrue(
             np.isclose(
-                test_diff_metrics.get_diff_metric('ks_p_value'),
+                test_diff_calcs.get_diff_calc('ks_p_value'),
                 np.array(1.0),
                 rtol=1e-09,
             ).all()
@@ -711,7 +709,7 @@ class TestErrorMetrics(TestCase):
     def test_diff_covariance(self):
         self.assertTrue(
             np.isclose(
-                test_diff_metrics.get_diff_metric('covariance'),
+                test_diff_calcs.get_diff_calc('covariance'),
                 np.array(3333.25),
                 rtol=1e-09,
             ).all()
@@ -720,7 +718,7 @@ class TestErrorMetrics(TestCase):
     def test_diff_normalized_max_pointwise_error(self):
         self.assertTrue(
             np.isclose(
-                test_diff_metrics.get_diff_metric('n_emax'),
+                test_diff_calcs.get_diff_calc('n_emax'),
                 np.array(0.00502513),
                 rtol=1e-09,
             ).all()
@@ -729,7 +727,7 @@ class TestErrorMetrics(TestCase):
     def test_diff_normalized_root_mean_squared(self):
         self.assertTrue(
             np.isclose(
-                test_diff_metrics.get_diff_metric('n_rms'),
+                test_diff_calcs.get_diff_calc('n_rms'),
                 np.array(0.00502513),
                 rtol=1e-09,
             ).all()
