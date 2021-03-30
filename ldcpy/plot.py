@@ -673,6 +673,15 @@ class calcsPlot(object):
         mpl.pyplot.title(tex_escape(titles[0]))
 
     def get_calc_label(self, calc, data, weights=None):
+        dd = data.cf['latitude'].dims
+
+        ll = len(dd)
+        if ll == 1:
+            lat_dim = dd[0]
+            lon_dim = data.cf['longitude'].dims[0]
+        elif ll == 2:
+            lat_dim = dd[0]
+            lon_dim = dd[1]
 
         # Get special calc names
         if self._short_title is False:
@@ -727,7 +736,7 @@ class calcsPlot(object):
 
                 calc_name = f'{calc} = {dat:.2f}'
             elif self._plot_type == 'time_series':
-                a1_data = (lm.Datasetcalcs(data, ['lat', 'lon']).get_calc(calc)).data
+                a1_data = (lm.Datasetcalcs(data, [lat_dim, lon_dim]).get_calc(calc)).data
                 # check for NANs
                 indices = ~np.isnan(a1_data)
                 if weights is not None:
