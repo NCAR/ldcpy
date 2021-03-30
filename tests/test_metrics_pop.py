@@ -6,7 +6,7 @@ import pytest
 import xarray as xr
 
 import ldcpy
-from ldcpy.metrics import DatasetMetrics, DiffMetrics
+from ldcpy.calcs import DatasetMetrics, DiffMetrics
 
 lats = np.array([[1.0, 2.0, 3.0, 4.0], [1.1, 2.1, 3.1, 3.9], [1, 1.9, 2.9, 3.9]])
 lons = np.array([[3.0, 4.0, 5.0, 6.0], [3.1, 4.1, 5.1, 5.9], [3, 3.9, 4.9, 5.9]])

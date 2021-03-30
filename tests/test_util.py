@@ -33,8 +33,8 @@ air_temp = xr.tutorial.open_dataset('air_temperature')
         (ds3.isel(time=0, lev=0), 'T', 'orig', 'orig', {'aggregate_dims': ['lat', 'lon']}),
     ],
 )
-def test_compare_stats(ds, varname, set1, set2, metrics_kwargs):
-    ldcpy.compare_stats(ds, varname, set1, set2, **metrics_kwargs)
+def test_compare_stats(ds, varname, set1, set2, calcs_kwargs):
+    ldcpy.compare_stats(ds, varname, set1, set2, **calcs_kwargs)
 
 
 @pytest.mark.parametrize(

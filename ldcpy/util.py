@@ -5,7 +5,7 @@ import dask
 import numpy as np
 import xarray as xr
 
-from .metrics import DatasetMetrics, DiffMetrics
+from .calcs import Datasetcalcs, Diffcalcs
 
 
 def collect_datasets(varnames, list_of_ds, labels, **kwargs):
@@ -136,7 +136,7 @@ def compare_stats(
     set2: str,
     significant_digits: int = 5,
     include_ssim_metric: bool = False,
-    **metrics_kwargs,
+    **calcs_kwargs,
 ):
     """
     Print error summary statistics of two DataArrays
@@ -154,10 +154,10 @@ def compare_stats(
     significant_digits : int, optional
         The number of significant digits to use when printing stats, (default 5)
     include_ssim_metric : bool, optional
-        Whether or not to compute the ssim metric, (default: False)
-    **metrics_kwargs :
+        Whether or not to compute the ssim calc, (default: False)
+    **calcs_kwargs :
         Additional keyword arguments passed through to the
-        :py:class:`~ldcpy.DatasetMetrics` instance.
+        :py:class:`~ldcpy.Datasetcalcs` instance.
 
     Returns
     =======
@@ -182,23 +182,23 @@ def compare_stats(
     da2 = da.sel(collection=set2)
     dd = da1 - da2
 
-    aggregate_dims = metrics_kwargs.pop('aggregate_dims', None)
+    aggregate_dims = calcs_kwargs.pop('aggregate_dims', None)
 
-    ds0_metrics = DatasetMetrics(da1, aggregate_dims, **metrics_kwargs)
+    ds0_calcs = Datasetcalcs(da1, aggregate_dims, **calcs_kwargs)
 
-    ds1_metrics = DatasetMetrics(da2, aggregate_dims, **metrics_kwargs)
+    ds1_calcs = Datasetcalcs(da2, aggregate_dims, **calcs_kwargs)
 
-    d_metrics = DatasetMetrics(
+    d_calcs = Datasetcalcs(
         dd,
         aggregate_dims,
-        **metrics_kwargs,
+        **calcs_kwargs,
     )
 
-    diff_metrics = DiffMetrics(
+    diff_calcs = Diffcalcs(
         da1,
         da2,
         aggregate_dims,
-        **metrics_kwargs,
+        **calcs_kwargs,
     )
 
     # DATA FRAME
@@ -208,32 +208,32 @@ def compare_stats(
     df_dict = {}
     my_cols = [set1, set2]
     df_dict['mean'] = [
-        ds0_metrics.get_metric('mean').data.compute(),
-        ds1_metrics.get_metric('mean').data.compute(),
+        ds0_calcs.get_calc('mean').data.compute(),
+        ds1_calcs.get_calc('mean').data.compute(),
     ]
     df_dict['variance'] = [
-        ds0_metrics.get_metric('variance').data.compute(),
-        ds1_metrics.get_metric('variance').data.compute(),
+        ds0_calcs.get_calc('variance').data.compute(),
+        ds1_calcs.get_calc('variance').data.compute(),
     ]
     df_dict['standard deviation'] = [
-        ds0_metrics.get_metric('std').data.compute(),
-        ds1_metrics.get_metric('std').data.compute(),
+        ds0_calcs.get_calc('std').data.compute(),
+        ds1_calcs.get_calc('std').data.compute(),
     ]
     df_dict['max value'] = [
-        ds0_metrics.get_metric('max_val').data.compute(),
-        ds1_metrics.get_metric('max_val').data.compute(),
+        ds0_calcs.get_calc('max_val').data.compute(),
+        ds1_calcs.get_calc('max_val').data.compute(),
     ]
     df_dict['min value'] = [
-        ds0_metrics.get_metric('min_val').data.compute(),
-        ds1_metrics.get_metric('min_val').data.compute(),
+        ds0_calcs.get_calc('min_val').data.compute(),
+        ds1_calcs.get_calc('min_val').data.compute(),
     ]
     df_dict['probability positive'] = [
-        ds0_metrics.get_metric('prob_positive').data.compute(),
-        ds1_metrics.get_metric('prob_positive').data.compute(),
+        ds0_calcs.get_calc('prob_positive').data.compute(),
+        ds1_calcs.get_calc('prob_positive').data.compute(),
     ]
     df_dict['number of zeros'] = [
-        ds0_metrics.get_metric('num_zero').data.compute(),
-        ds1_metrics.get_metric('num_zero').data.compute(),
+        ds0_calcs.get_calc('num_zero').data.compute(),
+        ds1_calcs.get_calc('num_zero').data.compute(),
     ]
 
     for d in df_dict.keys():
@@ -246,28 +246,28 @@ def compare_stats(
     df_dict2 = {}
     my_cols2 = [' ']
 
-    df_dict2['max abs diff'] = d_metrics.get_metric('max_abs').data.compute()
-    df_dict2['min abs diff'] = d_metrics.get_metric('min_abs').data.compute()
-    df_dict2['mean abs diff'] = d_metrics.get_metric('mean_abs').data.compute()
-    df_dict2['mean squared diff'] = d_metrics.get_metric('mean_squared').data.compute()
-    df_dict2['root mean squared diff'] = d_metrics.get_metric('rms').data.compute()
-    df_dict2['normalized root mean squared diff'] = diff_metrics.get_diff_metric(
+    df_dict2['max abs diff'] = d_calcs.get_calc('max_abs').data.compute()
+    df_dict2['min abs diff'] = d_calcs.get_calc('min_abs').data.compute()
+    df_dict2['mean abs diff'] = d_calcs.get_calc('mean_abs').data.compute()
+    df_dict2['mean squared diff'] = d_calcs.get_calc('mean_squared').data.compute()
+    df_dict2['root mean squared diff'] = d_calcs.get_calc('rms').data.compute()
+    df_dict2['normalized root mean squared diff'] = diff_calcs.get_diff_calc(
         'n_rms'
     ).data.compute()
-    df_dict2['normalized max pointwise error'] = diff_metrics.get_diff_metric(
+    df_dict2['normalized max pointwise error'] = diff_calcs.get_diff_calc(
         'n_emax'
     ).data.compute()
-    df_dict2['pearson correlation coefficient'] = diff_metrics.get_diff_metric(
+    df_dict2['pearson correlation coefficient'] = diff_calcs.get_diff_calc(
         'pearson_correlation_coefficient'
     ).data.compute()
-    df_dict2['ks p-value'] = diff_metrics.get_diff_metric('ks_p_value')
-    tmp = 'spatial relative error(% > ' + str(ds0_metrics.get_single_metric('spre_tol')) + ')'
-    df_dict2[tmp] = diff_metrics.get_diff_metric('spatial_rel_error')
-    df_dict2['max spatial relative error'] = diff_metrics.get_diff_metric('max_spatial_rel_error')
+    df_dict2['ks p-value'] = diff_calcs.get_diff_calc('ks_p_value')
+    tmp = 'spatial relative error(% > ' + str(ds0_calcs.get_single_calc('spre_tol')) + ')'
+    df_dict2[tmp] = diff_calcs.get_diff_calc('spatial_rel_error')
+    df_dict2['max spatial relative error'] = diff_calcs.get_diff_calc('max_spatial_rel_error')
 
     if include_ssim_metric:
-        df_dict2['SSIM'] = diff_metrics.get_diff_metric('ssim')
-        df_dict2['Data SSIM'] = diff_metrics.get_diff_metric('ssim_fp')
+        df_dict2['SSIM'] = diff_calcs.get_diff_calc('ssim')
+        df_dict2['Data SSIM'] = diff_calcs.get_diff_calc('ssim_fp')
 
     for d in df_dict2.keys():
         fo = [f'%.{significant_digits}g' % df_dict2[d]]
@@ -276,7 +276,7 @@ def compare_stats(
     df2 = pd.DataFrame.from_dict(df_dict2, orient='index', columns=my_cols2)
 
     display(HTML('<br>'))
-    display(HTML('<span style="color:green">Difference metrics: </span>  '))
+    display(HTML('<span style="color:green">Difference calcs: </span>  '))
     display(df2)
 
 
@@ -289,11 +289,11 @@ def check_metrics(
     pcc_tol=0.99999,
     spre_tol=5.0,
     ssim_tol=0.99995,
-    **metrics_kwargs,
+    **calcs_kwargs,
 ):
     """
 
-    Check the K-S, Pearson Correlation, and Spatial Relative Error metrics
+    Check the K-S, Pearson Correlation, and Spatial Relative Error calcs
 
     Parameters
     ==========
@@ -313,18 +313,18 @@ def check_metrics(
         The percentage threshold for failing grid points in the spatial relative error test (default = 5.0).
     ssim_tol: float, optional
          The threshold for the ssim test (default = .999950
-    **metrics_kwargs :
+    **calcs_kwargs :
         Additional keyword arguments passed through to the
-        :py:class:`~ldcpy.DatasetMetrics` instance.
+        :py:class:`~ldcpy.Datasetcalcs` instance.
 
     Returns
     =======
-    out : Number of failing metrics
+    out : Number of failing calcs
 
     Notes
     ======
 
-    Check the K-S, Pearson Correlation, and Spatial Relative Error metrics from:
+    Check the K-S, Pearson Correlation, and Spatial Relative Error calcs from:
 
     A. H. Baker, H. Xu, D. M. Hammerling, S. Li, and J. Clyne,
     “Toward a Multi-method Approach: Lossy Data Compression for
@@ -332,7 +332,7 @@ def check_metrics(
     High Performance Workshops 2017, Lecture Notes in Computer
     Science 10524, pp. 30–42, 2017 (doi:10.1007/978-3-319-67630-2_3).
 
-    Check the SSIM metric from:
+    Check the SSIM calc from:
 
     A.H. Baker, D.M. Hammerling, and T.L. Turton. “Evaluating image
     quality measures to assess the impact of lossy data compression
@@ -348,40 +348,40 @@ def check_metrics(
 
     """
 
-    print(f'Evaluating 4 metrics for {set1} data (set1) and {set2} data (set2):')
-    aggregate_dims = metrics_kwargs.pop('aggregate_dims', None)
-    diff_metrics = DiffMetrics(
+    print(f'Evaluating 4 calcs for {set1} data (set1) and {set2} data (set2):')
+    aggregate_dims = calcs_kwargs.pop('aggregate_dims', None)
+    diff_calcs = Diffcalcs(
         ds[varname].sel(collection=set1),
         ds[varname].sel(collection=set2),
         aggregate_dims,
-        **metrics_kwargs,
+        **calcs_kwargs,
     )
 
     # count the number of failures
     num_fail = 0
     # Pearson less than pcc_tol means fail
-    pcc = diff_metrics.get_diff_metric('pearson_correlation_coefficient').data.compute()
+    pcc = diff_calcs.get_diff_calc('pearson_correlation_coefficient').data.compute()
     if pcc < pcc_tol:
         print('     *FAILED pearson correlation coefficient test...(pcc = {0:.5f}'.format(pcc), ')')
         num_fail = num_fail + 1
     else:
         print('     PASSED pearson correlation coefficient test...(pcc = {0:.5f}'.format(pcc), ')')
     # K-S p-value less than ks_tol means fail (can reject null hypo)
-    ks = diff_metrics.get_diff_metric('ks_p_value')
+    ks = diff_calcs.get_diff_calc('ks_p_value')
     if ks < ks_tol:
         print('     *FAILED ks test...(ks p_val = {0:.4f}'.format(ks), ')')
         num_fail = num_fail + 1
     else:
         print('     PASSED ks test...(ks p_val = {0:.4f}'.format(ks), ')')
     # Spatial rel error fails if more than spre_tol
-    spre = diff_metrics.get_diff_metric('spatial_rel_error')
+    spre = diff_calcs.get_diff_calc('spatial_rel_error')
     if spre > spre_tol:
         print('     *FAILED spatial relative error test ... (spre = {0:.2f}'.format(spre), ' %)')
         num_fail = num_fail + 1
     else:
         print('     PASSED spatial relative error test ...(spre = {0:.2f}'.format(spre), ' %)')
     # SSIM less than of ssim_tol is failing
-    ssim_val = diff_metrics.get_diff_metric('ssim')
+    ssim_val = diff_calcs.get_diff_calc('ssim')
     if ssim_val < ssim_tol:
         print('     *FAILED SSIM test ... (ssim = {0:.5f}'.format(ssim_val), ')')
         num_fail = num_fail + 1

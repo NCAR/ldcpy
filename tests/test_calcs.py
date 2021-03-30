@@ -6,7 +6,7 @@ import pytest
 import xarray as xr
 
 import ldcpy
-from ldcpy.metrics import DatasetMetrics, DiffMetrics
+from ldcpy.calcs import DatasetMetrics, DiffMetrics
 
 times = pd.date_range('2000-01-01', periods=10)
 lats = [0, 1, 2, 3]

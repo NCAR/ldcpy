@@ -15,7 +15,7 @@ from cartopy.util import add_cyclic_point
 from matplotlib import pyplot as plt
 from pylab import flipud
 
-from ldcpy import metrics as lm, util as lu
+from ldcpy import calcs as lm, util as lu
 
 
 def tex_escape(text):
@@ -43,9 +43,9 @@ def tex_escape(text):
     return text
 
 
-class MetricsPlot(object):
+class calcsPlot(object):
     """
-    This class contains code to plot metrics in an xarray Dataset that has either 'lat' and 'lon' dimensions, or a
+    This class contains code to plot calcs in an xarray Dataset that has either 'lat' and 'lon' dimensions, or a
     'time' dimension.
     """
 
@@ -53,11 +53,11 @@ class MetricsPlot(object):
         self,
         ds,
         varname,
-        metric,
+        calc,
         sets,
         group_by=None,
         scale='linear',
-        metric_type='raw',
+        calc_type='raw',
         plot_type='spatial',
         transform='none',
         subset=None,
@@ -79,17 +79,17 @@ class MetricsPlot(object):
 
         self._ds = ds
 
-        # Metric settings used in plot titles
+        # calc settings used in plot titles
         self._varname = varname
         self._sets = sets
         self._title_lat = None
         self._title_lon = None
 
         # Plot settings
-        self._metric = metric
+        self._calc = calc
         self._group_by = group_by
         self._scale = scale
-        self._metric_type = metric_type
+        self._calc_type = calc_type
         self._plot_type = plot_type
         self._subset = subset
         self._true_lat = approx_lat
@@ -108,12 +108,12 @@ class MetricsPlot(object):
         self._legend_offset = legend_offset
 
     def verify_plot_parameters(self):
-        if len(self._sets) < 2 and self._metric_type in [
+        if len(self._sets) < 2 and self._calc_type in [
             'diff',
             'ratio',
-            'metric_of_diff',
+            'calc_of_diff',
         ]:
-            raise ValueError(f'Must specify set2 for {self._metric_type} metric type')
+            raise ValueError(f'Must specify set2 for {self._calc_type} calc type')
         if self._plot_type in ['spatial'] and self._group_by is not None:
             raise ValueError(f'Cannot group by {self._group_by} in a non-time-series plot')
         if self._plot_type not in ['spatial'] and self._color != 'coolwarm':
@@ -129,17 +129,17 @@ class MetricsPlot(object):
                 vert = None
             if vert is None:
                 raise ValueError('Cannot subset by lev (vertical dimension) in this dataset')
-        if self._quantile is not None and self._metric != 'quantile':
-            raise ValueError('Cannot change quantile value if metric is not quantile')
-        if self._quantile is None and self._metric == 'quantile':
+        if self._quantile is not None and self._calc != 'quantile':
+            raise ValueError('Cannot change quantile value if calc is not quantile')
+        if self._quantile is None and self._calc == 'quantile':
             raise ValueError('Must specify quantile value as argument')
 
-        if self._metric in ['lag1', 'corr_lag1', 'mae_day_max'] and self._plot_type not in [
+        if self._calc in ['lag1', 'corr_lag1', 'mae_day_max'] and self._plot_type not in [
             'spatial',
         ]:
-            raise ValueError(f'Cannot plot {self._metric} in a non-spatial plot')
+            raise ValueError(f'Cannot plot {self._calc} in a non-spatial plot')
 
-    def get_metrics(self, da):
+    def get_calcs(self, da):
         da_data = da
         da_data.attrs = da.attrs
 
@@ -155,9 +155,9 @@ class MetricsPlot(object):
             lon_dim = dd[1]
 
         if self._plot_type in ['spatial']:
-            metrics_da = lm.DatasetMetrics(da_data, ['time'])
+            calcs_da = lm.Datasetcalcs(da_data, ['time'])
         elif self._plot_type in ['time_series', 'periodogram', 'histogram']:
-            metrics_da = lm.DatasetMetrics(da_data, [lat_dim, lon_dim])
+            calcs_da = lm.Datasetcalcs(da_data, [lat_dim, lon_dim])
         else:
             raise ValueError(f'plot type {self._plot_type} not supported')
 
@@ -166,26 +166,26 @@ class MetricsPlot(object):
                 'SSIM is only calculated for spatial plots, ignoring calc_ssim option', UserWarning
             )
 
-        raw_data = metrics_da.get_metric(self._metric, self._quantile, self._group_by)
+        raw_data = calcs_da.get_calc(self._calc, self._quantile, self._group_by)
 
         return raw_data
 
     def get_plot_data(self, raw_data_1, raw_data_2=None):
-        if self._metric_type == 'diff':
+        if self._calc_type == 'diff':
             plot_data = raw_data_1 - raw_data_2
             plot_data.attrs = raw_data_1.attrs
-        elif self._metric_type == 'ratio':
+        elif self._calc_type == 'ratio':
             plot_data = raw_data_2 / raw_data_1
             plot_data.attrs = raw_data_1.attrs
             if hasattr(self._ds, 'units'):
                 self._odds_positive.attrs['units'] = ''
 
-        elif self._metric_type == 'raw' or self._metric_type == 'metric_of_diff':
+        elif self._calc_type == 'raw' or self._calc_type == 'calc_of_diff':
             plot_data = raw_data_1
         else:
-            raise ValueError(f'metric_type {self._metric_type} not supported')
+            raise ValueError(f'calc_type {self._calc_type} not supported')
 
-        if self._group_by is not None and self._metric not in [
+        if self._group_by is not None and self._calc not in [
             'standardized_mean',
             'odds_positive',
         ]:
@@ -200,11 +200,11 @@ class MetricsPlot(object):
             plot_data = np.log10(plot_data)
             plot_data.attrs = plot_attrs
         else:
-            raise ValueError(f'metric transformation {self._transform} not supported')
+            raise ValueError(f'calc transformation {self._transform} not supported')
 
         return plot_data
 
-    def get_title(self, metric_name, c_name=None):
+    def get_title(self, calc_name, c_name=None):
 
         if c_name is not None:
             das = f'{c_name}'
@@ -217,21 +217,21 @@ class MetricsPlot(object):
             else:
                 return das
 
-        if self._quantile is not None and metric_name == 'quantile':
-            metric_full_name = f'{metric_name} {self._quantile}'
+        if self._quantile is not None and calc_name == 'quantile':
+            calc_full_name = f'{calc_name} {self._quantile}'
         else:
-            metric_full_name = metric_name
+            calc_full_name = calc_name
 
         if self._transform == 'log':
-            title = f'{self._varname}: log10 {metric_full_name}'
+            title = f'{self._varname}: log10 {calc_full_name}'
         else:
-            title = f'{self._varname}: {metric_full_name}'
+            title = f'{self._varname}: {calc_full_name}'
 
         if self._plot_type == 'spatial':
             title = f'{das}: {title}'
 
-        if self._metric_type != 'raw':
-            title = f'{title} {self._metric_type}'
+        if self._calc_type != 'raw':
+            title = f'{title} {self._calc_type}'
 
         if self._group_by is not None:
 
@@ -288,7 +288,7 @@ class MetricsPlot(object):
             ncols = 1
         else:
             ncols = 2
-        if self._metric == 'zscore':
+        if self._calc == 'zscore':
             ncols = 1
             nrows = len(da_sets)
 
@@ -510,9 +510,9 @@ class MetricsPlot(object):
         fig, axs = mpl.pyplot.subplots(1, 1, sharey=True, tight_layout=True)
         axs.hist(plot_data, label=plot_data.sets.data)
         if plot_data.units != '':
-            mpl.pyplot.xlabel(tex_escape(f'{self._metric} ({plot_data.units})'))
+            mpl.pyplot.xlabel(tex_escape(f'{self._calc} ({plot_data.units})'))
         else:
-            mpl.pyplot.xlabel(tex_escape(f'{self._metric}'))
+            mpl.pyplot.xlabel(tex_escape(f'{self._calc}'))
         mpl.pyplot.title(tex_escape(title[0]))
         if self.vert_plot:
             plt.legend(loc=self._legend_loc, borderaxespad=1.0)
@@ -584,23 +584,23 @@ class MetricsPlot(object):
             group_string = 'day'
             xlabel = 'Day'
 
-        if self._metric_type == 'diff':
+        if self._calc_type == 'diff':
             if da_sets.units != '':
-                ylabel = f'{self._metric} ({da_sets.units}) diff'
+                ylabel = f'{self._calc} ({da_sets.units}) diff'
             else:
-                ylabel = f'{self._metric} diff'
-        elif self._metric_type == 'ratio':
-            ylabel = f'{self._metric} ratio'
-        elif self._metric_type == 'metric_of_diff':
+                ylabel = f'{self._calc} diff'
+        elif self._calc_type == 'ratio':
+            ylabel = f'{self._calc} ratio'
+        elif self._calc_type == 'calc_of_diff':
             if da_sets.units != '':
-                ylabel = f'{self._metric} ({da_sets.units}) of diff'
+                ylabel = f'{self._calc} ({da_sets.units}) of diff'
             else:
-                ylabel = f'{self._metric} of diff'
+                ylabel = f'{self._calc} of diff'
         else:
             if da_sets.units != '':
-                ylabel = f'{self._metric} ({da_sets.units})'
+                ylabel = f'{self._calc} ({da_sets.units})'
             else:
-                ylabel = f'{self._metric}'
+                ylabel = f'{self._calc}'
 
         if self._transform == 'log':
             plot_ylabel = f'log10 {ylabel}'
@@ -681,21 +681,21 @@ class MetricsPlot(object):
 
         mpl.pyplot.title(tex_escape(titles[0]))
 
-    def get_metric_label(self, metric, data, weights=None):
+    def get_calc_label(self, calc, data, weights=None):
 
-        # Get special metric names
+        # Get special calc names
         if self._short_title is False:
-            if metric == 'zscore':
-                zscore_cutoff = lm.DatasetMetrics((data), ['time']).get_single_metric(
+            if calc == 'zscore':
+                zscore_cutoff = lm.Datasetcalcs((data), ['time']).get_single_calc(
                     'zscore_cutoff'
                 )
-                percent_sig = lm.DatasetMetrics((data), ['time']).get_single_metric(
+                percent_sig = lm.Datasetcalcs((data), ['time']).get_single_calc(
                     'zscore_percent_significant'
                 )
-                metric_name = f'{metric}: cutoff {zscore_cutoff[0]:.2f}, % sig: {percent_sig:.2f}'
-            elif metric == 'mean' and self._plot_type == 'spatial' and self._metric_type == 'raw':
+                calc_name = f'{calc}: cutoff {zscore_cutoff[0]:.2f}, % sig: {percent_sig:.2f}'
+            elif calc == 'mean' and self._plot_type == 'spatial' and self._calc_type == 'raw':
 
-                a1_data = (lm.DatasetMetrics(data, ['time']).get_metric(metric)).data
+                a1_data = (lm.Datasetcalcs(data, ['time']).get_calc(calc)).data
                 # check for NANs
                 indices = ~np.isnan(a1_data)
                 if weights is not None:
@@ -709,20 +709,20 @@ class MetricsPlot(object):
 
                 o_wt_mean = np.nanmean(a2_data)
 
-                metric_name = f'{metric} = {o_wt_mean:.2f}'
-            elif metric == 'pooled_var_ratio':
+                calc_name = f'{calc} = {o_wt_mean:.2f}'
+            elif calc == 'pooled_var_ratio':
                 pooled_sd = np.sqrt(
-                    lm.DatasetMetrics((data), ['time']).get_single_metric('pooled_variance')
+                    lm.Datasetcalcs((data), ['time']).get_single_calc('pooled_variance')
                 )
                 d = pooled_sd.data.compute()
-                metric_name = f'{metric}: pooled SD = {d:.2f}'
-            elif metric == 'annual_harmonic_relative_ratio':
-                p = lm.DatasetMetrics((data), ['time']).get_single_metric(
+                calc_name = f'{calc}: pooled SD = {d:.2f}'
+            elif calc == 'annual_harmonic_relative_ratio':
+                p = lm.Datasetcalcs((data), ['time']).get_single_calc(
                     'annual_harmonic_relative_ratio_pct_sig'
                 )
-                metric_name = f'{metric}: % sig = {p:.2f}'
+                calc_name = f'{calc}: % sig = {p:.2f}'
             elif self._plot_type == 'spatial':
-                a1_data = (lm.DatasetMetrics(data, ['time']).get_metric(metric)).data
+                a1_data = (lm.Datasetcalcs(data, ['time']).get_calc(calc)).data
                 # check for NANs
                 indices = ~np.isnan(a1_data)
                 if weights is not None:
@@ -736,9 +736,9 @@ class MetricsPlot(object):
 
                 dat = np.nanmean(a2_data)
 
-                metric_name = f'{metric} = {dat:.2f}'
+                calc_name = f'{calc} = {dat:.2f}'
             elif self._plot_type == 'time_series':
-                a1_data = (lm.DatasetMetrics(data, ['lat', 'lon']).get_metric(metric)).data
+                a1_data = (lm.Datasetcalcs(data, ['lat', 'lon']).get_calc(calc)).data
                 # check for NANs
                 indices = ~np.isnan(a1_data)
                 if weights is not None:
@@ -752,11 +752,11 @@ class MetricsPlot(object):
 
                 dat = np.nanmean(a2_data)
 
-                metric_name = f'{metric} = {dat:.2f}'
+                calc_name = f'{calc} = {dat:.2f}'
             else:
-                metric_name = metric
+                calc_name = calc
 
-            return metric_name
+            return calc_name
         else:
             return ''
 
@@ -798,8 +798,8 @@ def plot(
     varname : str
         The name of the variable to be plotted
     calc : str
-        The name of the metric to be plotted (must match a property name in the DatasetMetrics
-        class in ldcpy.plot, for more information about the available metrics see ldcpy.DatasetMetrics)
+        The name of the calc to be plotted (must match a property name in the Datasetcalcs
+        class in ldcpy.plot, for more information about the available calcs see ldcpy.Datasetcalcs)
         Acceptable values include:
 
             - ns_con_var
@@ -824,7 +824,7 @@ def plot(
             - pooled_variance_ratio
 
     sets : list <str>
-        The labels of the dataset to gather metrics from
+        The labels of the dataset to gather calcs from
     group_by : str
         how to group the data in time series plots.
         Valid groupings:
@@ -840,13 +840,13 @@ def plot(
             - linear
             - log
     calc_type : str, optional
-        The type of operation to be performed on the metrics. (default 'raw')
+        The type of operation to be performed on the calcs. (default 'raw')
         Valid options:
 
-            - raw: the unaltered metric values
-            - diff: the difference between the metric values in the first set and every other set
-            - ratio: the ratio of the metric values in (2nd, 3rd, 4th... sets/1st set)
-            - metric_of_diff: the metric value computed on the difference between the first set and every other set
+            - raw: the unaltered calc values
+            - diff: the difference between the calc values in the first set and every other set
+            - ratio: the ratio of the calc values in (2nd, 3rd, 4th... sets/1st set)
+            - calc_of_diff: the calc value computed on the difference between the first set and every other set
     plot_type : str , optional
         The type of plot to be created. (default 'spatial')
         Valid options:
@@ -861,7 +861,7 @@ def plot(
             - none
             - log
     subset : str, optional
-        subset of the data to gather metrics on (default None).
+        subset of the data to gather calcs on (default None).
         Valid options:
 
             - first5: the first 5 days of data
@@ -870,18 +870,18 @@ def plot(
             - summer: data from the months June, July, August
             - autumn: data from the months September, October, November
     lat : float, optional
-        The latitude of the data to gather metrics on (default None).
+        The latitude of the data to gather calcs on (default None).
     lon : float , optional
-        The longitude of the data to gather metrics on (default None).
+        The longitude of the data to gather calcs on (default None).
     lev : float, optional
-        The level of the data to gather metrics on (used if plotting from a 3d data set),
+        The level of the data to gather calcs on (used if plotting from a 3d data set),
         (default 0).
     color : str, optional
         The color scheme for spatial plots, (default 'coolwarm').
         see https://matplotlib.org/3.1.1/gallery/color/colormap_reference.html
         for more options
     quantile : float, optional
-        A value between 0 and 1 required if metric="quantile", corresponding to the desired quantile to gather,
+        A value between 0 and 1 required if calc="quantile", corresponding to the desired quantile to gather,
         (default 0.5).
     start : int, optional
         A value between 0 and the number of time slices indicating the start time of a subset,
@@ -917,7 +917,7 @@ def plot(
     out : None
     """
 
-    mp = MetricsPlot(
+    mp = calcsPlot(
         ds,
         varname,
         calc,
@@ -982,9 +982,9 @@ def plot(
             subsets.append(lu.subset_data(dss[i], subset, lat, lon, lev, start, end))
             subsets[i].attrs = dss[i].attrs
 
-    # Acquire raw metric values
+    # Acquire raw calc values
     datas = []
-    if calc_type in ['metric_of_diff']:
+    if calc_type in ['calc_of_diff']:
         if subsets is not None:
             for i in range(1, len(subsets)):
                 datas.append(subsets[0] - subsets[i])
@@ -994,22 +994,22 @@ def plot(
             for i in range(len(subsets)):
                 datas.append(subsets[i])
 
-    raw_metrics = []
+    raw_calcs = []
 
     for d in datas:
-        raw_metrics.append(mp.get_metrics(d))
+        raw_calcs.append(mp.get_calcs(d))
 
     # get lat/lon coordinate names:
     lon_coord_name = datas[0].cf['longitude'].name
     lat_coord_name = datas[0].cf['latitude'].name
 
-    # Get metric names/values for plot title
-    metric_names = []
+    # Get calc names/values for plot title
+    calc_names = []
     for i in range(len(datas)):
         if ds.variables.mapping.get('gw') is not None:
-            metric_names.append(mp.get_metric_label(calc, datas[i], ds['gw'].values))
+            calc_names.append(mp.get_calc_label(calc, datas[i], ds['gw'].values))
         else:
-            metric_names.append(mp.get_metric_label(calc, datas[i]))
+            calc_names.append(mp.get_calc_label(calc, datas[i]))
     # Get plot data and title
     if lat is not None and lon is not None:
         # is this a 1D of 2D lat/lon?
@@ -1035,13 +1035,13 @@ def plot(
     set_names = []
 
     if calc_type in ['diff', 'ratio']:
-        for i in range(1, len(raw_metrics)):
-            plot_datas.append(mp.get_plot_data(raw_metrics[0], raw_metrics[i]))
+        for i in range(1, len(raw_calcs)):
+            plot_datas.append(mp.get_plot_data(raw_calcs[0], raw_calcs[i]))
             set_names.append(tex_escape(f'{sets[0]} & {sets[i]}'))
     else:
-        for i in range(len(raw_metrics)):
-            plot_datas.append(mp.get_plot_data(raw_metrics[i]))
-            if calc_type in ['metric_of_diff']:
+        for i in range(len(raw_calcs)):
+            plot_datas.append(mp.get_plot_data(raw_calcs[i]))
+            if calc_type in ['calc_of_diff']:
                 set_names.append(tex_escape(f'{sets[0]} & {sets[i+1]}'))
             else:
                 set_names.append(f'{sets[i]}')
@@ -1052,14 +1052,14 @@ def plot(
     titles = []
 
     if calc_type in ['ratio', 'diff']:
-        for i in range(1, len(metric_names)):
-            titles.append(mp.get_title(metric_names[i], f'{sets[0]} & {sets[i]}'))
-    elif calc_type in ['metric_of_diff']:
-        for i in range(len(metric_names)):
-            titles.append(mp.get_title(metric_names[i], f'{sets[0]} & {sets[i+1]}'))
+        for i in range(1, len(calc_names)):
+            titles.append(mp.get_title(calc_names[i], f'{sets[0]} & {sets[i]}'))
+    elif calc_type in ['calc_of_diff']:
+        for i in range(len(calc_names)):
+            titles.append(mp.get_title(calc_names[i], f'{sets[0]} & {sets[i+1]}'))
     else:
-        for i in range(len(metric_names)):
-            titles.append(mp.get_title(metric_names[i], sets[i]))
+        for i in range(len(calc_names)):
+            titles.append(mp.get_title(calc_names[i], sets[i]))
 
     # Call plot functions
     if plot_type == 'spatial':
