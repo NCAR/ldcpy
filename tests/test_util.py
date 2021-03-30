@@ -27,7 +27,7 @@ air_temp = xr.tutorial.open_dataset('air_temperature')
 
 
 @pytest.mark.parametrize(
-    'ds, varname, set1, set2, metrics_kwargs',
+    'ds, varname, set1, set2, calcs_kwargs',
     [
         (ds.isel(time=0), 'TS', 'orig', 'recon', {'aggregate_dims': ['lat', 'lon']}),
         (ds3.isel(time=0, lev=0), 'T', 'orig', 'orig', {'aggregate_dims': ['lat', 'lon']}),
