@@ -375,7 +375,7 @@ class calcsPlot(object):
             psets[i] = axs[i].imshow(img=flipud(no_inf_data_set), transform=ccrs.PlateCarree(), cmap=mymap)
             axs[i].set_global()
 
-            # if we want to get the ssim
+            # if we want to get the ssim 
             if self._calc_ssim:
                 axs[i].axis('off')
                 plt.margins(0, 0)
