@@ -16,6 +16,7 @@ import xrft
 from cartopy import crs as ccrs
 from cartopy.util import add_cyclic_point
 from matplotlib import dates as mdates, pyplot as plt
+from pylab import flipud, fliplr
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 
 from ldcpy import metrics as lm, util as lu
@@ -369,16 +370,22 @@ class MetricsPlot(object):
                 cmin.append(np.min(cyxr.where(cyxr != -np.inf).min()))
                 cmax.append(np.max(cyxr.where(cyxr != np.inf).max()))
 
-            no_inf_data_set = np.nan_to_num(cyxr, nan=np.nan)
+            ncyxr = cyxr.roll(dim_1=145)
+            no_inf_data_set = np.nan_to_num(ncyxr, nan=np.nan)
 
             # add a check here so ensure the dataset size is the same size as lon_sets * lat_sets[i]
-            psets[i] = axs[i].pcolormesh(
-                lon_sets,
-                lat_sets,
-                no_inf_data_set,
-                transform=ccrs.PlateCarree(),
-                cmap=mymap,
-            )
+            #psets[i] = axs[i].pcolormesh(
+            #    lon_sets,
+            #    lat_sets,
+            #    no_inf_data_set,
+            #    transform=ccrs.PlateCarree(),
+            #    cmap=mymap,
+            #)
+            #axs[i].imshow(img=flipud(no_inf_data_set), transform=ccrs.PlateCarree(), cmap=mymap)
+
+            # casting to float32 from float64 prevents lots of tiny black dots from showing up in some plots with lots of
+            # zeroes. See plot of probability of negative PRECT to see this in action.
+            psets[i] = axs[i].imshow(img=flipud(no_inf_data_set.astype(np.float32)), transform=ccrs.PlateCarree(), cmap=mymap)
             axs[i].set_global()
 
             # if we want to get the ssim
