@@ -75,7 +75,7 @@ class TestPlotPop(TestCase):
             'SST',
             sets=['orig', 'recon'],
             calc='ann_harmonic_ratio',
-            calc_type='metric_of_diff',
+            calc_type='calc_of_diff',
             tex_format=False,
         )
         self.assertTrue(True)
@@ -229,7 +229,7 @@ class TestPlotPop(TestCase):
             ds,
             'SST',
             sets=['orig', 'recon'],
-            calc_type='metric_of_diff',
+            calc_type='calc_of_diff',
             calc='zscore',
             tex_format=False,
         )
