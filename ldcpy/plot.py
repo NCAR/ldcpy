@@ -373,16 +373,6 @@ class MetricsPlot(object):
             ncyxr = cyxr.roll(dim_1=145)
             no_inf_data_set = np.nan_to_num(ncyxr, nan=np.nan)
 
-            # add a check here so ensure the dataset size is the same size as lon_sets * lat_sets[i]
-            #psets[i] = axs[i].pcolormesh(
-            #    lon_sets,
-            #    lat_sets,
-            #    no_inf_data_set,
-            #    transform=ccrs.PlateCarree(),
-            #    cmap=mymap,
-            #)
-            #axs[i].imshow(img=flipud(no_inf_data_set), transform=ccrs.PlateCarree(), cmap=mymap)
-
             # casting to float32 from float64 prevents lots of tiny black dots from showing up in some plots with lots of
             # zeroes. See plot of probability of negative PRECT to see this in action.
             psets[i] = axs[i].imshow(img=flipud(no_inf_data_set.astype(np.float32)), transform=ccrs.PlateCarree(), cmap=mymap)
