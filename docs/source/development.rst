@@ -101,7 +101,7 @@ Updating the package on Conda Forge:
 
 0) Ensure the package has been updated on PyPi.
 1) Fork the ldcpy_feedstock repository (https://github.com/conda-forge/ldcpy-feedstock)
-2) In recipe/meta.yml, set the version number to match the latest release tag.
+2) In recipe/meta.yml, set the version number to match the latest release tag. Make sure the build number is 0 if you are changing the version number.
 3) In recipe/meta.yml, update the sha256 hash. The hash for the latest release can be found at https://pypi.org/project/ldcpy/#files. Copy the hash from ldcpy-x.xx.xx.tar.gz.
 4) In recipe/meta.yml, add any new package dependencies under the run section of the requirements.
 5) From your fork's github page, create a pull request pointed at the conda_forge repository.

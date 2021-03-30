@@ -1,23 +1,19 @@
 import calendar
 import copy
-import re
 import warnings
 
 import cartopy
 import cf_xarray as cf
 import cmocean
 import matplotlib as mpl
-import matplotlib.patches as mpatches
 import nc_time_axis
 import numpy as np
-import pandas as pd
 import xarray as xr
 import xrft
 from cartopy import crs as ccrs
 from cartopy.util import add_cyclic_point
-from matplotlib import dates as mdates, pyplot as plt
-from pylab import flipud, fliplr
-from mpl_toolkits.axes_grid1 import make_axes_locatable
+from matplotlib import pyplot as plt
+from pylab import flipud
 
 from ldcpy import metrics as lm, util as lu
 
@@ -102,7 +98,7 @@ class MetricsPlot(object):
         self._lev = lev
         self._color = color
         self._short_title = short_title
-        self._quantile = None
+        self._quantile = quantile
         self._calc_ssim = calc_ssim
         self._contour_levs = contour_levs
         self._axes_symmetric = axes_symmetric
@@ -257,6 +253,7 @@ class MetricsPlot(object):
         elif self._plot_type == 'periodogram':
             title = f'periodogram:{title}'
 
+
         return title
 
     def _label_offset(
@@ -371,11 +368,11 @@ class MetricsPlot(object):
                 cmax.append(np.max(cyxr.where(cyxr != np.inf).max()))
 
             ncyxr = cyxr.roll(dim_1=145)
-            no_inf_data_set = np.nan_to_num(ncyxr, nan=np.nan)
+            no_inf_data_set = np.nan_to_num(ncyxr.astype(np.float32), nan=np.nan)
 
             # casting to float32 from float64 prevents lots of tiny black dots from showing up in some plots with lots of
             # zeroes. See plot of probability of negative PRECT to see this in action.
-            psets[i] = axs[i].imshow(img=flipud(no_inf_data_set.astype(np.float32)), transform=ccrs.PlateCarree(), cmap=mymap)
+            psets[i] = axs[i].imshow(img=flipud(no_inf_data_set), transform=ccrs.PlateCarree(), cmap=mymap)
             axs[i].set_global()
 
             # if we want to get the ssim
@@ -724,6 +721,38 @@ class MetricsPlot(object):
                     'annual_harmonic_relative_ratio_pct_sig'
                 )
                 metric_name = f'{metric}: % sig = {p:.2f}'
+            elif self._plot_type == 'spatial':
+                a1_data = (lm.DatasetMetrics(data, ['time']).get_metric(metric)).data
+                # check for NANs
+                indices = ~np.isnan(a1_data)
+                if weights is not None:
+                    weights = weights[indices]
+
+                a2_data = np.average(
+                    a1_data[indices],
+                    axis=0,
+                    weights=weights,
+                ).compute()
+
+                dat = np.nanmean(a2_data)
+
+                metric_name = f'{metric} = {dat:.2f}'
+            elif self._plot_type == 'time_series':
+                a1_data = (lm.DatasetMetrics(data, ['lat', 'lon']).get_metric(metric)).data
+                # check for NANs
+                indices = ~np.isnan(a1_data)
+                if weights is not None:
+                    weights = weights[indices]
+
+                a2_data = np.average(
+                    a1_data[indices],
+                    axis=0,
+                    weights=weights,
+                ).compute()
+
+                dat = np.nanmean(a2_data)
+
+                metric_name = f'{metric} = {dat:.2f}'
             else:
                 metric_name = metric
 
