@@ -251,12 +251,8 @@ def compare_stats(
     df_dict2['mean abs diff'] = d_calcs.get_calc('mean_abs').data.compute()
     df_dict2['mean squared diff'] = d_calcs.get_calc('mean_squared').data.compute()
     df_dict2['root mean squared diff'] = d_calcs.get_calc('rms').data.compute()
-    df_dict2['normalized root mean squared diff'] = diff_calcs.get_diff_calc(
-        'n_rms'
-    ).data.compute()
-    df_dict2['normalized max pointwise error'] = diff_calcs.get_diff_calc(
-        'n_emax'
-    ).data.compute()
+    df_dict2['normalized root mean squared diff'] = diff_calcs.get_diff_calc('n_rms').data.compute()
+    df_dict2['normalized max pointwise error'] = diff_calcs.get_diff_calc('n_emax').data.compute()
     df_dict2['pearson correlation coefficient'] = diff_calcs.get_diff_calc(
         'pearson_correlation_coefficient'
     ).data.compute()

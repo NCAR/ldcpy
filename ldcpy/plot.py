@@ -253,7 +253,6 @@ class calcsPlot(object):
         elif self._plot_type == 'periodogram':
             title = f'periodogram:{title}'
 
-
         return title
 
     def _label_offset(
@@ -314,7 +313,6 @@ class calcsPlot(object):
 
         # lat/lon could be 1 or 2d and have different names
         lon_coord_name = da_sets[0].cf.coordinates['longitude'][0]
-        lat_coord_name = da_sets[0].cf.coordinates['latitude'][0]
 
         # is the lat/lon 1d or 2d (to do: set error if > 2)
         latdim = da_sets[0].cf[lon_coord_name].ndim
@@ -341,20 +339,11 @@ class calcsPlot(object):
 
             # make data periodic
             if latdim == 2:
-                ylon = da_sets[i][lon_coord_name]
-                lon_sets = np.hstack((ylon, ylon[:, 0:1]))
-
-                xlat = da_sets[i][lat_coord_name]
-                lat_sets = np.hstack((xlat, xlat[:, 0:1]))
 
                 cy_datas = add_cyclic_point(da_sets[i])
             else:  # 1d
 
-                ylon = da_sets[i][lon_coord_name]
-                lon_sets = np.hstack((ylon, ylon[0]))
                 cy_datas = add_cyclic_point(da_sets[i])
-
-                lat_sets = da_sets[i][lat_coord_name]
 
             if np.isnan(cy_datas).any() or np.isinf(cy_datas).any():
                 nan_inf_flag = 1
@@ -372,10 +361,12 @@ class calcsPlot(object):
 
             # casting to float32 from float64 prevents lots of tiny black dots from showing up in some plots with lots of
             # zeroes. See plot of probability of negative PRECT to see this in action.
-            psets[i] = axs[i].imshow(img=flipud(no_inf_data_set), transform=ccrs.PlateCarree(), cmap=mymap)
+            psets[i] = axs[i].imshow(
+                img=flipud(no_inf_data_set), transform=ccrs.PlateCarree(), cmap=mymap
+            )
             axs[i].set_global()
 
-            # if we want to get the ssim 
+            # if we want to get the ssim
             if self._calc_ssim:
                 axs[i].axis('off')
                 plt.margins(0, 0)
@@ -686,9 +677,7 @@ class calcsPlot(object):
         # Get special calc names
         if self._short_title is False:
             if calc == 'zscore':
-                zscore_cutoff = lm.Datasetcalcs((data), ['time']).get_single_calc(
-                    'zscore_cutoff'
-                )
+                zscore_cutoff = lm.Datasetcalcs((data), ['time']).get_single_calc('zscore_cutoff')
                 percent_sig = lm.Datasetcalcs((data), ['time']).get_single_calc(
                     'zscore_percent_significant'
                 )
