@@ -94,7 +94,7 @@ class TestPlot(TestCase):
             'TS',
             sets=['orig', 'recon'],
             calc='ann_harmonic_ratio',
-            calc_type='metric_of_diff',
+            calc_type='calc_of_diff',
             tex_format=False,
         )
         self.assertTrue(True)
@@ -274,7 +274,7 @@ class TestPlot(TestCase):
             ds,
             'TS',
             sets=['orig', 'recon'],
-            calc_type='metric_of_diff',
+            calc_type='calc_of_diff',
             calc='zscore',
             tex_format=False,
         )

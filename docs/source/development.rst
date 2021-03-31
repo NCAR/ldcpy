@@ -87,3 +87,24 @@ Name the branch add-<new_dependency_name>.
 In the file /recipe/meta.yaml, in the "requirements" section, under "run", add your dependency to the list.
 
 4) If the CI build encounters errors after adding a dependency, check the status of the CI workflow at (https://github.com/NCAR/ldcpy/actions?query=workflow%3ACI) to determine if the error is related to the new package.
+
+Creating a Release
+___________________________
+
+Updating the package on PyPi:
+
+1) On the ldcpy Github page, select Releases on the right sidebar, and select "Draft a new release"
+2) Create a new tag by incrementing the minor or major version number. Give the release a title and description.
+3) Publish the release. Check the Actions tab -> Upload Packageg to PyPi workflow to ensure it completes.
+
+Updating the package on Conda Forge:
+
+0) Ensure the package has been updated on PyPi.
+1) Fork the ldcpy_feedstock repository (https://github.com/conda-forge/ldcpy-feedstock)
+2) In recipe/meta.yml, set the version number to match the latest release tag. Make sure the build number is 0 if you are changing the version number.
+3) In recipe/meta.yml, update the sha256 hash. The hash for the latest release can be found at https://pypi.org/project/ldcpy/#files. Copy the hash from ldcpy-x.xx.xx.tar.gz.
+4) In recipe/meta.yml, add any new package dependencies under the run section of the requirements.
+5) From your fork's github page, create a pull request pointed at the conda_forge repository.
+6) Make sure each step listed in the pull request checklist is completed. See https://conda-forge.org/docs/maintainer/updating_pkgs.html if needed.
+7) Allow some time for all the tests to complete, these take between 8-20 minutes. See the error/warning output if any tests fail.
+8) Merge the pull request. The new version will be available on conda forge shortly.
