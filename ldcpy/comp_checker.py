@@ -10,7 +10,9 @@ from math import exp, pi, sqrt
 
 import matplotlib as mpl
 import numpy as np
+import pandas as pd
 import xarray as xr
+from IPython.display import HTML, display
 
 from ldcpy import calcs as lm
 
@@ -55,18 +57,26 @@ class CompChecker:
         self._tol_greater_than = True
         self._compressor = compressor
         self._comp_mode = comp_mode
+        self._accept_first = accept_first
+
         self._counter = 0
         self._results_dict = {}
         self._prev_level = -1
         self._prev_pass = False
         self._opt_level = None
-        self._accept_first = accept_first
+
+    def reset_counter(self):  # call before doing the next timestep
+        self._counter = 0
+        self._results_dict = {}
+        self._prev_level = -1
+        self._prev_pass = False
+        self._opt_level = None
 
     def eval_comp_level(self, orig_da, comp_da, comp_level):
 
-        dm = lm.Diffcalcs(orig_da, comp_da)
-        val = dm.get_diff_calc(self._calc_type)
-        print('val = ', val)
+        dc = lm.Diffcalcs(orig_da, comp_da)
+        val = dc.get_diff_calc(self._calc_type)
+        print('calc_val = ', val)
 
         if self._tol_greater_than:
             if val >= self._calc_tol:
@@ -81,9 +91,9 @@ class CompChecker:
 
         opt_level = None
         call_again = True
-        print('level_passed = ', level_passed)
+        # print('level_passed = ', level_passed)
         # keep track for now (for debugging)
-        self._results_dict[comp_level] = level_passed
+        self._results_dict[comp_level] = [val, level_passed]
 
         if self._counter == 0:  # first try
             if level_passed:  # this one passed
@@ -101,7 +111,7 @@ class CompChecker:
                 new_level = self._comp_rules(comp_level, level_passed)
 
         else:  # counter > 0
-            print('prev_pass = ', self._prev_pass)
+            # print('prev_pass = ', self._prev_pass)
             if level_passed:  # this one passed
                 if self._prev_pass:
                     self._prev_level = comp_level
@@ -140,6 +150,15 @@ class CompChecker:
 
     def get_new_level(self):
         return self._new_level
+
+    def show_results(self):
+        my_cols = [self._calc_type, 'Passed?']
+
+        df = pd.DataFrame.from_dict(self._results_dict, orient='index', columns=my_cols)
+        a = self._compressor
+        display(HTML('<br>'))
+        display(HTML(f'<span style="color:green">{a} level results: </span>  '))
+        display(df)
 
     def _comp_rules(self, comp_level, level_passed):
         if self._compressor == 'zfp':
