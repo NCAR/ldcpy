@@ -569,29 +569,16 @@ def subset_data(
 
     # print(ds.cf.describe())
 
-    if lon_coord_name is None:
-        lon_coord_name = ds.cf.coordinates['longitude'][0]
-    if lat_coord_name is None:
-        lat_coord_name = ds.cf.coordinates['latitude'][0]
-    if vertical_dim_name is None:
-        try:
-            vert = ds.cf['vertical']
-        except KeyError:
-            vert = None
-        if vert is not None:
-            vertical_dim_name = ds.cf.coordinates['vertical'][0]
+    lon_coord_name = 'lon'
+    lat_coord_name = 'lat'
+    vertical_dim_name = 'lev'
 
     # print(lat_coord_name, lon_coord_name, vertical_dim_name)
 
-    latdim = ds_subset.cf[lon_coord_name].ndim
-    # need dim names
-    dd = ds_subset.cf['latitude'].dims
-    if latdim == 1:
-        lat_dim_name = dd[0]
-        lon_dim_name = ds_subset.cf['longitude'].dims[0]
-    elif latdim == 2:
-        lat_dim_name = dd[0]
-        lon_dim_name = dd[1]
+    latdim = 1
+
+    lat_dim_name = 'lat'
+    lon_dim_name = 'lon'
 
     if start is not None and end is not None:
         ds_subset = ds_subset.isel({time_dim_name: slice(start, end + 1)})
