@@ -65,7 +65,7 @@ class CompChecker:
         self._prev_pass = False
         self._opt_level = None
 
-    def reset_counter(self):  # call before doing the next timestep
+    def reset_checker(self):  # call before doing the next timestep
         self._counter = 0
         self._results_dict = {}
         self._prev_level = -1
@@ -76,7 +76,7 @@ class CompChecker:
 
         dc = lm.Diffcalcs(orig_da, comp_da)
         val = dc.get_diff_calc(self._calc_type)
-        print('calc_val = ', val)
+        # print('calc_val = ', val)
 
         if self._tol_greater_than:
             if val >= self._calc_tol:
