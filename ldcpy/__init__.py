@@ -3,6 +3,7 @@
 """ Top-level module for ldcpy. """
 from pkg_resources import DistributionNotFound, get_distribution
 
+from .comp_checker import CompChecker
 from .metrics import DatasetMetrics, DiffMetrics
 from .plot import plot
 from .util import check_metrics, collect_datasets, compare_stats, open_datasets
