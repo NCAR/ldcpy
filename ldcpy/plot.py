@@ -124,8 +124,13 @@ class MetricsPlot(object):
             self._true_lat is not None or self._true_lon is not None
         ):
             raise ValueError('Cannot currently subset by latitude or longitude in a spatial plot')
-        if self._lev != 0 and 'lev' not in self._ds.dims:
-            raise ValueError('Cannot subset by lev in this dataset')
+        if self._lev != 0:  # and 'lev' not in self._ds.dims:
+            try:
+                vert = self._ds.cf['vertical']
+            except KeyError:
+                vert = None
+            if vert is None:
+                raise ValueError('Cannot subset by lev (vertical dimension) in this dataset')
         if self._quantile is not None and self._metric != 'quantile':
             raise ValueError('Cannot change quantile value if metric is not quantile')
         if self._quantile is None and self._metric == 'quantile':
@@ -141,21 +146,20 @@ class MetricsPlot(object):
         da_data.attrs = da.attrs
 
         # lat/lon dim names are different for ocn and atm
-        if da_data.dims[0] == 'time':
-            lat_dim = da_data.dims[1]
-            lon_dim = da_data.dims[2]
-        else:
-            lat_dim = da_data.dims[0]
-            lon_dim = da_data.dims[1]
+        dd = da_data.cf['latitude'].dims
 
-        # print(lat_dim, lon_dim)
+        ll = len(dd)
+        if ll == 1:
+            lat_dim = dd[0]
+            lon_dim = da_data.cf['longitude'].dims[0]
+        elif ll == 2:
+            lat_dim = dd[0]
+            lon_dim = dd[1]
 
         if self._plot_type in ['spatial']:
             metrics_da = lm.DatasetMetrics(da_data, ['time'])
         elif self._plot_type in ['time_series', 'periodogram', 'histogram']:
-            # metrics_da = lm.DatasetMetrics(da_data, ['lat', 'lon'])
             metrics_da = lm.DatasetMetrics(da_data, [lat_dim, lon_dim])
-
         else:
             raise ValueError(f'plot type {self._plot_type} not supported')
 
@@ -165,6 +169,7 @@ class MetricsPlot(object):
             )
 
         raw_data = metrics_da.get_metric(self._metric, self._quantile, self._group_by)
+
         return raw_data
 
     def get_plot_data(self, raw_data_1, raw_data_2=None):
@@ -275,6 +280,7 @@ class MetricsPlot(object):
         return
 
     def spatial_plot(self, da_sets, titles):
+
         if self.vert_plot:
             nrows = int((da_sets.sets.size))
         else:
@@ -308,13 +314,14 @@ class MetricsPlot(object):
         cmin = []
 
         # lat/lon could be 1 or 2d and have different names
-        lon_coord_name = "lon"
-        lat_coord_name = "lat"
-        # print(lon_coord_name)
-        # print(lat_coord_name)
+        lon_coord_name = da_sets[0].cf.coordinates['longitude'][0]
+        lat_coord_name = da_sets[0].cf.coordinates['latitude'][0]
 
         # is the lat/lon 1d or 2d (to do: set error if > 2)
-        latdim = 1
+        latdim = da_sets[0].cf[lon_coord_name].ndim
+
+        # print("DS:", da_sets[0])
+        # print(titles)
 
         central = 0.0  # might make this a parameter later
         if latdim == 2:  # probably pop
@@ -333,7 +340,6 @@ class MetricsPlot(object):
 
             axs[i].set_facecolor('#39ff14')
 
-            # da_sets[i].compute()
             # make data periodic
             if latdim == 2:
                 ylon = da_sets[i][lon_coord_name]
@@ -344,11 +350,12 @@ class MetricsPlot(object):
 
                 cy_datas = add_cyclic_point(da_sets[i])
             else:  # 1d
-                cy_datas, lon_sets = add_cyclic_point(da_sets[i], coord=da_sets[i][lon_coord_name])
-                lat_sets = da_sets[i][lat_coord_name]
 
-            # AB: convert back to reg. array (not masked)
-            # cy_datas = cy_datas.filled()
+                ylon = da_sets[i][lon_coord_name]
+                lon_sets = np.hstack((ylon, ylon[0]))
+                cy_datas = add_cyclic_point(da_sets[i])
+
+                lat_sets = da_sets[i][lat_coord_name]
 
             if np.isnan(cy_datas).any() or np.isinf(cy_datas).any():
                 nan_inf_flag = 1
@@ -357,14 +364,10 @@ class MetricsPlot(object):
 
             cyxr = xr.DataArray(data=cy_datas)
 
-            # if not np.isinf(cy_datas).all():
-            #    cmin.append(np.min(cy_datas.where(cy_datas != -np.inf).min()))
-            #    cmax.append(np.max(cy_datas.where(cy_datas != np.inf).max()))
             if not np.isinf(cyxr).all():
                 cmin.append(np.min(cyxr.where(cyxr != -np.inf).min()))
                 cmax.append(np.max(cyxr.where(cyxr != np.inf).max()))
 
-            # no_inf_data_set = np.nan_to_num(cy_datas, nan=np.nan)
             no_inf_data_set = np.nan_to_num(cyxr, nan=np.nan)
 
             # add a check here so ensure the dataset size is the same size as lon_sets * lat_sets[i]
@@ -495,9 +498,14 @@ class MetricsPlot(object):
             for i in range(1, len(da_sets)):
                 img1 = skimage.io.imread('tmp_ssim1.png')
                 img2 = skimage.io.imread(f'tmp_ssim{i+1}.png')
-                # print(img1.shape)
-                # print(img2.shape)
-                ssim_val = ssim(img1, img2, multichannel=True)
+                # ssim_val = ssim(img1, img2, multichannel=True)
+                ssim_val = ssim(
+                    img1,
+                    img2,
+                    multichannel=True,
+                    gaussian_weights=True,
+                    use_sample_covariance=False,
+                )
                 print(f' SSIM 1 & {i+1} = % 5.5f\n' % (ssim_val))
             for i in range(len(da_sets) + 1):
                 if os.path.exists(f'tmp_ssim{i}.png'):
@@ -627,14 +635,6 @@ class MetricsPlot(object):
                 )
                 ax = plt.gca()
             else:
-                # plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%m-%d-%Y'))
-                # plt.gca().xaxis.set_major_locator(mdates.DayLocator())
-                # dtindex = da_sets[i].indexes['time'].to_datetimeindex()
-                # da_sets[i]['time'] = dtindex
-
-                # mpl.pyplot.plot_date(
-                #    da_sets[i].time.data, da_sets[i], f'C{i}', label=f'{da_sets.sets.data[i]}'
-                # )
                 dtindex = da_sets[i].indexes['time']
                 c_d_time = [nc_time_axis.CalendarDateTime(item, '365_day') for item in dtindex]
                 mpl.pyplot.plot(c_d_time, da_sets[i], f'C{i}', label=f'{da_sets.sets.data[i]}')
@@ -687,6 +687,7 @@ class MetricsPlot(object):
         mpl.pyplot.title(tex_escape(titles[0]))
 
     def get_metric_label(self, metric, data, weights=None):
+
         # Get special metric names
         if self._short_title is False:
             if metric == 'zscore':
@@ -698,13 +699,21 @@ class MetricsPlot(object):
                 )
                 metric_name = f'{metric}: cutoff {zscore_cutoff[0]:.2f}, % sig: {percent_sig:.2f}'
             elif metric == 'mean' and self._plot_type == 'spatial' and self._metric_type == 'raw':
-                o_wt_mean = np.average(
-                    np.average(
-                        lm.DatasetMetrics(data, ['time']).get_metric(metric),
-                        axis=0,
-                        weights=weights,
-                    )
-                )
+
+                a1_data = (lm.DatasetMetrics(data, ['time']).get_metric(metric)).data
+                # check for NANs
+                indices = ~np.isnan(a1_data)
+                if weights is not None:
+                    weights = weights[indices]
+
+                a2_data = np.average(
+                    a1_data[indices],
+                    axis=0,
+                    weights=weights,
+                ).compute()
+
+                o_wt_mean = np.nanmean(a2_data)
+
                 metric_name = f'{metric} = {o_wt_mean:.2f}'
             elif metric == 'pooled_var_ratio':
                 pooled_sd = np.sqrt(
@@ -719,6 +728,7 @@ class MetricsPlot(object):
                 metric_name = f'{metric}: % sig = {p:.2f}'
             else:
                 metric_name = metric
+
             return metric_name
         else:
             return ''
@@ -916,7 +926,8 @@ def plot(
     # Subset data (by var and collection)
     dss = []
 
-    # update when new release of cf_xarray is released
+    # update when new release of cf_xarray is released (won't need to do this - just trying to avoid
+    # an uneeded arror message for now)
     if 'bounds' in ds['time'].attrs.keys():
         ds['time'].attrs.pop('bounds')
 
@@ -942,6 +953,7 @@ def plot(
     if sets is not None:
         for i in range(len(sets)):
             subsets.append(lu.subset_data(dss[i], subset, lat, lon, lev, start, end))
+            subsets[i].attrs = dss[i].attrs
 
     # Acquire raw metric values
     datas = []
@@ -956,11 +968,15 @@ def plot(
                 datas.append(subsets[i])
 
     raw_metrics = []
+
     for d in datas:
         raw_metrics.append(mp.get_metrics(d))
 
+    # get lat/lon coordinate names:
+    lon_coord_name = datas[0].cf['longitude'].name
+    lat_coord_name = datas[0].cf['latitude'].name
+
     # Get metric names/values for plot title
-    # if metric == 'zscore':
     metric_names = []
     for i in range(len(datas)):
         if ds.variables.mapping.get('gw') is not None:
@@ -969,14 +985,28 @@ def plot(
             metric_names.append(mp.get_metric_label(calc, datas[i]))
     # Get plot data and title
     if lat is not None and lon is not None:
-        mp.title_lat = subsets[0]['lat'].data[0]
-        mp.title_lon = subsets[0]['lon'].data[0] - 180
+        # is this a 1D of 2D lat/lon?
+        dd = subsets[0].cf['latitude'].dims
+        if len(dd) == 1:
+            mp.title_lat = subsets[0][lat_coord_name].data[0]
+            mp.title_lon = subsets[0][lon_coord_name].data[0] - 180
+        else:  # 2
+            # lon should be 0- 360
+            mylat = subsets[0][lat_coord_name].data[0]
+            mylon = subsets[0][lon_coord_name].data[0]
+            mylat = mylat[0].compute()
+            mylon = mylon[0].compute()
+            if mylon < 0:
+                mylon = mylon + 360
+            mp.title_lat = mylat
+            mp.title_lon = mylon
     else:
         mp.title_lat = lat
         mp.title_lon = lon
 
     plot_datas = []
     set_names = []
+
     if calc_type in ['diff', 'ratio']:
         for i in range(1, len(raw_metrics)):
             plot_datas.append(mp.get_plot_data(raw_metrics[0], raw_metrics[i]))

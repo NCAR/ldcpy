@@ -1,10 +1,16 @@
 cmocean
+cartopy
 dask[complete]
 matplotlib
 nc-time-axis
+h5py
 netcdf4
 numpy
 scikit-image
 scipy
 xarray
 xrft
+cf_xarray
+cartopy
+nodejs
+pandas

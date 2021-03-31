@@ -136,7 +136,7 @@ def compare_stats(
     set1: str,
     set2: str,
     significant_digits: int = 5,
-    include_ssim_metric: bool = True,
+    include_ssim_metric: bool = False,
     **metrics_kwargs,
 ):
     """
@@ -153,9 +153,9 @@ def compare_stats(
     set2 : str
         The collection label of the (1st) data to compare
     significant_digits : int, optional
-        The number of significant digits to use when printing stats, (default 51)
+        The number of significant digits to use when printing stats, (default 5)
     include_ssim_metric : bool, optional
-        Whether or not to compute the ssim metric, (default: True)
+        Whether or not to compute the ssim metric, (default: False)
     **metrics_kwargs :
         Additional keyword arguments passed through to the
         :py:class:`~ldcpy.DatasetMetrics` instance.
@@ -202,54 +202,83 @@ def compare_stats(
         **metrics_kwargs,
     )
 
-    output = collections.OrderedDict()
-    output['skip1'] = 0
-    output[f'mean {set1}'] = ds0_metrics.get_metric('mean').data
-    output[f'mean {set2}'] = ds1_metrics.get_metric('mean').data
-    output['mean diff'] = d_metrics.get_metric('mean').data
-    output['skip2'] = 0
-    output[f'variance {set1}'] = ds0_metrics.get_metric('variance').data
-    output[f'variance {set2}'] = ds1_metrics.get_metric('variance').data
-    output['skip3'] = 0
-    output[f'standard deviation {set1}'] = ds0_metrics.get_metric('std').data
-    output[f'standard deviation {set2}'] = ds1_metrics.get_metric('std').data
-    output['skip4'] = 0
-    output[f'max value {set1}'] = ds0_metrics.get_metric('max_val').data
-    output[f'max value {set2}'] = ds1_metrics.get_metric('max_val').data
-    output[f'min value {set1}'] = ds0_metrics.get_metric('min_val').data
-    output[f'min value {set2}'] = ds1_metrics.get_metric('min_val').data
-    output['skip55'] = 0
-    output['max abs diff'] = d_metrics.get_metric('max_abs').data
-    output['min abs diff'] = d_metrics.get_metric('min_abs').data
-    output['mean abs diff'] = d_metrics.get_metric('mean_abs').data
-    output['mean squared diff'] = d_metrics.get_metric('mean_squared').data
-    output['root mean squared diff'] = d_metrics.get_metric('rms').data
-    output['normalized root mean squared diff'] = diff_metrics.get_diff_metric('n_rms').data
-    output['normalized max pointwise error'] = diff_metrics.get_diff_metric('n_emax').data
-    output['pearson correlation coefficient'] = diff_metrics.get_diff_metric(
+    # DATA FRAME
+    import pandas as pd
+    from IPython.display import HTML, display
+
+    df_dict = {}
+    my_cols = [set1, set2]
+    df_dict['mean'] = [
+        ds0_metrics.get_metric('mean').data.compute(),
+        ds1_metrics.get_metric('mean').data.compute(),
+    ]
+    df_dict['variance'] = [
+        ds0_metrics.get_metric('variance').data.compute(),
+        ds1_metrics.get_metric('variance').data.compute(),
+    ]
+    df_dict['standard deviation'] = [
+        ds0_metrics.get_metric('std').data.compute(),
+        ds1_metrics.get_metric('std').data.compute(),
+    ]
+    df_dict['max value'] = [
+        ds0_metrics.get_metric('max_val').data.compute(),
+        ds1_metrics.get_metric('max_val').data.compute(),
+    ]
+    df_dict['min value'] = [
+        ds0_metrics.get_metric('min_val').data.compute(),
+        ds1_metrics.get_metric('min_val').data.compute(),
+    ]
+    df_dict['probability positive'] = [
+        ds0_metrics.get_metric('prob_positive').data.compute(),
+        ds1_metrics.get_metric('prob_positive').data.compute(),
+    ]
+    df_dict['number of zeros'] = [
+        ds0_metrics.get_metric('num_zero').data.compute(),
+        ds1_metrics.get_metric('num_zero').data.compute(),
+    ]
+
+    for d in df_dict.keys():
+        fo = [f'%.{significant_digits}g' % item for item in df_dict[d]]
+        df_dict[d] = fo
+    df = pd.DataFrame.from_dict(df_dict, orient='index', columns=my_cols)
+    display(HTML(' <span style="color:green">Comparison: </span>  '))
+    display(df)
+
+    df_dict2 = {}
+    my_cols2 = [' ']
+
+    df_dict2['max abs diff'] = d_metrics.get_metric('max_abs').data.compute()
+    df_dict2['min abs diff'] = d_metrics.get_metric('min_abs').data.compute()
+    df_dict2['mean abs diff'] = d_metrics.get_metric('mean_abs').data.compute()
+    df_dict2['mean squared diff'] = d_metrics.get_metric('mean_squared').data.compute()
+    df_dict2['root mean squared diff'] = d_metrics.get_metric('rms').data.compute()
+    df_dict2['normalized root mean squared diff'] = diff_metrics.get_diff_metric(
+        'n_rms'
+    ).data.compute()
+    df_dict2['normalized max pointwise error'] = diff_metrics.get_diff_metric(
+        'n_emax'
+    ).data.compute()
+    df_dict2['pearson correlation coefficient'] = diff_metrics.get_diff_metric(
         'pearson_correlation_coefficient'
-    ).data
-    output['ks p-value'] = diff_metrics.get_diff_metric('ks_p_value')
+    ).data.compute()
+    df_dict2['ks p-value'] = diff_metrics.get_diff_metric('ks_p_value')
     tmp = 'spatial relative error(% > ' + str(ds0_metrics.get_single_metric('spre_tol')) + ')'
-    output[tmp] = diff_metrics.get_diff_metric('spatial_rel_error')
-    output['max spatial relative error'] = diff_metrics.get_diff_metric('max_spatial_rel_error')
+    df_dict2[tmp] = diff_metrics.get_diff_metric('spatial_rel_error')
+    df_dict2['max spatial relative error'] = diff_metrics.get_diff_metric('max_spatial_rel_error')
 
     if include_ssim_metric:
-        output['ssim'] = diff_metrics.get_diff_metric('ssim')
-        output['ssim_fp'] = diff_metrics.get_diff_metric('ssim_fp')
-        output['ssim_fp_old'] = diff_metrics.get_diff_metric('ssim_fp_old')
+        df_dict2['SSIM'] = diff_metrics.get_diff_metric('ssim')
+        df_dict2['Data SSIM'] = diff_metrics.get_diff_metric('ssim_fp')
 
-    if dask.is_dask_collection(ds):
-        output = dask.compute(output)[0]
+    for d in df_dict2.keys():
+        fo = [f'%.{significant_digits}g' % df_dict2[d]]
+        df_dict2[d] = fo
 
-    for key, value in output.items():
-        if key[:4] != 'skip':
-            # rounded_value = f'{float(f"{value:.{significant_digits}g}"):g}'
-            rounded_value = f'{(f"{value:.{significant_digits}g}")}'
+    df2 = pd.DataFrame.from_dict(df_dict2, orient='index', columns=my_cols2)
 
-            print(f'{key:<35}:', f'{rounded_value}')
-        else:
-            print(' ')
+    display(HTML('<br>'))
+    display(HTML('<span style="color:green">Difference metrics: </span>  '))
+    display(df2)
 
 
 def check_metrics(
@@ -466,11 +495,11 @@ def save_metrics(
     # spre = diff_metrics.get_diff_metric('spatial_rel_error')
 
     # SSIM less than of ssim_tol is failing
-    #ssim_val = diff_metrics.get_diff_metric('ssim')
+    # ssim_val = diff_metrics.get_diff_metric('ssim')
 
     ssim_fp_val = diff_metrics.get_diff_metric('ssim_fp')
 
-    #ssim_fp_old_val = diff_metrics.get_diff_metric('ssim_fp_old')
+    # ssim_fp_old_val = diff_metrics.get_diff_metric('ssim_fp_old')
 
     file_exists = os.path.isfile('names.csv')
     with open('names.csv', 'a', newline='') as csvfile:
@@ -482,15 +511,15 @@ def save_metrics(
             #            'pcc',
             #            'ks_p_value',
             #            'spatial_rel_error',
-            #'ssim',
+            # 'ssim',
             'ssim_fp',
-            #'ssim_fp_old',
+            # 'ssim_fp_old',
             #            'pcc_pass',
             #            'ks_p_value_pass',
             #            'spatial_rel_error_pass',
-            #'ssim_pass',
+            # 'ssim_pass',
             'ssim_fp_pass',
-            #'ssim_fp_old_pass',
+            # 'ssim_fp_old_pass',
         ]
         writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
 
@@ -505,15 +534,15 @@ def save_metrics(
                 #                'pcc': pcc,
                 #                'ks_p_value': ks,
                 #                'spatial_rel_error': spre,
-                #'ssim': ssim_val,
+                # 'ssim': ssim_val,
                 'ssim_fp': ssim_fp_val,
-                #'ssim_fp_old': ssim_fp_old_val,
+                # 'ssim_fp_old': ssim_fp_old_val,
                 #                'pcc_pass': pcc >= pcc_tol,
                 #                'ks_p_value_pass': ks >= ks_tol,
                 #                'spatial_rel_error_pass': spre <= spre_tol,
-                #'ssim_pass': ssim_val >= ssim_tol,
+                # 'ssim_pass': ssim_val >= ssim_tol,
                 'ssim_fp_pass': ssim_fp_val >= ssim_tol,
-                #'ssim_fp_old_pass': ssim_fp_old_val >= ssim_tol,
+                # 'ssim_fp_old_pass': ssim_fp_old_val >= ssim_tol,
             }
         )
 
@@ -529,27 +558,53 @@ def subset_data(
     start=None,
     end=None,
     time_dim_name='time',
-    vertical_dim_name='lev',
-    lat_dim_name='lat',
-    lon_dim_name='lon',
+    vertical_dim_name=None,
+    lat_coord_name=None,
+    lon_coord_name=None,
 ):
     """
     Get a subset of the given dataArray, returns a dataArray
     """
     ds_subset = ds
 
+    # print(ds.cf.describe())
+
+    if lon_coord_name is None:
+        lon_coord_name = ds.cf.coordinates['longitude'][0]
+    if lat_coord_name is None:
+        lat_coord_name = ds.cf.coordinates['latitude'][0]
+    if vertical_dim_name is None:
+        try:
+            vert = ds.cf['vertical']
+        except KeyError:
+            vert = None
+        if vert is not None:
+            vertical_dim_name = ds.cf.coordinates['vertical'][0]
+
+    # print(lat_coord_name, lon_coord_name, vertical_dim_name)
+
+    latdim = ds_subset.cf[lon_coord_name].ndim
+    # need dim names
+    dd = ds_subset.cf['latitude'].dims
+    if latdim == 1:
+        lat_dim_name = dd[0]
+        lon_dim_name = ds_subset.cf['longitude'].dims[0]
+    elif latdim == 2:
+        lat_dim_name = dd[0]
+        lon_dim_name = dd[1]
+
     if start is not None and end is not None:
         ds_subset = ds_subset.isel({time_dim_name: slice(start, end + 1)})
 
     if subset is not None:
         if subset == 'winter':
-            ds_subset = ds_subset.where(ds[time_dim_name].dt.season == 'DJF', drop=True)
+            ds_subset = ds_subset.cf.sel(time=ds.cf['time'].dt.season == 'DJF')
         elif subset == 'spring':
-            ds_subset = ds_subset.where(ds[time_dim_name].dt.season == 'MAM', drop=True)
+            ds_subset = ds_subset.cf.sel(time=ds.cf['time'].dt.season == 'MAM')
         elif subset == 'summer':
-            ds_subset = ds_subset.where(ds[time_dim_name].dt.season == 'JJA', drop=True)
+            ds_subset = ds_subset.cf.sel(time=ds.cf['time'].dt.season == 'JJA')
         elif subset == 'autumn':
-            ds_subset = ds_subset.where(ds[time_dim_name].dt.season == 'SON', drop=True)
+            ds_subset = ds_subset.cf.sel(time=ds.cf['time'].dt.season == 'SON')
 
         elif subset == 'first5':
             ds_subset = ds_subset.isel({time_dim_name: slice(None, 5)})
@@ -558,12 +613,42 @@ def subset_data(
         if vertical_dim_name in ds_subset.dims:
             ds_subset = ds_subset.isel({vertical_dim_name: lev})
 
-    if lat is not None:
-        ds_subset = ds_subset.sel(**{lat_dim_name: lat, 'method': 'nearest'})
-        ds_subset = ds_subset.expand_dims(lat_dim_name)
+    if latdim == 1:
 
-    if lon is not None:
-        ds_subset = ds_subset.sel(**{lon_dim_name: lon + 180, 'method': 'nearest'})
-        ds_subset = ds_subset.expand_dims(lon_dim_name)
+        if lat is not None:
+            ds_subset = ds_subset.sel(**{lat_coord_name: [lat], 'method': 'nearest'})
+        if lon is not None:
+            ds_subset = ds_subset.sel(**{lon_coord_name: [lon + 180], 'method': 'nearest'})
+
+    elif latdim == 2:
+
+        # print(ds_subset)
+
+        if lat is not None:
+            if lon is not None:
+
+                # lat is -90 to 90
+                # lon should be 0- 360
+                ad_lon = lon
+                if ad_lon < 0:
+                    ad_lon = ad_lon + 360
+
+                mlat = ds_subset[lat_coord_name].compute()
+                mlon = ds_subset[lon_coord_name].compute()
+                # euclidean dist for now....
+                di = np.sqrt(np.square(ad_lon - mlon) + np.square(lat - mlat))
+                index = np.where(di == np.min(di))
+                xmin = index[0][0]
+                ymin = index[1][0]
+
+                # Don't want if it's a land point
+                check = ds_subset.isel(nlat=xmin, nlon=ymin, time=1).compute()
+                if np.isnan(check):
+                    print(
+                        'You have chosen a lat/lon point with Nan values (i.e., a land point). Plot will not make sense.'
+                    )
+                ds_subset = ds_subset.isel({lat_dim_name: [xmin], lon_dim_name: [ymin]})
+
+                # ds_subset.compute()
 
     return ds_subset
