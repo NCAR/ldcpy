@@ -12,7 +12,7 @@ import matplotlib as mpl
 import numpy as np
 import xarray as xr
 
-from ldcpy import metrics as lm
+from ldcpy import calcs as lm
 
 
 class CompChecker:
@@ -24,7 +24,7 @@ class CompChecker:
     When you initialize the object, the following paramters are optional:
 
     calc_type: str, optional
-          A valid DiffMetrics options ("ssim_fp" is the default)
+          A valid Diffcalcs options ("ssim_fp" is the default)
     cal_tol: float
           The tolerance to check for that calc_type (default is .9995)
     tol_greater_than: boolean, optional
@@ -64,8 +64,8 @@ class CompChecker:
 
     def eval_comp_level(self, orig_da, comp_da, comp_level):
 
-        dm = lm.DiffMetrics(orig_da, comp_da)
-        val = dm.get_diff_metric(self._calc_type)
+        dm = lm.Diffcalcs(orig_da, comp_da)
+        val = dm.get_diff_calc(self._calc_type)
         print('val = ', val)
 
         if self._tol_greater_than:
