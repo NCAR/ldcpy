@@ -39,31 +39,14 @@ class DatasetMetrics:
         # Let's just get all the lat/lon and time
         # names from the file if they are None
         # lon coord
-        if lon_coord_name is None:
-            lon_coord_name = ds.cf.coordinates['longitude'][0]
-        self._lon_coord_name = lon_coord_name
+        self._lon_coord_name = 'lon'
 
         # lat coord
-        if lat_coord_name is None:
-            lat_coord_name = ds.cf.coordinates['latitude'][0]
-        self._lat_coord_name = lat_coord_name
+        self._lat_coord_name = 'lat'
 
-        dd = ds.cf['latitude'].dims
-        ll = len(dd)
-        if ll == 1:
-            if lat_dim_name is None:
-                lat_dim_name = dd[0]
-            if lon_dim_name is None:
-                lon_dim_name = ds.cf['longitude'].dims[0]
-        elif ll == 2:
-            if lat_dim_name is None:
-                lat_dim_name = dd[0]
-            if lon_dim_name is None:
-                lon_dim_name = dd[1]
-
-        self._latlon_dims = ll
-        self._lat_dim_name = lat_dim_name
-        self._lon_dim_name = lon_dim_name
+        self._latlon_dims = 2
+        self._lat_dim_name = 'lat'
+        self._lon_dim_name = 'lon'
 
         # vertical dimension?
         if vert_dim_name is None:
@@ -1029,7 +1012,7 @@ class DiffMetrics:
             lon1 = d1[self._metrics1._lon_coord_name]
             lon2 = d2[self._metrics2._lon_coord_name]
 
-            latdim = d1.cf[self._metrics1._lon_coord_name].ndim
+            latdim = 1
             central = 0.0  # might make this a parameter later
             if latdim == 2:  # probably pop
                 central = 300.0
