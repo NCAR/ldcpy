@@ -147,7 +147,7 @@ class TestErrorcalcsPOP(TestCase):
         import xarray as xr
         import zfpy
 
-        ds = xr.open_dataset('data/pop/pop.SST.100days.nc')
+        ds = xr.open_dataset('data/pop/pop.SST.60days.nc')
 
         SST = ds.SST
 
