@@ -365,21 +365,26 @@ class calcsPlot(object):
                 cmin.append(np.min(cyxr.where(cyxr != -np.inf).min()))
                 cmax.append(np.max(cyxr.where(cyxr != np.inf).max()))
 
-            no_inf_data_set = np.nan_to_num(cyxr.astype(np.float32), nan=np.nan)
+            if latdim == 2:
+                no_inf_data_set = np.nan_to_num(cyxr.astype(np.float32), nan=np.nan)
+            else:
+                ncyxr = cyxr.roll(dim_1=145)
+                no_inf_data_set = np.nan_to_num(ncyxr.astype(np.float32), nan=np.nan)
 
             # casting to float32 from float64 using imshow prevents lots of tiny black dots from showing up in some plots with lots of
             # zeroes. See plot of probability of negative PRECT to see this in action.
-            psets[i] = psets[i] = axs[i].pcolormesh(
-                lon_sets,
-                lat_sets,
-                no_inf_data_set,
-                transform=ccrs.PlateCarree(),
-                cmap=mymap,
-            )
-
-            # psets[i] = axs[i].imshow(
-            #    img=flipud(no_inf_data_set), transform=ccrs.PlateCarree(), cmap=mymap
-            # )
+            if latdim == 2:
+                psets[i] = psets[i] = axs[i].pcolormesh(
+                    lon_sets,
+                    lat_sets,
+                    no_inf_data_set,
+                    transform=ccrs.PlateCarree(),
+                    cmap=mymap,
+                )
+            else:
+                psets[i] = axs[i].imshow(
+                    img=flipud(no_inf_data_set), transform=ccrs.PlateCarree(), cmap=mymap
+                )
 
             # psets[i] = axs[i].imshow(
             #    img=flipud(no_inf_data_set), transform=ccrs.PlateCarree(), cmap=mymap
