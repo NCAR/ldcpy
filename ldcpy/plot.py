@@ -367,7 +367,7 @@ class calcsPlot(object):
 
             no_inf_data_set = np.nan_to_num(cyxr.astype(np.float32), nan=np.nan)
 
-            # casting to float32 from float64 prevents lots of tiny black dots from showing up in some plots with lots of
+            # casting to float32 from float64 using imshow prevents lots of tiny black dots from showing up in some plots with lots of
             # zeroes. See plot of probability of negative PRECT to see this in action.
             psets[i] = psets[i] = axs[i].pcolormesh(
                 lon_sets,
@@ -519,7 +519,10 @@ class calcsPlot(object):
 
     def hist_plot(self, plot_data, title):
         fig, axs = mpl.pyplot.subplots(1, 1, sharey=True, tight_layout=True)
-        axs.hist(plot_data, label=plot_data.sets.data)
+        sets = []
+        for set in plot_data.sets:
+            sets.append(plot_data.sel(sets=set))
+        axs.hist(sets, label=plot_data.sets.data)
         if plot_data.units != '':
             mpl.pyplot.xlabel(tex_escape(f'{self._calc} ({plot_data.units})'))
         else:
