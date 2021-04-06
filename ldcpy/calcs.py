@@ -11,6 +11,7 @@ from cartopy import crs as ccrs
 from cartopy.util import add_cyclic_point
 from matplotlib import pyplot as plt
 from scipy import stats as ss
+from scipy.ndimage import gaussian_filter
 from xrft import dft
 
 
@@ -843,6 +844,7 @@ class Diffcalcs:
         self._ssim_value = None
         self._ssim_value_fp = None
         self._ssim_value_fp_old = None
+        self._ssim_value_fp_fast = None
         self._max_spatial_rel_error = None
 
     def _is_memoized(self, calc_name: str) -> bool:
@@ -1173,16 +1175,12 @@ class Diffcalcs:
     @property
     def ssim_value_fp(self):
         """
-        We compute the SSIM (structural similarity index) on the spatial data - using the
-        data itself (we do not create an image).
+        We compute the SSIM (structural similarity index) on the spatial data
+        - using the data itself (we do not create an image).
 
         Here we scale from [0,1] - then quantize to 256 bins
 
         """
-        from math import exp, pi, sqrt
-
-        from skimage.util import crop
-
         if not self._is_memoized('_ssim_value_fp'):
 
             # if this is a 3D variable, we will do each level seperately
@@ -1322,14 +1320,109 @@ class Diffcalcs:
                         ssim_mat[i, j] = ssim_1 * ssim_2
 
                 mean_ssim = np.nanmean(ssim_mat)
-                # to ignore edge effects (as in skimage)
-                # mean_ssim = np.nanmean(crop(ssim_mat, k))
                 ssim_levs[this_lev] = mean_ssim
 
             return_ssim = ssim_levs.min()
             self._ssim_value_fp = return_ssim
 
         return self._ssim_value_fp
+
+    @property
+    def ssim_value_fp_fast(self):
+        """
+        Faster implementation then ssim_value_fp
+
+        """
+        import astropy
+
+        if not self._is_memoized('_ssim_value_fp_fast'):
+
+            # if this is a 3D variable, we will do each level seperately
+            if self._calcs1._vert_dim_name is not None:
+                vname = self._calcs1._vert_dim_name
+                nlevels = self._calcs1.get_calc('ds').sizes[vname]
+                # print("nlevels = ", nlevels)
+            else:
+                nlevels = 1
+
+            ssim_levs = np.zeros(nlevels)
+            my_eps = 1.0e-15
+
+            for this_lev in range(nlevels):
+                if nlevels == 1:
+                    a1 = self._calcs1.get_calc('ds').data
+                    a2 = self._calcs2.get_calc('ds').data
+                else:
+                    a1 = self._calcs1.get_calc('ds').isel({vname: this_lev}).data
+                    a2 = self._calcs2.get_calc('ds').isel({vname: this_lev}).data
+
+                if dask.is_dask_collection(a1):
+                    a1 = a1.compute()
+                if dask.is_dask_collection(a2):
+                    a2 = a2.compute()
+
+                # re-scale  to [0,1] - if not constant
+                smin = min(np.nanmin(a1), np.nanmin(a2))
+                smax = max(np.nanmax(a1), np.nanmax(a2))
+                r = smax - smin
+                if r == 0.0:  # scale by smax if fiels is a constant (and smax != 0)
+                    if smax == 0.0:
+                        sc_a1 = a1
+                        sc_a2 = a2
+                    else:
+                        sc_a1 = a1 / smax
+                        sc_a2 = a2 / smax
+                else:
+                    sc_a1 = (a1 - smin) / r
+                    sc_a2 = (a2 - smin) / r
+
+                # now quantize to 256 bins
+                sc_a1 = np.round(sc_a1 * 255) / 255
+                sc_a2 = np.round(sc_a2 * 255) / 255
+
+                # gaussian filter
+                # n = 11  # recommended window size
+                # k = 5  # extent or radius
+                sigma = 1.5  # std dev for guasss weight
+                truncate = 3.5
+                filter_func = gaussian_filter
+                filter_args = {'sigma': sigma, 'truncate': truncate}
+
+                # weighted means
+                a1_mu = filter_func(sc_a1, **filter_args)
+                a2_mu = filter_func(sc_a2, **filter_args)
+
+                # weighted std
+                a1a1 = filter_func(sc_a1 * sc_a1, **filter_args)
+                a2a2 = filter_func(sc_a2 * sc_a2, **filter_args)
+                a1a2 = filter_func(sc_a1 * sc_a2, **filter_args)
+
+                var_a1 = a1a1 - a1_mu * a1_mu
+                var_a2 = a2a2 - a2_mu * a2_mu
+                cov_a1a2 = a1a2 - a1_mu * a2_mu
+
+                # ssim constants
+                C1 = my_eps
+                C2 = my_eps
+
+                ssim_t1 = 2 * a1_mu * a2_mu + C1
+                ssim_t2 = 2 * cov_a1a2 + C2
+
+                ssim_b1 = a1_mu * a1_mu + a2_mu * a2_mu + C1
+                ssim_b2 = var_a1 + var_a2 + C2
+
+                ssim_1 = ssim_t1 / ssim_b1
+                ssim_2 = ssim_t2 / ssim_b2
+                ssim_mat = ssim_1 * ssim_2
+
+                mean_ssim = np.nanmean(ssim_mat)
+                ssim_levs[this_lev] = mean_ssim
+
+            # end of levels calculation
+            return_ssim = ssim_levs.min()
+            self._ssim_value_fp_fast = return_ssim
+
+        return self._ssim_value_fp_fast
 
     @property
     def ssim_value_fp_old(self):
@@ -1405,6 +1498,8 @@ class Diffcalcs:
                 return self.ssim_value
             if name == 'ssim_fp':
                 return self.ssim_value_fp
+            if name == 'ssim_fp_fast':
+                return self.ssim_value_fp_fast
             if name == 'ssim_fp_old':
                 return self.ssim_value_fp_old
             raise ValueError(f'there is no calc with the name: {name}.')
