@@ -27,10 +27,10 @@ ds3 = ldcpy.open_datasets(['T'], ['data/cam-fv/cam-fv.T.3months.nc'], ['orig'])
 ds_pop = ldcpy.open_datasets(
     ['SST'],
     [
-        'data/pop/pop.SST.100days.nc',
-        'data/pop/zfp1.0.pop.SST.100days.nc',
-        'data/pop/zfp1e-1.pop.SST.100days.nc',
-        'data/pop/zfp1e-2.pop.SST.100days.nc',
+        'data/pop/pop.SST.60days.nc',
+        'data/pop/zfp1.0.pop.SST.60days.nc',
+        'data/pop/zfp1e-1.pop.SST.60days.nc',
+        'data/pop/zfp1e-2.pop.SST.60days.nc',
     ],
     ['orig', 'recon', 'recon2', 'recon3'],
 )
@@ -94,7 +94,7 @@ class TestPlot(TestCase):
             'TS',
             sets=['orig', 'recon'],
             calc='ann_harmonic_ratio',
-            calc_type='metric_of_diff',
+            calc_type='calc_of_diff',
             tex_format=False,
         )
         self.assertTrue(True)
@@ -274,7 +274,7 @@ class TestPlot(TestCase):
             ds,
             'TS',
             sets=['orig', 'recon'],
-            calc_type='metric_of_diff',
+            calc_type='calc_of_diff',
             calc='zscore',
             tex_format=False,
         )

@@ -7,10 +7,10 @@ import ldcpy
 ds = ldcpy.open_datasets(
     ['SST'],
     [
-        'data/pop/pop.SST.100days.nc',
-        'data/pop/zfp1.0.pop.SST.100days.nc',
-        'data/pop/zfp1e-1.pop.SST.100days.nc',
-        'data/pop/zfp1e-2.pop.SST.100days.nc',
+        'data/pop/pop.SST.60days.nc',
+        'data/pop/zfp1.0.pop.SST.60days.nc',
+        'data/pop/zfp1e-1.pop.SST.60days.nc',
+        'data/pop/zfp1e-2.pop.SST.60days.nc',
     ],
     ['orig', 'recon', 'recon2', 'recon3'],
 )
@@ -75,7 +75,7 @@ class TestPlotPop(TestCase):
             'SST',
             sets=['orig', 'recon'],
             calc='ann_harmonic_ratio',
-            calc_type='metric_of_diff',
+            calc_type='calc_of_diff',
             tex_format=False,
         )
         self.assertTrue(True)
@@ -229,7 +229,7 @@ class TestPlotPop(TestCase):
             ds,
             'SST',
             sets=['orig', 'recon'],
-            calc_type='metric_of_diff',
+            calc_type='calc_of_diff',
             calc='zscore',
             tex_format=False,
         )
