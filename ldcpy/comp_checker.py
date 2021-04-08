@@ -76,7 +76,6 @@ class CompChecker:
 
         dc = lm.Diffcalcs(orig_da, comp_da)
         val = dc.get_diff_calc(self._calc_type)
-        # print('calc_val = ', val)
 
         if self._tol_greater_than:
             if val >= self._calc_tol:
@@ -91,7 +90,6 @@ class CompChecker:
 
         opt_level = None
         call_again = True
-        # print('level_passed = ', level_passed)
         # keep track for now (for debugging)
         self._results_dict[comp_level] = [val, level_passed]
 
@@ -111,7 +109,6 @@ class CompChecker:
                 new_level = self._comp_rules(comp_level, level_passed)
 
         else:  # counter > 0
-            # print('prev_pass = ', self._prev_pass)
             if level_passed:  # this one passed
                 if self._prev_pass:
                     self._prev_level = comp_level

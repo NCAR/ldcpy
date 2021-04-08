@@ -313,6 +313,7 @@ class calcsPlot(object):
 
         # lat/lon could be 1 or 2d and have different names
         lon_coord_name = da_sets[0].cf.coordinates['longitude'][0]
+        lat_coord_name = da_sets[0].cf.coordinates['latitude'][0]
 
         # is the lat/lon 1d or 2d (to do: set error if > 2)
         latdim = da_sets[0].cf[lon_coord_name].ndim
@@ -339,9 +340,17 @@ class calcsPlot(object):
 
             # make data periodic
             if latdim == 2:
+                ylon = da_sets[i][lon_coord_name]
+                lon_sets = np.hstack((ylon, ylon[:, 0:1]))
+
+                xlat = da_sets[i][lat_coord_name]
+                lat_sets = np.hstack((xlat, xlat[:, 0:1]))
 
                 cy_datas = add_cyclic_point(da_sets[i])
             else:  # 1d
+                ylon = da_sets[i][lon_coord_name]
+                lon_sets = np.hstack((ylon, ylon[0]))
+                lat_sets = da_sets[i][lat_coord_name]
 
                 cy_datas = add_cyclic_point(da_sets[i])
 
@@ -356,14 +365,30 @@ class calcsPlot(object):
                 cmin.append(np.min(cyxr.where(cyxr != -np.inf).min()))
                 cmax.append(np.max(cyxr.where(cyxr != np.inf).max()))
 
-            ncyxr = cyxr.roll(dim_1=145)
-            no_inf_data_set = np.nan_to_num(ncyxr.astype(np.float32), nan=np.nan)
+            if latdim == 2:
+                no_inf_data_set = np.nan_to_num(cyxr.astype(np.float32), nan=np.nan)
+            else:
+                ncyxr = cyxr.roll(dim_1=145)
+                no_inf_data_set = np.nan_to_num(ncyxr.astype(np.float32), nan=np.nan)
 
-            # casting to float32 from float64 prevents lots of tiny black dots from showing up in some plots with lots of
+            # casting to float32 from float64 using imshow prevents lots of tiny black dots from showing up in some plots with lots of
             # zeroes. See plot of probability of negative PRECT to see this in action.
-            psets[i] = axs[i].imshow(
-                img=flipud(no_inf_data_set), transform=ccrs.PlateCarree(), cmap=mymap
-            )
+            if latdim == 2:
+                psets[i] = psets[i] = axs[i].pcolormesh(
+                    lon_sets,
+                    lat_sets,
+                    no_inf_data_set,
+                    transform=ccrs.PlateCarree(),
+                    cmap=mymap,
+                )
+            else:
+                psets[i] = axs[i].imshow(
+                    img=flipud(no_inf_data_set), transform=ccrs.PlateCarree(), cmap=mymap
+                )
+
+            # psets[i] = axs[i].imshow(
+            #    img=flipud(no_inf_data_set), transform=ccrs.PlateCarree(), cmap=mymap
+            # )
             axs[i].set_global()
 
             # if we want to get the ssim
@@ -499,7 +524,10 @@ class calcsPlot(object):
 
     def hist_plot(self, plot_data, title):
         fig, axs = mpl.pyplot.subplots(1, 1, sharey=True, tight_layout=True)
-        axs.hist(plot_data, label=plot_data.sets.data)
+        sets = []
+        for set in plot_data.sets:
+            sets.append(plot_data.sel(sets=set))
+        axs.hist(sets, label=plot_data.sets.data)
         if plot_data.units != '':
             mpl.pyplot.xlabel(tex_escape(f'{self._calc} ({plot_data.units})'))
         else:
