@@ -7,10 +7,10 @@ import ldcpy
 ds = ldcpy.open_datasets(
     ['SST'],
     [
-        'data/pop/pop.SST.100days.nc',
-        'data/pop/zfp1.0.pop.SST.100days.nc',
-        'data/pop/zfp1e-1.pop.SST.100days.nc',
-        'data/pop/zfp1e-2.pop.SST.100days.nc',
+        'data/pop/pop.SST.60days.nc',
+        'data/pop/zfp1.0.pop.SST.60days.nc',
+        'data/pop/zfp1e-1.pop.SST.60days.nc',
+        'data/pop/zfp1e-2.pop.SST.60days.nc',
     ],
     ['orig', 'recon', 'recon2', 'recon3'],
 )
