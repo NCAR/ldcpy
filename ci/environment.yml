@@ -20,3 +20,4 @@ dependencies:
   - zfpy
   - cf_xarray
   - pandas
+  - astropy

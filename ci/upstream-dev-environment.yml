@@ -16,6 +16,7 @@ dependencies:
   - scikit-image
   - zfpy
   - pandas
+  - astropy
   - jupyterlab
   - pip:
       - git+https://github.com/pydata/xarray.git

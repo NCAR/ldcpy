@@ -12,6 +12,7 @@ from cartopy.util import add_cyclic_point
 from matplotlib import pyplot as plt
 from scipy import stats as ss
 from scipy.ndimage import gaussian_filter
+from skimage.util import crop
 from xrft import dft
 
 
@@ -845,6 +846,7 @@ class Diffcalcs:
         self._ssim_value_fp = None
         self._ssim_value_fp_old = None
         self._ssim_value_fp_fast = None
+        self._ssim_value_fp_fast2 = None
         self._max_spatial_rel_error = None
 
     def _is_memoized(self, calc_name: str) -> bool:
@@ -855,6 +857,38 @@ class Diffcalcs:
     def _oned_gauss(self, n, sigma):
         r = range(-int(n / 2), int(n / 2) + 1)
         return [(1 / (sigma * sqrt(2 * pi))) * exp(-float(x) ** 2 / (2 * sigma ** 2)) for x in r]
+
+    # this adjusts the boundary area after filtering with astropy
+    # to account for the fact that we want to divide only by the weight in
+    # the domain at the edges
+    def _filter_adjust_edges(self, mydata, kernel, k):
+        k_sum = kernel.array.sum()
+        X = mydata.shape[0]
+        Y = mydata.shape[1]
+        # R and L rectangles and T and B rectangles
+        for j in range(k):
+            kk = kernel.array[:, 0 : k + j + 1].sum()
+            scale = k_sum / kk
+            # L and R
+            mydata[k : X - k, j] = mydata[k : X - k, j] * scale
+            mydata[k : X - k, Y - j - 1] = mydata[k : X - k, Y - j - 1] * scale
+            # T and B
+            mydata[j, k : Y - k] = mydata[j, k : Y - k] * scale
+            mydata[X - j - 1, k : Y - k] = mydata[X - j - 1, k : Y - k] * scale
+
+        # corners
+        for i in range(k):
+            for j in range(k):
+                kk = kernel.array[0 : k + i + 1, 0 : k + j + 1].sum()
+                scale = k_sum / kk
+                # top left
+                mydata[i, j] = mydata[i, j] * scale
+                # top right
+                mydata[i, Y - j - 1] = mydata[i, Y - j - 1] * scale
+                # bottom left
+                mydata[X - i - 1, j] = mydata[X - i - 1, j] * scale
+                # bottom right
+                mydata[X - i - 1, Y - j - 1] = mydata[X - i - 1, Y - j - 1] * scale
 
     @property
     def covariance(self) -> xr.DataArray:
@@ -1029,6 +1063,7 @@ class Diffcalcs:
 
             d1 = self._calcs1.get_calc('ds')
             d2 = self._calcs2.get_calc('ds')
+
             lat1 = d1[self._calcs1._lat_coord_name]
             lat2 = d2[self._calcs2._lat_coord_name]
             lon1 = d1[self._calcs1._lon_coord_name]
@@ -1173,7 +1208,7 @@ class Diffcalcs:
         return self._ssim_value
 
     @property
-    def ssim_value_fp(self):
+    def ssim_value_fp_orig(self):
         """
         We compute the SSIM (structural similarity index) on the spatial data
         - using the data itself (we do not create an image).
@@ -1232,7 +1267,7 @@ class Diffcalcs:
                 sigma = 1.5
 
                 X = sc_a1.shape[0]
-                Y = sc_a2.shape[1]
+                Y = sc_a1.shape[1]
 
                 g_w = np.array(self._oned_gauss(n, sigma))
                 # 2D gauss weights
@@ -1285,17 +1320,22 @@ class Diffcalcs:
                         a2_mu = np.average(a2_win[indices2], weights=Wt[indices2])
 
                         # weighted std squared (variance)
-                        a1_std_sq = np.average(
-                            (a1_win[indices1] - a1_mu) ** 2, weights=Wt[indices1]
+                        a1_std_sq = (
+                            np.average((a1_win[indices1] * a1_win[indices1]), weights=Wt[indices1])
+                            - a1_mu * a1_mu
                         )
-                        a2_std_sq = np.average(
-                            (a2_win[indices2] - a2_mu) ** 2, weights=Wt[indices2]
+                        a2_std_sq = (
+                            np.average((a2_win[indices2] * a2_win[indices2]), weights=Wt[indices2])
+                            - a2_mu * a2_mu
                         )
 
                         # cov of a1 and a2
-                        a1a2_cov = np.average(
-                            (a1_win[indices1] - a1_mu) * (a2_win[indices2] - a2_mu),
-                            weights=Wt[indices1],
+                        a1a2_cov = (
+                            np.average(
+                                (a1_win[indices1] * a2_win[indices2]),
+                                weights=Wt[indices1],
+                            )
+                            - a1_mu * a2_mu
                         )
 
                         # SSIM for this window
@@ -1319,29 +1359,31 @@ class Diffcalcs:
                         ssim_2 = ssim_t2 / ssim_b2
                         ssim_mat[i, j] = ssim_1 * ssim_2
 
+                # cropping (temp)
+                # ssim_mat = crop(ssim_mat, k)
+
                 mean_ssim = np.nanmean(ssim_mat)
                 ssim_levs[this_lev] = mean_ssim
 
             return_ssim = ssim_levs.min()
-            self._ssim_value_fp = return_ssim
+            self._ssim_value_fp_orig = return_ssim
 
-        return self._ssim_value_fp
+        return self._ssim_value_fp_orig
 
     @property
     def ssim_value_fp_fast(self):
         """
-        Faster implementation then ssim_value_fp
+        Faster implementation then ssim_value_fp_orig
 
         """
-        import astropy
+        from astropy.convolution import Gaussian2DKernel, convolve, interpolate_replace_nans
 
-        if not self._is_memoized('_ssim_value_fp_fast'):
+        if not self._is_memoized('_ssim_value_fp_fast2'):
 
             # if this is a 3D variable, we will do each level seperately
             if self._calcs1._vert_dim_name is not None:
                 vname = self._calcs1._vert_dim_name
                 nlevels = self._calcs1.get_calc('ds').sizes[vname]
-                # print("nlevels = ", nlevels)
             else:
                 nlevels = 1
 
@@ -1365,7 +1407,7 @@ class Diffcalcs:
                 smin = min(np.nanmin(a1), np.nanmin(a2))
                 smax = max(np.nanmax(a1), np.nanmax(a2))
                 r = smax - smin
-                if r == 0.0:  # scale by smax if fiels is a constant (and smax != 0)
+                if r == 0.0:  # scale by smax if field is a constant (and smax != 0)
                     if smax == 0.0:
                         sc_a1 = a1
                         sc_a2 = a2
@@ -1381,22 +1423,25 @@ class Diffcalcs:
                 sc_a2 = np.round(sc_a2 * 255) / 255
 
                 # gaussian filter
-                # n = 11  # recommended window size
-                # k = 5  # extent or radius
-                sigma = 1.5  # std dev for guasss weight
-                truncate = 3.5
-                filter_func = gaussian_filter
-                filter_args = {'sigma': sigma, 'truncate': truncate}
+                kernel = Gaussian2DKernel(x_stddev=1.5, x_size=11, y_size=11)
+                k = 5
+                filter_args = {'boundary': 'fill', 'preserve_nan': True}
+                a1_mu = convolve(sc_a1, kernel, **filter_args)
+                self._filter_adjust_edges(a1_mu, kernel, k)
 
-                # weighted means
-                a1_mu = filter_func(sc_a1, **filter_args)
-                a2_mu = filter_func(sc_a2, **filter_args)
+                a2_mu = convolve(sc_a2, kernel, **filter_args)
+                self._filter_adjust_edges(a2_mu, kernel, k)
 
-                # weighted std
-                a1a1 = filter_func(sc_a1 * sc_a1, **filter_args)
-                a2a2 = filter_func(sc_a2 * sc_a2, **filter_args)
-                a1a2 = filter_func(sc_a1 * sc_a2, **filter_args)
+                a1a1 = convolve(sc_a1 * sc_a1, kernel, **filter_args)
+                self._filter_adjust_edges(a1a1, kernel, k)
 
+                a2a2 = convolve(sc_a2 * sc_a2, kernel, **filter_args)
+                self._filter_adjust_edges(a2a2, kernel, k)
+
+                a1a2 = convolve(sc_a1 * sc_a2, kernel, **filter_args)
+                self._filter_adjust_edges(a1a2, kernel, k)
+
+                ###########
                 var_a1 = a1a1 - a1_mu * a1_mu
                 var_a2 = a2a2 - a2_mu * a2_mu
                 cov_a1a2 = a1a2 - a1_mu * a2_mu
@@ -1496,9 +1541,9 @@ class Diffcalcs:
                 return self.max_spatial_rel_error
             if name == 'ssim':
                 return self.ssim_value
+            if name == 'ssim_fp_orig':
+                return self.ssim_value_fp_orig
             if name == 'ssim_fp':
-                return self.ssim_value_fp
-            if name == 'ssim_fp_fast':
                 return self.ssim_value_fp_fast
             if name == 'ssim_fp_old':
                 return self.ssim_value_fp_old
