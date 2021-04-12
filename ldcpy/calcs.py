@@ -893,29 +893,37 @@ class Diffcalcs:
                 mydata[X - i - 1, Y - j - 1] = mydata[X - i - 1, Y - j - 1] * scale
 
     def plot_ssim_mat(self, return_mat=False, ssim_type='ssim_fp'):
-
         if ssim_type == 'orig':
             if self._ssim_value is None:
                 self.ssim_value
-            mat = self._ssim_mat
+            mats = self._ssim_mat
         else:
             if self._ssim_value_fp_fast is None:
                 self.ssim_value_fp_fast
-            mat = self._ssim_mat_fp
+            mats = self._ssim_mat_fp
 
-        mina = mat.min()
-        # maxa = mat.max()
-        meana = np.nanmean(mat)
-        ind = np.unravel_index(np.argmin(mat, axis=None), mat.shape)
+        num = len(mats)
+        meana = np.zeros(num)
+        for i in range(num):
+            meana[i] = np.nanmean(mats[i])
 
-        plt.imshow(mat, interpolation='none', vmax=1.0, cmap='bone')
+        # for 3D which is the min level
+        min_meana = meana.min()
+        min_lev = meana.argmin()
+
+        # smallest value at that level
+        min_lev_val = np.min(mats[min_lev])
+
+        ind = np.unravel_index(np.argmin(mats[min_lev], axis=None), mats[min_lev].shape)
+
+        plt.imshow(mats[min_lev], interpolation='none', vmax=1.0, cmap='bone')
         plt.colorbar(orientation='horizontal')
-        mytitle = f'ssim val = {meana:.4f}, min = {mina:.4f} at {ind}'
+        mytitle = f'ssim val = {min_meana:.4f}, min = {min_lev_val:.4f} at {ind}'
         plt.title(mytitle)
         plt.show()
 
         if return_mat:
-            return mat
+            return mats
 
     @property
     def covariance(self) -> xr.DataArray:
@@ -1144,6 +1152,7 @@ class Diffcalcs:
             mymap.set_bad(alpha=0)
 
             ssim_levs = np.zeros(nlevels)
+            ssim_mats_array = []
 
             for this_lev in range(nlevels):
 
@@ -1225,6 +1234,7 @@ class Diffcalcs:
                     # print(s)
                     ssim_levs[this_lev] = s
                     plt.close(fig)
+                    ssim_mats_array.append(np.mean(ssim_mat, axis=2))
 
             return_ssim = ssim_levs.min()
 
@@ -1232,7 +1242,7 @@ class Diffcalcs:
             mpl.use(backend_)
 
             # save full matrix
-            self._ssim_mat = np.mean(ssim_mat, axis=2)
+            self._ssim_mat = ssim_mats_array
 
             self._ssim_value = return_ssim
 
@@ -1419,6 +1429,7 @@ class Diffcalcs:
                 nlevels = 1
 
             ssim_levs = np.zeros(nlevels)
+            ssim_mats_array = []
             my_eps = 1.0e-15
 
             for this_lev in range(nlevels):
@@ -1493,13 +1504,14 @@ class Diffcalcs:
 
                 mean_ssim = np.nanmean(ssim_mat)
                 ssim_levs[this_lev] = mean_ssim
+                ssim_mats_array.append(ssim_mat)
 
             # end of levels calculation
             return_ssim = ssim_levs.min()
             self._ssim_value_fp_fast = return_ssim
 
             # save full matrix
-            self._ssim_mat_fp = ssim_mat
+            self._ssim_mat_fp = ssim_mats_array
         return self._ssim_value_fp_fast
 
     @property
