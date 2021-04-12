@@ -848,6 +848,8 @@ class Diffcalcs:
         self._ssim_value_fp_fast = None
         self._ssim_value_fp_fast2 = None
         self._max_spatial_rel_error = None
+        self._ssim_mat_fp = None
+        self._ssim_mat = None
 
     def _is_memoized(self, calc_name: str) -> bool:
         return hasattr(self, calc_name) and (self.__getattribute__(calc_name) is not None)
@@ -889,6 +891,31 @@ class Diffcalcs:
                 mydata[X - i - 1, j] = mydata[X - i - 1, j] * scale
                 # bottom right
                 mydata[X - i - 1, Y - j - 1] = mydata[X - i - 1, Y - j - 1] * scale
+
+    def plot_ssim_mat(self, return_mat=False, ssim_type='ssim_fp'):
+
+        if ssim_type == 'orig':
+            if self._ssim_value is None:
+                self.ssim_value
+            mat = self._ssim_mat
+        else:
+            if self._ssim_value_fp_fast is None:
+                self.ssim_value_fp_fast
+            mat = self._ssim_mat_fp
+
+        mina = mat.min()
+        # maxa = mat.max()
+        meana = np.nanmean(mat)
+        ind = np.unravel_index(np.argmin(mat, axis=None), mat.shape)
+
+        plt.imshow(mat, interpolation='none', vmax=1.0, cmap='bone')
+        plt.colorbar(orientation='horizontal')
+        mytitle = f'ssim val = {meana:.4f}, min = {mina:.4f} at {ind}'
+        plt.title(mytitle)
+        plt.show()
+
+        if return_mat:
+            return mat
 
     @property
     def covariance(self) -> xr.DataArray:
@@ -1187,12 +1214,13 @@ class Diffcalcs:
 
                     # s = ssim(img1, img2, multichannel=True)
                     # the following version closer to matlab version (and orig ssim paper)
-                    s = ssim(
+                    s, ssim_mat = ssim(
                         img1,
                         img2,
                         multichannel=True,
                         gaussian_weights=True,
                         use_sample_covariance=False,
+                        full=True,
                     )
                     # print(s)
                     ssim_levs[this_lev] = s
@@ -1202,6 +1230,9 @@ class Diffcalcs:
 
             # Reset backend
             mpl.use(backend_)
+
+            # save full matrix
+            self._ssim_mat = np.mean(ssim_mat, axis=2)
 
             self._ssim_value = return_ssim
 
@@ -1467,6 +1498,8 @@ class Diffcalcs:
             return_ssim = ssim_levs.min()
             self._ssim_value_fp_fast = return_ssim
 
+            # save full matrix
+            self._ssim_mat_fp = ssim_mat
         return self._ssim_value_fp_fast
 
     @property
