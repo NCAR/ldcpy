@@ -891,10 +891,10 @@ def plot(
         Valid options:
 
             - first5: the first 5 days of data
-            - winter: data from the months December, January, February
-            - spring: data from the months March, April, May
-            - summer: data from the months June, July, August
-            - autumn: data from the months September, October, November
+            - DJF: data from the months December, January, February
+            - MAM: data from the months March, April, May
+            - JJA: data from the months June, July, August
+            - SON: data from the months September, October, November
     lat : float, optional
         The latitude of the data to gather calcs on (default None).
     lon : float , optional

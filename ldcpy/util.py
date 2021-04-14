@@ -436,13 +436,13 @@ def subset_data(
         ds_subset = ds_subset.isel({time_dim_name: slice(start, end + 1)})
 
     if subset is not None:
-        if subset == 'winter':
+        if subset == 'DJF':
             ds_subset = ds_subset.cf.sel(time=ds.cf['time'].dt.season == 'DJF')
-        elif subset == 'spring':
+        elif subset == 'MAM':
             ds_subset = ds_subset.cf.sel(time=ds.cf['time'].dt.season == 'MAM')
-        elif subset == 'summer':
+        elif subset == 'JJA':
             ds_subset = ds_subset.cf.sel(time=ds.cf['time'].dt.season == 'JJA')
-        elif subset == 'autumn':
+        elif subset == 'SON':
             ds_subset = ds_subset.cf.sel(time=ds.cf['time'].dt.season == 'SON')
 
         elif subset == 'first5':
