@@ -14,7 +14,8 @@ from cartopy.util import add_cyclic_point
 from matplotlib import pyplot as plt
 from pylab import flipud
 
-from ldcpy import calcs as lm, util as lu
+from ldcpy import calcs as lm
+from ldcpy.util import subset_data
 
 
 def tex_escape(text):
@@ -1004,7 +1005,7 @@ def plot(
     subsets = []
     if sets is not None:
         for i in range(len(sets)):
-            subsets.append(lu.subset_data(dss[i], subset, lat, lon, lev, start, end))
+            subsets.append(subset_data(dss[i], subset, lat, lon, lev, start, end))
             subsets[i].attrs = dss[i].attrs
 
     # Acquire raw calc values
