@@ -477,9 +477,9 @@ def save_metrics(
         - ds[varname].sel(collection=set2).isel(time=time),
         ['lat', 'lon'],
     )
-    max_abs = reg_metrics.get_metric('max_abs').data.compute()
+    max_abs = reg_metrics.get_calc('max_abs').data.compute()
 
-    max_rel_error = diff_metrics.get_diff_metric('max_spatial_rel_error')
+    max_rel_error = diff_metrics.get_diff_calc('max_spatial_rel_error')
 
     # Pearson less than pcc_tol means fail
     # pcc = diff_metrics.get_diff_metric('pearson_correlation_coefficient').data.compute()
@@ -493,7 +493,7 @@ def save_metrics(
     # SSIM less than of ssim_tol is failing
     # ssim_val = diff_metrics.get_diff_metric('ssim')
 
-    ssim_fp_val = diff_metrics.get_diff_metric('ssim_fp')
+    ssim_fp_val = diff_metrics.get_diff_calc('ssim_fp')
 
     # ssim_fp_old_val = diff_metrics.get_diff_metric('ssim_fp_old')
 
