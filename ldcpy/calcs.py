@@ -842,12 +842,16 @@ class Diffcalcs:
         self._n_rms = None
         self._n_emax = None
         self._spatial_rel_error = None
-        self._ssim_value = None
-        self._ssim_value_fp = None
-        self._ssim_value_fp_old = None
-        self._ssim_value_fp_fast = None
-        self._ssim_value_fp_fast2 = None
+        self._ssim_value = None  # uses images
+        self._ssim_value_fp_old = None  # like the old zchecker one
+        self._ssim_value_fp_fast = None  # faster use - use this for Data SSIM
+        self._ssim_value_fp_fast2 = None  # orig faster version
+        self._ssim_value_fp_orig = None  # slower version
         self._max_spatial_rel_error = None
+        self._ssim_mat_fp = None
+        self._ssim_mat = None
+        self._ssim_mat_fp_orig = None
+        self._ssim_mat_fp_fast2 = None
 
     def _is_memoized(self, calc_name: str) -> bool:
         return hasattr(self, calc_name) and (self.__getattribute__(calc_name) is not None)
@@ -860,7 +864,7 @@ class Diffcalcs:
 
     # this adjusts the boundary area after filtering with astropy
     # to account for the fact that we want to divide only by the weight in
-    # the domain at the edges
+    # the domain at the edges (this is used in fast2)
     def _filter_adjust_edges(self, mydata, kernel, k):
         k_sum = kernel.array.sum()
         X = mydata.shape[0]
@@ -889,6 +893,47 @@ class Diffcalcs:
                 mydata[X - i - 1, j] = mydata[X - i - 1, j] * scale
                 # bottom right
                 mydata[X - i - 1, Y - j - 1] = mydata[X - i - 1, Y - j - 1] * scale
+
+    def plot_ssim_mat(self, return_mat=False, ssim_type='ssim_fp'):
+        if ssim_type == 'orig':
+            if self._ssim_value is None:
+                self.ssim_value
+            mats = self._ssim_mat
+        elif ssim_type == 'ssim_fp_orig':
+            if self._ssim_value_fp_orig is None:
+                self.ssim_value_fp_orig
+            mats = self._ssim_mat_fp_orig
+        elif ssim_type == 'ssim_fp_fast2':
+            if self._ssim_value_fp_fast2 is None:
+                self.ssim_value_fp_fast2
+            mats = self._ssim_mat_fp_fast2
+        else:
+            if self._ssim_value_fp_fast is None:
+                self.ssim_value_fp_fast
+            mats = self._ssim_mat_fp
+
+        num = len(mats)
+        meana = np.zeros(num)
+        for i in range(num):
+            meana[i] = np.nanmean(mats[i])
+
+        # for 3D which is the min level
+        min_meana = meana.min()
+        min_lev = meana.argmin()
+
+        # smallest value at that level
+        min_lev_val = np.min(mats[min_lev])
+
+        ind = np.unravel_index(np.argmin(mats[min_lev], axis=None), mats[min_lev].shape)
+
+        plt.imshow(mats[min_lev], interpolation='none', vmax=1.0, cmap='bone')
+        plt.colorbar(orientation='horizontal')
+        mytitle = f'ssim val = {min_meana:.4f}, min = {min_lev_val:.4f} at {ind}'
+        plt.title(mytitle)
+        # plt.show()
+
+        if return_mat:
+            return mats
 
     @property
     def covariance(self) -> xr.DataArray:
@@ -1100,8 +1145,6 @@ class Diffcalcs:
             else:
                 nlevels = 1
 
-            # print("nlevels = ", nlevels)
-
             color_min = min(
                 np.min(d1.where(d1 != -np.inf)).values.min(),
                 np.min(d2.where(d2 != -np.inf)).values.min(),
@@ -1117,6 +1160,7 @@ class Diffcalcs:
             mymap.set_bad(alpha=0)
 
             ssim_levs = np.zeros(nlevels)
+            ssim_mats_array = []
 
             for this_lev in range(nlevels):
 
@@ -1187,21 +1231,26 @@ class Diffcalcs:
 
                     # s = ssim(img1, img2, multichannel=True)
                     # the following version closer to matlab version (and orig ssim paper)
-                    s = ssim(
+                    s, ssim_mat = ssim(
                         img1,
                         img2,
                         multichannel=True,
                         gaussian_weights=True,
                         use_sample_covariance=False,
+                        full=True,
                     )
                     # print(s)
                     ssim_levs[this_lev] = s
                     plt.close(fig)
+                    ssim_mats_array.append(np.mean(ssim_mat, axis=2))
 
             return_ssim = ssim_levs.min()
 
             # Reset backend
             mpl.use(backend_)
+
+            # save full matrix
+            self._ssim_mat = ssim_mats_array
 
             self._ssim_value = return_ssim
 
@@ -1222,11 +1271,11 @@ class Diffcalcs:
             if self._calcs1._vert_dim_name is not None:
                 vname = self._calcs1._vert_dim_name
                 nlevels = self._calcs1.get_calc('ds').sizes[vname]
-                # print("nlevels = ", nlevels)
             else:
                 nlevels = 1
 
             ssim_levs = np.zeros(nlevels)
+            ssim_mats_array = []
 
             for this_lev in range(nlevels):
                 if nlevels == 1:
@@ -1359,21 +1408,22 @@ class Diffcalcs:
                         ssim_2 = ssim_t2 / ssim_b2
                         ssim_mat[i, j] = ssim_1 * ssim_2
 
-                # cropping (temp)
-                # ssim_mat = crop(ssim_mat, k)
-
                 mean_ssim = np.nanmean(ssim_mat)
                 ssim_levs[this_lev] = mean_ssim
+                ssim_mats_array.append(ssim_mat)
 
             return_ssim = ssim_levs.min()
             self._ssim_value_fp_orig = return_ssim
+            # save full matrix
+            self._ssim_mat_fp_orig = ssim_mats_array
 
         return self._ssim_value_fp_orig
 
     @property
-    def ssim_value_fp_fast(self):
+    def ssim_value_fp_fast2(self):
         """
         Faster implementation then ssim_value_fp_orig
+        Use other version below - not this fast2
 
         """
         from astropy.convolution import Gaussian2DKernel, convolve, interpolate_replace_nans
@@ -1388,6 +1438,7 @@ class Diffcalcs:
                 nlevels = 1
 
             ssim_levs = np.zeros(nlevels)
+            ssim_mats_array = []
             my_eps = 1.0e-15
 
             for this_lev in range(nlevels):
@@ -1460,18 +1511,124 @@ class Diffcalcs:
                 ssim_2 = ssim_t2 / ssim_b2
                 ssim_mat = ssim_1 * ssim_2
 
+                # cropping (temp)
+                # ssim_mat = crop(ssim_mat, k)
+
                 mean_ssim = np.nanmean(ssim_mat)
                 ssim_levs[this_lev] = mean_ssim
+                ssim_mats_array.append(ssim_mat)
+
+            # end of levels calculation
+            return_ssim = ssim_levs.min()
+            self._ssim_value_fp_fast2 = return_ssim
+
+            # save full matrix
+            self._ssim_mat_fp_fast2 = ssim_mats_array
+        return self._ssim_value_fp_fast2
+
+    @property
+    def ssim_value_fp_fast(self):
+        """
+        Faster implementation then ssim_value_fp_orig
+
+        """
+        from astropy.convolution import Gaussian2DKernel, convolve, interpolate_replace_nans
+
+        if not self._is_memoized('_ssim_value_fp_fast'):
+
+            # if this is a 3D variable, we will do each level seperately
+            if self._calcs1._vert_dim_name is not None:
+                vname = self._calcs1._vert_dim_name
+                nlevels = self._calcs1.get_calc('ds').sizes[vname]
+            else:
+                nlevels = 1
+
+            ssim_levs = np.zeros(nlevels)
+            ssim_mats_array = []
+            my_eps = 1.0e-8
+
+            for this_lev in range(nlevels):
+                if nlevels == 1:
+                    a1 = self._calcs1.get_calc('ds').data
+                    a2 = self._calcs2.get_calc('ds').data
+                else:
+                    a1 = self._calcs1.get_calc('ds').isel({vname: this_lev}).data
+                    a2 = self._calcs2.get_calc('ds').isel({vname: this_lev}).data
+
+                if dask.is_dask_collection(a1):
+                    a1 = a1.compute()
+                if dask.is_dask_collection(a2):
+                    a2 = a2.compute()
+
+                # re-scale  to [0,1] - if not constant
+                smin = min(np.nanmin(a1), np.nanmin(a2))
+                smax = max(np.nanmax(a1), np.nanmax(a2))
+                r = smax - smin
+                if r == 0.0:  # scale by smax if field is a constant (and smax != 0)
+                    if smax == 0.0:
+                        sc_a1 = a1
+                        sc_a2 = a2
+                    else:
+                        sc_a1 = a1 / smax
+                        sc_a2 = a2 / smax
+                else:
+                    sc_a1 = (a1 - smin) / r
+                    sc_a2 = (a2 - smin) / r
+
+                # now quantize to 256 bins
+                sc_a1 = np.round(sc_a1 * 255) / 255
+                sc_a2 = np.round(sc_a2 * 255) / 255
+
+                # gaussian filter
+                kernel = Gaussian2DKernel(x_stddev=1.5, x_size=11, y_size=11)
+                k = 5
+                filter_args = {'boundary': 'fill', 'preserve_nan': True}
+
+                a1_mu = convolve(sc_a1, kernel, **filter_args)
+                a2_mu = convolve(sc_a2, kernel, **filter_args)
+
+                a1a1 = convolve(sc_a1 * sc_a1, kernel, **filter_args)
+                a2a2 = convolve(sc_a2 * sc_a2, kernel, **filter_args)
+
+                a1a2 = convolve(sc_a1 * sc_a2, kernel, **filter_args)
+
+                ###########
+                var_a1 = a1a1 - a1_mu * a1_mu
+                var_a2 = a2a2 - a2_mu * a2_mu
+                cov_a1a2 = a1a2 - a1_mu * a2_mu
+
+                # ssim constants
+                C1 = my_eps
+                C2 = my_eps
+
+                ssim_t1 = 2 * a1_mu * a2_mu + C1
+                ssim_t2 = 2 * cov_a1a2 + C2
+
+                ssim_b1 = a1_mu * a1_mu + a2_mu * a2_mu + C1
+                ssim_b2 = var_a1 + var_a2 + C2
+
+                ssim_1 = ssim_t1 / ssim_b1
+                ssim_2 = ssim_t2 / ssim_b2
+                ssim_mat = ssim_1 * ssim_2
+
+                # cropping (the boarder region)
+                ssim_mat = crop(ssim_mat, k)
+
+                mean_ssim = np.nanmean(ssim_mat)
+                ssim_levs[this_lev] = mean_ssim
+                ssim_mats_array.append(ssim_mat)
 
             # end of levels calculation
             return_ssim = ssim_levs.min()
             self._ssim_value_fp_fast = return_ssim
 
+            # save full matrix
+            self._ssim_mat_fp = ssim_mats_array
         return self._ssim_value_fp_fast
 
     @property
     def ssim_value_fp_old(self):
-        """To mimc what zchecker does - the ssim on the fp data with
+        """To mimic what zchecker does - the ssim on the fp data with
         original constants and no scaling. This will return Nan on POP data.
         """
 
@@ -1545,6 +1702,8 @@ class Diffcalcs:
                 return self.ssim_value_fp_orig
             if name == 'ssim_fp':
                 return self.ssim_value_fp_fast
+            if name == 'ssim_fp_fast2':
+                return self.ssim_value_fp_fast2
             if name == 'ssim_fp_old':
                 return self.ssim_value_fp_old
             raise ValueError(f'there is no calc with the name: {name}.')

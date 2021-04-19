@@ -136,6 +136,7 @@ def compare_stats(
     set2: str,
     significant_digits: int = 5,
     include_ssim_metric: bool = False,
+    data_ssim_only=True,
     **calcs_kwargs,
 ):
     """
@@ -154,7 +155,10 @@ def compare_stats(
     significant_digits : int, optional
         The number of significant digits to use when printing stats, (default 5)
     include_ssim_metric : bool, optional
-        Whether or not to compute the ssim calc, (default: False)
+        Whether or not to compute the ssim calcs, (default: False)
+    data_ssim_only: bool, optional
+        If calculating the SSIMS, only do the data ssim (much faster - esp. for 3D vars)
+        (default: True)
     **calcs_kwargs :
         Additional keyword arguments passed through to the
         :py:class:`~ldcpy.Datasetcalcs` instance.
@@ -244,7 +248,7 @@ def compare_stats(
     display(df)
 
     df_dict2 = {}
-    my_cols2 = [' ']
+    my_cols2 = [set2]
 
     df_dict2['max abs diff'] = d_calcs.get_calc('max_abs').data.compute()
     df_dict2['min abs diff'] = d_calcs.get_calc('min_abs').data.compute()
@@ -262,7 +266,8 @@ def compare_stats(
     df_dict2['max spatial relative error'] = diff_calcs.get_diff_calc('max_spatial_rel_error')
 
     if include_ssim_metric:
-        df_dict2['SSIM'] = diff_calcs.get_diff_calc('ssim')
+        if not data_ssim_only:
+            df_dict2['SSIM'] = diff_calcs.get_diff_calc('ssim')
         df_dict2['Data SSIM'] = diff_calcs.get_diff_calc('ssim_fp')
 
     for d in df_dict2.keys():
