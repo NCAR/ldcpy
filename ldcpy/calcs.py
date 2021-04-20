@@ -928,7 +928,13 @@ class Diffcalcs:
 
         plt.imshow(mats[min_lev], interpolation='none', vmax=1.0, cmap='bone')
         plt.colorbar(orientation='horizontal')
-        mytitle = f'ssim val = {min_meana:.4f}, min = {min_lev_val:.4f} at {ind}'
+        if num == 1:
+            mytitle = f'ssim val = {min_meana:.4f}, min = {min_lev_val:.4f} at {ind}'
+        else:
+            mytitle = (
+                f'ssim val = {min_meana:.4f}, min = {min_lev_val:.4f} at {ind} on lev={min_lev}'
+            )
+
         plt.title(mytitle)
         # plt.show()
 
