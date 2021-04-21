@@ -132,11 +132,9 @@ def preprocess(ds, varnames):
 def compare_stats(
     ds,
     varname: str,
-    set1: str,
-    set2: str,
+    sets,
     significant_digits: int = 5,
-    include_ssim_metric: bool = False,
-    data_ssim_only=True,
+    include_ssim: bool = False,
     **calcs_kwargs,
 ):
     """
@@ -148,17 +146,12 @@ def compare_stats(
         An xarray dataset containing multiple netCDF files concatenated across a 'collection' dimension
     varname : str
         The variable of interest in the dataset
-    set1 : str
-        The collection label of the "control" data
-    set2 : str
-        The collection label of the (1st) data to compare
+    sets: list of str
+        The labels of the collection to compare (all will be compared to the first set)
     significant_digits : int, optional
         The number of significant digits to use when printing stats, (default 5)
-    include_ssim_metric : bool, optional
-        Whether or not to compute the ssim calcs, (default: False)
-    data_ssim_only: bool, optional
-        If calculating the SSIMS, only do the data ssim (much faster - esp. for 3D vars)
-        (default: True)
+    include_ssim : bool, optional
+        Whether or not to compute the image ssim - slow for 3D vars (default: False)
     **calcs_kwargs :
         Additional keyword arguments passed through to the
         :py:class:`~ldcpy.Datasetcalcs` instance.
@@ -182,63 +175,67 @@ def compare_stats(
     # use this after the update instead of above
     # da = ds.cf.data_vars[varname]
 
-    da1 = da.sel(collection=set1)
-    da2 = da.sel(collection=set2)
-    dd = da1 - da2
+    # see how many sets we have
+    da_sets = []
+
+    num = len(sets)
+    if num < 2:
+        print('Error: must specifiy at least two sets to compare!')
+        return
+    for set in sets:
+        da_sets.append(da.sel(collection=set))
+
+    dd_sets = []
+    for i in range(1, num):
+        dd_sets.append(da_sets[0] - da_sets[i])
 
     aggregate_dims = calcs_kwargs.pop('aggregate_dims', None)
 
-    ds0_calcs = Datasetcalcs(da1, aggregate_dims, **calcs_kwargs)
+    da_set_calcs = []
+    for i in range(num):
+        da_set_calcs.append(Datasetcalcs(da_sets[i], aggregate_dims, **calcs_kwargs))
 
-    ds1_calcs = Datasetcalcs(da2, aggregate_dims, **calcs_kwargs)
+    dd_set_calcs = []
+    for i in range(num - 1):
+        dd_set_calcs.append(Datasetcalcs(dd_sets[i], aggregate_dims, **calcs_kwargs))
 
-    d_calcs = Datasetcalcs(
-        dd,
-        aggregate_dims,
-        **calcs_kwargs,
-    )
-
-    diff_calcs = Diffcalcs(
-        da1,
-        da2,
-        aggregate_dims,
-        **calcs_kwargs,
-    )
+    diff_calcs = []
+    for i in range(1, num):
+        diff_calcs.append(Diffcalcs(da_sets[0], da_sets[i], aggregate_dims, **calcs_kwargs))
 
     # DATA FRAME
     import pandas as pd
     from IPython.display import HTML, display
 
     df_dict = {}
-    my_cols = [set1, set2]
-    df_dict['mean'] = [
-        ds0_calcs.get_calc('mean').data.compute(),
-        ds1_calcs.get_calc('mean').data.compute(),
-    ]
-    df_dict['variance'] = [
-        ds0_calcs.get_calc('variance').data.compute(),
-        ds1_calcs.get_calc('variance').data.compute(),
-    ]
-    df_dict['standard deviation'] = [
-        ds0_calcs.get_calc('std').data.compute(),
-        ds1_calcs.get_calc('std').data.compute(),
-    ]
-    df_dict['max value'] = [
-        ds0_calcs.get_calc('max_val').data.compute(),
-        ds1_calcs.get_calc('max_val').data.compute(),
-    ]
-    df_dict['min value'] = [
-        ds0_calcs.get_calc('min_val').data.compute(),
-        ds1_calcs.get_calc('min_val').data.compute(),
-    ]
-    df_dict['probability positive'] = [
-        ds0_calcs.get_calc('prob_positive').data.compute(),
-        ds1_calcs.get_calc('prob_positive').data.compute(),
-    ]
-    df_dict['number of zeros'] = [
-        ds0_calcs.get_calc('num_zero').data.compute(),
-        ds1_calcs.get_calc('num_zero').data.compute(),
-    ]
+    my_cols = []
+    for i in range(num):
+        my_cols.append(sets[i])
+
+    temp_mean = []
+    temp_var = []
+    temp_std = []
+    temp_min = []
+    temp_max = []
+    temp_pos = []
+    temp_zeros = []
+
+    for i in range(num):
+        temp_mean.append(da_set_calcs[i].get_calc('mean').data.compute())
+        temp_var.append(da_set_calcs[i].get_calc('variance').data.compute())
+        temp_std.append(da_set_calcs[i].get_calc('std').data.compute())
+        temp_min.append(da_set_calcs[i].get_calc('max_val').data.compute())
+        temp_max.append(da_set_calcs[i].get_calc('min_val').data.compute())
+        temp_pos.append(da_set_calcs[i].get_calc('prob_positive').data.compute())
+        temp_zeros.append(da_set_calcs[i].get_calc('num_zero').data.compute())
+
+    df_dict['mean'] = temp_mean
+    df_dict['variance'] = temp_var
+    df_dict['standard deviation'] = temp_std
+    df_dict['min value'] = temp_min
+    df_dict['max value'] = temp_max
+    df_dict['probability positive'] = temp_pos
+    df_dict['number of zeros'] = temp_zeros
 
     for d in df_dict.keys():
         fo = [f'%.{significant_digits}g' % item for item in df_dict[d]]
@@ -247,31 +244,68 @@ def compare_stats(
     display(HTML(' <span style="color:green">Comparison: </span>  '))
     display(df)
 
+    # diff stuff
     df_dict2 = {}
-    my_cols2 = [set2]
+    my_cols2 = []
+    for i in range(1, num):
+        my_cols2.append(sets[i])
 
-    df_dict2['max abs diff'] = d_calcs.get_calc('max_abs').data.compute()
-    df_dict2['min abs diff'] = d_calcs.get_calc('min_abs').data.compute()
-    df_dict2['mean abs diff'] = d_calcs.get_calc('mean_abs').data.compute()
-    df_dict2['mean squared diff'] = d_calcs.get_calc('mean_squared').data.compute()
-    df_dict2['root mean squared diff'] = d_calcs.get_calc('rms').data.compute()
-    df_dict2['normalized root mean squared diff'] = diff_calcs.get_diff_calc('n_rms').data.compute()
-    df_dict2['normalized max pointwise error'] = diff_calcs.get_diff_calc('n_emax').data.compute()
-    df_dict2['pearson correlation coefficient'] = diff_calcs.get_diff_calc(
-        'pearson_correlation_coefficient'
-    ).data.compute()
-    df_dict2['ks p-value'] = diff_calcs.get_diff_calc('ks_p_value')
-    tmp = 'spatial relative error(% > ' + str(ds0_calcs.get_single_calc('spre_tol')) + ')'
-    df_dict2[tmp] = diff_calcs.get_diff_calc('spatial_rel_error')
-    df_dict2['max spatial relative error'] = diff_calcs.get_diff_calc('max_spatial_rel_error')
+    temp_max_abs = []
+    temp_min_abs = []
+    temp_mean_abs = []
+    temp_mean_sq = []
+    temp_rms = []
 
-    if include_ssim_metric:
-        if not data_ssim_only:
-            df_dict2['SSIM'] = diff_calcs.get_diff_calc('ssim')
-        df_dict2['Data SSIM'] = diff_calcs.get_diff_calc('ssim_fp')
+    for i in range(num - 1):
+        temp_max_abs.append(dd_set_calcs[i].get_calc('max_abs').data.compute())
+        temp_min_abs.append(dd_set_calcs[i].get_calc('min_abs').data.compute())
+        temp_mean_abs.append(dd_set_calcs[i].get_calc('mean_abs').data.compute())
+        temp_mean_sq.append(dd_set_calcs[i].get_calc('mean_squared').data.compute())
+        temp_rms.append(dd_set_calcs[i].get_calc('rms').data.compute())
+
+    df_dict2['max abs diff'] = temp_max_abs
+    df_dict2['min abs diff'] = temp_min_abs
+    df_dict2['mean abs diff'] = temp_mean_abs
+    df_dict2['mean squared diff'] = temp_mean_sq
+    df_dict2['root mean squared diff'] = temp_rms
+
+    temp_nrms = []
+    temp_max_pe = []
+    temp_pcc = []
+    temp_ks = []
+    temp_sre = []
+    temp_max_spr = []
+    temp_data_ssim = []
+    temp_ssim = []
+
+    for i in range(num - 1):
+        temp_nrms.append(diff_calcs[i].get_diff_calc('n_rms').data.compute())
+        temp_max_pe.append(diff_calcs[i].get_diff_calc('n_emax').data.compute())
+        temp_pcc.append(
+            diff_calcs[i].get_diff_calc('pearson_correlation_coefficient').data.compute()
+        )
+        temp_ks.append(diff_calcs[i].get_diff_calc('ks_p_value'))
+        temp_sre.append(diff_calcs[i].get_diff_calc('spatial_rel_error'))
+        temp_max_spr.append(diff_calcs[i].get_diff_calc('max_spatial_rel_error'))
+        temp_data_ssim.append(diff_calcs[i].get_diff_calc('ssim_fp'))
+        if include_ssim:
+            temp_ssim.append(diff_calcs[i].get_diff_calc('ssim'))
+
+    df_dict2['normalized root mean squared diff'] = temp_nrms
+    df_dict2['normalized max pointwise error'] = temp_max_pe
+    df_dict2['pearson correlation coefficient'] = temp_pcc
+    df_dict2['ks p-value'] = temp_ks
+
+    tmp_str = 'spatial relative error(% > ' + str(da_set_calcs[0].get_single_calc('spre_tol')) + ')'
+    df_dict2[tmp_str] = temp_sre
+
+    df_dict2['max spatial relative error'] = temp_max_spr
+    df_dict2['Data SSIM'] = temp_data_ssim
+    if include_ssim:
+        df_dict2['Image SSIM'] = temp_ssim
 
     for d in df_dict2.keys():
-        fo = [f'%.{significant_digits}g' % df_dict2[d]]
+        fo = [f'%.{significant_digits}g' % item for item in df_dict2[d]]
         df_dict2[d] = fo
 
     df2 = pd.DataFrame.from_dict(df_dict2, orient='index', columns=my_cols2)
