@@ -109,6 +109,11 @@ def open_datasets(varnames, list_of_files, labels, **kwargs):
     def preprocess_vars(ds):
         return ds[varnames]
 
+    data_type = 'cam-fv'
+    if data_type == 'cam-fv':
+        weights_name = 'gw'
+        varnames.append(weights_name)
+
     full_ds = xr.open_mfdataset(
         list_of_files,
         concat_dim='collection',
@@ -118,6 +123,19 @@ def open_datasets(varnames, list_of_files, labels, **kwargs):
         preprocess=preprocess_vars,
         **kwargs,
     )
+
+    full_ds.coords['cell_area'] = (
+        xr.DataArray(full_ds.variables.mapping.get('gw'))
+        .expand_dims(lon=full_ds.dims['lon'])
+        .transpose()
+    )
+    full_ds.attrs['cell_measures'] = 'area: cell_area'
+
+    # for varname in varnames:
+    #    full_ds.cf[varname].coords["cell_area"] = xr.DataArray(full_ds.variables.mapping.get("gw")).expand_dims(lon=full_ds.dims["lon"]).transpose()
+    #    full_ds.cf[varname].attrs["cell_measures"] = "area: cell_area"
+
+    full_ds = full_ds.drop(weights_name)
 
     full_ds['collection'] = xr.DataArray(labels, dims='collection')
     print('dataset size in GB {:0.2f}\n'.format(full_ds.nbytes / 1e9))

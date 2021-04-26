@@ -34,6 +34,7 @@ class Datasetcalcs:
         lon_coord_name: str = None,
         q: float = 0.5,
         spre_tol: float = 1.0e-4,
+        weighted=True,
     ):
         self._ds = ds if (ds.dtype == np.float64) else ds.astype(np.float64)
         # For some reason, casting to float64 removes all attrs from the dataset
@@ -84,6 +85,7 @@ class Datasetcalcs:
         self._frame_size = 1
 
         # array calcs
+        self._weighted = weighted
         self._ns_con_var = None
         self._ew_con_var = None
         self._mean = None
@@ -156,26 +158,41 @@ class Datasetcalcs:
         """
         The overall variance of the dataset
         """
-        if not self._is_memoized('_pooled_variance'):
-            self._pooled_variance = self._ds.var(self._agg_dims).mean()
-            self._pooled_variance.attrs = self._ds.attrs
+        if not self._is_memoized('_pooled_variance_mean'):
+            self._pooled_variance = self._ds.var(self._agg_dims)
+            self._pooled_variance.attrs['cell_measures'] = self._ds.attrs['cell_measures']
+            if self.weighted:
+                self._pooled_variance_mean = self._pooled_variance.cf.weighted('area').mean(
+                    self._agg_dims, skipna=True
+                )
+            else:
+                self._pooled_variance_mean = self._pooled_variance.mean(self._agg_dims)
+            self._pooled_variance_mean.attrs = self._ds.attrs
             if hasattr(self._ds, 'units'):
-                self._pooled_variance.attrs['units'] = f'{self._ds.units}$^2$'
+                self._pooled_variance_mean.attrs['units'] = f'{self._ds.units}$^2$'
 
-        return self._pooled_variance
+        return self._pooled_variance_mean
 
     @property
     def ns_con_var(self) -> xr.DataArray:
         """
         The North-South Contrast Variance averaged along the aggregate dimensions
         """
-        if not self._is_memoized('_ns_con_var'):
-            self._ns_con_var = self._con_var('ns', self._ds).mean(self._agg_dims)
-            self._ns_con_var.attrs = self._ds.attrs
-            if hasattr(self._ds, 'units'):
-                self._ns_con_var.attrs['units'] = f'{self._ds.units}$^2$'
+        if not self._is_memoized('_ns_con_var_mean'):
+            self._ns_con_var = self._con_var('ns', self._ds)
+            self._ns_con_var.attrs['cell_measures'] = self._ds.attrs['cell_measures']
+            if self._weighted:
+                self._ns_con_var_mean = self._ns_con_var.cf.weighted('area').mean(
+                    self._agg_dims, skipna=True
+                )
+            else:
+                self._ns_con_var_mean = self._ns_con_var.mean(self._agg_dims)
 
-        return self._ns_con_var
+            self._ns_con_var_mean.attrs = self._ds.attrs
+            if hasattr(self._ds, 'units'):
+                self._ns_con_var_mean.attrs['units'] = f'{self._ds.units}$^2$'
+
+        return self._ns_con_var_mean
 
     @property
     def ew_con_var(self) -> xr.DataArray:
@@ -183,12 +200,20 @@ class Datasetcalcs:
         The East-West Contrast Variance averaged along the aggregate dimensions
         """
         if not self._is_memoized('_ew_con_var'):
-            self._ew_con_var = self._con_var('ew', self._ds).mean(self._agg_dims)
-            self._ew_con_var.attrs = self._ds.attrs
-            if hasattr(self._ds, 'units'):
-                self._ew_con_var.attrs['units'] = f'{self._ds.units}$^2$'
+            self._ew_con_var = self._con_var('ew', self._ds)
+            self._ew_con_var.attrs['cell_measures'] = self._ds.attrs['cell_measures']
 
-        return self._ew_con_var
+            if self._weighted:
+                self._ew_con_var_mean = self._ew_con_var.cf.weighted('area').mean(
+                    self._agg_dims, skipna=True
+                )
+            else:
+                self._ew_con_var_mean = self._ew_con_var.mean(self._agg_dims)
+            self._ew_con_var_mean.attrs = self._ds.attrs
+            if hasattr(self._ds, 'units'):
+                self._ew_con_var_mean.attrs['units'] = f'{self._ds.units}$^2$'
+
+        return self._ew_con_var_mean
 
     @property
     def mean(self) -> xr.DataArray:
@@ -197,7 +222,10 @@ class Datasetcalcs:
         """
         # print("mean")
         if not self._is_memoized('_mean'):
-            self._mean = self._ds.mean(self._agg_dims, skipna=True)
+            if self._weighted:
+                self._mean = self._ds.cf.weighted('area').mean(self._agg_dims, skipna=True)
+            else:
+                self._mean = self._ds.mean(self._agg_dims, skipna=True)
             self._mean.attrs = self._ds.attrs
         return self._mean
 
@@ -207,7 +235,10 @@ class Datasetcalcs:
         The mean of the absolute errors along the aggregate dimensions
         """
         if not self._is_memoized('_mean_abs'):
-            self._mean_abs = abs(self._ds).mean(self._agg_dims, skipna=True)
+            if self._weighted:
+                self._mean_abs = abs(self._ds).cf.weighted('area').mean(self._agg_dims, skipna=True)
+            else:
+                self._mean_abs = abs(self._ds).mean(self._agg_dims, skipna=True)
             self._mean_abs.attrs = self._ds.attrs
             if hasattr(self._ds, 'units'):
                 self._mean_abs.attrs['units'] = f'{self._ds.units}'
@@ -221,9 +252,9 @@ class Datasetcalcs:
         """
         if not self._is_memoized('_mean_squared'):
             self._mean_squared = np.square(self.mean)
-            self.mean_abs.attrs = self._ds.attrs
+            self.mean_squared.attrs = self._ds.attrs
             if hasattr(self._ds, 'units'):
-                self.mean_abs.attrs['units'] = f'{self._ds.units}$^2$'
+                self.mean_squared.attrs['units'] = f'{self._ds.units}$^2$'
 
         return self._mean_squared
 
@@ -232,9 +263,19 @@ class Datasetcalcs:
         """
         The absolute value of the mean along the aggregate dimensions
         """
-        if not self._is_memoized('_root_mean_squared'):
+        if not self._is_memoized('_root_mean_squared_mean'):
             self._root_mean_squared = np.sqrt(np.square(self._ds).mean(dim=self._agg_dims))
-            self._root_mean_squared.attrs = self._ds.attrs
+            self._root_mean_squared.attrs['cell_measures'] = self._ds.attrs['cell_measures']
+
+            if self._weighted:
+                self._root_mean_squared_mean = self._root_mean_squared.cf.weighted('area').mean(
+                    self._agg_dims, skipna=True
+                )
+            else:
+                self._root_mean_squared_mean = self._root_mean_squared.mean(
+                    self._agg_dims, skipna=True
+                )
+            self._root_mean_squared_mean.attrs = self._ds.attrs
             if hasattr(self._ds, 'units'):
                 self._root_mean_squared.attrs['units'] = f'{self._ds.units}'
 
@@ -243,7 +284,10 @@ class Datasetcalcs:
     @property
     def sum(self) -> xr.DataArray:
         if not self._is_memoized('_sum'):
-            self._sum = self._ds.sum(dim=self._agg_dims, skipna=True)
+            if self._weighted:
+                self._sum = self._ds.cf.weighted('area').sum(dim=self._agg_dims, skipna=True)
+            else:
+                self._sum = self._ds.sum(dim=self._agg_dims, skipna=True)
             self._sum.attrs = self._ds.attrs
             if hasattr(self._ds, 'units'):
                 self._sum.attrs['units'] = f'{self._ds.units}'
@@ -266,7 +310,12 @@ class Datasetcalcs:
         The standard deviation along the aggregate dimensions
         """
         if not self._is_memoized('_std'):
-            self._std = self._ds.std(self._agg_dims, ddof=self._ddof, skipna=True)
+            if self._weighted:
+                self._std = self._ds.cf.weighted('area').std(
+                    self._agg_dims, ddof=self._ddof, skipna=True
+                )
+            else:
+                self._std = self._ds.std(self._agg_dims, ddof=self._ddof, skipna=True)
             self._std.attrs = self._ds.attrs
             if hasattr(self._ds, 'units'):
                 self._std.attrs['units'] = ''
@@ -281,13 +330,26 @@ class Datasetcalcs:
         """
         if not self._is_memoized('_standardized_mean'):
             if self._grouping is None:
-                self._standardized_mean = (self.mean - self._ds.mean()) / self._ds.std(ddof=1)
+                if self._weighted:
+                    self._standardized_mean = (
+                        self.mean - self._ds.cf.weighted('area').mean(self._agg_dims, skipna=True)
+                    ) / self._ds.cf.weighted('area').std(self._agg_dims, ddof=1, skipna=True)
+                else:
+                    self._standardized_mean = (self.mean - self._ds.mean()) / self._ds.std(ddof=1)
             else:
                 grouped = self.mean.groupby(self._grouping)
                 grouped_mean = grouped.mean()
-                self._standardized_mean = (grouped_mean - grouped_mean.mean()) / grouped_mean.std(
-                    ddof=1
-                )
+                grouped_mean.attrs['cell_measures'] = self._ds.attrs['cell_measures']
+                if self._weighted:
+                    self._standardized_mean = (
+                        grouped_mean
+                        - grouped_mean.cf.weighted('area').mean(self._agg_dims, skipna=True)
+                    ) / grouped_mean.cf.weighted('area').std(self._agg_dims, ddof=1, skipna=True)
+                else:
+                    self._standardized_mean = (
+                        grouped_mean
+                        - grouped_mean.cf.weighted('area').mean(self._agg_dims, skipna=True)
+                    ) / grouped_mean.std(ddof=1)
             if hasattr(self._ds, 'units'):
                 self._standardized_mean.attrs['units'] = ''
 
@@ -299,7 +361,10 @@ class Datasetcalcs:
         The variance along the aggregate dimensions
         """
         if not self._is_memoized('_variance'):
-            self._variance = self._ds.var(self._agg_dims, skipna=True)
+            if self._weighted:
+                self._variance = self._ds.cf.weighted('area').var(self._agg_dims, skipna=True)
+            else:
+                self._variance = self._ds.var(self._agg_dims, skipna=True)
             self._variance.attrs = self._ds.attrs
             if hasattr(self._ds, 'units'):
                 self._variance.attrs['units'] = f'{self._ds.units}$^2$'
@@ -325,7 +390,10 @@ class Datasetcalcs:
         The probability that a point is positive
         """
         if not self._is_memoized('_num_positive'):
-            self._num_positive = (self._ds > 0).sum(self._agg_dims)
+            if self._weighted:
+                self._num_positive = (self._ds > 0).cf.weighted('area').sum(self._agg_dims)
+            else:
+                self._num_positive = (self._ds > 0).sum(self._agg_dims)
         return self._num_positive
 
     @property
@@ -334,7 +402,10 @@ class Datasetcalcs:
         The probability that a point is negative
         """
         if not self._is_memoized('_num_negative'):
-            self._num_negative = (self._ds < 0).sum(self._agg_dims)
+            if self._weighted:
+                self._num_negative = (self._ds < 0).cf.weighted('area').sum(self._agg_dims)
+            else:
+                self._num_negative = (self._ds < 0).sum(self._agg_dims)
         return self._num_negative
 
     @property
@@ -343,7 +414,10 @@ class Datasetcalcs:
         The probability that a point is zero
         """
         if not self._is_memoized('_num_zero'):
-            self._num_zero = (self._ds == 0).sum(self._agg_dims)
+            if self._weighted:
+                self._num_zero = (self._ds == 0).cf.weighted('area').sum(self._agg_dims)
+            else:
+                self._num_zero = (self._ds == 0).sum(self._agg_dims)
         return self._num_zero
 
     @property
