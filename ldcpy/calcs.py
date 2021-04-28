@@ -163,7 +163,7 @@ class Datasetcalcs:
         if not self._is_memoized('_pooled_variance_mean'):
             self._pooled_variance = self._ds.var(self._agg_dims)
             self._pooled_variance.attrs['cell_measures'] = self._ds.attrs['cell_measures']
-            if self.weighted:
+            if self._weighted:
                 self._pooled_variance_mean = self._pooled_variance.cf.weighted('area').mean(
                     self._agg_dims, skipna=True
                 )
@@ -346,7 +346,7 @@ class Datasetcalcs:
                 if self._weighted:
                     self._standardized_mean = (
                         self.mean - self._ds.cf.weighted('area').mean(self._agg_dims, skipna=True)
-                    ) / self._ds.cf.weighted('area').std(self._agg_dims, ddof=1, skipna=True)
+                    ) / self.std
                 else:
                     self._standardized_mean = (self.mean - self._ds.mean()) / self._ds.std(ddof=1)
             else:

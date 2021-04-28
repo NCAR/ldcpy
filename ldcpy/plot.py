@@ -1011,24 +1011,28 @@ def plot(
     if 'bounds' in ds['time'].attrs.keys():
         ds['time'].attrs.pop('bounds')
 
-    if varname == 'T':  # work around for cf_xarray (until new tag that
-        # includes issue 130 updated to main on 1/27/21)
-        ds.T.attrs['standard_name'] = 'tt'
-        if 'collection' in ds[varname].dims:
-            if sets is not None:
-                for set in sets:
-                    dss.append(ds.cf['tt'].sel(collection=set))
-        else:
-            dss.append(ds.cf['tt'])
+    # if varname == 'T':  # work around for cf_xarray (until new tag that
+    #     # includes issue 130 updated to main on 1/27/21)
+    #     ds.T.attrs['standard_name'] = 'tt'
+    #     if 'collection' in ds[varname].dims:
+    #         if sets is not None:
+    #             for set in sets:
+    #                 d = ds.cf['tt'].sel(collection=set)
+    #                 d.coords["cell_area"] = ds.coords["cell_area"]
+    #                 dss.append(d)
+    #     else:
+    #         d = ds.cf['tt']
+    #         d.coords["cell_area"] = ds.coords["cell_area"]
+    #         dss.append(ds.cf['tt'])
+    #
+    # else:
 
+    if 'collection' in ds[varname].dims:
+        if sets is not None:
+            for set in sets:
+                dss.append(ds[varname].sel(collection=set))
     else:
-
-        if 'collection' in ds[varname].dims:
-            if sets is not None:
-                for set in sets:
-                    dss.append(ds[varname].sel(collection=set))
-        else:
-            dss.append(ds[varname])
+        dss.append(ds[varname])
 
     subsets = []
     if sets is not None:
