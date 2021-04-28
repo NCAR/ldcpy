@@ -8,7 +8,7 @@ import xarray as xr
 from .calcs import Datasetcalcs, Diffcalcs
 
 
-def collect_datasets(varnames, list_of_ds, labels, **kwargs):
+def collect_datasets(data_type, varnames, list_of_ds, labels, **kwargs):
     """
     Concatonate several different xarray datasets across a new
     "collection" dimension, which can be accessed with the specified
@@ -58,7 +58,7 @@ def collect_datasets(varnames, list_of_ds, labels, **kwargs):
     full_ds['collection'] = xr.DataArray(labels, dims='collection')
 
     print('dataset size in GB {:0.2f}\n'.format(full_ds.nbytes / 1e9))
-
+    full_ds.attrs['data_type'] = data_type
     return full_ds
 
 
@@ -141,6 +141,7 @@ def open_datasets(data_type, varnames, list_of_files, labels, **kwargs):
 
     full_ds['collection'] = xr.DataArray(labels, dims='collection')
     print('dataset size in GB {:0.2f}\n'.format(full_ds.nbytes / 1e9))
+    full_ds.attrs['data_type'] = data_type
 
     return full_ds
 

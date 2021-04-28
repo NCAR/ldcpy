@@ -1059,8 +1059,12 @@ def plot(
         raw_calcs.append(mp.get_calcs(d))
 
     # get lat/lon coordinate names:
-    lon_coord_name = datas[0].cf[datas[0].cf.coordinates['latitude'][0]].dims[1]
-    lat_coord_name = datas[0].cf[datas[0].cf.coordinates['latitude'][0]].dims[0]
+    if ds.data_type == 'pop':
+        lon_coord_name = datas[0].cf[datas[0].cf.coordinates['longitude'][0]].dims[1]
+        lat_coord_name = datas[0].cf[datas[0].cf.coordinates['latitude'][0]].dims[0]
+    else:
+        lat_coord_name = datas[0].cf[datas[0].cf.coordinates['latitude'][0]].dims[0]
+        lon_coord_name = datas[0].cf[datas[0].cf.coordinates['longitude'][0]].dims[0]
 
     # Get calc names/values for plot title
     calc_names = []

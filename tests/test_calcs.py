@@ -88,6 +88,7 @@ class TestErrorcalcs(TestCase):
         em = Datasetcalcs(
             xr.DataArray(self._samples[0]['observed']) - xr.DataArray(self._samples[0]['measured']),
             [],
+            weighted=False,
         )
 
         self.assertTrue((self._samples[0]['expected_error'] == em.sum).all())
@@ -96,6 +97,7 @@ class TestErrorcalcs(TestCase):
         em = Datasetcalcs(
             xr.DataArray(self._samples[0]['observed']) - xr.DataArray(self._samples[0]['measured']),
             [],
+            weighted=False,
         )
         self.assertTrue(em.mean.all() == 0.0)
 
@@ -103,6 +105,7 @@ class TestErrorcalcs(TestCase):
         em = Datasetcalcs(
             xr.DataArray(self._samples[0]['observed'] - xr.DataArray(self._samples[0]['measured'])),
             [],
+            weighted=False,
         )
 
         self.assertTrue(em.mean.all() == 0.0)

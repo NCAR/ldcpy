@@ -180,8 +180,8 @@ class Datasetcalcs:
         """
         if not self._is_memoized('_ns_con_var_mean'):
             self._ns_con_var = self._con_var('ns', self._ds)
-            self._ns_con_var.attrs['cell_measures'] = self._ds.attrs['cell_measures']
             if self._weighted:
+                self._ns_con_var.attrs['cell_measures'] = self._ds.attrs['cell_measures']
                 self._ns_con_var_mean = self._ns_con_var.cf.weighted('area').mean(
                     self._agg_dims, skipna=True
                 )
@@ -201,9 +201,9 @@ class Datasetcalcs:
         """
         if not self._is_memoized('_ew_con_var'):
             self._ew_con_var = self._con_var('ew', self._ds)
-            self._ew_con_var.attrs['cell_measures'] = self._ds.attrs['cell_measures']
 
             if self._weighted:
+                self._ew_con_var.attrs['cell_measures'] = self._ds.attrs['cell_measures']
                 self._ew_con_var_mean = self._ew_con_var.cf.weighted('area').mean(
                     self._agg_dims, skipna=True
                 )
