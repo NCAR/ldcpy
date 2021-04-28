@@ -127,21 +127,16 @@ def open_datasets(data_type, varnames, list_of_files, labels, **kwargs):
     )
 
     if data_type == 'pop':
-        lon_name = 'nlon'
+        full_ds.coords['cell_area'] = xr.DataArray(full_ds.variables.mapping.get(weights_name))[0]
     else:
         lon_name = 'lon'
-
-    full_ds.coords['cell_area'] = (
-        xr.DataArray(full_ds.variables.mapping.get(weights_name))
-        .expand_dims(f'{{{lon_name}: {full_ds.cf[full_ds.cf[lon_name].dims[0]].size}}}')
-        .transpose()
-    )
+        full_ds.coords['cell_area'] = (
+            xr.DataArray(full_ds.variables.mapping.get(weights_name))
+            .expand_dims(f'{{{lon_name}: {full_ds.cf[full_ds.cf[lon_name].dims[0]].size}}}')
+            .transpose()
+        )
 
     full_ds.attrs['cell_measures'] = 'area: cell_area'
-
-    # for varname in varnames:
-    #    full_ds.cf[varname].coords["cell_area"] = xr.DataArray(full_ds.variables.mapping.get("gw")).expand_dims(lon=full_ds.dims["lon"]).transpose()
-    #    full_ds.cf[varname].attrs["cell_measures"] = "area: cell_area"
 
     full_ds = full_ds.drop(weights_name)
 
