@@ -1084,8 +1084,6 @@ def plot(
             # lon should be 0- 360
             mylat = subsets[0][lat_coord_name].data[0]
             mylon = subsets[0][lon_coord_name].data[0]
-            mylat = mylat[0].compute()
-            mylon = mylon[0].compute()
             if mylon < 0:
                 mylon = mylon + 360
             mp.title_lat = mylat

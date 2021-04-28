@@ -205,22 +205,13 @@ def compare_stats(
 
     aggregate_dims = calcs_kwargs.pop('aggregate_dims', None)
 
-    ds0_calcs = Datasetcalcs(da1, aggregate_dims, **calcs_kwargs)
+    ds0_calcs = Datasetcalcs(da1, aggregate_dims, **calcs_kwargs, weighted=False)
 
-    ds1_calcs = Datasetcalcs(da2, aggregate_dims, **calcs_kwargs)
+    ds1_calcs = Datasetcalcs(da2, aggregate_dims, **calcs_kwargs, weighted=False)
 
-    d_calcs = Datasetcalcs(
-        dd,
-        aggregate_dims,
-        **calcs_kwargs,
-    )
+    d_calcs = Datasetcalcs(dd, aggregate_dims, **calcs_kwargs, weighted=False)
 
-    diff_calcs = Diffcalcs(
-        da1,
-        da2,
-        aggregate_dims,
-        **calcs_kwargs,
-    )
+    diff_calcs = Diffcalcs(da1, da2, aggregate_dims, **calcs_kwargs, weighted=False)
 
     # DATA FRAME
     import pandas as pd
