@@ -322,9 +322,6 @@ class calcsPlot(object):
         # is the lat/lon 1d or 2d (to do: set error if > 2)
         latdim = da_sets[0].cf[lon_coord_name].ndim
 
-        # print("DS:", da_sets[0])
-        # print(titles)
-
         central = 0.0  # might make this a parameter later
         if latdim == 2:  # probably pop
             central = 300.0
