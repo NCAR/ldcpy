@@ -493,7 +493,7 @@ def save_metrics(
 
     """
 
-    ds = subset_data(full_ds, lev=lev)
+    ds = subset_data(full_ds)
 
     # count the number of failuress
     num_fail = 0
@@ -509,18 +509,16 @@ def save_metrics(
         ds[varname].sel(collection=set1).isel(time=time),
         ds[varname].sel(collection=set2).isel(time=time),
         ['lat', 'lon'],
-        weighted=False,
     )
 
-    reg_metrics = Datasetcalcs(
-        ds[varname].sel(collection=set1).isel(time=time)
-        - ds[varname].sel(collection=set2).isel(time=time),
-        ['lat', 'lon'],
-        weighted=False,
-    )
-    max_abs = reg_metrics.get_calc('max_abs').data.compute()
+    # reg_metrics = Datasetcalcs(
+    #    ds[varname].sel(collection=set1).isel(time=time)
+    #    - ds[varname].sel(collection=set2).isel(time=time),
+    #    ['lat', 'lon'],
+    # )
+    # max_abs = reg_metrics.get_calc('max_abs').data.compute()
 
-    max_rel_error = diff_metrics.get_diff_calc('max_spatial_rel_error')
+    # max_rel_error = diff_metrics.get_diff_calc('max_spatial_rel_error')
 
     # Pearson less than pcc_tol means fail
     # pcc = diff_metrics.get_diff_metric('pearson_correlation_coefficient').data.compute()
@@ -543,8 +541,8 @@ def save_metrics(
         fieldnames = [
             'set',
             'time',
-            'max_abs',
-            'max_rel_error',
+            # 'max_abs',
+            # 'max_rel_error',
             #            'pcc',
             #            'ks_p_value',
             #            'spatial_rel_error',
@@ -566,8 +564,8 @@ def save_metrics(
             {
                 'set': set2,
                 'time': time,
-                'max_abs': max_abs,
-                'max_rel_error': max_rel_error,
+                # 'max_abs': max_abs,
+                # 'max_rel_error': max_rel_error,
                 #                'pcc': pcc,
                 #                'ks_p_value': ks,
                 #                'spatial_rel_error': spre,
