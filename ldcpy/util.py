@@ -215,19 +215,19 @@ def compare_stats(
     da_set_calcs = []
     for i in range(num):
         da_set_calcs.append(
-            Datasetcalcs(da_sets[i], aggregate_dims, **calcs_kwargs), weighted=False
+            Datasetcalcs(da_sets[i], aggregate_dims, **calcs_kwargs, weighted=False)
         )
 
     dd_set_calcs = []
     for i in range(num - 1):
         dd_set_calcs.append(
-            Datasetcalcs(dd_sets[i], aggregate_dims, **calcs_kwargs), weighted=False
+            Datasetcalcs(dd_sets[i], aggregate_dims, **calcs_kwargs, weighted=False)
         )
 
     diff_calcs = []
     for i in range(1, num):
         diff_calcs.append(
-            Diffcalcs(da_sets[0], da_sets[i], aggregate_dims, **calcs_kwargs), weighted=False
+            Diffcalcs(da_sets[0], da_sets[i], aggregate_dims, **calcs_kwargs, weighted=False)
         )
 
     # DATA FRAME
