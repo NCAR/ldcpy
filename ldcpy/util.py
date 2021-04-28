@@ -438,7 +438,7 @@ def save_metrics(
     ks_tol=0.05,
     pcc_tol=0.99999,
     spre_tol=5.0,
-    ssim_tol=0.99995,
+    ssim_tol=0.9995,
 ):
     """
 
@@ -509,12 +509,14 @@ def save_metrics(
         ds[varname].sel(collection=set1).isel(time=time),
         ds[varname].sel(collection=set2).isel(time=time),
         ['lat', 'lon'],
+        weighted=False,
     )
 
     reg_metrics = Datasetcalcs(
         ds[varname].sel(collection=set1).isel(time=time)
         - ds[varname].sel(collection=set2).isel(time=time),
         ['lat', 'lon'],
+        weighted=False,
     )
     max_abs = reg_metrics.get_calc('max_abs').data.compute()
 
