@@ -5,6 +5,7 @@ import ldcpy
 from ldcpy.util import subset_data
 
 ds = ldcpy.open_datasets(
+    'cam-fv',
     ['TS'],
     [
         'data/cam-fv/orig.TS.100days.nc',
@@ -14,6 +15,7 @@ ds = ldcpy.open_datasets(
     ['orig', 'recon', 'recon2'],
 )
 ds2 = ldcpy.open_datasets(
+    'cam-fv',
     ['PRECT'],
     [
         'data/cam-fv/orig.PRECT.60days.nc',
@@ -22,7 +24,7 @@ ds2 = ldcpy.open_datasets(
     ],
     ['orig', 'recon', 'recon_2'],
 )
-ds3 = ldcpy.open_datasets(['T'], ['data/cam-fv/cam-fv.T.3months.nc'], ['orig'])
+ds3 = ldcpy.open_datasets('cam-fv', ['T'], ['data/cam-fv/cam-fv.T.3months.nc'], ['orig'])
 air_temp = xr.tutorial.open_dataset('air_temperature')
 
 

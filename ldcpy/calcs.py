@@ -15,6 +15,8 @@ from scipy.ndimage import gaussian_filter
 from skimage.util import crop
 from xrft import dft
 
+xr.set_options(keep_attrs=True)
+
 
 class Datasetcalcs:
     """
@@ -264,18 +266,15 @@ class Datasetcalcs:
         The absolute value of the mean along the aggregate dimensions
         """
         if not self._is_memoized('_root_mean_squared_mean'):
-            self._root_mean_squared = np.sqrt(np.square(self._ds).mean(dim=self._agg_dims))
-            self._root_mean_squared.attrs['cell_measures'] = self._ds.attrs['cell_measures']
+            self._squared = np.square(self._ds)
 
             if self._weighted:
-                self._root_mean_squared_mean = self._root_mean_squared.cf.weighted('area').mean(
-                    self._agg_dims, skipna=True
+                self._root_mean_squared = np.sqrt(
+                    self._squared.cf.weighted('area').mean(self._agg_dims, skipna=True)
                 )
             else:
-                self._root_mean_squared_mean = self._root_mean_squared.mean(
-                    self._agg_dims, skipna=True
-                )
-            self._root_mean_squared_mean.attrs = self._ds.attrs
+                self._root_mean_squared = np.sqrt(self._squared.mean(self._agg_dims, skipna=True))
+            self._root_mean_squared.attrs = self._ds.attrs
             if hasattr(self._ds, 'units'):
                 self._root_mean_squared.attrs['units'] = f'{self._ds.units}'
 
@@ -285,7 +284,7 @@ class Datasetcalcs:
     def sum(self) -> xr.DataArray:
         if not self._is_memoized('_sum'):
             if self._weighted:
-                self._sum = self._ds.cf.weighted('area').sum(dim=self._agg_dims, skipna=True)
+                self._sum = self._ds.sum(dim=self._agg_dims, skipna=True)
             else:
                 self._sum = self._ds.sum(dim=self._agg_dims, skipna=True)
             self._sum.attrs = self._ds.attrs
@@ -309,11 +308,25 @@ class Datasetcalcs:
         """
         The standard deviation along the aggregate dimensions
         """
+
         if not self._is_memoized('_std'):
             if self._weighted:
-                self._std = self._ds.cf.weighted('area').std(
-                    self._agg_dims, ddof=self._ddof, skipna=True
-                )
+                if self._ddof == 0:
+                    # biased std
+                    self._std = np.sqrt(
+                        ((self._ds - self.mean) ** 2).cf.weighted('area').mean(self._agg_dims)
+                    )
+                elif 'lat' in self._agg_dims:
+                    # assume unbiased std (reliability weighted)
+                    V1 = self._ds.coords['cell_area'].sum(dim='lat')[0]
+                    V2 = np.square(self._ds.coords['cell_area']).sum(dim='lat')[0]
+                    _biased_var = (
+                        ((self._ds - self.mean) ** 2).cf.weighted('area').mean(self._agg_dims)
+                    )
+                    self._std = np.sqrt(_biased_var * (1 / (1 - V2 / (V1 ** 2))))
+                else:
+                    # same as unweighted
+                    self._std = self._ds.std(self._agg_dims, ddof=self._ddof, skipna=True)
             else:
                 self._std = self._ds.std(self._agg_dims, ddof=self._ddof, skipna=True)
             self._std.attrs = self._ds.attrs
@@ -362,7 +375,7 @@ class Datasetcalcs:
         """
         if not self._is_memoized('_variance'):
             if self._weighted:
-                self._variance = self._ds.cf.weighted('area').var(self._agg_dims, skipna=True)
+                self._variance = np.square(self.std)
             else:
                 self._variance = self._ds.var(self._agg_dims, skipna=True)
             self._variance.attrs = self._ds.attrs
@@ -391,7 +404,7 @@ class Datasetcalcs:
         """
         if not self._is_memoized('_num_positive'):
             if self._weighted:
-                self._num_positive = (self._ds > 0).cf.weighted('area').sum(self._agg_dims)
+                self._num_positive = (self._ds > 0).sum(self._agg_dims)
             else:
                 self._num_positive = (self._ds > 0).sum(self._agg_dims)
         return self._num_positive
@@ -403,7 +416,7 @@ class Datasetcalcs:
         """
         if not self._is_memoized('_num_negative'):
             if self._weighted:
-                self._num_negative = (self._ds < 0).cf.weighted('area').sum(self._agg_dims)
+                self._num_negative = (self._ds < 0).sum(self._agg_dims)
             else:
                 self._num_negative = (self._ds < 0).sum(self._agg_dims)
         return self._num_negative
@@ -415,7 +428,7 @@ class Datasetcalcs:
         """
         if not self._is_memoized('_num_zero'):
             if self._weighted:
-                self._num_zero = (self._ds == 0).cf.weighted('area').sum(self._agg_dims)
+                self._num_zero = (self._ds == 0).sum(self._agg_dims)
             else:
                 self._num_zero = (self._ds == 0).sum(self._agg_dims)
         return self._num_zero

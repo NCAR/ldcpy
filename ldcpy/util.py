@@ -62,7 +62,7 @@ def collect_datasets(varnames, list_of_ds, labels, **kwargs):
     return full_ds
 
 
-def open_datasets(varnames, list_of_files, labels, **kwargs):
+def open_datasets(data_type, varnames, list_of_files, labels, **kwargs):
     """
     Open several different netCDF files, concatenate across
     a new 'collection' dimension, which can be accessed with the specified
@@ -109,9 +109,11 @@ def open_datasets(varnames, list_of_files, labels, **kwargs):
     def preprocess_vars(ds):
         return ds[varnames]
 
-    data_type = 'cam-fv'
     if data_type == 'cam-fv':
         weights_name = 'gw'
+        varnames.append(weights_name)
+    elif data_type == 'pop':
+        weights_name = 'TAREA'
         varnames.append(weights_name)
 
     full_ds = xr.open_mfdataset(
@@ -125,7 +127,7 @@ def open_datasets(varnames, list_of_files, labels, **kwargs):
     )
 
     full_ds.coords['cell_area'] = (
-        xr.DataArray(full_ds.variables.mapping.get('gw'))
+        xr.DataArray(full_ds.variables.mapping.get(weights_name))
         .expand_dims(lon=full_ds.dims['lon'])
         .transpose()
     )

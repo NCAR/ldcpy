@@ -17,6 +17,8 @@ from pylab import flipud
 
 from ldcpy import calcs as lm, util as lu
 
+xr.set_options(keep_attrs=True)
+
 
 def tex_escape(text):
     """
@@ -790,7 +792,6 @@ class calcsPlot(object):
                     a1_data = (
                         lm.Datasetcalcs(data, [lat_dim, lon_dim], weighted=self._weighted)
                         .get_calc(calc)
-                        .cf.weighted('area')
                         .mean()
                         .data.compute()
                     )
