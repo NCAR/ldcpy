@@ -5,6 +5,7 @@ import pytest
 import ldcpy
 
 ds = ldcpy.open_datasets(
+    'pop',
     ['SST'],
     [
         'data/pop/pop.SST.60days.nc',
