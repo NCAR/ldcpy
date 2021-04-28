@@ -29,10 +29,10 @@ test_data_2 = xr.DataArray(
     ],
     dims=['lat', 'lon', 'time'],
 )
-test_overall_calcs = ldcpy.Datasetcalcs(test_data, ['time', 'lat', 'lon'])
-test_spatial_calcs = ldcpy.Datasetcalcs(test_data, ['time'])
-test_time_series_calcs = ldcpy.Datasetcalcs(test_data, ['lat', 'lon'])
-test_diff_calcs = ldcpy.Diffcalcs(test_data, test_data_2, ['time', 'lat', 'lon'])
+test_overall_calcs = ldcpy.Datasetcalcs(test_data, ['time', 'lat', 'lon'], weighted=False)
+test_spatial_calcs = ldcpy.Datasetcalcs(test_data, ['time'], weighted=False)
+test_time_series_calcs = ldcpy.Datasetcalcs(test_data, ['lat', 'lon'], weighted=False)
+test_diff_calcs = ldcpy.Diffcalcs(test_data, test_data_2, ['time', 'lat', 'lon'], weighted=False)
 
 
 class TestErrorcalcs(TestCase):

@@ -36,10 +36,10 @@ test_data_2 = xr.DataArray(
     attrs={'long_name': 'Surface Potential'},
 )
 
-test_overall_calcs = ldcpy.Datasetcalcs(test_data, ['time', 'nlat', 'nlon'])
-test_spatial_calcs = ldcpy.Datasetcalcs(test_data, ['time'])
-test_time_series_calcs = ldcpy.Datasetcalcs(test_data, ['nlat', 'nlon'])
-test_diff_calcs = ldcpy.Diffcalcs(test_data, test_data_2, ['time', 'nlat', 'nlon'])
+test_overall_calcs = ldcpy.Datasetcalcs(test_data, ['time', 'nlat', 'nlon'], weighted=False)
+test_spatial_calcs = ldcpy.Datasetcalcs(test_data, ['time'], weighted=False)
+test_time_series_calcs = ldcpy.Datasetcalcs(test_data, ['nlat', 'nlon'], weighted=False)
+test_diff_calcs = ldcpy.Diffcalcs(test_data, test_data_2, ['time', 'nlat', 'nlon'], weighted=False)
 
 
 class TestErrorcalcsPOP(TestCase):

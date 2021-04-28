@@ -54,7 +54,7 @@ class Datasetcalcs:
             lat_coord_name = ds.cf.coordinates['latitude'][0]
         self._lat_coord_name = lat_coord_name
 
-        dd = ds.cf['latitude'].dims
+        dd = ds.cf[ds.cf.coordinates['latitude'][0]].dims
         ll = len(dd)
         if ll == 1:
             if lat_dim_name is None:
@@ -164,11 +164,9 @@ class Datasetcalcs:
             self._pooled_variance = self._ds.var(self._agg_dims)
             self._pooled_variance.attrs['cell_measures'] = self._ds.attrs['cell_measures']
             if self._weighted:
-                self._pooled_variance_mean = self._pooled_variance.cf.weighted('area').mean(
-                    self._agg_dims, skipna=True
-                )
+                self._pooled_variance_mean = self._pooled_variance.cf.weighted('area').mean()
             else:
-                self._pooled_variance_mean = self._pooled_variance.mean(self._agg_dims)
+                self._pooled_variance_mean = self._pooled_variance.mean()
             self._pooled_variance_mean.attrs = self._ds.attrs
             if hasattr(self._ds, 'units'):
                 self._pooled_variance_mean.attrs['units'] = f'{self._ds.units}$^2$'

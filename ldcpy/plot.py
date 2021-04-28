@@ -148,7 +148,7 @@ class calcsPlot(object):
         da_data.attrs = da.attrs
 
         # lat/lon dim names are different for ocn and atm
-        dd = da_data.cf['latitude'].dims
+        dd = da_data.cf[da_data.cf.coordinates['latitude'][0]].dims
 
         ll = len(dd)
         if ll == 1:
@@ -705,7 +705,7 @@ class calcsPlot(object):
         mpl.pyplot.title(tex_escape(titles[0]))
 
     def get_calc_label(self, calc, data):
-        dd = data.cf['latitude'].dims
+        dd = data.cf[data.cf.coordinates['latitude'][0]].dims
 
         ll = len(dd)
         if ll == 1:
@@ -1059,8 +1059,8 @@ def plot(
         raw_calcs.append(mp.get_calcs(d))
 
     # get lat/lon coordinate names:
-    lon_coord_name = datas[0].cf['longitude'].name
-    lat_coord_name = datas[0].cf['latitude'].name
+    lon_coord_name = datas[0].cf[datas[0].cf.coordinates['latitude'][0]].dims[1]
+    lat_coord_name = datas[0].cf[datas[0].cf.coordinates['latitude'][0]].dims[0]
 
     # Get calc names/values for plot title
     calc_names = []
