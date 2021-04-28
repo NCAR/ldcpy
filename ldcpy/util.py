@@ -206,7 +206,6 @@ def compare_stats(
     for set in sets:
         da_sets.append(da.sel(collection=set))
 
-
     dd_sets = []
     for i in range(1, num):
         dd_sets.append(da_sets[0] - da_sets[i])
@@ -215,15 +214,21 @@ def compare_stats(
 
     da_set_calcs = []
     for i in range(num):
-        da_set_calcs.append(Datasetcalcs(da_sets[i], aggregate_dims, **calcs_kwargs), weighted=False)
+        da_set_calcs.append(
+            Datasetcalcs(da_sets[i], aggregate_dims, **calcs_kwargs), weighted=False
+        )
 
     dd_set_calcs = []
     for i in range(num - 1):
-        dd_set_calcs.append(Datasetcalcs(dd_sets[i], aggregate_dims, **calcs_kwargs), weighted=False)
+        dd_set_calcs.append(
+            Datasetcalcs(dd_sets[i], aggregate_dims, **calcs_kwargs), weighted=False
+        )
 
     diff_calcs = []
     for i in range(1, num):
-        diff_calcs.append(Diffcalcs(da_sets[0], da_sets[i], aggregate_dims, **calcs_kwargs), weighted=False)
+        diff_calcs.append(
+            Diffcalcs(da_sets[0], da_sets[i], aggregate_dims, **calcs_kwargs), weighted=False
+        )
 
     # DATA FRAME
     import pandas as pd
