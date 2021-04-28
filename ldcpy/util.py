@@ -128,7 +128,7 @@ def open_datasets(data_type, varnames, list_of_files, labels, **kwargs):
 
     full_ds.coords['cell_area'] = (
         xr.DataArray(full_ds.variables.mapping.get(weights_name))
-        .expand_dims(lon=full_ds.dims['lon'])
+        .expand_dims(lon=full_ds.dims[full_ds.cf['longitude'].name])
         .transpose()
     )
     full_ds.attrs['cell_measures'] = 'area: cell_area'
