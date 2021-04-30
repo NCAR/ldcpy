@@ -138,7 +138,7 @@ def compare_stats(
     **calcs_kwargs,
 ):
     """
-    Print error summary statistics of two DataArrays
+    Print error summary statistics for multiple DataArrays (should just be a single time slice)
 
     Parameters
     ==========
@@ -174,6 +174,11 @@ def compare_stats(
 
     # use this after the update instead of above
     # da = ds.cf.data_vars[varname]
+
+    # do we have more than one time slice? SHould only have one..
+    if 'time' in da.dims:
+        print('Warning - this data set has a time dimension - examining slice 0 only...')
+        da = da.isel(time=0)
 
     # see how many sets we have
     da_sets = []
@@ -224,8 +229,8 @@ def compare_stats(
         temp_mean.append(da_set_calcs[i].get_calc('mean').data.compute())
         temp_var.append(da_set_calcs[i].get_calc('variance').data.compute())
         temp_std.append(da_set_calcs[i].get_calc('std').data.compute())
-        temp_min.append(da_set_calcs[i].get_calc('max_val').data.compute())
-        temp_max.append(da_set_calcs[i].get_calc('min_val').data.compute())
+        temp_max.append(da_set_calcs[i].get_calc('max_val').data.compute())
+        temp_min.append(da_set_calcs[i].get_calc('min_val').data.compute())
         temp_pos.append(da_set_calcs[i].get_calc('prob_positive').data.compute())
         temp_zeros.append(da_set_calcs[i].get_calc('num_zero').data.compute())
 

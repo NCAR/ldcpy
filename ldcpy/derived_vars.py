@@ -4,152 +4,196 @@ import matplotlib as mpl
 import numpy as np
 import xarray as xr
 
-# class CAMBudgets:
+
+def _preprocess(list_set_labels, list_of_cols):
+    contU = True
+
+    num_sets = len(list_set_labels[0])
+
+    if num_sets < 2:
+        print('Error: Must have at least 2 set lables for each variable')
+        contU = False
+        return contU
+
+    for labels in list_set_labels:
+        num = len(labels)
+        if num != num_sets:
+            print('Error: all collections must have the same number of set labels.')
+            contU = False
+            return contU
+
+    # Add a check: need at least one year of data
+
+    return contU
 
 
-def cam_restom(fsnt_col, flnt_col, fsnt_sets, flnt_sets):
+# top of the model radiation budget
+def cam_restom(fsnt_col, flnt_col, list_of_sets):
 
     fsnt = fsnt_col['FSNT']
     flnt = flnt_col['FLNT']
+    col = [fsnt_col, flnt_col]
 
-    num = len(fsnt_sets)
-    num2 = len(flnt_sets)
-
-    if num < 2 or num2 < 2 or num != num2:
-        print('Must have at least 2 set lables for each variable (and the same number for each).')
+    contU = _preprocess(list_of_sets, col)
+    if not contU:
         return
+
+    num_sets = len(list_of_sets[0])
 
     fsnt_data = []
     flnt_data = []
-    out_array = np.zeros(num)
-
-    for set in fsnt_sets:
+    for set in list_of_sets[0]:
         fsnt_data.append(fsnt.sel(collection=set))
-    for set in flnt_sets:
+    for set in list_of_sets[1]:
         flnt_data.append(flnt.sel(collection=set))
 
-    for j in range(num):
-        tmp = np.mean(fsnt_data[j] - flnt_data[j])
-        out_array[j] = tmp
-
+    # Now the calculation
+    out_array = np.zeros(num_sets)
+    percent_diff = np.zeros(num_sets - 1)
+    for j in range(num_sets):
         # need to normalize by area
+        tmp = np.mean(fsnt_data[j] - flnt_data[j])
+        # output
+        out_array[j] = tmp
+        if j == 0:
+            control = tmp
+            if control == 0:
+                control = 1
+        else:
+            percent_diff[j - 1] = np.abs((control - tmp) / control) * 100
 
-    print(out_array)
+    print('values = ', out_array)
+    print('percent rel. difference = ', percent_diff)
 
 
-def cam_precip(precc_col, precl_col, precc_sets, precl_sets):
+# global precipitation
+def cam_precip(precc_col, precl_col, list_of_sets):
 
     precc = precc_col['PRECC']
     precl = precl_col['PRECL']
+    col = [precc_col, precl_col]
 
-    num = len(precc_sets)
-    num2 = len(precl_sets)
-
-    if num < 2 or num2 < 2 or num != num2:
-        print('Must have at least 2 set lables for each variable (and the same number for each).')
+    contU = _preprocess(list_of_sets, col)
+    if not contU:
         return
+
+    num_sets = len(list_of_sets[0])
 
     precc_data = []
     precl_data = []
-    out_array = np.zeros(num)
-
-    for set in precc_sets:
+    for set in list_of_sets[0]:
         precc_data.append(precc.sel(collection=set))
-    for set in precl_sets:
+    for set in list_of_sets[1]:
         precl_data.append(precl.sel(collection=set))
 
-    for j in range(num):
+    # Now the calculation
+    out_array = np.zeros(num_sets)
+    percent_diff = np.zeros(num_sets - 1)
+    for j in range(num_sets):
         tmp = np.mean(precc_data[j] + precl_data[j])
-        out_array[j] = tmp
-
         # need to normalize by area
+        out_array[j] = tmp
+        if j == 0:
+            control = tmp
+            if control == 0:
+                control = 1
+        else:
+            percent_diff[j - 1] = np.abs((control - tmp) / control) * 100
 
-    print(out_array)
+    print('values = ', out_array)
+    print('percent rel. difference = ', percent_diff)
 
 
-def cam_ep(qflx_col, precc_col, precl_col, qflx_sets, precc_sets, precl_sets):
-
-    qflx = qflx_col['QFLX']
-    precc = precc_col['PRECC']
-    precl = precl_col['PRECL']
-
-    num = len(qflx_sets)
-    num2 = len(precc_sets)
-    num3 = len(precl_sets)
-
-    if num < 2 or num2 < 2 or num3 < 2 or num != num2 or num2 != num3:
-        print('Must have at least 2 set lables for each variable (and the same number for each).')
-        return
+# evaporation-precipitation
+def cam_ep(qflx_col, precc_col, precl_col, list_of_sets):
 
     # QFLX is "kg/m2/s or mm/s
     # PRECC and PRECL are m/s
     # 1 kg/m2/s = 86400 mm/day.
     # 8.64e7 mm/day = 1 m/sec
 
+    qflx = qflx_col['QFLX']
+    precc = precc_col['PRECC']
+    precl = precl_col['PRECL']
+    col = [qflx_col, precc_col, precl_col]
+
+    contU = _preprocess(list_of_sets, col)
+    if not contU:
+        return
+
+    num_sets = len(list_of_sets[0])
+
     qflx_data = []
     precc_data = []
     precl_data = []
-    out_array = np.zeros(num)
-
-    for set in qflx_sets:
+    for set in list_of_sets[0]:
         qflx_data.append(qflx.sel(collection=set))
-    for set in precc_sets:
+    for set in list_of_sets[1]:
         precc_data.append(precc.sel(collection=set))
-    for set in precl_sets:
+    for set in list_of_sets[2]:
         precl_data.append(precl.sel(collection=set))
 
-    # adjust units
-
-    for j in range(num):
+    # Now the calculation
+    out_array = np.zeros(num_sets)
+    percent_diff = np.zeros(num_sets - 1)
+    for j in range(num_sets):
         tmp = np.mean(qflx_data[j] * 86400 + (precc_data[j] + precl_data[j]) * 8.64e7)
+        # need to normalize by area?
+
         out_array[j] = tmp
-        # need to normalize by area
+        if j == 0:
+            control = tmp
+            if control == 0:
+                control = 1
+        else:
+            percent_diff[j - 1] = np.abs((control - tmp) / control) * 100
 
-    print(out_array)
+    print('values = ', out_array)
+    print('percent rel. difference = ', percent_diff)
 
 
-def cam_ressurf(
-    fsns_col, flns_col, shflx_col, lhflx_col, fsns_sets, flns_sets, shflx_sets, lhflx_sets
-):
+# surface energy balance
+def cam_ressurf(fsns_col, flns_col, shflx_col, lhflx_col, list_of_sets):
 
     # all in W/m^2
     fsns = fsns_col['FSNS']
     flns = flns_col['FLNS']
     shflx = shflx_col['SHFLX']
     lhflx = lhflx_col['LHFLX']
+    col = [fsns_col, flns_col, shflx_col, lhflx]
 
-    # maybe read in qflx instead of lhflx and multiply by Lv = 2.501e6
-    # to get lhflx? (ncl code does this)
-
-    num = len(fsns_sets)
-    num2 = len(flns_sets)
-    num3 = len(shflx_sets)
-    num4 = len(lhflx_sets)
-
-    if num < 2 or num2 < 2 or num3 < 2 or num4 < 2 or num != num2 or num2 != num3 or num3 != num4:
-        print('Must have at least 2 set lables for each variable (and the same number for each).')
+    contU = _preprocess(list_of_sets, col)
+    if not contU:
         return
+
+    num_sets = len(list_of_sets[0])
 
     fsns_data = []
     flns_data = []
     shflx_data = []
     lhflx_data = []
-
-    out_array = np.zeros(num)
-
-    for set in fsns_sets:
+    for set in list_of_sets[0]:
         fsns_data.append(fsns.sel(collection=set))
-    for set in flns_sets:
+    for set in list_of_sets[1]:
         flns_data.append(flns.sel(collection=set))
-    for set in shflx_sets:
+    for set in list_of_sets[2]:
         shflx_data.append(shflx.sel(collection=set))
-    for set in lhflx_sets:
+    for set in list_of_sets[3]:
         lhflx_data.append(lhflx.sel(collection=set))
 
-    for j in range(num):
-        tmp = np.mean(fsns_data[j] - flns_data[j] - shflx_data[j] - lhflx_data[j])
+    # Now the calculation
+    out_array = np.zeros(num_sets)
+    percent_diff = np.zeros(num_sets - 1)
+    for j in range(num_sets):
+        tmp = np.mean(fsns_data[j] - (flns_data[j] + shflx_data[j] + lhflx_data[j]))
+
         out_array[j] = tmp
+        if j == 0:
+            control = tmp
+            if control == 0:
+                control = 1
+        else:
+            percent_diff[j - 1] = np.abs((control - tmp) / control) * 100
 
-        # need to normalize by area
-
-    print(out_array)
+    print('values = ', out_array)
+    print('percent rel. difference = ', percent_diff)
