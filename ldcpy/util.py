@@ -439,6 +439,7 @@ def save_metrics(
     pcc_tol=0.99999,
     spre_tol=5.0,
     ssim_tol=0.9995,
+    location='names.csv',
 ):
     """
 
@@ -536,8 +537,8 @@ def save_metrics(
 
     # ssim_fp_old_val = diff_metrics.get_diff_metric('ssim_fp_old')
 
-    file_exists = os.path.isfile('names.csv')
-    with open('names.csv', 'a', newline='') as csvfile:
+    file_exists = os.path.isfile(location)
+    with open(location, 'a', newline='') as csvfile:
         fieldnames = [
             'set',
             'time',
