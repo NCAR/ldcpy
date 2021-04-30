@@ -5,6 +5,7 @@ import pytest
 import ldcpy
 
 ds = ldcpy.open_datasets(
+    'cam-fv',
     ['TS'],
     [
         'data/cam-fv/orig.TS.100days.nc',
@@ -14,6 +15,7 @@ ds = ldcpy.open_datasets(
     ['orig', 'recon', 'recon2'],
 )
 ds2 = ldcpy.open_datasets(
+    'cam-fv',
     ['PRECT'],
     [
         'data/cam-fv/orig.PRECT.60days.nc',
@@ -22,18 +24,7 @@ ds2 = ldcpy.open_datasets(
     ],
     ['orig', 'recon', 'recon2'],
 )
-ds3 = ldcpy.open_datasets(['T'], ['data/cam-fv/cam-fv.T.3months.nc'], ['orig'])
-
-ds_pop = ldcpy.open_datasets(
-    ['SST'],
-    [
-        'data/pop/pop.SST.60days.nc',
-        'data/pop/zfp1.0.pop.SST.60days.nc',
-        'data/pop/zfp1e-1.pop.SST.60days.nc',
-        'data/pop/zfp1e-2.pop.SST.60days.nc',
-    ],
-    ['orig', 'recon', 'recon2', 'recon3'],
-)
+ds3 = ldcpy.open_datasets('cam-fv', ['T'], ['data/cam-fv/cam-fv.T.3months.nc'], ['orig'])
 
 
 class TestPlot(TestCase):
@@ -44,6 +35,18 @@ class TestPlot(TestCase):
 
     def test_mean(self):
         ldcpy.plot(ds, 'TS', sets=['orig', 'recon'], calc='mean', vert_plot=True, tex_format=False)
+        self.assertTrue(True)
+
+    def test_mean_ts(self):
+        ldcpy.plot(
+            ds,
+            'TS',
+            sets=['orig', 'recon'],
+            calc='std',
+            plot_type='time_series',
+            vert_plot=True,
+            tex_format=False,
+        )
         self.assertTrue(True)
 
     def test_standardized_mean(self):
