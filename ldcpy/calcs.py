@@ -1122,24 +1122,30 @@ class Diffcalcs:
             m_t2 = np.ma.masked_invalid(t2).compressed()
             m_t1 = np.ma.masked_invalid(t1).compressed()
 
-            if z.size > 0:
-                m_t1_denom = np.ma.masked_invalid(t1_denom).compressed()
+            if m_t2.shape != m_t1.shape:
+                print('Warning: Spatial error not calculated with differing numbers of Nans')
+                self._spatial_rel_error = 0
+                self._max_spatial_rel_error = 0
             else:
-                m_t1_denom = m_t1
 
-            m_tt = m_t1 - m_t2
-            m_tt = m_tt / m_t1_denom
+                if z.size > 0:
+                    m_t1_denom = np.ma.masked_invalid(t1_denom).compressed()
+                else:
+                    m_t1_denom = m_t1
 
-            # find the max spatial error also if None
-            if self._max_spatial_rel_error is None:
-                max_spre = np.max(m_tt)
-                self._max_spatial_rel_error = max_spre
+                m_tt = m_t1 - m_t2
+                m_tt = m_tt / m_t1_denom
 
-            # percentage greater than the tolerance
-            a = len(m_tt[abs(m_tt) > sp_tol])
-            sz = m_tt.shape[0]
+                # find the max spatial error also if None
+                if self._max_spatial_rel_error is None:
+                    max_spre = np.max(m_tt)
+                    self._max_spatial_rel_error = max_spre
 
-            self._spatial_rel_error = (a / sz) * 100
+                # percentage greater than the tolerance
+                a = len(m_tt[abs(m_tt) > sp_tol])
+                sz = m_tt.shape[0]
+
+                self._spatial_rel_error = (a / sz) * 100
 
         return self._spatial_rel_error
 
