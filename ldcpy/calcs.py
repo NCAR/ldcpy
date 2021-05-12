@@ -220,13 +220,13 @@ class Datasetcalcs:
         """
         The mean along the aggregate dimensions
         """
-        # print("mean")
         if not self._is_memoized('_mean'):
             if self._weighted:
                 self._mean = self._ds.cf.weighted('area').mean(self._agg_dims, skipna=True)
             else:
                 self._mean = self._ds.mean(self._agg_dims, skipna=True)
             self._mean.attrs = self._ds.attrs
+
         return self._mean
 
     @property
@@ -1007,9 +1007,9 @@ class Diffcalcs:
         min_lev = meana.argmin()
 
         # smallest value at that level
-        min_lev_val = np.min(mats[min_lev])
+        min_lev_val = np.nanmin(mats[min_lev])
 
-        ind = np.unravel_index(np.argmin(mats[min_lev], axis=None), mats[min_lev].shape)
+        ind = np.unravel_index(np.nanargmin(mats[min_lev], axis=None), mats[min_lev].shape)
 
         plt.imshow(mats[min_lev], interpolation='none', vmax=1.0, cmap='bone')
         plt.colorbar(orientation='horizontal')
@@ -1238,7 +1238,10 @@ class Diffcalcs:
             # is it 3D? must do each level
             if self._calcs1._vert_dim_name is not None:
                 vname = self._calcs1._vert_dim_name
-                nlevels = self._calcs1.get_calc('ds').sizes[vname]
+                if vname not in self._calcs1.get_calc('ds').sizes:
+                    nlevels = 1
+                else:
+                    nlevels = self._calcs1.get_calc('ds').sizes[vname]
             else:
                 nlevels = 1
 
@@ -1367,7 +1370,10 @@ class Diffcalcs:
             # if this is a 3D variable, we will do each level seperately
             if self._calcs1._vert_dim_name is not None:
                 vname = self._calcs1._vert_dim_name
-                nlevels = self._calcs1.get_calc('ds').sizes[vname]
+                if vname not in self._calcs1.get_calc('ds').sizes:
+                    nlevels = 1
+                else:
+                    nlevels = self._calcs1.get_calc('ds').sizes[vname]
             else:
                 nlevels = 1
 
@@ -1520,7 +1526,7 @@ class Diffcalcs:
     def ssim_value_fp_fast2(self):
         """
         Faster implementation then ssim_value_fp_orig
-        Use other version below - not this fast2
+        Use other version below - not this one
 
         """
         from astropy.convolution import Gaussian2DKernel, convolve, interpolate_replace_nans
@@ -1530,7 +1536,10 @@ class Diffcalcs:
             # if this is a 3D variable, we will do each level seperately
             if self._calcs1._vert_dim_name is not None:
                 vname = self._calcs1._vert_dim_name
-                nlevels = self._calcs1.get_calc('ds').sizes[vname]
+                if vname not in self._calcs1.get_calc('ds').sizes:
+                    nlevels = 1
+                else:
+                    nlevels = self._calcs1.get_calc('ds').sizes[vname]
             else:
                 nlevels = 1
 
@@ -1609,7 +1618,7 @@ class Diffcalcs:
                 ssim_mat = ssim_1 * ssim_2
 
                 # cropping (temp)
-                # ssim_mat = crop(ssim_mat, k)
+                ssim_mat = crop(ssim_mat, k)
 
                 mean_ssim = np.nanmean(ssim_mat)
                 ssim_levs[this_lev] = mean_ssim
@@ -1636,7 +1645,10 @@ class Diffcalcs:
             # if this is a 3D variable, we will do each level seperately
             if self._calcs1._vert_dim_name is not None:
                 vname = self._calcs1._vert_dim_name
-                nlevels = self._calcs1.get_calc('ds').sizes[vname]
+                if vname not in self._calcs1.get_calc('ds').sizes:
+                    nlevels = 1
+                else:
+                    nlevels = self._calcs1.get_calc('ds').sizes[vname]
             else:
                 nlevels = 1
 
@@ -1708,7 +1720,7 @@ class Diffcalcs:
                 ssim_2 = ssim_t2 / ssim_b2
                 ssim_mat = ssim_1 * ssim_2
 
-                # cropping (the boarder region)
+                # cropping (the border region)
                 ssim_mat = crop(ssim_mat, k)
 
                 mean_ssim = np.nanmean(ssim_mat)

@@ -739,6 +739,7 @@ class calcsPlot(object):
                         .mean()
                         .data.compute()
                     )
+                    print(a1_data)
                 # check for NANs
                 # indices = ~np.isnan(a1_data)
                 # if weights is not None:
