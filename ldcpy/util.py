@@ -49,11 +49,31 @@ def collect_datasets(data_type, varnames, list_of_ds, labels, **kwargs):
     indx = np.unique(sz)
     assert indx.size == 1, 'ERROR: all datasets must have the same length time dimension'
 
+    if data_type == 'cam-fv':
+        weights_name = 'gw'
+        varnames.append(weights_name)
+    elif data_type == 'pop':
+        weights_name = 'TAREA'
+        varnames.append(weights_name)
+
     # preprocess
     for i, myds in enumerate(list_of_ds):
         list_of_ds[i] = preprocess(myds, varnames)
 
     full_ds = xr.concat(list_of_ds, 'collection', **kwargs)
+
+    if data_type == 'pop':
+        full_ds.coords['cell_area'] = xr.DataArray(full_ds.variables.mapping.get(weights_name))[0]
+    else:
+        full_ds.coords['cell_area'] = (
+            xr.DataArray(full_ds.variables.mapping.get(weights_name))
+            .expand_dims(lon=full_ds.dims['lon'])
+            .transpose()
+        )
+
+    full_ds.attrs['cell_measures'] = 'area: cell_area'
+
+    full_ds = full_ds.drop(weights_name)
 
     full_ds['collection'] = xr.DataArray(labels, dims='collection')
 
