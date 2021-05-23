@@ -911,8 +911,8 @@ class Diffcalcs:
                 f'ds must be of type xarray.DataArray. Type(s): {str(type(ds1))} {str(type(ds2))}'
             )
 
-        self._calcs1 = Datasetcalcs(self._ds1, aggregate_dims, weighted=False, **calcs_kwargs)
-        self._calcs2 = Datasetcalcs(self._ds2, aggregate_dims, weighted=False, **calcs_kwargs)
+        self._calcs1 = Datasetcalcs(self._ds1, aggregate_dims, **calcs_kwargs)
+        self._calcs2 = Datasetcalcs(self._ds2, aggregate_dims, **calcs_kwargs)
         self._aggregate_dims = aggregate_dims
         self._pcc = None
         self._covariance = None

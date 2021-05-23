@@ -437,6 +437,7 @@ def check_metrics(
         ds[varname].sel(collection=set2),
         aggregate_dims,
         **calcs_kwargs,
+        weighted=False,
     )
 
     # count the number of failures
