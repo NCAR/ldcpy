@@ -4,6 +4,8 @@ import matplotlib as mpl
 import numpy as np
 import xarray as xr
 
+xr.set_options(keep_attrs=True)                                                     
+
 
 def _preprocess(list_set_labels, list_of_cols):
     contU = True
@@ -52,7 +54,8 @@ def cam_restom(fsnt_col, flnt_col, list_of_sets):
     percent_diff = np.zeros(num_sets - 1)
     for j in range(num_sets):
         # need to normalize by area
-        tmp = np.mean(fsnt_data[j] - flnt_data[j])
+        tmp_data = fsnt_data[j] - flnt_data[j]
+        tmp = tmp_data.cf.weighted('area').mean() 
         # output
         out_array[j] = tmp
         if j == 0:
