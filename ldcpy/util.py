@@ -8,7 +8,7 @@ import xarray as xr
 from .calcs import Datasetcalcs, Diffcalcs
 
 
-def collect_datasets(varnames, list_of_ds, labels, **kwargs):
+def collect_datasets(data_type, varnames, list_of_ds, labels, **kwargs):
     """
     Concatonate several different xarray datasets across a new
     "collection" dimension, which can be accessed with the specified
@@ -49,20 +49,40 @@ def collect_datasets(varnames, list_of_ds, labels, **kwargs):
     indx = np.unique(sz)
     assert indx.size == 1, 'ERROR: all datasets must have the same length time dimension'
 
+    if data_type == 'cam-fv':
+        weights_name = 'gw'
+        varnames.append(weights_name)
+    elif data_type == 'pop':
+        weights_name = 'TAREA'
+        varnames.append(weights_name)
+
     # preprocess
     for i, myds in enumerate(list_of_ds):
         list_of_ds[i] = preprocess(myds, varnames)
 
     full_ds = xr.concat(list_of_ds, 'collection', **kwargs)
 
+    if data_type == 'pop':
+        full_ds.coords['cell_area'] = xr.DataArray(full_ds.variables.mapping.get(weights_name))[0]
+    else:
+        full_ds.coords['cell_area'] = (
+            xr.DataArray(full_ds.variables.mapping.get(weights_name))
+            .expand_dims(lon=full_ds.dims['lon'])
+            .transpose()
+        )
+
+    full_ds.attrs['cell_measures'] = 'area: cell_area'
+
+    full_ds = full_ds.drop(weights_name)
+
     full_ds['collection'] = xr.DataArray(labels, dims='collection')
 
     print('dataset size in GB {:0.2f}\n'.format(full_ds.nbytes / 1e9))
-
+    full_ds.attrs['data_type'] = data_type
     return full_ds
 
 
-def open_datasets(varnames, list_of_files, labels, **kwargs):
+def open_datasets(data_type, varnames, list_of_files, labels, **kwargs):
     """
     Open several different netCDF files, concatenate across
     a new 'collection' dimension, which can be accessed with the specified
@@ -109,6 +129,13 @@ def open_datasets(varnames, list_of_files, labels, **kwargs):
     def preprocess_vars(ds):
         return ds[varnames]
 
+    if data_type == 'cam-fv':
+        weights_name = 'gw'
+        varnames.append(weights_name)
+    elif data_type == 'pop':
+        weights_name = 'TAREA'
+        varnames.append(weights_name)
+
     full_ds = xr.open_mfdataset(
         list_of_files,
         concat_dim='collection',
@@ -119,8 +146,22 @@ def open_datasets(varnames, list_of_files, labels, **kwargs):
         **kwargs,
     )
 
+    if data_type == 'pop':
+        full_ds.coords['cell_area'] = xr.DataArray(full_ds.variables.mapping.get(weights_name))[0]
+    else:
+        full_ds.coords['cell_area'] = (
+            xr.DataArray(full_ds.variables.mapping.get(weights_name))
+            .expand_dims(lon=full_ds.dims['lon'])
+            .transpose()
+        )
+
+    full_ds.attrs['cell_measures'] = 'area: cell_area'
+
+    full_ds = full_ds.drop(weights_name)
+
     full_ds['collection'] = xr.DataArray(labels, dims='collection')
     print('dataset size in GB {:0.2f}\n'.format(full_ds.nbytes / 1e9))
+    full_ds.attrs['data_type'] = data_type
 
     return full_ds
 
@@ -193,15 +234,21 @@ def compare_stats(
 
     da_set_calcs = []
     for i in range(num):
-        da_set_calcs.append(Datasetcalcs(da_sets[i], aggregate_dims, **calcs_kwargs))
+        da_set_calcs.append(
+            Datasetcalcs(da_sets[i], aggregate_dims, **calcs_kwargs, weighted=False)
+        )
 
     dd_set_calcs = []
     for i in range(num - 1):
-        dd_set_calcs.append(Datasetcalcs(dd_sets[i], aggregate_dims, **calcs_kwargs))
+        dd_set_calcs.append(
+            Datasetcalcs(dd_sets[i], aggregate_dims, **calcs_kwargs, weighted=False)
+        )
 
     diff_calcs = []
     for i in range(1, num):
-        diff_calcs.append(Diffcalcs(da_sets[0], da_sets[i], aggregate_dims, **calcs_kwargs))
+        diff_calcs.append(
+            Diffcalcs(da_sets[0], da_sets[i], aggregate_dims, **calcs_kwargs, weighted=False)
+        )
 
     # DATA FRAME
     import pandas as pd
@@ -390,6 +437,7 @@ def check_metrics(
         ds[varname].sel(collection=set2),
         aggregate_dims,
         **calcs_kwargs,
+        weighted=False,
     )
 
     # count the number of failures
@@ -475,13 +523,13 @@ def subset_data(
         ds_subset = ds_subset.isel({time_dim_name: slice(start, end + 1)})
 
     if subset is not None:
-        if subset == 'winter':
+        if subset == 'DJF':
             ds_subset = ds_subset.cf.sel(time=ds.cf['time'].dt.season == 'DJF')
-        elif subset == 'spring':
+        elif subset == 'MAM':
             ds_subset = ds_subset.cf.sel(time=ds.cf['time'].dt.season == 'MAM')
-        elif subset == 'summer':
+        elif subset == 'JJA':
             ds_subset = ds_subset.cf.sel(time=ds.cf['time'].dt.season == 'JJA')
-        elif subset == 'autumn':
+        elif subset == 'SON':
             ds_subset = ds_subset.cf.sel(time=ds.cf['time'].dt.season == 'SON')
 
         elif subset == 'first5':

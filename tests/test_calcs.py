@@ -29,10 +29,10 @@ test_data_2 = xr.DataArray(
     ],
     dims=['lat', 'lon', 'time'],
 )
-test_overall_calcs = ldcpy.Datasetcalcs(test_data, ['time', 'lat', 'lon'])
-test_spatial_calcs = ldcpy.Datasetcalcs(test_data, ['time'])
-test_time_series_calcs = ldcpy.Datasetcalcs(test_data, ['lat', 'lon'])
-test_diff_calcs = ldcpy.Diffcalcs(test_data, test_data_2, ['time', 'lat', 'lon'])
+test_overall_calcs = ldcpy.Datasetcalcs(test_data, ['time', 'lat', 'lon'], weighted=False)
+test_spatial_calcs = ldcpy.Datasetcalcs(test_data, ['time'], weighted=False)
+test_time_series_calcs = ldcpy.Datasetcalcs(test_data, ['lat', 'lon'], weighted=False)
+test_diff_calcs = ldcpy.Diffcalcs(test_data, test_data_2, ['time', 'lat', 'lon'], weighted=False)
 
 
 class TestErrorcalcs(TestCase):
@@ -88,6 +88,7 @@ class TestErrorcalcs(TestCase):
         em = Datasetcalcs(
             xr.DataArray(self._samples[0]['observed']) - xr.DataArray(self._samples[0]['measured']),
             [],
+            weighted=False,
         )
 
         self.assertTrue((self._samples[0]['expected_error'] == em.sum).all())
@@ -96,6 +97,7 @@ class TestErrorcalcs(TestCase):
         em = Datasetcalcs(
             xr.DataArray(self._samples[0]['observed']) - xr.DataArray(self._samples[0]['measured']),
             [],
+            weighted=False,
         )
         self.assertTrue(em.mean.all() == 0.0)
 
@@ -103,6 +105,7 @@ class TestErrorcalcs(TestCase):
         em = Datasetcalcs(
             xr.DataArray(self._samples[0]['observed'] - xr.DataArray(self._samples[0]['measured'])),
             [],
+            weighted=False,
         )
 
         self.assertTrue(em.mean.all() == 0.0)

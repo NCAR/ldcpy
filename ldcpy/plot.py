@@ -17,6 +17,8 @@ from pylab import flipud
 
 from ldcpy import calcs as lm, util as lu
 
+xr.set_options(keep_attrs=True)
+
 
 def tex_escape(text):
     """
@@ -75,6 +77,7 @@ class calcsPlot(object):
         vert_plot=False,
         tex_format=False,
         legend_offset=None,
+        weighted=True,
     ):
 
         self._ds = ds
@@ -106,6 +109,7 @@ class calcsPlot(object):
         self.vert_plot = vert_plot
         self._tex_format = tex_format
         self._legend_offset = legend_offset
+        self._weighted = weighted
 
     def verify_plot_parameters(self):
         if len(self._sets) < 2 and self._calc_type in [
@@ -144,7 +148,7 @@ class calcsPlot(object):
         da_data.attrs = da.attrs
 
         # lat/lon dim names are different for ocn and atm
-        dd = da_data.cf['latitude'].dims
+        dd = da_data.cf[da_data.cf.coordinates['latitude'][0]].dims
 
         ll = len(dd)
         if ll == 1:
@@ -155,9 +159,9 @@ class calcsPlot(object):
             lon_dim = dd[1]
 
         if self._plot_type in ['spatial']:
-            calcs_da = lm.Datasetcalcs(da_data, ['time'])
+            calcs_da = lm.Datasetcalcs(da_data, ['time'], weighted=self._weighted)
         elif self._plot_type in ['time_series', 'periodogram', 'histogram']:
-            calcs_da = lm.Datasetcalcs(da_data, [lat_dim, lon_dim])
+            calcs_da = lm.Datasetcalcs(da_data, [lat_dim, lon_dim], weighted=self._weighted)
         else:
             raise ValueError(f'plot type {self._plot_type} not supported')
 
@@ -697,8 +701,8 @@ class calcsPlot(object):
 
         mpl.pyplot.title(tex_escape(titles[0]))
 
-    def get_calc_label(self, calc, data, weights=None):
-        dd = data.cf['latitude'].dims
+    def get_calc_label(self, calc, data):
+        dd = data.cf[data.cf.coordinates['latitude'][0]].dims
 
         ll = len(dd)
         if ll == 1:
@@ -711,71 +715,92 @@ class calcsPlot(object):
         # Get special calc names
         if self._short_title is False:
             if calc == 'zscore':
-                zscore_cutoff = lm.Datasetcalcs((data), ['time']).get_single_calc('zscore_cutoff')
-                percent_sig = lm.Datasetcalcs((data), ['time']).get_single_calc(
-                    'zscore_percent_significant'
-                )
+                zscore_cutoff = lm.Datasetcalcs(
+                    (data), ['time'], weighted=self._weighted
+                ).get_single_calc('zscore_cutoff')
+                percent_sig = lm.Datasetcalcs(
+                    (data), ['time'], weighted=self._weighted
+                ).get_single_calc('zscore_percent_significant')
                 calc_name = f'{calc}: cutoff {zscore_cutoff[0]:.2f}, % sig: {percent_sig:.2f}'
             elif calc == 'mean' and self._plot_type == 'spatial' and self._calc_type == 'raw':
 
-                a1_data = (lm.Datasetcalcs(data, ['time']).get_calc(calc)).data
+                if self._weighted:
+                    a1_data = (
+                        lm.Datasetcalcs(data, ['time'], weighted=self._weighted)
+                        .get_calc(calc)
+                        .cf.weighted('area')
+                        .mean()
+                        .data.compute()
+                    )
+                else:
+                    a1_data = (
+                        lm.Datasetcalcs(data, ['time'], weighted=self._weighted)
+                        .get_calc(calc)
+                        .mean()
+                        .data.compute()
+                    )
                 # check for NANs
-                indices = ~np.isnan(a1_data)
-                if weights is not None:
-                    weights = weights[indices]
+                # indices = ~np.isnan(a1_data)
+                # if weights is not None:
+                #    weights = weights[indices]
 
-                a2_data = np.average(
-                    a1_data[indices],
-                    axis=0,
-                    weights=weights,
-                ).compute()
+                # a2_data = np.average(
+                #    a1_data[indices],
+                #    axis=0,
+                #    weights=weights,
+                # ).compute()
 
-                o_wt_mean = np.nanmean(a2_data)
+                # o_wt_mean = np.nanmean(a2_data)
 
-                calc_name = f'{calc} = {o_wt_mean:.2f}'
+                calc_name = f'{calc} = {a1_data:.2f}'
             elif calc == 'pooled_var_ratio':
                 pooled_sd = np.sqrt(
-                    lm.Datasetcalcs((data), ['time']).get_single_calc('pooled_variance')
+                    lm.Datasetcalcs((data), ['time'], weighted=self._weighted).get_single_calc(
+                        'pooled_variance'
+                    )
                 )
                 d = pooled_sd.data.compute()
                 calc_name = f'{calc}: pooled SD = {d:.2f}'
-            elif calc == 'annual_harmonic_relative_ratio':
-                p = lm.Datasetcalcs((data), ['time']).get_single_calc(
+            elif calc == 'ann_harmonic_ratio':
+                p = lm.Datasetcalcs((data), ['time'], weighted=self._weighted).get_single_calc(
                     'annual_harmonic_relative_ratio_pct_sig'
                 )
                 calc_name = f'{calc}: % sig = {p:.2f}'
             elif self._plot_type == 'spatial':
-                a1_data = (lm.Datasetcalcs(data, ['time']).get_calc(calc)).data
-                # check for NANs
-                indices = ~np.isnan(a1_data)
-                if weights is not None:
-                    weights = weights[indices]
+                if self._weighted:
+                    a1_data = (
+                        lm.Datasetcalcs(data, ['time'], weighted=self._weighted)
+                        .get_calc(calc)
+                        .cf.weighted('area')
+                        .mean()
+                        .data.compute()
+                    )
+                else:
+                    a1_data = (
+                        lm.Datasetcalcs(data, ['time'], weighted=self._weighted)
+                        .get_calc(calc)
+                        .mean()
+                        .data.compute()
+                    )
 
-                a2_data = np.average(
-                    a1_data[indices],
-                    axis=0,
-                    weights=weights,
-                ).compute()
-
-                dat = np.nanmean(a2_data)
-
-                calc_name = f'{calc} = {dat:.2f}'
+                calc_name = f'{calc} = {a1_data:.2f}'
             elif self._plot_type == 'time_series':
-                a1_data = (lm.Datasetcalcs(data, [lat_dim, lon_dim]).get_calc(calc)).data
-                # check for NANs
-                indices = ~np.isnan(a1_data)
-                if weights is not None:
-                    weights = weights[indices]
+                if self._weighted:
+                    a1_data = (
+                        lm.Datasetcalcs(data, [lat_dim, lon_dim], weighted=self._weighted)
+                        .get_calc(calc)
+                        .mean()
+                        .data.compute()
+                    )
+                else:
+                    a1_data = (
+                        lm.Datasetcalcs(data, [lat_dim, lon_dim], weighted=self._weighted)
+                        .get_calc(calc)
+                        .mean()
+                        .data.compute()
+                    )
 
-                a2_data = np.average(
-                    a1_data[indices],
-                    axis=0,
-                    weights=weights,
-                ).compute()
-
-                dat = np.nanmean(a2_data)
-
-                calc_name = f'{calc} = {dat:.2f}'
+                calc_name = f'{calc} = {a1_data:.2f}'
             else:
                 calc_name = calc
 
@@ -809,6 +834,7 @@ def plot(
     vert_plot=False,
     tex_format=False,
     legend_offset=None,
+    weighted=True,
 ):
     """
     Plots the data given an xarray dataset
@@ -843,7 +869,7 @@ def plot(
             - quantile
             - lag1
             - standardized_mean
-            - annual_harmonic_relative_ratio
+            - ann_harmonic_ratio
             - pooled_variance_ratio
 
     sets : list <str>
@@ -888,10 +914,10 @@ def plot(
         Valid options:
 
             - first5: the first 5 days of data
-            - winter: data from the months December, January, February
-            - spring: data from the months March, April, May
-            - summer: data from the months June, July, August
-            - autumn: data from the months September, October, November
+            - DJF: data from the months December, January, February
+            - MAM: data from the months March, April, May
+            - JJA: data from the months June, July, August
+            - SON: data from the months September, October, November
     lat : float, optional
         The latitude of the data to gather calcs on (default None).
     lon : float , optional
@@ -963,6 +989,7 @@ def plot(
         vert_plot=vert_plot,
         tex_format=tex_format,
         legend_offset=legend_offset,
+        weighted=weighted,
     )
 
     plt.rcParams.update(
@@ -981,29 +1008,35 @@ def plot(
     if 'bounds' in ds['time'].attrs.keys():
         ds['time'].attrs.pop('bounds')
 
-    if varname == 'T':  # work around for cf_xarray (until new tag that
-        # includes issue 130 updated to main on 1/27/21)
-        ds.T.attrs['standard_name'] = 'tt'
-        if 'collection' in ds[varname].dims:
-            if sets is not None:
-                for set in sets:
-                    dss.append(ds.cf['tt'].sel(collection=set))
-        else:
-            dss.append(ds.cf['tt'])
+    # if varname == 'T':  # work around for cf_xarray (until new tag that
+    #     # includes issue 130 updated to main on 1/27/21)
+    #     ds.T.attrs['standard_name'] = 'tt'
+    #     if 'collection' in ds[varname].dims:
+    #         if sets is not None:
+    #             for set in sets:
+    #                 d = ds.cf['tt'].sel(collection=set)
+    #                 d.coords["cell_area"] = ds.coords["cell_area"]
+    #                 dss.append(d)
+    #     else:
+    #         d = ds.cf['tt']
+    #         d.coords["cell_area"] = ds.coords["cell_area"]
+    #         dss.append(ds.cf['tt'])
+    #
+    # else:
 
+    if 'collection' in ds[varname].dims:
+        if sets is not None:
+            for set in sets:
+                dss.append(ds[varname].sel(collection=set))
     else:
-        if 'collection' in ds[varname].dims:
-            if sets is not None:
-                for set in sets:
-                    dss.append(ds.cf[varname].sel(collection=set))
-        else:
-            dss.append(ds.cf[varname])
+        dss.append(ds[varname])
 
     subsets = []
     if sets is not None:
         for i in range(len(sets)):
             subsets.append(lu.subset_data(dss[i], subset, lat, lon, lev, start, end))
             subsets[i].attrs = dss[i].attrs
+            subsets[i].attrs['cell_measures'] = 'area: cell_area'
 
     # Acquire raw calc values
     datas = []
@@ -1023,8 +1056,12 @@ def plot(
         raw_calcs.append(mp.get_calcs(d))
 
     # get lat/lon coordinate names:
-    lon_coord_name = datas[0].cf['longitude'].name
-    lat_coord_name = datas[0].cf['latitude'].name
+    if ds.data_type == 'pop':
+        lon_coord_name = datas[0].cf[datas[0].cf.coordinates['longitude'][0]].dims[1]
+        lat_coord_name = datas[0].cf[datas[0].cf.coordinates['latitude'][0]].dims[0]
+    else:
+        lat_coord_name = datas[0].cf[datas[0].cf.coordinates['latitude'][0]].dims[0]
+        lon_coord_name = datas[0].cf[datas[0].cf.coordinates['longitude'][0]].dims[0]
 
     # Get calc names/values for plot title
     calc_names = []
@@ -1044,8 +1081,6 @@ def plot(
             # lon should be 0- 360
             mylat = subsets[0][lat_coord_name].data[0]
             mylon = subsets[0][lon_coord_name].data[0]
-            mylat = mylat[0].compute()
-            mylon = mylon[0].compute()
             if mylon < 0:
                 mylon = mylon + 360
             mp.title_lat = mylat

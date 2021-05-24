@@ -5,6 +5,7 @@ import pytest
 import ldcpy
 
 ds = ldcpy.open_datasets(
+    'cam-fv',
     ['TS'],
     [
         'data/cam-fv/orig.TS.100days.nc',
@@ -14,6 +15,7 @@ ds = ldcpy.open_datasets(
     ['orig', 'recon', 'recon2'],
 )
 ds2 = ldcpy.open_datasets(
+    'cam-fv',
     ['PRECT'],
     [
         'data/cam-fv/orig.PRECT.60days.nc',
@@ -22,18 +24,7 @@ ds2 = ldcpy.open_datasets(
     ],
     ['orig', 'recon', 'recon2'],
 )
-ds3 = ldcpy.open_datasets(['T'], ['data/cam-fv/cam-fv.T.3months.nc'], ['orig'])
-
-ds_pop = ldcpy.open_datasets(
-    ['SST'],
-    [
-        'data/pop/pop.SST.60days.nc',
-        'data/pop/zfp1.0.pop.SST.60days.nc',
-        'data/pop/zfp1e-1.pop.SST.60days.nc',
-        'data/pop/zfp1e-2.pop.SST.60days.nc',
-    ],
-    ['orig', 'recon', 'recon2', 'recon3'],
-)
+ds3 = ldcpy.open_datasets('cam-fv', ['T'], ['data/cam-fv/cam-fv.T.3months.nc'], ['orig'])
 
 
 class TestPlot(TestCase):
@@ -42,8 +33,48 @@ class TestPlot(TestCase):
     parameters. Tests still need to be written for the methods in the plot.py class.
     """
 
+    def test_dataset_calc(self):
+        my_data = ds['TS'].sel(collection='orig')
+        my_data.attrs['cell_measures'] = 'area: cell_area'
+
+        ds_calcs_across_time = ldcpy.Datasetcalcs(my_data, ['time'])
+        ds_calcs_across_space = ldcpy.Datasetcalcs(my_data, ['lat', 'lon'])
+
+        ds_calcs_across_time.get_calc('mean')
+        ds_calcs_across_space.get_calc('mean')
+        self.assertTrue(True)
+
+    def test_grouped_standardized_mean_time_series(self):
+        ldcpy.plot(
+            ds,
+            'TS',
+            sets=['orig', 'recon'],
+            calc='standardized_mean',
+            legend_loc='lower left',
+            calc_type='calc_of_diff',
+            plot_type='time_series',
+            group_by='time.dayofyear',
+            tex_format=False,
+            lat=90,
+            lon=0,
+            vert_plot=True,
+            short_title=True,
+        )
+
     def test_mean(self):
         ldcpy.plot(ds, 'TS', sets=['orig', 'recon'], calc='mean', vert_plot=True, tex_format=False)
+        self.assertTrue(True)
+
+    def test_mean_ts(self):
+        ldcpy.plot(
+            ds,
+            'TS',
+            sets=['orig', 'recon'],
+            calc='std',
+            plot_type='time_series',
+            vert_plot=True,
+            tex_format=False,
+        )
         self.assertTrue(True)
 
     def test_standardized_mean(self):
