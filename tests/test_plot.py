@@ -44,6 +44,23 @@ class TestPlot(TestCase):
         ds_calcs_across_space.get_calc('mean')
         self.assertTrue(True)
 
+    def test_grouped_standardized_mean_time_series(self):
+        ldcpy.plot(
+            ds,
+            'TS',
+            sets=['orig', 'recon'],
+            calc='standardized_mean',
+            legend_loc='lower left',
+            calc_type='calc_of_diff',
+            plot_type='time_series',
+            group_by='time.dayofyear',
+            tex_format=False,
+            lat=90,
+            lon=0,
+            vert_plot=True,
+            short_title=True,
+        )
+
     def test_mean(self):
         ldcpy.plot(ds, 'TS', sets=['orig', 'recon'], calc='mean', vert_plot=True, tex_format=False)
         self.assertTrue(True)
