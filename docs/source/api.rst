@@ -21,5 +21,5 @@ ldcpy Plot (ldcpy.plot)
 ldcpy Metrics (ldcpy.metrics)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-.. automodule:: ldcpy.metrics
+.. automodule:: ldcpy.calcs
     :members:

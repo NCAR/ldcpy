@@ -762,7 +762,7 @@ class calcsPlot(object):
                 )
                 d = pooled_sd.data.compute()
                 calc_name = f'{calc}: pooled SD = {d:.2f}'
-            elif calc == 'annual_harmonic_relative_ratio':
+            elif calc == 'ann_harmonic_ratio':
                 p = lm.Datasetcalcs((data), ['time'], weighted=self._weighted).get_single_calc(
                     'annual_harmonic_relative_ratio_pct_sig'
                 )
@@ -870,7 +870,7 @@ def plot(
             - quantile
             - lag1
             - standardized_mean
-            - annual_harmonic_relative_ratio
+            - ann_harmonic_ratio
             - pooled_variance_ratio
 
     sets : list <str>

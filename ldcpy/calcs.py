@@ -350,17 +350,10 @@ class Datasetcalcs:
             else:
                 grouped = self.mean.groupby(self._grouping)
                 grouped_mean = grouped.mean()
-                grouped_mean.attrs['cell_measures'] = self._ds.attrs['cell_measures']
-                if self._weighted:
-                    self._standardized_mean = (
-                        grouped_mean
-                        - grouped_mean.cf.weighted('area').mean(self._agg_dims, skipna=True)
-                    ) / grouped_mean.cf.weighted('area').std(self._agg_dims, ddof=1, skipna=True)
-                else:
-                    self._standardized_mean = (
-                        grouped_mean
-                        - grouped_mean.cf.weighted('area').mean(self._agg_dims, skipna=True)
-                    ) / grouped_mean.std(ddof=1)
+
+                self._standardized_mean = (
+                    grouped_mean - grouped_mean.mean(skipna=True)
+                ) / grouped_mean.std(ddof=1)
             if hasattr(self._ds, 'units'):
                 self._standardized_mean.attrs['units'] = ''
 
