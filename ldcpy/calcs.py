@@ -42,6 +42,10 @@ class Datasetcalcs:
         # For some reason, casting to float64 removes all attrs from the dataset
         self._ds.attrs = ds.attrs
 
+        if weighted:
+            if 'cell_measures' not in self._ds.attrs:
+                self._ds.attrs['cell_measures'] = 'area: cell_area'
+
         # Let's just get all the lat/lon and time
         # names from the file if they are None
         # lon coord
@@ -1065,6 +1069,7 @@ class Diffcalcs:
         The covariance between the two datasets
         """
         if not self._is_memoized('_covariance'):
+
             self._covariance = (
                 (self._calcs2.get_calc('ds') - self._calcs2.get_calc('mean'))
                 * (self._calcs1.get_calc('ds') - self._calcs1.get_calc('mean'))
@@ -1091,11 +1096,29 @@ class Diffcalcs:
         returns the pearson correlation coefficient between the two datasets
         """
         if not self._is_memoized('_pearson_correlation_coefficient'):
-            self._pcc = (
-                self.covariance
-                / self._calcs1.get_calc('std', ddof=0)
-                / self._calcs2.get_calc('std', ddof=0)
-            )
+            # for now, do the true for both (so always unweighted recalc)
+            weighted = True
+            if not weighted:
+                self._pcc = (
+                    self.covariance
+                    / self._calcs1.get_calc('std', ddof=0)
+                    / self._calcs2.get_calc('std', ddof=0)
+                )
+            else:  # weighted
+                # we need to do this with  unweighted data
+
+                c1_mean = self._calcs1.get_calc('ds').mean(skipna=True)
+                c2_mean = self._calcs2.get_calc('ds').mean(skipna=True)
+
+                c1_std = self._calcs1.get_calc('ds').std(skipna=True)
+                c2_std = self._calcs2.get_calc('ds').std(skipna=True)
+
+                cov = (
+                    (self._calcs2.get_calc('ds') - c2_mean)
+                    * (self._calcs1.get_calc('ds') - c1_mean)
+                ).mean()
+
+                self._pcc = cov / c1_std / c2_std
 
         return self._pcc
 
