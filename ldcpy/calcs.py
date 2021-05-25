@@ -182,9 +182,13 @@ class Datasetcalcs:
             self._ns_con_var = self._con_var('ns', self._ds)
             if self._weighted:
                 self._ns_con_var.attrs['cell_measures'] = self._ds.attrs['cell_measures']
-                self._ns_con_var_mean = self._ns_con_var.cf.weighted('area').mean(
-                    self._agg_dims, skipna=True
-                )
+                adims = self._agg_dims
+                if adims is None:
+                    self._ns_con_var_mean = self._ns_con_var.cf.weighted('area').mean(skipna=True)
+                else:
+                    self._ns_con_var_mean = self._ns_con_var.cf.weighted('area').mean(
+                        dim=adims, skipna=True
+                    )
             else:
                 self._ns_con_var_mean = self._ns_con_var.mean(self._agg_dims)
 
@@ -204,9 +208,13 @@ class Datasetcalcs:
 
             if self._weighted:
                 self._ew_con_var.attrs['cell_measures'] = self._ds.attrs['cell_measures']
-                self._ew_con_var_mean = self._ew_con_var.cf.weighted('area').mean(
-                    self._agg_dims, skipna=True
-                )
+                adims = self._agg_dims
+                if adims is None:
+                    self._ew_con_var_mean = self._ew_con_var.cf.weighted('area').mean(skipna=True)
+                else:
+                    self._ew_con_var_mean = self._ew_con_var.cf.weighted('area').mean(
+                        dim=adims, skipna=True
+                    )
             else:
                 self._ew_con_var_mean = self._ew_con_var.mean(self._agg_dims)
             self._ew_con_var_mean.attrs = self._ds.attrs
@@ -222,7 +230,11 @@ class Datasetcalcs:
         """
         if not self._is_memoized('_mean'):
             if self._weighted:
-                self._mean = self._ds.cf.weighted('area').mean(self._agg_dims, skipna=True)
+                adims = self._agg_dims
+                if adims is None:
+                    self._mean = self._ds.cf.weighted('area').mean(skipna=True)
+                else:
+                    self._mean = self._ds.cf.weighted('area').mean(dim=adims, skipna=True)
             else:
                 self._mean = self._ds.mean(self._agg_dims, skipna=True)
             self._mean.attrs = self._ds.attrs
@@ -236,7 +248,11 @@ class Datasetcalcs:
         """
         if not self._is_memoized('_mean_abs'):
             if self._weighted:
-                self._mean_abs = abs(self._ds).cf.weighted('area').mean(self._agg_dims, skipna=True)
+                adims = self._agg_dims
+                if adims is None:
+                    self._mean_abs = abs(self._ds).cf.weighted('area').mean(skipna=True)
+                else:
+                    self._mean_abs = abs(self._ds).cf.weighted('area').mean(dim=adims, skipna=True)
             else:
                 self._mean_abs = abs(self._ds).mean(self._agg_dims, skipna=True)
             self._mean_abs.attrs = self._ds.attrs
@@ -267,9 +283,15 @@ class Datasetcalcs:
             self._squared = np.square(self._ds)
 
             if self._weighted:
-                self._root_mean_squared = np.sqrt(
-                    self._squared.cf.weighted('area').mean(self._agg_dims, skipna=True)
-                )
+                adims = self._agg_dims
+                if adims is None:
+                    self._root_mean_squared = np.sqrt(
+                        self._squared.cf.weighted('area').mean(skipna=True)
+                    )
+                else:
+                    self._root_mean_squared = np.sqrt(
+                        self._squared.cf.weighted('area').mean(dim=adims, skipna=True)
+                    )
             else:
                 self._root_mean_squared = np.sqrt(self._squared.mean(self._agg_dims, skipna=True))
             self._root_mean_squared.attrs = self._ds.attrs
@@ -309,22 +331,34 @@ class Datasetcalcs:
 
         if not self._is_memoized('_std'):
             if self._weighted:
+                adims = self._agg_dims
                 if self._ddof == 0:
                     # biased std
-                    self._std = np.sqrt(
-                        ((self._ds - self.mean) ** 2).cf.weighted('area').mean(self._agg_dims)
-                    )
-                elif 'lat' in self._agg_dims:
-                    # assume unbiased std (reliability weighted)
-                    V1 = self._ds.coords['cell_area'].sum(dim='lat')[0]
-                    V2 = np.square(self._ds.coords['cell_area']).sum(dim='lat')[0]
-                    _biased_var = (
-                        ((self._ds - self.mean) ** 2).cf.weighted('area').mean(self._agg_dims)
-                    )
-                    self._std = np.sqrt(_biased_var * (1 / (1 - V2 / (V1 ** 2))))
+                    if adims is None:
+                        self._std = np.sqrt(
+                            ((self._ds - self.mean) ** 2).cf.weighted('area').mean()
+                        )
+                    else:
+                        self._std = np.sqrt(
+                            ((self._ds - self.mean) ** 2)
+                            .cf.weighted('area')
+                            .mean(dim=self._agg_dims)
+                        )
+                elif adims is not None:
+                    if 'lat' in adims:
+                        # assume unbiased std (reliability weighted)
+                        V1 = self._ds.coords['cell_area'].sum(dim='lat')[0]
+                        V2 = np.square(self._ds.coords['cell_area']).sum(dim='lat')[0]
+                        _biased_var = (
+                            ((self._ds - self.mean) ** 2).cf.weighted('area').mean(dim=adims)
+                        )
+                        self._std = np.sqrt(_biased_var * (1 / (1 - V2 / (V1 ** 2))))
+                    else:
+                        # same as unweighted
+                        self._std = self._ds.std(adims, ddof=self._ddof, skipna=True)
                 else:
                     # same as unweighted
-                    self._std = self._ds.std(self._agg_dims, ddof=self._ddof, skipna=True)
+                    self._std = self._ds.std(adims, ddof=self._ddof, skipna=True)
             else:
                 self._std = self._ds.std(self._agg_dims, ddof=self._ddof, skipna=True)
             self._std.attrs = self._ds.attrs
@@ -342,9 +376,15 @@ class Datasetcalcs:
         if not self._is_memoized('_standardized_mean'):
             if self._grouping is None:
                 if self._weighted:
-                    self._standardized_mean = (
-                        self.mean - self._ds.cf.weighted('area').mean(self._agg_dims, skipna=True)
-                    ) / self.std
+                    adims = self._agg_dims
+                    if adims is None:
+                        self._standardized_mean = (
+                            self.mean - self._ds.cf.weighted('area').mean(skipna=True)
+                        ) / self.std
+                    else:
+                        self._standardized_mean = (
+                            self.mean - self._ds.cf.weighted('area').mean(dim=adims, skipna=True)
+                        ) / self.std
                 else:
                     self._standardized_mean = (self.mean - self._ds.mean()) / self._ds.std(ddof=1)
             else:

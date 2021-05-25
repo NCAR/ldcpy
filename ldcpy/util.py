@@ -176,6 +176,7 @@ def compare_stats(
     sets,
     significant_digits: int = 5,
     include_ssim: bool = False,
+    weighted: bool = False,
     **calcs_kwargs,
 ):
     """
@@ -193,6 +194,8 @@ def compare_stats(
         The number of significant digits to use when printing stats, (default 5)
     include_ssim : bool, optional
         Whether or not to compute the image ssim - slow for 3D vars (default: False)
+    weighted : bool, optional
+        Whether or not weight the means (default = True)
     **calcs_kwargs :
         Additional keyword arguments passed through to the
         :py:class:`~ldcpy.Datasetcalcs` instance.
@@ -209,9 +212,13 @@ def compare_stats(
     if varname == 'T':  # work around for cf_xarray (until new tag that
         # includes issue 130 updated to main on 1/27/21)
         ds.T.attrs['standard_name'] = 'tt'
-        da = ds.cf['tt']
+        # da = ds.cf['tt']
+        da = ds['tt']
     else:
-        da = ds.cf[varname]
+        # da = ds.cf[varname]
+        da = ds[varname]
+
+    da.attrs['cell_measures'] = 'area: cell_area'
 
     # use this after the update instead of above
     # da = ds.cf.data_vars[varname]
@@ -226,7 +233,7 @@ def compare_stats(
 
     num = len(sets)
     if num < 2:
-        print('Error: must specifiy at least two sets to compare!')
+        print('Error: must specify at least two sets to compare!')
         return
     for set in sets:
         da_sets.append(da.sel(collection=set))
@@ -240,19 +247,19 @@ def compare_stats(
     da_set_calcs = []
     for i in range(num):
         da_set_calcs.append(
-            Datasetcalcs(da_sets[i], aggregate_dims, **calcs_kwargs, weighted=False)
+            Datasetcalcs(da_sets[i], aggregate_dims, **calcs_kwargs, weighted=weighted)
         )
 
     dd_set_calcs = []
     for i in range(num - 1):
         dd_set_calcs.append(
-            Datasetcalcs(dd_sets[i], aggregate_dims, **calcs_kwargs, weighted=False)
+            Datasetcalcs(dd_sets[i], aggregate_dims, **calcs_kwargs, weighted=weighted)
         )
 
     diff_calcs = []
     for i in range(1, num):
         diff_calcs.append(
-            Diffcalcs(da_sets[0], da_sets[i], aggregate_dims, **calcs_kwargs, weighted=False)
+            Diffcalcs(da_sets[0], da_sets[i], aggregate_dims, **calcs_kwargs, weighted=weighted)
         )
 
     # DATA FRAME
@@ -503,6 +510,7 @@ def subset_data(
     if lon_coord_name is None:
         lon_coord_name = ds.cf.coordinates['longitude'][0]
     if lat_coord_name is None:
+
         lat_coord_name = ds.cf.coordinates['latitude'][0]
     if vertical_dim_name is None:
         try:
@@ -583,3 +591,17 @@ def subset_data(
                 # ds_subset.compute()
 
     return ds_subset
+
+
+def var_and_wt_coords(varname, ds_col):
+
+    ca_coord = ds_col.coords['cell_area']
+    if dask.is_dask_collection(ca_coord):
+        ca_coord = ca_coord.compute()
+    ds0 = ds_col.cf[varname]
+    all_coords = ds0.coords
+    all_coords['cell_area'] = ca_coord
+    ds0.assign_coords(all_coords)
+    ds0.attrs['cell_measures'] = 'area: cell_area'
+
+    return ds0
