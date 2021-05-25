@@ -1070,9 +1070,12 @@ class Diffcalcs:
         """
         if not self._is_memoized('_covariance'):
 
+            # need to use unweighted means
+            c1_mean = self._calcs1.get_calc('ds').mean(skipna=True)
+            c2_mean = self._calcs2.get_calc('ds').mean(skipna=True)
+
             self._covariance = (
-                (self._calcs2.get_calc('ds') - self._calcs2.get_calc('mean'))
-                * (self._calcs1.get_calc('ds') - self._calcs1.get_calc('mean'))
+                (self._calcs2.get_calc('ds') - c2_mean) * (self._calcs1.get_calc('ds') - c1_mean)
             ).mean()
 
         return self._covariance
@@ -1096,29 +1099,14 @@ class Diffcalcs:
         returns the pearson correlation coefficient between the two datasets
         """
         if not self._is_memoized('_pearson_correlation_coefficient'):
-            # for now, do the true for both (so always unweighted recalc)
-            weighted = True
-            if not weighted:
-                self._pcc = (
-                    self.covariance
-                    / self._calcs1.get_calc('std', ddof=0)
-                    / self._calcs2.get_calc('std', ddof=0)
-                )
-            else:  # weighted
-                # we need to do this with  unweighted data
 
-                c1_mean = self._calcs1.get_calc('ds').mean(skipna=True)
-                c2_mean = self._calcs2.get_calc('ds').mean(skipna=True)
+            # we need to do this with  unweighted data
+            c1_std = self._calcs1.get_calc('ds').std(skipna=True)
+            c2_std = self._calcs2.get_calc('ds').std(skipna=True)
 
-                c1_std = self._calcs1.get_calc('ds').std(skipna=True)
-                c2_std = self._calcs2.get_calc('ds').std(skipna=True)
+            cov = self.covariance
 
-                cov = (
-                    (self._calcs2.get_calc('ds') - c2_mean)
-                    * (self._calcs1.get_calc('ds') - c1_mean)
-                ).mean()
-
-                self._pcc = cov / c1_std / c2_std
+            self._pcc = cov / c1_std / c2_std
 
         return self._pcc
 

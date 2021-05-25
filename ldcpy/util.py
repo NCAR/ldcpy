@@ -176,7 +176,7 @@ def compare_stats(
     sets,
     significant_digits: int = 5,
     include_ssim: bool = False,
-    weighted: bool = False,
+    weighted: bool = True,
     **calcs_kwargs,
 ):
     """
