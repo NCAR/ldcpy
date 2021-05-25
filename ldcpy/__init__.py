@@ -6,7 +6,7 @@ from pkg_resources import DistributionNotFound, get_distribution
 from .calcs import Datasetcalcs, Diffcalcs
 from .comp_checker import CompChecker
 from .plot import plot
-from .util import check_metrics, collect_datasets, compare_stats, open_datasets
+from .util import check_metrics, collect_datasets, combine_datasets, compare_stats, open_datasets
 
 try:
     __version__ = get_distribution(__name__).version
