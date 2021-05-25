@@ -82,6 +82,14 @@ def collect_datasets(data_type, varnames, list_of_ds, labels, **kwargs):
     return full_ds
 
 
+def combine_datasets(ds_list):
+    new_ds = ds_list[0]
+    for ds in ds_list[1:]:
+        for var in ds.data_vars.variables.mapping:
+            new_ds[var] = ds[var]
+    return new_ds
+
+
 def open_datasets(data_type, varnames, list_of_files, labels, **kwargs):
     """
     Open several different netCDF files, concatenate across
@@ -106,7 +114,6 @@ def open_datasets(data_type, varnames, list_of_files, labels, **kwargs):
     =======
     out : xarray.Dataset
           a collection containing all the data from the list of files
-
 
     """
 
