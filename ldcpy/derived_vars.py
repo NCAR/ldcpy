@@ -260,7 +260,7 @@ def cam_budgets(
         ('FSNS' in all_vars)
         and ('FLNS' in all_vars)
         and ('SHFLX' in all_vars)
-        and ('lHFLX' in all_vars)
+        and ('LHFLX' in all_vars)
     ):
         ressurf_data = cam_ressurf(all_data_ds, sets)
         df_dict['ressurf'] = ressurf_data
