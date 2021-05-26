@@ -198,7 +198,7 @@ def compare_stats(
     sets: list of str
         The labels of the collection to compare (all will be compared to the first set)
     significant_digits : int, optional
-        The number of significant digits to use when printing stats, (default 5)
+        The number of significant digits to use when printing stats (default 5)
     include_ssim : bool, optional
         Whether or not to compute the image ssim - slow for 3D vars (default: False)
     weighted : bool, optional
