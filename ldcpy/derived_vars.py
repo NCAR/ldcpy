@@ -25,12 +25,12 @@ def _preprocess(set_labels, list_of_cols):
 
 
 # top of the model radiation budget
-def cam_restom(fsnt_col, flnt_col, sets):
+def cam_restom(all_col, sets):
 
     col = []
 
-    fsnt = fsnt_col['FSNT']
-    flnt = flnt_col['FLNT']
+    fsnt = all_col['FSNT']
+    flnt = all_col['FLNT']
 
     fsnt.attrs['cell_measures'] = 'area: cell_area'
     flnt.attrs['cell_measures'] = 'area: cell_area'
@@ -52,31 +52,23 @@ def cam_restom(fsnt_col, flnt_col, sets):
 
     # Now the calculation
     out_array = np.zeros(num_sets)
-    percent_diff = np.zeros(num_sets - 1)
     for j in range(num_sets):
         # need to normalize by area
         tmp_data = fsnt_data[j] - flnt_data[j]
         tmp = tmp_data.cf.weighted('area').mean()
-        # output
         out_array[j] = tmp
-        if j == 0:
-            control = tmp
-            if control == 0:
-                control = 1
-        else:
-            percent_diff[j - 1] = np.abs((control - tmp) / control) * 100
 
-    print('values = ', out_array)
-    print('percent rel. difference = ', percent_diff)
+    # print('values = ', out_array)
+    return out_array
 
 
 # global precipitation
-def cam_precip(precc_col, precl_col, sets):
+def cam_precip(all_col, sets):
 
     col = []
 
-    precc = precc_col['PRECC']
-    precl = precl_col['PRECL']
+    precc = all_col['PRECC']
+    precl = all_col['PRECL']
 
     precc.attrs['cell_measures'] = 'area: cell_area'
     precl.attrs['cell_measures'] = 'area: cell_area'
@@ -98,24 +90,17 @@ def cam_precip(precc_col, precl_col, sets):
 
     # Now the calculation
     out_array = np.zeros(num_sets)
-    percent_diff = np.zeros(num_sets - 1)
     for j in range(num_sets):
         tmp_data = precc_data[j] + precl_data[j]
         tmp = tmp_data.cf.weighted('area').mean()
         out_array[j] = tmp
-        if j == 0:
-            control = tmp
-            if control == 0:
-                control = 1
-        else:
-            percent_diff[j - 1] = np.abs((control - tmp) / control) * 100
 
-    print('values = ', out_array)
-    print('percent rel. difference = ', percent_diff)
+    # print('values = ', out_array)
+    return out_array
 
 
 # evaporation-precipitation
-def cam_ep(qflx_col, precc_col, precl_col, sets):
+def cam_ep(all_col, sets):
 
     # QFLX is "kg/m2/s or mm/s
     # PRECC and PRECL are m/s
@@ -124,9 +109,9 @@ def cam_ep(qflx_col, precc_col, precl_col, sets):
 
     col = []
 
-    qflx = qflx_col['QFLX']
-    precc = precc_col['PRECC']
-    precl = precl_col['PRECL']
+    qflx = all_col['QFLX']
+    precc = all_col['PRECC']
+    precl = all_col['PRECL']
 
     qflx.attrs['cell_measures'] = 'area: cell_area'
     precc.attrs['cell_measures'] = 'area: cell_area'
@@ -152,33 +137,25 @@ def cam_ep(qflx_col, precc_col, precl_col, sets):
 
     # Now the calculation
     out_array = np.zeros(num_sets)
-    percent_diff = np.zeros(num_sets - 1)
     for j in range(num_sets):
         tmp_data = qflx_data[j] * 86400 + (precc_data[j] + precl_data[j]) * 8.64e7
         tmp = tmp_data.cf.weighted('area').mean()
-        # output
         out_array[j] = tmp
-        if j == 0:
-            control = tmp
-            if control == 0:
-                control = 1
-        else:
-            percent_diff[j - 1] = np.abs((control - tmp) / control) * 100
 
-    print('values = ', out_array)
-    print('percent rel. difference = ', percent_diff)
+    # print('values = ', out_array)
+    return out_array
 
 
 # surface energy balance
-def cam_ressurf(fsns_col, flns_col, shflx_col, lhflx_col, sets):
+def cam_ressurf(all_col, sets):
 
     col = []
 
     # all in W/m^2
-    fsns = fsns_col['FSNS']
-    flns = flns_col['FLNS']
-    shflx = shflx_col['SHFLX']
-    lhflx = lhflx_col['LHFLX']
+    fsns = all_col['FSNS']
+    flns = all_col['FLNS']
+    shflx = all_col['SHFLX']
+    lhflx = all_col['LHFLX']
 
     fsns.attrs['cell_measures'] = 'area: cell_area'
     flns.attrs['cell_measures'] = 'area: cell_area'
@@ -207,25 +184,17 @@ def cam_ressurf(fsns_col, flns_col, shflx_col, lhflx_col, sets):
 
     # Now the calculation
     out_array = np.zeros(num_sets)
-    percent_diff = np.zeros(num_sets - 1)
     for j in range(num_sets):
         tmp_data = fsns_data[j] - (flns_data[j] + shflx_data[j] + lhflx_data[j])
         tmp = tmp_data.cf.weighted('area').mean()
-
         out_array[j] = tmp
-        if j == 0:
-            control = tmp
-            if control == 0:
-                control = 1
-        else:
-            percent_diff[j - 1] = np.abs((control - tmp) / control) * 100
 
-    print('values = ', out_array)
-    print('percent rel. difference = ', percent_diff)
+    # print('values = ', out_array)
+    return out_array
 
 
 def cam_budgets(
-    all_data,
+    all_data_ds,
     sets,
     significant_digits: int = 5,
 ):
@@ -240,7 +209,7 @@ def cam_budgets(
 
     Parameters
     ==========
-    all_data : xarray.Dataset
+    all_data_ds : xarray.Dataset
         An xarray dataset containing multiple variables needed for budgets
     sets: list of str
         The labels of the collection to compare (all will be compared to the first set)
@@ -253,6 +222,7 @@ def cam_budgets(
     """
 
     # get list of variable names and check for needed vars
+    all_vars = all_data_ds.variables
 
     # DATA FRAME
     import pandas as pd
@@ -265,20 +235,37 @@ def cam_budgets(
         my_cols.append(sets[i])
 
     # restom (FSNT, FLNT)
-    # restom_data = cam_restom(fsnt_col, flnt_col, sets)
-    # df_dict['restom'] = restom_data
+    if ('FSNT' in all_vars) and ('FLNT' in all_vars):
+        restom_data = cam_restom(all_data_ds, sets)
+        df_dict['restom'] = restom_data
+    else:
+        print("Skipping 'restom' : requires FSNT and FLNT")
 
     # precip (PRECC, PRECL)
-    # precip_data = cam_precip(precc_col, precl_col, sets)
-    # df_dict['precip'] = precip_data
+    if ('PRECC' in all_vars) and ('PRECL' in all_vars):
+        precip_data = cam_precip(all_data_ds, sets)
+        df_dict['precip'] = precip_data
+    else:
+        print("Skipping 'precip' : requires PRECC and PRECL")
 
     # ep (QFLX, PRECC, PRECL)
-    # ep_data = cam_ep(qflx_col, precc_col, precl_col, sets)
-    # df_dict['e-p'] = ep_data
+    if ('PRECC' in all_vars) and ('PRECL' in all_vars) and ('QFLX' in all_vars):
+        ep_data = cam_ep(all_data_ds, sets)
+        df_dict['e-p'] = ep_data
+    else:
+        print("Skipping 'e-p' : requires PRECC, PRECL, and QFLX")
 
     # ressurf (FSNS, FLNS, SHFLX, LHFLX)
-    # ressurf_data = cam_ressurf(fsns_col, flns_col, shflx_col, lhflx_col, sets)
-    # df_dict['ressurf'] = ressurf_data
+    if (
+        ('FSNS' in all_vars)
+        and ('FLNS' in all_vars)
+        and ('SHFLX' in all_vars)
+        and ('lHFLX' in all_vars)
+    ):
+        ressurf_data = cam_ressurf(all_data_ds, sets)
+        df_dict['ressurf'] = ressurf_data
+    else:
+        print("Skipping 'ressurf' : requires FSNS, FLNS, SHFLX, and LHFLX")
 
     for d in df_dict.keys():
         fo = [f'%.{significant_digits}g' % item for item in df_dict[d]]
@@ -286,3 +273,15 @@ def cam_budgets(
     df = pd.DataFrame.from_dict(df_dict, orient='index', columns=my_cols)
     display(HTML(' <span style="color:green">CAM Budgets: </span>  '))
     display(df)
+
+
+# figure out percentages?
+#    percent_diff = np.zeros(num - 1)
+#    for j in range(num):
+#        tmp = out_array[j]
+#        if j == 0:
+#            control = tmp
+#            if control == 0:
+#                control = 1
+#        else:
+#            percent_diff[j - 1] = np.abs((control - tmp) / control) * 100
