@@ -389,7 +389,7 @@ def check_metrics(
     ks_tol=0.05,
     pcc_tol=0.99999,
     spre_tol=5.0,
-    ssim_tol=0.99995,
+    ssim_tol=0.995,
     **calcs_kwargs,
 ):
     """
@@ -413,7 +413,7 @@ def check_metrics(
     spre_tol: float, optional
         The percentage threshold for failing grid points in the spatial relative error test (default = 5.0).
     ssim_tol: float, optional
-         The threshold for the ssim test (default = .999950
+         The threshold for the data ssim test (default = .995
     **calcs_kwargs :
         Additional keyword arguments passed through to the
         :py:class:`~ldcpy.Datasetcalcs` instance.
@@ -433,7 +433,7 @@ def check_metrics(
     High Performance Workshops 2017, Lecture Notes in Computer
     Science 10524, pp. 30–42, 2017 (doi:10.1007/978-3-319-67630-2_3).
 
-    Check the SSIM calc from:
+    Check the Data SSIM, which is a modification of SSIM calc from:
 
     A.H. Baker, D.M. Hammerling, and T.L. Turton. “Evaluating image
     quality measures to assess the impact of lossy data compression
@@ -445,7 +445,7 @@ def check_metrics(
     K-S: fail if p-value < .05 (significance level)
     Pearson correlation coefficient:  fail if coefficient < .99999
     Spatial relative error: fail if > 5% of grid points fail relative error
-    SSIM: fail if SSIM < .99995
+    Data SSIM: fail if Data SSIM < .995
 
     """
 
@@ -483,12 +483,12 @@ def check_metrics(
     else:
         print('     PASSED spatial relative error test ...(spre = {0:.2f}'.format(spre), ' %)')
     # SSIM less than of ssim_tol is failing
-    ssim_val = diff_calcs.get_diff_calc('ssim')
+    ssim_val = diff_calcs.get_diff_calc('ssim_fp')
     if ssim_val < ssim_tol:
-        print('     *FAILED SSIM test ... (ssim = {0:.5f}'.format(ssim_val), ')')
+        print('     *FAILED DATA SSIM test ... (ssim = {0:.5f}'.format(ssim_val), ')')
         num_fail = num_fail + 1
     else:
-        print('     PASSED SSIM test ... (ssim = {0:.5f}'.format(ssim_val), ')')
+        print('     PASSED DATA SSIM test ... (ssim = {0:.5f}'.format(ssim_val), ')')
     if num_fail > 0:
         print(f'WARNING: {num_fail} of 4 tests failed.')
     return num_fail
