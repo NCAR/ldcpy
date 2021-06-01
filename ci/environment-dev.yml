@@ -13,7 +13,6 @@ dependencies:
   - jupyter_contrib_nbextensions
   - jupyterlab
   - matplotlib-base
-  - nc-time-axis
   - netcdf4
   - numpy
   - opencv

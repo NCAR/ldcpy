@@ -16,7 +16,6 @@ dependencies:
   - jupyter-offlinenotebook
   - jupyterlab>=3
   - matplotlib-base
-  - nc-time-axis
   - netcdf4
   - nodejs
   - pip

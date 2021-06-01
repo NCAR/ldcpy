@@ -9,7 +9,6 @@ dependencies:
   - dask
   - intake-esm
   - matplotlib-base
-  - nc-time-axis
   - netcdf4
   - pip
   - pytest

@@ -216,14 +216,7 @@ def compare_stats(
     # get a datarray for the variable of interest and get collections
     # (this is done seperately to work with cf_xarray)
 
-    if varname == 'T':  # work around for cf_xarray (until new tag that
-        # includes issue 130 updated to main on 1/27/21)
-        ds.T.attrs['standard_name'] = 'tt'
-        # da = ds.cf['tt']
-        da = ds['tt']
-    else:
-        # da = ds.cf[varname]
-        da = ds[varname]
+    da = ds[varname]
 
     da.attrs['cell_measures'] = 'area: cell_area'
 
