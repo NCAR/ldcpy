@@ -82,6 +82,14 @@ def collect_datasets(data_type, varnames, list_of_ds, labels, **kwargs):
     return full_ds
 
 
+def combine_datasets(ds_list):
+    new_ds = ds_list[0]
+    for ds in ds_list[1:]:
+        for var in ds.data_vars.variables.mapping:
+            new_ds[var] = ds[var]
+    return new_ds
+
+
 def open_datasets(data_type, varnames, list_of_files, labels, **kwargs):
     """
     Open several different netCDF files, concatenate across
@@ -106,7 +114,6 @@ def open_datasets(data_type, varnames, list_of_files, labels, **kwargs):
     =======
     out : xarray.Dataset
           a collection containing all the data from the list of files
-
 
     """
 
@@ -176,10 +183,11 @@ def compare_stats(
     sets,
     significant_digits: int = 5,
     include_ssim: bool = False,
+    weighted: bool = True,
     **calcs_kwargs,
 ):
     """
-    Print error summary statistics of two DataArrays
+    Print error summary statistics for multiple DataArrays (should just be a single time slice)
 
     Parameters
     ==========
@@ -190,9 +198,11 @@ def compare_stats(
     sets: list of str
         The labels of the collection to compare (all will be compared to the first set)
     significant_digits : int, optional
-        The number of significant digits to use when printing stats, (default 5)
+        The number of significant digits to use when printing stats (default 5)
     include_ssim : bool, optional
         Whether or not to compute the image ssim - slow for 3D vars (default: False)
+    weighted : bool, optional
+        Whether or not weight the means (default = True)
     **calcs_kwargs :
         Additional keyword arguments passed through to the
         :py:class:`~ldcpy.Datasetcalcs` instance.
@@ -206,22 +216,24 @@ def compare_stats(
     # get a datarray for the variable of interest and get collections
     # (this is done seperately to work with cf_xarray)
 
-    if varname == 'T':  # work around for cf_xarray (until new tag that
-        # includes issue 130 updated to main on 1/27/21)
-        ds.T.attrs['standard_name'] = 'tt'
-        da = ds.cf['tt']
-    else:
-        da = ds.cf[varname]
+    da = ds[varname]
+
+    da.attrs['cell_measures'] = 'area: cell_area'
 
     # use this after the update instead of above
     # da = ds.cf.data_vars[varname]
+
+    # do we have more than one time slice? SHould only have one..
+    if 'time' in da.dims:
+        print('Warning - this data set has a time dimension - examining slice 0 only...')
+        da = da.isel(time=0)
 
     # see how many sets we have
     da_sets = []
 
     num = len(sets)
     if num < 2:
-        print('Error: must specifiy at least two sets to compare!')
+        print('Error: must specify at least two sets to compare!')
         return
     for set in sets:
         da_sets.append(da.sel(collection=set))
@@ -235,19 +247,19 @@ def compare_stats(
     da_set_calcs = []
     for i in range(num):
         da_set_calcs.append(
-            Datasetcalcs(da_sets[i], aggregate_dims, **calcs_kwargs, weighted=False)
+            Datasetcalcs(da_sets[i], aggregate_dims, **calcs_kwargs, weighted=weighted)
         )
 
     dd_set_calcs = []
     for i in range(num - 1):
         dd_set_calcs.append(
-            Datasetcalcs(dd_sets[i], aggregate_dims, **calcs_kwargs, weighted=False)
+            Datasetcalcs(dd_sets[i], aggregate_dims, **calcs_kwargs, weighted=weighted)
         )
 
     diff_calcs = []
     for i in range(1, num):
         diff_calcs.append(
-            Diffcalcs(da_sets[0], da_sets[i], aggregate_dims, **calcs_kwargs, weighted=False)
+            Diffcalcs(da_sets[0], da_sets[i], aggregate_dims, **calcs_kwargs, weighted=weighted)
         )
 
     # DATA FRAME
@@ -271,8 +283,8 @@ def compare_stats(
         temp_mean.append(da_set_calcs[i].get_calc('mean').data.compute())
         temp_var.append(da_set_calcs[i].get_calc('variance').data.compute())
         temp_std.append(da_set_calcs[i].get_calc('std').data.compute())
-        temp_min.append(da_set_calcs[i].get_calc('max_val').data.compute())
-        temp_max.append(da_set_calcs[i].get_calc('min_val').data.compute())
+        temp_max.append(da_set_calcs[i].get_calc('max_val').data.compute())
+        temp_min.append(da_set_calcs[i].get_calc('min_val').data.compute())
         temp_pos.append(da_set_calcs[i].get_calc('prob_positive').data.compute())
         temp_zeros.append(da_set_calcs[i].get_calc('num_zero').data.compute())
 
@@ -370,7 +382,7 @@ def check_metrics(
     ks_tol=0.05,
     pcc_tol=0.99999,
     spre_tol=5.0,
-    ssim_tol=0.99995,
+    ssim_tol=0.995,
     **calcs_kwargs,
 ):
     """
@@ -394,7 +406,7 @@ def check_metrics(
     spre_tol: float, optional
         The percentage threshold for failing grid points in the spatial relative error test (default = 5.0).
     ssim_tol: float, optional
-         The threshold for the ssim test (default = .999950
+         The threshold for the data ssim test (default = .995
     **calcs_kwargs :
         Additional keyword arguments passed through to the
         :py:class:`~ldcpy.Datasetcalcs` instance.
@@ -414,7 +426,7 @@ def check_metrics(
     High Performance Workshops 2017, Lecture Notes in Computer
     Science 10524, pp. 30–42, 2017 (doi:10.1007/978-3-319-67630-2_3).
 
-    Check the SSIM calc from:
+    Check the Data SSIM, which is a modification of SSIM calc from:
 
     A.H. Baker, D.M. Hammerling, and T.L. Turton. “Evaluating image
     quality measures to assess the impact of lossy data compression
@@ -426,7 +438,7 @@ def check_metrics(
     K-S: fail if p-value < .05 (significance level)
     Pearson correlation coefficient:  fail if coefficient < .99999
     Spatial relative error: fail if > 5% of grid points fail relative error
-    SSIM: fail if SSIM < .99995
+    Data SSIM: fail if Data SSIM < .995
 
     """
 
@@ -464,12 +476,12 @@ def check_metrics(
     else:
         print('     PASSED spatial relative error test ...(spre = {0:.2f}'.format(spre), ' %)')
     # SSIM less than of ssim_tol is failing
-    ssim_val = diff_calcs.get_diff_calc('ssim')
+    ssim_val = diff_calcs.get_diff_calc('ssim_fp')
     if ssim_val < ssim_tol:
-        print('     *FAILED SSIM test ... (ssim = {0:.5f}'.format(ssim_val), ')')
+        print('     *FAILED DATA SSIM test ... (ssim = {0:.5f}'.format(ssim_val), ')')
         num_fail = num_fail + 1
     else:
-        print('     PASSED SSIM test ... (ssim = {0:.5f}'.format(ssim_val), ')')
+        print('     PASSED DATA SSIM test ... (ssim = {0:.5f}'.format(ssim_val), ')')
     if num_fail > 0:
         print(f'WARNING: {num_fail} of 4 tests failed.')
     return num_fail
@@ -498,6 +510,7 @@ def subset_data(
     if lon_coord_name is None:
         lon_coord_name = ds.cf.coordinates['longitude'][0]
     if lat_coord_name is None:
+
         lat_coord_name = ds.cf.coordinates['latitude'][0]
     if vertical_dim_name is None:
         try:
@@ -578,3 +591,17 @@ def subset_data(
                 # ds_subset.compute()
 
     return ds_subset
+
+
+def var_and_wt_coords(varname, ds_col):
+
+    ca_coord = ds_col.coords['cell_area']
+    if dask.is_dask_collection(ca_coord):
+        ca_coord = ca_coord.compute()
+    ds0 = ds_col.cf[varname]
+    all_coords = ds0.coords
+    all_coords['cell_area'] = ca_coord
+    ds0.assign_coords(all_coords)
+    ds0.attrs['cell_measures'] = 'area: cell_area'
+
+    return ds0

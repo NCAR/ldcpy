@@ -42,6 +42,10 @@ class Datasetcalcs:
         # For some reason, casting to float64 removes all attrs from the dataset
         self._ds.attrs = ds.attrs
 
+        if weighted:
+            if 'cell_measures' not in self._ds.attrs:
+                self._ds.attrs['cell_measures'] = 'area: cell_area'
+
         # Let's just get all the lat/lon and time
         # names from the file if they are None
         # lon coord
@@ -182,9 +186,13 @@ class Datasetcalcs:
             self._ns_con_var = self._con_var('ns', self._ds)
             if self._weighted:
                 self._ns_con_var.attrs['cell_measures'] = self._ds.attrs['cell_measures']
-                self._ns_con_var_mean = self._ns_con_var.cf.weighted('area').mean(
-                    self._agg_dims, skipna=True
-                )
+                adims = self._agg_dims
+                if adims is None:
+                    self._ns_con_var_mean = self._ns_con_var.cf.weighted('area').mean(skipna=True)
+                else:
+                    self._ns_con_var_mean = self._ns_con_var.cf.weighted('area').mean(
+                        dim=adims, skipna=True
+                    )
             else:
                 self._ns_con_var_mean = self._ns_con_var.mean(self._agg_dims)
 
@@ -204,9 +212,13 @@ class Datasetcalcs:
 
             if self._weighted:
                 self._ew_con_var.attrs['cell_measures'] = self._ds.attrs['cell_measures']
-                self._ew_con_var_mean = self._ew_con_var.cf.weighted('area').mean(
-                    self._agg_dims, skipna=True
-                )
+                adims = self._agg_dims
+                if adims is None:
+                    self._ew_con_var_mean = self._ew_con_var.cf.weighted('area').mean(skipna=True)
+                else:
+                    self._ew_con_var_mean = self._ew_con_var.cf.weighted('area').mean(
+                        dim=adims, skipna=True
+                    )
             else:
                 self._ew_con_var_mean = self._ew_con_var.mean(self._agg_dims)
             self._ew_con_var_mean.attrs = self._ds.attrs
@@ -220,13 +232,17 @@ class Datasetcalcs:
         """
         The mean along the aggregate dimensions
         """
-        # print("mean")
         if not self._is_memoized('_mean'):
             if self._weighted:
-                self._mean = self._ds.cf.weighted('area').mean(self._agg_dims, skipna=True)
+                adims = self._agg_dims
+                if adims is None:
+                    self._mean = self._ds.cf.weighted('area').mean(skipna=True)
+                else:
+                    self._mean = self._ds.cf.weighted('area').mean(dim=adims, skipna=True)
             else:
                 self._mean = self._ds.mean(self._agg_dims, skipna=True)
             self._mean.attrs = self._ds.attrs
+
         return self._mean
 
     @property
@@ -236,7 +252,11 @@ class Datasetcalcs:
         """
         if not self._is_memoized('_mean_abs'):
             if self._weighted:
-                self._mean_abs = abs(self._ds).cf.weighted('area').mean(self._agg_dims, skipna=True)
+                adims = self._agg_dims
+                if adims is None:
+                    self._mean_abs = abs(self._ds).cf.weighted('area').mean(skipna=True)
+                else:
+                    self._mean_abs = abs(self._ds).cf.weighted('area').mean(dim=adims, skipna=True)
             else:
                 self._mean_abs = abs(self._ds).mean(self._agg_dims, skipna=True)
             self._mean_abs.attrs = self._ds.attrs
@@ -267,9 +287,15 @@ class Datasetcalcs:
             self._squared = np.square(self._ds)
 
             if self._weighted:
-                self._root_mean_squared = np.sqrt(
-                    self._squared.cf.weighted('area').mean(self._agg_dims, skipna=True)
-                )
+                adims = self._agg_dims
+                if adims is None:
+                    self._root_mean_squared = np.sqrt(
+                        self._squared.cf.weighted('area').mean(skipna=True)
+                    )
+                else:
+                    self._root_mean_squared = np.sqrt(
+                        self._squared.cf.weighted('area').mean(dim=adims, skipna=True)
+                    )
             else:
                 self._root_mean_squared = np.sqrt(self._squared.mean(self._agg_dims, skipna=True))
             self._root_mean_squared.attrs = self._ds.attrs
@@ -309,22 +335,34 @@ class Datasetcalcs:
 
         if not self._is_memoized('_std'):
             if self._weighted:
+                adims = self._agg_dims
                 if self._ddof == 0:
                     # biased std
-                    self._std = np.sqrt(
-                        ((self._ds - self.mean) ** 2).cf.weighted('area').mean(self._agg_dims)
-                    )
-                elif 'lat' in self._agg_dims:
-                    # assume unbiased std (reliability weighted)
-                    V1 = self._ds.coords['cell_area'].sum(dim='lat')[0]
-                    V2 = np.square(self._ds.coords['cell_area']).sum(dim='lat')[0]
-                    _biased_var = (
-                        ((self._ds - self.mean) ** 2).cf.weighted('area').mean(self._agg_dims)
-                    )
-                    self._std = np.sqrt(_biased_var * (1 / (1 - V2 / (V1 ** 2))))
+                    if adims is None:
+                        self._std = np.sqrt(
+                            ((self._ds - self.mean) ** 2).cf.weighted('area').mean()
+                        )
+                    else:
+                        self._std = np.sqrt(
+                            ((self._ds - self.mean) ** 2)
+                            .cf.weighted('area')
+                            .mean(dim=self._agg_dims)
+                        )
+                elif adims is not None:
+                    if 'lat' in adims:
+                        # assume unbiased std (reliability weighted)
+                        V1 = self._ds.coords['cell_area'].sum(dim='lat')[0]
+                        V2 = np.square(self._ds.coords['cell_area']).sum(dim='lat')[0]
+                        _biased_var = (
+                            ((self._ds - self.mean) ** 2).cf.weighted('area').mean(dim=adims)
+                        )
+                        self._std = np.sqrt(_biased_var * (1 / (1 - V2 / (V1 ** 2))))
+                    else:
+                        # same as unweighted
+                        self._std = self._ds.std(adims, ddof=self._ddof, skipna=True)
                 else:
                     # same as unweighted
-                    self._std = self._ds.std(self._agg_dims, ddof=self._ddof, skipna=True)
+                    self._std = self._ds.std(adims, ddof=self._ddof, skipna=True)
             else:
                 self._std = self._ds.std(self._agg_dims, ddof=self._ddof, skipna=True)
             self._std.attrs = self._ds.attrs
@@ -342,9 +380,15 @@ class Datasetcalcs:
         if not self._is_memoized('_standardized_mean'):
             if self._grouping is None:
                 if self._weighted:
-                    self._standardized_mean = (
-                        self.mean - self._ds.cf.weighted('area').mean(self._agg_dims, skipna=True)
-                    ) / self.std
+                    adims = self._agg_dims
+                    if adims is None:
+                        self._standardized_mean = (
+                            self.mean - self._ds.cf.weighted('area').mean(skipna=True)
+                        ) / self.std
+                    else:
+                        self._standardized_mean = (
+                            self.mean - self._ds.cf.weighted('area').mean(dim=adims, skipna=True)
+                        ) / self.std
                 else:
                     self._standardized_mean = (self.mean - self._ds.mean()) / self._ds.std(ddof=1)
             else:
@@ -1000,9 +1044,9 @@ class Diffcalcs:
         min_lev = meana.argmin()
 
         # smallest value at that level
-        min_lev_val = np.min(mats[min_lev])
+        min_lev_val = np.nanmin(mats[min_lev])
 
-        ind = np.unravel_index(np.argmin(mats[min_lev], axis=None), mats[min_lev].shape)
+        ind = np.unravel_index(np.nanargmin(mats[min_lev], axis=None), mats[min_lev].shape)
 
         plt.imshow(mats[min_lev], interpolation='none', vmax=1.0, cmap='bone')
         plt.colorbar(orientation='horizontal')
@@ -1025,9 +1069,13 @@ class Diffcalcs:
         The covariance between the two datasets
         """
         if not self._is_memoized('_covariance'):
+
+            # need to use unweighted means
+            c1_mean = self._calcs1.get_calc('ds').mean(skipna=True)
+            c2_mean = self._calcs2.get_calc('ds').mean(skipna=True)
+
             self._covariance = (
-                (self._calcs2.get_calc('ds') - self._calcs2.get_calc('mean'))
-                * (self._calcs1.get_calc('ds') - self._calcs1.get_calc('mean'))
+                (self._calcs2.get_calc('ds') - c2_mean) * (self._calcs1.get_calc('ds') - c1_mean)
             ).mean()
 
         return self._covariance
@@ -1051,11 +1099,14 @@ class Diffcalcs:
         returns the pearson correlation coefficient between the two datasets
         """
         if not self._is_memoized('_pearson_correlation_coefficient'):
-            self._pcc = (
-                self.covariance
-                / self._calcs1.get_calc('std', ddof=0)
-                / self._calcs2.get_calc('std', ddof=0)
-            )
+
+            # we need to do this with  unweighted data
+            c1_std = self._calcs1.get_calc('ds').std(skipna=True)
+            c2_std = self._calcs2.get_calc('ds').std(skipna=True)
+
+            cov = self.covariance
+
+            self._pcc = cov / c1_std / c2_std
 
         return self._pcc
 
@@ -1115,24 +1166,30 @@ class Diffcalcs:
             m_t2 = np.ma.masked_invalid(t2).compressed()
             m_t1 = np.ma.masked_invalid(t1).compressed()
 
-            if z.size > 0:
-                m_t1_denom = np.ma.masked_invalid(t1_denom).compressed()
+            if m_t2.shape != m_t1.shape:
+                print('Warning: Spatial error not calculated with differing numbers of Nans')
+                self._spatial_rel_error = 0
+                self._max_spatial_rel_error = 0
             else:
-                m_t1_denom = m_t1
 
-            m_tt = m_t1 - m_t2
-            m_tt = m_tt / m_t1_denom
+                if z.size > 0:
+                    m_t1_denom = np.ma.masked_invalid(t1_denom).compressed()
+                else:
+                    m_t1_denom = m_t1
 
-            # find the max spatial error also if None
-            if self._max_spatial_rel_error is None:
-                max_spre = np.max(m_tt)
-                self._max_spatial_rel_error = max_spre
+                m_tt = m_t1 - m_t2
+                m_tt = m_tt / m_t1_denom
 
-            # percentage greater than the tolerance
-            a = len(m_tt[abs(m_tt) > sp_tol])
-            sz = m_tt.shape[0]
+                # find the max spatial error also if None
+                if self._max_spatial_rel_error is None:
+                    max_spre = np.max(m_tt)
+                    self._max_spatial_rel_error = max_spre
 
-            self._spatial_rel_error = (a / sz) * 100
+                # percentage greater than the tolerance
+                a = len(m_tt[abs(m_tt) > sp_tol])
+                sz = m_tt.shape[0]
+
+                self._spatial_rel_error = (a / sz) * 100
 
         return self._spatial_rel_error
 
@@ -1225,7 +1282,10 @@ class Diffcalcs:
             # is it 3D? must do each level
             if self._calcs1._vert_dim_name is not None:
                 vname = self._calcs1._vert_dim_name
-                nlevels = self._calcs1.get_calc('ds').sizes[vname]
+                if vname not in self._calcs1.get_calc('ds').sizes:
+                    nlevels = 1
+                else:
+                    nlevels = self._calcs1.get_calc('ds').sizes[vname]
             else:
                 nlevels = 1
 
@@ -1354,7 +1414,10 @@ class Diffcalcs:
             # if this is a 3D variable, we will do each level seperately
             if self._calcs1._vert_dim_name is not None:
                 vname = self._calcs1._vert_dim_name
-                nlevels = self._calcs1.get_calc('ds').sizes[vname]
+                if vname not in self._calcs1.get_calc('ds').sizes:
+                    nlevels = 1
+                else:
+                    nlevels = self._calcs1.get_calc('ds').sizes[vname]
             else:
                 nlevels = 1
 
@@ -1507,7 +1570,7 @@ class Diffcalcs:
     def ssim_value_fp_fast2(self):
         """
         Faster implementation then ssim_value_fp_orig
-        Use other version below - not this fast2
+        Use other version below - not this one
 
         """
         from astropy.convolution import Gaussian2DKernel, convolve, interpolate_replace_nans
@@ -1517,7 +1580,10 @@ class Diffcalcs:
             # if this is a 3D variable, we will do each level seperately
             if self._calcs1._vert_dim_name is not None:
                 vname = self._calcs1._vert_dim_name
-                nlevels = self._calcs1.get_calc('ds').sizes[vname]
+                if vname not in self._calcs1.get_calc('ds').sizes:
+                    nlevels = 1
+                else:
+                    nlevels = self._calcs1.get_calc('ds').sizes[vname]
             else:
                 nlevels = 1
 
@@ -1596,7 +1662,7 @@ class Diffcalcs:
                 ssim_mat = ssim_1 * ssim_2
 
                 # cropping (temp)
-                # ssim_mat = crop(ssim_mat, k)
+                ssim_mat = crop(ssim_mat, k)
 
                 mean_ssim = np.nanmean(ssim_mat)
                 ssim_levs[this_lev] = mean_ssim
@@ -1623,7 +1689,10 @@ class Diffcalcs:
             # if this is a 3D variable, we will do each level seperately
             if self._calcs1._vert_dim_name is not None:
                 vname = self._calcs1._vert_dim_name
-                nlevels = self._calcs1.get_calc('ds').sizes[vname]
+                if vname not in self._calcs1.get_calc('ds').sizes:
+                    nlevels = 1
+                else:
+                    nlevels = self._calcs1.get_calc('ds').sizes[vname]
             else:
                 nlevels = 1
 
@@ -1695,7 +1764,7 @@ class Diffcalcs:
                 ssim_2 = ssim_t2 / ssim_b2
                 ssim_mat = ssim_1 * ssim_2
 
-                # cropping (the boarder region)
+                # cropping (the border region)
                 ssim_mat = crop(ssim_mat, k)
 
                 mean_ssim = np.nanmean(ssim_mat)

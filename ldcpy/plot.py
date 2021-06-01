@@ -6,7 +6,6 @@ import cartopy
 import cf_xarray as cf
 import cmocean
 import matplotlib as mpl
-import nc_time_axis
 import numpy as np
 import xarray as xr
 import xrft
@@ -16,6 +15,7 @@ from matplotlib import pyplot as plt
 from pylab import flipud
 
 from ldcpy import calcs as lm, util as lu
+from ldcpy.convert import CalendarDateTime
 
 xr.set_options(keep_attrs=True)
 
@@ -651,7 +651,7 @@ class calcsPlot(object):
                 ax = plt.gca()
             else:
                 dtindex = da_sets[i].indexes['time']
-                c_d_time = [nc_time_axis.CalendarDateTime(item, '365_day') for item in dtindex]
+                c_d_time = [CalendarDateTime(item, '365_day') for item in dtindex]
                 mpl.pyplot.plot(c_d_time, da_sets[i], f'C{i}', label=f'{da_sets.sets.data[i]}')
                 ax = plt.gca()
                 for label in ax.get_xticklabels():
@@ -739,6 +739,7 @@ class calcsPlot(object):
                         .mean()
                         .data.compute()
                     )
+                    print(a1_data)
                 # check for NANs
                 # indices = ~np.isnan(a1_data)
                 # if weights is not None:
