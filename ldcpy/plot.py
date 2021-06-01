@@ -766,8 +766,7 @@ class calcsPlot(object):
                 p = lm.Datasetcalcs((data), ['time'], weighted=self._weighted).get_single_calc(
                     'annual_harmonic_relative_ratio_pct_sig'
                 )
-                d = p.data.compute()
-                calc_name = f'{calc}: % sig = {d:.2f}'
+                calc_name = f'{calc}: % sig = {p:.2f}'
             elif self._plot_type == 'spatial':
                 if self._weighted:
                     a1_data = (
