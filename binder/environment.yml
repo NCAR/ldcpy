@@ -16,6 +16,7 @@ dependencies:
   - jupyter-offlinenotebook
   - jupyterlab>=3
   - matplotlib-base
+  - ipython
   - netcdf4
   - nodejs
   - pip

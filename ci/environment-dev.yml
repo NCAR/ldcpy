@@ -30,3 +30,4 @@ dependencies:
   - zfpy
   - cf_xarray
   - astropy
+  - ipython

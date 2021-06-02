@@ -21,3 +21,4 @@ dependencies:
   - cf_xarray
   - pandas
   - astropy
+  - ipython
