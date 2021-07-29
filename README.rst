@@ -37,6 +37,13 @@ It also contains a number of statistical and visual tools for gathering metrics 
 
 Documentation and usage examples are available `here <http://ldcpy.readthedocs.io>`_.
 
+Reference to ldcpy paper
+------------------------
+
+A. Pinard, D. M. Hammerling, and A. H. Baker. Assessing differences in large spatio­temporal climate datasets with a new Python package. In The 2020 IEEE International Workshop on Big Data Reduction, 2020. doi: 10.1109/BigData50022.2020.9378100.
+
+Link to paper:
+https://doi.org/10.1109/BigData50022.2020.9378100
 
 Installation using Conda (recommended)
 ______________________________________
