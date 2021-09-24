@@ -124,6 +124,8 @@ class Datasetcalcs:
         self._max_val = None
         self._grouping = None
         self._annual_harmonic_relative_ratio = None
+        self._first_differences = None
+        self._derivative = None
 
         # single value calcs
         self._zscore_cutoff = None
@@ -176,6 +178,29 @@ class Datasetcalcs:
                 self._pooled_variance_mean.attrs['units'] = f'{self._ds.units}$^2$'
 
         return self._pooled_variance_mean
+
+    @property
+    def first_differences(self) -> xr.DataArray:
+        """
+        First differences along the west-east direction
+        """
+        if not self._is_memoized('_first_differences'):
+            self._first_differences = self._ds.diff('lat').mean(self._agg_dims)
+        self._first_differences.attrs = self._ds.attrs
+
+        return self._first_differences
+
+    @property
+    def derivative(self) -> xr.DataArray:
+        """
+        Derivative of dataset from west-east
+        """
+
+        if not self._is_memoized('_derivative'):
+            self._derivative = self._ds.differentiate('lon').mean(self._agg_dims)
+        self._derivative.attrs = self._ds.attrs
+
+        return self._derivative
 
     @property
     def ns_con_var(self) -> xr.DataArray:
@@ -840,6 +865,10 @@ class Datasetcalcs:
                 return self.ns_con_var
             if name == 'ew_con_var':
                 return self.ew_con_var
+            if name == 'first_differences':
+                return self.first_differences
+            if name == 'derivative':
+                return self.derivative
             if name == 'mean':
                 return self.mean
             if name == 'std':
