@@ -10,7 +10,7 @@ from .calcs import Datasetcalcs, Diffcalcs
 
 def collect_datasets(data_type, varnames, list_of_ds, labels, **kwargs):
     """
-    Concatonate several different xarray datasets across a new
+    Concatenate several different xarray datasets across a new
     "collection" dimension, which can be accessed with the specified
     labels.  Stores them in an xarray dataset which can be passed to
     the ldcpy plot functions (Call this OR open_datasets() before
@@ -49,16 +49,16 @@ def collect_datasets(data_type, varnames, list_of_ds, labels, **kwargs):
     indx = np.unique(sz)
     assert indx.size == 1, 'ERROR: all datasets must have the same length time dimension'
 
+    # preprocess
+    for i, myds in enumerate(list_of_ds):
+        list_of_ds[i] = preprocess(myds, varnames)
+
     if data_type == 'cam-fv':
         weights_name = 'gw'
         varnames.append(weights_name)
     elif data_type == 'pop':
         weights_name = 'TAREA'
         varnames.append(weights_name)
-
-    # preprocess
-    for i, myds in enumerate(list_of_ds):
-        list_of_ds[i] = preprocess(myds, varnames)
 
     full_ds = xr.concat(list_of_ds, 'collection', **kwargs)
 
