@@ -73,7 +73,7 @@ def collect_datasets(data_type, varnames, list_of_ds, labels, **kwargs):
 
     full_ds.attrs['cell_measures'] = 'area: cell_area'
 
-    full_ds = full_ds.drop(weights_name)
+    # full_ds = full_ds.drop(weights_name)
 
     full_ds['collection'] = xr.DataArray(labels, dims='collection')
 
