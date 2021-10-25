@@ -641,7 +641,7 @@ def save_metrics(
     # SSIM less than of ssim_tol is failing
     ssim_val = diff_metrics.get_diff_calc('ssim', color)
 
-    # ssim_fp_val = diff_metrics.get_diff_calc('ssim_fp')
+    ssim_fp_val = diff_metrics.get_diff_calc('ssim_fp')
 
     # ssim_fp_old_val = diff_metrics.get_diff_metric('ssim_fp_old')
 
@@ -656,7 +656,7 @@ def save_metrics(
             #            'ks_p_value',
             #            'spatial_rel_error',
             'ssim',
-            # 'ssim_fp',
+            'ssim_fp',
             # 'ssim_fp_old',
             #            'pcc_pass',
             #            'ks_p_value_pass',
@@ -679,7 +679,7 @@ def save_metrics(
                 #                'ks_p_value': ks,
                 #                'spatial_rel_error': spre,
                 'ssim': ssim_val,
-                # 'ssim_fp': ssim_fp_val,
+                'ssim_fp': ssim_fp_val,
                 # 'ssim_fp_old': ssim_fp_old_val,
                 #                'pcc_pass': pcc >= pcc_tol,
                 #                'ks_p_value_pass': ks >= ks_tol,
