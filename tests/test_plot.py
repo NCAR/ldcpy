@@ -217,6 +217,32 @@ class TestPlot(TestCase):
         )
         self.assertTrue(True is True)
 
+    def test_first_differences(self):
+        ldcpy.plot(
+            ds,
+            'TS',
+            sets=['orig', 'recon'],
+            calc='w_e_first_differences',
+            color='binary',
+            plot_type='spatial',
+            tex_format=False,
+            weighted=False,
+        )
+        self.assertTrue(True is True)
+
+    def test_derivative(self):
+        ldcpy.plot(
+            ds2,
+            'PRECT',
+            sets=['orig', 'recon'],
+            calc='derivative',
+            color='binary',
+            plot_type='spatial',
+            tex_format=False,
+            weighted=False,
+        )
+        self.assertTrue(True is True)
+
     def test_mean_abs_diff_time_series(self):
         ldcpy.plot(
             ds,

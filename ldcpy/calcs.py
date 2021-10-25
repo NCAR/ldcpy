@@ -6,6 +6,8 @@ import cf_xarray as cf
 import dask
 import matplotlib as mpl
 import numpy as np
+import pandas as pd
+import statsmodels.api as sm
 import xarray as xr
 from cartopy import crs as ccrs
 from cartopy.util import add_cyclic_point
@@ -14,6 +16,8 @@ from scipy import stats as ss
 from scipy.ndimage import gaussian_filter
 from skimage.util import crop
 from xrft import dft
+
+from .collect_datasets import collect_datasets
 
 xr.set_options(keep_attrs=True)
 
@@ -124,8 +128,14 @@ class Datasetcalcs:
         self._max_val = None
         self._grouping = None
         self._annual_harmonic_relative_ratio = None
-        self._first_differences = None
+        self._w_e_first_differences = None
+        self._n_s_first_differences = None
         self._derivative = None
+        self._percent_unique = None
+        self._most_repeated = None
+        self._most_repeated_pct = None
+        self._cdf = None
+        self._dtype = ds.dtype
 
         # single value calcs
         self._zscore_cutoff = None
@@ -162,6 +172,10 @@ class Datasetcalcs:
         return con_var
 
     @property
+    def dtype(self) -> xr.DataArray:
+        return self._dtype
+
+    @property
     def pooled_variance(self) -> xr.DataArray:
         """
         The overall variance of the dataset
@@ -180,15 +194,68 @@ class Datasetcalcs:
         return self._pooled_variance_mean
 
     @property
-    def first_differences(self) -> xr.DataArray:
+    def w_e_first_differences(self) -> xr.DataArray:
         """
         First differences along the west-east direction
         """
-        if not self._is_memoized('_first_differences'):
-            self._first_differences = self._ds.diff('lat').mean(self._agg_dims)
-        self._first_differences.attrs = self._ds.attrs
+        if not self._is_memoized('_w_e_first_differences'):
+            # self._first_differences = self._ds.diff('lat').mean(self._agg_dims)
+            self._w_e_first_differences = self._ds.roll(
+                {'lat': -1}, roll_coords=False
+            ) - self._ds.roll({'lat': 1}, roll_coords=False)
+        self._w_e_first_differences.attrs = self._ds.attrs
 
-        return self._first_differences
+        return self._w_e_first_differences.mean(self._agg_dims)
+
+    @property
+    def n_s_first_differences(self) -> xr.DataArray:
+        """
+        First differences along the west-east direction
+        """
+        if not self._is_memoized('_n_s_first_differences'):
+            self._n_s_first_differences = self._ds.diff('lon').mean(self._agg_dims)
+            # self._first_differences = self._ds.roll({"lon": -1}, roll_coords=False) - self._ds.roll({"lat": 1},                                                                                        roll_coords=False)
+        self._n_s_first_differences.attrs = self._ds.attrs
+        return self._n_s_first_differences
+
+    @property
+    def percent_unique(self) -> xr.DataArray:
+        """
+        Percentage of unique values in the dataset
+        """
+        if not self._is_memoized('_percent_unique'):
+            count_unique = len(pd.unique(self._ds.values.flatten()))
+            count_all = len(self._ds.values.flatten())
+            self._percent_unique = count_unique / count_all
+
+        return self._percent_unique
+
+    @property
+    def most_repeated(self) -> xr.DataArray:
+        """
+        Most repeated value in dataset
+        """
+        if not self._is_memoized('_most_repeated'):
+            self._most_repeated = ss.mode(self._ds.values.flatten())[0][0]
+        return self._most_repeated
+
+    @property
+    def most_repeated_percent(self) -> xr.DataArray:
+        """
+        Most repeated value in dataset
+        """
+        if not self._is_memoized('_most_repeated_pct'):
+            self._most_repeated_pct = ss.mode(self._ds.values.flatten())[1][0] / len(
+                self._ds.values.flatten()
+            )
+        return self._most_repeated_pct
+
+    @property
+    def range(self) -> xr.DataArray:
+        """
+        The range of the dataset
+        """
+        return self.max_val - self.min_val
 
     @property
     def derivative(self) -> xr.DataArray:
@@ -569,6 +636,18 @@ class Datasetcalcs:
         return self._mae_day_max
 
     @property
+    def cdf(self) -> xr.DataArray:
+        """
+        The empirical CDF of the dataset.
+        """
+        if not self._is_memoized('_cdf'):
+            # ecfd = sm.distributions.ECDF(self._ds)
+            x = np.linspace(min(self._ds), max(self._ds))
+            self._cdf = sm.distributions.ECDF(self._ds)(x)
+
+        return self._cdf
+
+    @property
     def quantile(self):
         return self._quantile
 
@@ -842,6 +921,15 @@ class Datasetcalcs:
 
             return self._zscore_percent_significant
 
+    def get_calc_ds(self, calc_name: str, var_name: str) -> xr.Dataset:
+        da = self.get_calc(calc_name)
+        ds = da.squeeze().to_dataset(name=var_name, promote_attrs=True)
+        ds.attrs['data_type'] = da.data_type
+        # new_ds = collect_datasets(self._ds.data_type, [var_name], [ds],
+        #                                [self._ds.set_name])
+        # new_ds = new_ds.astype(self.dtype)
+        return ds
+
     def get_calc(self, name: str, q: Optional[int] = 0.5, grouping: Optional[str] = None, ddof=1):
         """
         Gets a calc aggregated across one or more dimensions of the dataset
@@ -865,8 +953,10 @@ class Datasetcalcs:
                 return self.ns_con_var
             if name == 'ew_con_var':
                 return self.ew_con_var
-            if name == 'first_differences':
-                return self.first_differences
+            if name == 'w_e_first_differences':
+                return self.w_e_first_differences
+            if name == 'n_s_first_differences':
+                return self.n_s_first_differences
             if name == 'derivative':
                 return self.derivative
             if name == 'mean':
@@ -902,6 +992,8 @@ class Datasetcalcs:
                 return self.mean_abs
             if name == 'mean_squared':
                 return self.mean_squared
+            if name == 'range':
+                return self.range
             if name == 'rms':
                 return self.root_mean_squared
             if name == 'sum':
@@ -925,6 +1017,8 @@ class Datasetcalcs:
                 return self.max_val
             if name == 'min_val':
                 return self.min_val
+            if name == 'cdf':
+                return self.cdf
             if name == 'ds':
                 return self._ds
             raise ValueError(f'there is no calc with the name: {name}.')
@@ -958,6 +1052,12 @@ class Datasetcalcs:
                 return self.pooled_variance
             if name == 'annual_harmonic_relative_ratio_pct_sig':
                 return self.annual_harmonic_relative_ratio_pct_sig
+            if name == 'percent_unique':
+                return self.percent_unique
+            if name == 'most_repeated':
+                return self.most_repeated
+            if name == 'most_repeated_percent':
+                return self.most_repeated_percent
             raise ValueError(f'there is no calcs with the name: {name}.')
         else:
             raise TypeError('name must be a string.')
@@ -1259,7 +1359,7 @@ class Diffcalcs:
         return self._max_spatial_rel_error
 
     @property
-    def ssim_value(self):
+    def ssim_value(self, color='coolwarm'):
         """
         We compute the SSIM (structural similarity index) on the visualization of the spatial data.
         """
@@ -1327,7 +1427,7 @@ class Diffcalcs:
                 np.max(d2.where(d2 != np.inf)).values.max(),
             )
 
-            mymap = copy.copy(plt.cm.get_cmap('coolwarm'))
+            mymap = copy.copy(plt.cm.get_cmap(color))
             mymap.set_under(color='black')
             mymap.set_over(color='white')
             mymap.set_bad(alpha=0)
@@ -1850,7 +1950,7 @@ class Diffcalcs:
 
         return self._ssim_value_fp_old
 
-    def get_diff_calc(self, name: str):
+    def get_diff_calc(self, name: str, color: Optional[str] = 'coolwarm'):
         """
         Gets a calc on the dataset that requires more than one input dataset
 
@@ -1879,6 +1979,7 @@ class Diffcalcs:
             if name == 'max_spatial_rel_error':
                 return self.max_spatial_rel_error
             if name == 'ssim':
+                self.color = color
                 return self.ssim_value
             if name == 'ssim_fp_orig':
                 return self.ssim_value_fp_orig

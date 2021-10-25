@@ -1027,10 +1027,14 @@ def plot(
 
     if 'collection' in ds[varname].dims:
         if sets is not None:
+            i = 0
             for set in sets:
                 dss.append(ds[varname].sel(collection=set))
+                dss[i].attrs['data_type'] = ds.data_type
+                dss[i].attrs['set_name'] = set
     else:
         dss.append(ds[varname])
+        dss[0].attrs['data_type'] = ds.data_type
 
     subsets = []
     if sets is not None:
@@ -1050,6 +1054,7 @@ def plot(
         if subsets is not None:
             for i in range(len(subsets)):
                 datas.append(subsets[i])
+                datas[i - 1].attrs = subsets[0].attrs
 
     raw_calcs = []
 
