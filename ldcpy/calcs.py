@@ -1359,7 +1359,7 @@ class Diffcalcs:
         return self._max_spatial_rel_error
 
     @property
-    def ssim_value(self, color='coolwarm'):
+    def ssim_value(self):
         """
         We compute the SSIM (structural similarity index) on the visualization of the spatial data.
         """
@@ -1427,7 +1427,7 @@ class Diffcalcs:
                 np.max(d2.where(d2 != np.inf)).values.max(),
             )
 
-            mymap = copy.copy(plt.cm.get_cmap(color))
+            mymap = copy.copy(plt.cm.get_cmap(self.color))
             mymap.set_under(color='black')
             mymap.set_over(color='white')
             mymap.set_bad(alpha=0)
