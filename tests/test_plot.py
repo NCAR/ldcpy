@@ -200,7 +200,6 @@ class TestPlot(TestCase):
             calc='odds_positive',
             plot_type='time_series',
             group_by='time.month',
-            calc_ssim=True,
             vert_plot=True,
         )
         self.assertTrue(True)
@@ -310,17 +309,6 @@ class TestPlot(TestCase):
             tex_format=False,
         )
         self.assertTrue(True is True)
-
-    def test_ssim(self):
-        ldcpy.plot(
-            ds,
-            'TS',
-            sets=['orig', 'recon'],
-            calc='mean',
-            plot_type='spatial',
-            calc_ssim=True,
-            tex_format=False,
-        )
 
     def test_mae_max_day(self):
         ldcpy.plot(ds, 'TS', sets=['orig'], calc='mae_day_max', tex_format=False)
