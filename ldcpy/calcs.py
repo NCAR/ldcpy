@@ -37,6 +37,7 @@ class Datasetcalcs:
         q: float = 0.5,
         spre_tol: float = 1.0e-4,
         weighted=True,
+        data_type: str = None,
     ):
         self._ds = ds if (ds.dtype == np.float64) else ds.astype(np.float64)
         # For some reason, casting to float64 removes all attrs from the dataset
@@ -60,12 +61,12 @@ class Datasetcalcs:
 
         dd = ds.cf[ds.cf.coordinates['latitude'][0]].dims
         ll = len(dd)
-        if ll == 1:
+        if data_type == 'cam_fv':  # ll == 1:
             if lat_dim_name is None:
                 lat_dim_name = dd[0]
             if lon_dim_name is None:
                 lon_dim_name = ds.cf['longitude'].dims[0]
-        elif ll == 2:
+        elif data_type == 'pop':  # ll == 2:
             if lat_dim_name is None:
                 lat_dim_name = dd[0]
             if lon_dim_name is None:
