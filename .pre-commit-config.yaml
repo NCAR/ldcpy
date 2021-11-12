@@ -15,11 +15,6 @@ repos:
     hooks:
       - id: black
 
-  - repo: https://github.com/keewis/blackdoc
-    rev: v0.3
-    hooks:
-      - id: blackdoc
-
   - repo: https://gitlab.com/pycqa/flake8
     rev: 3.8.4
     hooks:
