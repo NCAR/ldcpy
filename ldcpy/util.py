@@ -19,6 +19,8 @@ def collect_datasets(data_type, varnames, list_of_ds, labels, **kwargs):
 
     Parameters
     ==========
+    data_type: string
+        Current data types: :cam-fv, pop
     varnames : list
         The variable(s) of interest to combine across input files (usually just one)
     list_of_datasets : list
@@ -99,6 +101,8 @@ def open_datasets(data_type, varnames, list_of_files, labels, **kwargs):
 
     Parameters
     ==========
+    data_type: string
+        Current data types: :cam-fv, pop
     varnames : list
            The variable(s) of interest to combine across input files (usually just one)
     list_of_files : list
@@ -217,6 +221,7 @@ def compare_stats(
     # (this is done seperately to work with cf_xarray)
 
     da = ds[varname]
+    data_type = ds.attrs['data_type']
 
     da.attrs['cell_measures'] = 'area: cell_area'
 
@@ -247,19 +252,21 @@ def compare_stats(
     da_set_calcs = []
     for i in range(num):
         da_set_calcs.append(
-            Datasetcalcs(da_sets[i], aggregate_dims, **calcs_kwargs, weighted=weighted)
+            Datasetcalcs(da_sets[i], data_type, aggregate_dims, **calcs_kwargs, weighted=weighted)
         )
 
     dd_set_calcs = []
     for i in range(num - 1):
         dd_set_calcs.append(
-            Datasetcalcs(dd_sets[i], aggregate_dims, **calcs_kwargs, weighted=weighted)
+            Datasetcalcs(dd_sets[i], data_type, aggregate_dims, **calcs_kwargs, weighted=weighted)
         )
 
     diff_calcs = []
     for i in range(1, num):
         diff_calcs.append(
-            Diffcalcs(da_sets[0], da_sets[i], aggregate_dims, **calcs_kwargs, weighted=weighted)
+            Diffcalcs(
+                da_sets[0], da_sets[i], data_type, aggregate_dims, **calcs_kwargs, weighted=weighted
+            )
         )
 
     # DATA FRAME
@@ -278,6 +285,9 @@ def compare_stats(
     temp_max = []
     temp_pos = []
     temp_zeros = []
+    temp_ac_lat = []
+    temp_ac_lon = []
+    temp_entropy = []
 
     for i in range(num):
         temp_mean.append(da_set_calcs[i].get_calc('mean').data.compute())
@@ -287,6 +297,10 @@ def compare_stats(
         temp_min.append(da_set_calcs[i].get_calc('min_val').data.compute())
         temp_pos.append(da_set_calcs[i].get_calc('prob_positive').data.compute())
         temp_zeros.append(da_set_calcs[i].get_calc('num_zero').data.compute())
+        if data_type == 'cam-fv':
+            temp_ac_lat.append(da_set_calcs[i].get_single_calc('lat_autocorr'))
+            temp_ac_lon.append(da_set_calcs[i].get_single_calc('lon_autocorr'))
+        temp_entropy.append(da_set_calcs[i].get_single_calc('entropy'))
 
     df_dict['mean'] = temp_mean
     df_dict['variance'] = temp_var
@@ -295,6 +309,10 @@ def compare_stats(
     df_dict['max value'] = temp_max
     df_dict['probability positive'] = temp_pos
     df_dict['number of zeros'] = temp_zeros
+    if data_type == 'cam-fv':
+        df_dict['spatial autocorr - latitude'] = temp_ac_lat
+        df_dict['spatial autocorr - longitude'] = temp_ac_lon
+    df_dict['entropy estimate'] = temp_entropy
 
     for d in df_dict.keys():
         fo = [f'%.{significant_digits}g' % item for item in df_dict[d]]
@@ -443,10 +461,12 @@ def check_metrics(
     """
 
     print(f'Evaluating 4 calcs for {set1} data (set1) and {set2} data (set2):')
+    data_type = ds.attrs['data_type']
     aggregate_dims = calcs_kwargs.pop('aggregate_dims', None)
     diff_calcs = Diffcalcs(
         ds[varname].sel(collection=set1),
         ds[varname].sel(collection=set2),
+        data_type,
         aggregate_dims,
         **calcs_kwargs,
         weighted=False,

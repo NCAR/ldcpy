@@ -156,12 +156,10 @@ class calcsPlot(object):
             lon_dim = dd[1]
 
         if self._plot_type in ['spatial']:
-            calcs_da = lm.Datasetcalcs(
-                da_data, ['time'], weighted=self._weighted, data_type=data_type
-            )
+            calcs_da = lm.Datasetcalcs(da_data, data_type, ['time'], weighted=self._weighted)
         elif self._plot_type in ['time_series', 'periodogram', 'histogram']:
             calcs_da = lm.Datasetcalcs(
-                da_data, [lat_dim, lon_dim], weighted=self._weighted, data_type=data_type
+                da_data, data_type, [lat_dim, lon_dim], weighted=self._weighted
             )
         else:
             raise ValueError(f'plot type {self._plot_type} not supported')
@@ -697,19 +695,17 @@ class calcsPlot(object):
         if self._short_title is False:
             if calc == 'zscore':
                 zscore_cutoff = lm.Datasetcalcs(
-                    (data), ['time'], weighted=self._weighted, data_type=data_type
+                    (data), data_type, ['time'], weighted=self._weighted
                 ).get_single_calc('zscore_cutoff')
                 percent_sig = lm.Datasetcalcs(
-                    (data), ['time'], weighted=self._weighted, data_type=data_type
+                    (data), data_type, ['time'], weighted=self._weighted
                 ).get_single_calc('zscore_percent_significant')
                 calc_name = f'{calc}: cutoff {zscore_cutoff[0]:.2f}, % sig: {percent_sig:.2f}'
             elif calc == 'mean' and self._plot_type == 'spatial' and self._calc_type == 'raw':
 
                 if self._weighted:
                     a1_data = (
-                        lm.Datasetcalcs(
-                            data, ['time'], weighted=self._weighted, data_type=data_type
-                        )
+                        lm.Datasetcalcs(data, data_type, ['time'], weighted=self._weighted)
                         .get_calc(calc)
                         .cf.weighted('area')
                         .mean()
@@ -717,9 +713,7 @@ class calcsPlot(object):
                     )
                 else:
                     a1_data = (
-                        lm.Datasetcalcs(
-                            data, ['time'], weighted=self._weighted, data_type=data_type
-                        )
+                        lm.Datasetcalcs(data, data_type, ['time'], weighted=self._weighted)
                         .get_calc(calc)
                         .mean()
                         .data.compute()
@@ -741,23 +735,21 @@ class calcsPlot(object):
                 calc_name = f'{calc} = {a1_data:.2f}'
             elif calc == 'pooled_var_ratio':
                 pooled_sd = np.sqrt(
-                    lm.Datasetcalcs((data), ['time'], weighted=self._weighted).get_single_calc(
-                        'pooled_variance'
-                    )
+                    lm.Datasetcalcs(
+                        (data), data_type, ['time'], weighted=self._weighted
+                    ).get_single_calc('pooled_variance')
                 )
                 d = pooled_sd.data.compute()
                 calc_name = f'{calc}: pooled SD = {d:.2f}'
             elif calc == 'ann_harmonic_ratio':
                 p = lm.Datasetcalcs(
-                    (data), ['time'], weighted=self._weighted, data_type=data_type
+                    (data), data_type, ['time'], weighted=self._weighted
                 ).get_single_calc('annual_harmonic_relative_ratio_pct_sig')
                 calc_name = f'{calc}: % sig = {p:.2f}'
             elif self._plot_type == 'spatial':
                 if self._weighted:
                     a1_data = (
-                        lm.Datasetcalcs(
-                            data, ['time'], weighted=self._weighted, data_type=data_type
-                        )
+                        lm.Datasetcalcs(data, data_type, ['time'], weighted=self._weighted)
                         .get_calc(calc)
                         .cf.weighted('area')
                         .mean()
@@ -765,9 +757,7 @@ class calcsPlot(object):
                     )
                 else:
                     a1_data = (
-                        lm.Datasetcalcs(
-                            data, ['time'], weighted=self._weighted, data_type=data_type
-                        )
+                        lm.Datasetcalcs(data, data_type, ['time'], weighted=self._weighted)
                         .get_calc(calc)
                         .mean()
                         .data.compute()
@@ -778,7 +768,7 @@ class calcsPlot(object):
                 if self._weighted:
                     a1_data = (
                         lm.Datasetcalcs(
-                            data, [lat_dim, lon_dim], weighted=self._weighted, data_type=data_type
+                            data, data_type, [lat_dim, lon_dim], weighted=self._weighted
                         )
                         .get_calc(calc)
                         .mean()
@@ -787,7 +777,7 @@ class calcsPlot(object):
                 else:
                     a1_data = (
                         lm.Datasetcalcs(
-                            data, [lat_dim, lon_dim], weighted=self._weighted, data_type=data_type
+                            data, data_type, [lat_dim, lon_dim], weighted=self._weighted
                         )
                         .get_calc(calc)
                         .mean()

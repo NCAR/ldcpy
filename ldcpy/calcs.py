@@ -1,4 +1,5 @@
 import copy
+import gzip
 from math import exp, pi, sqrt
 from typing import Optional
 
@@ -62,7 +63,7 @@ class Datasetcalcs:
         dd = ds.cf[ds.cf.coordinates['latitude'][0]].dims
 
         ll = len(dd)
-        if data_type == 'cam_fv':  # ll == 1:
+        if data_type == 'cam-fv':  # ll == 1:
             if lat_dim_name is None:
                 lat_dim_name = dd[0]
             if lon_dim_name is None:
@@ -132,6 +133,7 @@ class Datasetcalcs:
         self._lon_autocorr = None
         self._lat_autocorr = None
         self._lev_autocorr = None
+        self._entropy = None
 
         # single value calcs
         self._zscore_cutoff = None
@@ -309,6 +311,29 @@ class Datasetcalcs:
                 self._lev_autocorr = aa
 
         return self._lev_autocorr
+
+    @property
+    def entropy(self) -> xr.DataArray:
+        """
+        An estimate for the entropy of the data (using gzip)
+        # lower is better (1.0 means random - no compression possible)
+        """
+        if not self._is_memoized('_entropy'):
+
+            a1 = self._ds.data
+            if dask.is_dask_collection(a1):
+                a1 = a1.compute()
+
+            cc = gzip.compress(a1)
+            dd = gzip.decompress(cc)
+            cl = len(cc)
+            dl = len(dd)
+            if dl > 0:
+                e = cl / dl
+            else:
+                e = 0.0
+            self._entropy = e
+        return self._entropy
 
     @property
     def mean(self) -> xr.DataArray:
@@ -924,12 +949,6 @@ class Datasetcalcs:
                 return self.ns_con_var
             if name == 'ew_con_var':
                 return self.ew_con_var
-            if name == 'lat_autocorr':
-                return self.lat_autocorr
-            if name == 'lon_autocorr':
-                return self.lon_autocorr
-            if name == 'lev_autocorr':
-                return self.lev_autocorr
             if name == 'mean':
                 return self.mean
             if name == 'std':
@@ -1011,6 +1030,14 @@ class Datasetcalcs:
                 return self.zscore_cutoff
             if name == 'zscore_percent_significant':
                 return self.zscore_percent_significant
+            if name == 'lat_autocorr':
+                return self.lat_autocorr
+            if name == 'lon_autocorr':
+                return self.lon_autocorr
+            if name == 'lev_autocorr':
+                return self.lev_autocorr
+            if name == 'entropy':
+                return self.entropy
             if name == 'range':
                 return self.dyn_range
             if name == 'spre_tol':
@@ -1359,7 +1386,7 @@ class Diffcalcs:
                 cy1 = add_cyclic_point(d1)
                 cy2 = add_cyclic_point(d2)
 
-            else:  # cam_fv
+            else:  # cam-fv
                 cy1, cy_lon1 = add_cyclic_point(d1, coord=lon1)
                 cy2, cy_lon2 = add_cyclic_point(d2, coord=lon2)
                 cy_lat1 = lat1
