@@ -27,6 +27,7 @@ class Datasetcalcs:
     def __init__(
         self,
         ds: xr.DataArray,
+        data_type: str,
         aggregate_dims: list,
         time_dim_name: str = 'time',
         lat_dim_name: str = None,
@@ -37,7 +38,6 @@ class Datasetcalcs:
         q: float = 0.5,
         spre_tol: float = 1.0e-4,
         weighted=True,
-        data_type: str = None,
     ):
         self._ds = ds if (ds.dtype == np.float64) else ds.astype(np.float64)
         # For some reason, casting to float64 removes all attrs from the dataset
@@ -60,6 +60,7 @@ class Datasetcalcs:
         self._lat_coord_name = lat_coord_name
 
         dd = ds.cf[ds.cf.coordinates['latitude'][0]].dims
+
         ll = len(dd)
         if data_type == 'cam_fv':  # ll == 1:
             if lat_dim_name is None:
@@ -71,6 +72,8 @@ class Datasetcalcs:
                 lat_dim_name = dd[0]
             if lon_dim_name is None:
                 lon_dim_name = dd[1]
+        else:
+            print('Warning: unknown data_type: ', data_type)
 
         self._latlon_dims = ll
         self._lat_dim_name = lat_dim_name
@@ -90,6 +93,7 @@ class Datasetcalcs:
         self._spre_tol = spre_tol
         self._agg_dims = aggregate_dims
         self._frame_size = 1
+        self._data_type = data_type
 
         # array calcs
         self._weighted = weighted
@@ -125,6 +129,9 @@ class Datasetcalcs:
         self._max_val = None
         self._grouping = None
         self._annual_harmonic_relative_ratio = None
+        self._lon_autocorr = None
+        self._lat_autocorr = None
+        self._lev_autocorr = None
 
         # single value calcs
         self._zscore_cutoff = None
@@ -137,7 +144,6 @@ class Datasetcalcs:
         else:
             dp = np.count_nonzero(~np.isnan(self._ds))
             self._frame_size = dp
-            # print(self._frame_size)
 
     def _is_memoized(self, calc_name: str) -> bool:
         return hasattr(self, calc_name) and (self.__getattribute__(calc_name) is not None)
@@ -227,6 +233,82 @@ class Datasetcalcs:
                 self._ew_con_var_mean.attrs['units'] = f'{self._ds.units}$^2$'
 
         return self._ew_con_var_mean
+
+    @property
+    def lat_autocorr(self) -> xr.DataArray:
+        """
+        Autocorrelation: the correlation of a variable with itself shifted in the latitude dimension
+        """
+        if not self._is_memoized('_lat_autocorr'):
+            dims = self._ds.dims
+            lat_dim_name = self._lat_dim_name
+            if lat_dim_name not in dims:
+                print('error: latitude not found for autocorrelation')
+                self._lat_autocorr = 0
+            else:
+                idx = dims.index(lat_dim_name)
+                sz = self._ds.sizes[lat_dim_name]
+                y_lat = np.roll(self._ds, -1, axis=idx)
+                x_lat = self._ds
+                # this one (longitude) should not wrap
+                yd_lat = np.delete(y_lat, sz - 1, axis=idx)
+                xd_lat = np.delete(x_lat, sz - 1, axis=idx)
+                y_lat_r = np.ravel(yd_lat)
+                x_lat_r = np.ravel(xd_lat)
+                aa = np.corrcoef(x_lat_r, y_lat_r)[0, 1]
+                self._lat_autocorr = aa
+
+        return self._lat_autocorr
+
+    @property
+    def lon_autocorr(self) -> xr.DataArray:
+        """
+        Autocorrelation: the correlation of a variable with itself shifted in the longitude dimension
+        """
+        if not self._is_memoized('_lon_autocorr'):
+            dims = self._ds.dims
+            lon_dim_name = self._lon_dim_name
+            if lon_dim_name not in dims:
+                print('error: longitude not found for autocorrelation')
+                self._lon_autocorr = 0
+            else:
+                idx = dims.index(lon_dim_name)
+                y_lon = np.roll(self._ds, -1, axis=idx)
+                x_lon = self._ds
+                y_lon_r = np.ravel(y_lon)
+                x_lon_r = np.ravel(x_lon)
+                aa = np.corrcoef(x_lon_r, y_lon_r)[0, 1]
+                self._lon_autocorr = aa
+
+        return self._lon_autocorr
+
+    @property
+    def lev_autocorr(self) -> xr.DataArray:
+        """
+        Autocorrelation: the correlation of a variable with itself shifted in the vertical dimension
+        """
+        if not self._is_memoized('_lev_autocorr'):
+            dims = self._ds.dims
+            vert_dim_name = self._vert_dim_name
+            if vert_dim_name not in dims:
+                print('error: vertical (lev) not found for autocorrelation')
+                self._lon_autocorr = 0
+            else:
+                idx = dims.index(vert_dim_name)
+                sz = self._ds.sizes[vert_dim_name]
+                # print(idx)
+                y = np.roll(self._ds, -1, axis=idx)
+                x = self._ds
+                # this one (vert level) should not wrap
+                yd = np.delete(y, sz - 1, axis=idx)
+                xd = np.delete(x, sz - 1, axis=idx)
+                yd_r = np.ravel(yd)
+                xd_r = np.ravel(xd)
+                aa = np.corrcoef(xd_r, yd_r)[0, 1]
+
+                self._lev_autocorr = aa
+
+        return self._lev_autocorr
 
     @property
     def mean(self) -> xr.DataArray:
@@ -836,11 +918,18 @@ class Datasetcalcs:
             A DataArray of the same size and dimensions the original dataarray,
             minus those dimensions that were aggregated across.
         """
+
         if isinstance(name, str):
             if name == 'ns_con_var':
                 return self.ns_con_var
             if name == 'ew_con_var':
                 return self.ew_con_var
+            if name == 'lat_autocorr':
+                return self.lat_autocorr
+            if name == 'lon_autocorr':
+                return self.lon_autocorr
+            if name == 'lev_autocorr':
+                return self.lev_autocorr
             if name == 'mean':
                 return self.mean
             if name == 'std':
@@ -944,6 +1033,7 @@ class Diffcalcs:
         self,
         ds1: xr.DataArray,
         ds2: xr.DataArray,
+        data_type: str,
         aggregate_dims: Optional[list] = None,
         **calcs_kwargs,
     ) -> None:
@@ -956,8 +1046,9 @@ class Diffcalcs:
                 f'ds must be of type xarray.DataArray. Type(s): {str(type(ds1))} {str(type(ds2))}'
             )
 
-        self._calcs1 = Datasetcalcs(self._ds1, aggregate_dims, **calcs_kwargs)
-        self._calcs2 = Datasetcalcs(self._ds2, aggregate_dims, **calcs_kwargs)
+        self._calcs1 = Datasetcalcs(self._ds1, data_type, aggregate_dims, **calcs_kwargs)
+        self._calcs2 = Datasetcalcs(self._ds2, data_type, aggregate_dims, **calcs_kwargs)
+        self._data_type = data_type
         self._aggregate_dims = aggregate_dims
         self._pcc = None
         self._covariance = None
@@ -1253,12 +1344,12 @@ class Diffcalcs:
             lon1 = d1[self._calcs1._lon_coord_name]
             lon2 = d2[self._calcs2._lon_coord_name]
 
-            latdim = d1.cf[self._calcs1._lon_coord_name].ndim
+            # latdim = d1.cf[self._calcs1._lon_coord_name].ndim
             central = 0.0  # might make this a parameter later
-            if latdim == 2:  # probably pop
+            if self._data_type == 'pop':
                 central = 300.0
             # make periodic
-            if latdim == 2:
+            if self._data_type == 'pop':
                 cy_lon1 = np.hstack((lon1, lon1[:, 0:1]))
                 cy_lon2 = np.hstack((lon2, lon2[:, 0:1]))
 
@@ -1268,7 +1359,7 @@ class Diffcalcs:
                 cy1 = add_cyclic_point(d1)
                 cy2 = add_cyclic_point(d2)
 
-            else:  # 1d
+            else:  # cam_fv
                 cy1, cy_lon1 = add_cyclic_point(d1, coord=lon1)
                 cy2, cy_lon2 = add_cyclic_point(d2, coord=lon2)
                 cy_lat1 = lat1
