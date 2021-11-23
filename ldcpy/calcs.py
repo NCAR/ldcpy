@@ -130,7 +130,7 @@ class Datasetcalcs:
         self._annual_harmonic_relative_ratio = None
         self._w_e_first_differences = None
         self._n_s_first_differences = None
-        self._derivative = None
+        self._w_e_derivative = None
         self._percent_unique = None
         self._most_repeated = None
         self._most_repeated_pct = None
@@ -258,7 +258,7 @@ class Datasetcalcs:
         return self.max_val - self.min_val
 
     @property
-    def derivative(self) -> xr.DataArray:
+    def w_e_derivative(self) -> xr.DataArray:
         """
         Derivative of dataset from west-east
         """
@@ -957,8 +957,8 @@ class Datasetcalcs:
                 return self.w_e_first_differences
             if name == 'n_s_first_differences':
                 return self.n_s_first_differences
-            if name == 'derivative':
-                return self.derivative
+            if name == 'w_e_derivative':
+                return self.w_e_derivative
             if name == 'mean':
                 return self.mean
             if name == 'std':
