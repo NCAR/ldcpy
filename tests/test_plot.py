@@ -37,8 +37,8 @@ class TestPlot(TestCase):
         my_data = ds['TS'].sel(collection='orig')
         my_data.attrs['cell_measures'] = 'area: cell_area'
 
-        ds_calcs_across_time = ldcpy.Datasetcalcs(my_data, ['time'])
-        ds_calcs_across_space = ldcpy.Datasetcalcs(my_data, ['lat', 'lon'])
+        ds_calcs_across_time = ldcpy.Datasetcalcs(my_data, 'cam-fv', ['time'])
+        ds_calcs_across_space = ldcpy.Datasetcalcs(my_data, 'cam-fv', ['lat', 'lon'])
 
         ds_calcs_across_time.get_calc('mean')
         ds_calcs_across_space.get_calc('mean')
