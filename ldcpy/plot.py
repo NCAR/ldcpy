@@ -1050,9 +1050,8 @@ def plot(
     calc_names = []
     for i in range(len(datas)):
         if ds.variables.mapping.get('gw') is not None:
-            #calc_names.append(mp.get_calc_label(calc, datas[i], ds['gw'].values, ds.data_type))
+            # calc_names.append(mp.get_calc_label(calc, datas[i], ds['gw'].values, ds.data_type))
             calc_names.append(mp.get_calc_label(calc, datas[i], ds.data_type))
-
         else:
             calc_names.append(mp.get_calc_label(calc, datas[i], ds.data_type))
     # Get plot data and title
