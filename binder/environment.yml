@@ -15,7 +15,7 @@ dependencies:
   - ipywidgets
   - jupyter-offlinenotebook
   - jupyterlab>=3
-  - matplotlib-base
+  - matplotlib-base=3.3.3
   - ipython
   - netcdf4
   - nodejs
