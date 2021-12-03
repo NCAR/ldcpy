@@ -29,10 +29,12 @@ test_data_2 = xr.DataArray(
     ],
     dims=['lat', 'lon', 'time'],
 )
-test_overall_calcs = ldcpy.Datasetcalcs(test_data, ['time', 'lat', 'lon'], weighted=False)
-test_spatial_calcs = ldcpy.Datasetcalcs(test_data, ['time'], weighted=False)
-test_time_series_calcs = ldcpy.Datasetcalcs(test_data, ['lat', 'lon'], weighted=False)
-test_diff_calcs = ldcpy.Diffcalcs(test_data, test_data_2, ['time', 'lat', 'lon'], weighted=False)
+test_overall_calcs = ldcpy.Datasetcalcs(test_data, 'cam-fv', ['time', 'lat', 'lon'], weighted=False)
+test_spatial_calcs = ldcpy.Datasetcalcs(test_data, 'cam-fv', ['time'], weighted=False)
+test_time_series_calcs = ldcpy.Datasetcalcs(test_data, 'cam-fv', ['lat', 'lon'], weighted=False)
+test_diff_calcs = ldcpy.Diffcalcs(
+    test_data, test_data_2, 'cam-fv', ['time', 'lat', 'lon'], weighted=False
+)
 
 
 class TestErrorcalcs(TestCase):
@@ -87,6 +89,7 @@ class TestErrorcalcs(TestCase):
     def test_error_01(self):
         em = Datasetcalcs(
             xr.DataArray(self._samples[0]['observed']) - xr.DataArray(self._samples[0]['measured']),
+            'cam-fv',
             [],
             weighted=False,
         )
@@ -96,6 +99,7 @@ class TestErrorcalcs(TestCase):
     def test_mean_error_01(self):
         em = Datasetcalcs(
             xr.DataArray(self._samples[0]['observed']) - xr.DataArray(self._samples[0]['measured']),
+            'cam-fv',
             [],
             weighted=False,
         )
@@ -104,6 +108,7 @@ class TestErrorcalcs(TestCase):
     def test_mean_error_02(self):
         em = Datasetcalcs(
             xr.DataArray(self._samples[0]['observed'] - xr.DataArray(self._samples[0]['measured'])),
+            'cam-fv',
             [],
             weighted=False,
         )

@@ -36,10 +36,12 @@ test_data_2 = xr.DataArray(
     attrs={'long_name': 'Surface Potential'},
 )
 
-test_overall_calcs = ldcpy.Datasetcalcs(test_data, ['time', 'nlat', 'nlon'], weighted=False)
-test_spatial_calcs = ldcpy.Datasetcalcs(test_data, ['time'], weighted=False)
-test_time_series_calcs = ldcpy.Datasetcalcs(test_data, ['nlat', 'nlon'], weighted=False)
-test_diff_calcs = ldcpy.Diffcalcs(test_data, test_data_2, ['time', 'nlat', 'nlon'], weighted=False)
+test_overall_calcs = ldcpy.Datasetcalcs(test_data, 'pop', ['time', 'nlat', 'nlon'], weighted=False)
+test_spatial_calcs = ldcpy.Datasetcalcs(test_data, 'pop', ['time'], weighted=False)
+test_time_series_calcs = ldcpy.Datasetcalcs(test_data, 'pop', ['nlat', 'nlon'], weighted=False)
+test_diff_calcs = ldcpy.Diffcalcs(
+    test_data, test_data_2, 'pop', ['time', 'nlat', 'nlon'], weighted=False
+)
 
 
 class TestErrorcalcsPOP(TestCase):
@@ -118,6 +120,7 @@ class TestErrorcalcsPOP(TestCase):
     def test_error_01(self):
         em = Datasetcalcs(
             xr.DataArray(self._samples[0]['observed']) - xr.DataArray(self._samples[0]['measured']),
+            'pop',
             [],
             weighted=False,
         )
@@ -127,6 +130,7 @@ class TestErrorcalcsPOP(TestCase):
     def test_mean_error_01(self):
         em = Datasetcalcs(
             xr.DataArray(self._samples[0]['observed']) - xr.DataArray(self._samples[0]['measured']),
+            'pop',
             [],
             weighted=False,
         )
@@ -135,6 +139,7 @@ class TestErrorcalcsPOP(TestCase):
     def test_mean_error_02(self):
         em = Datasetcalcs(
             xr.DataArray(self._samples[0]['observed'] - xr.DataArray(self._samples[0]['measured'])),
+            'pop',
             [],
             weighted=False,
         )
