@@ -1,10 +1,10 @@
 import collections
+import os
 
 import cf_xarray as cf
 import dask
 import numpy as np
 import xarray as xr
-import os
 
 from .calcs import Datasetcalcs, Diffcalcs
 
@@ -137,7 +137,7 @@ def open_datasets(data_type, varnames, list_of_files, labels, **kwargs):
         myds = xr.open_dataset(myfile)
         sz[i] = myds.sizes['time']
         myds.close()
-        file_size[i] = os.path.getsize(myfile) 
+        file_size[i] = os.path.getsize(myfile)
     indx = np.unique(sz)
     assert indx.size == 1, 'ERROR: all files must have the same length time dimension'
 
@@ -235,7 +235,6 @@ def compare_stats(
     else:
         include_file_size = True
         fs_orig = file_size[0]
-        
 
     da.attrs['cell_measures'] = 'area: cell_area'
 
@@ -383,9 +382,8 @@ def compare_stats(
         if include_ssim:
             temp_ssim.append(diff_calcs[i].get_diff_calc('ssim'))
 
-        if include_file_size:     
-            temp_cr.append(round(fs_orig/file_size[i+1], 2))
-
+        if include_file_size:
+            temp_cr.append(round(fs_orig / file_size[i + 1], 2))
 
     df_dict2['normalized root mean squared diff'] = temp_nrms
     df_dict2['normalized max pointwise error'] = temp_max_pe
@@ -400,10 +398,8 @@ def compare_stats(
     if include_ssim:
         df_dict2['image SSIM'] = temp_ssim
 
-
-    if include_file_size:    
+    if include_file_size:
         df_dict2['file size ratio'] = temp_cr
-
 
     for d in df_dict2.keys():
         fo = [f'%.{significant_digits}g' % item for item in df_dict2[d]]
@@ -474,6 +470,7 @@ def check_metrics(
     quality measures to assess the impact of lossy data compression
     applied to climate simulation data”, Computer Graphics Forum 38(3),
     June 2019, pp. 517-528 (doi:10.1111/cgf.13707).
+
 
     Default tolerances for the tests are:
     ------------------------
