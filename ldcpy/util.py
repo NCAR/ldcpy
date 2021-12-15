@@ -59,7 +59,6 @@ def collect_datasets(data_type, varnames, list_of_ds, labels, **kwargs):
         weights_name = 'TAREA'
         varnames.append(weights_name)
 
-
     # preprocess
     for i, myds in enumerate(list_of_ds):
         list_of_ds[i] = preprocess(myds, varnames)
@@ -370,10 +369,9 @@ def compare_stats(
     temp_ssim = []
     temp_cr = []
 
-    #compare to the first set
+    # compare to the first set
     if include_file_size:
         fs_orig = file_size_dict[sets[0]]
-
 
     for i in range(num - 1):
         temp_nrms.append(diff_calcs[i].get_diff_calc('n_rms').data.compute())
@@ -477,7 +475,6 @@ def check_metrics(
     quality measures to assess the impact of lossy data compression
     applied to climate simulation data”, Computer Graphics Forum 38(3),
     June 2019, pp. 517-528 (doi:10.1111/cgf.13707).
-
 
     Default tolerances for the tests are:
     ------------------------
