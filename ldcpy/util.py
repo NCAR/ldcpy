@@ -1,4 +1,5 @@
 import collections
+import os
 
 import cf_xarray as cf
 import dask
@@ -81,6 +82,8 @@ def collect_datasets(data_type, varnames, list_of_ds, labels, **kwargs):
 
     print('dataset size in GB {:0.2f}\n'.format(full_ds.nbytes / 1e9))
     full_ds.attrs['data_type'] = data_type
+    full_ds.attrs['file_size'] = None
+
     return full_ds
 
 
@@ -129,10 +132,13 @@ def open_datasets(data_type, varnames, list_of_files, labels, **kwargs):
 
     # all must have the same time dimension
     sz = np.zeros(len(list_of_files))
+    file_size_dict = {}
     for i, myfile in enumerate(list_of_files):
         myds = xr.open_dataset(myfile)
         sz[i] = myds.sizes['time']
         myds.close()
+        fs = os.path.getsize(myfile)
+        file_size_dict[labels[i]] = fs
     indx = np.unique(sz)
     assert indx.size == 1, 'ERROR: all files must have the same length time dimension'
 
@@ -173,6 +179,7 @@ def open_datasets(data_type, varnames, list_of_files, labels, **kwargs):
     full_ds['collection'] = xr.DataArray(labels, dims='collection')
     print('dataset size in GB {:0.2f}\n'.format(full_ds.nbytes / 1e9))
     full_ds.attrs['data_type'] = data_type
+    full_ds.attrs['file_size'] = file_size_dict
 
     return full_ds
 
@@ -222,6 +229,12 @@ def compare_stats(
 
     da = ds[varname]
     data_type = ds.attrs['data_type']
+
+    file_size_dict = ds.attrs['file_size']
+    if file_size_dict is None:
+        include_file_size = False
+    else:
+        include_file_size = True
 
     da.attrs['cell_measures'] = 'area: cell_area'
 
@@ -354,6 +367,11 @@ def compare_stats(
     temp_max_spr = []
     temp_data_ssim = []
     temp_ssim = []
+    temp_cr = []
+
+    # compare to the first set
+    if include_file_size:
+        fs_orig = file_size_dict[sets[0]]
 
     for i in range(num - 1):
         temp_nrms.append(diff_calcs[i].get_diff_calc('n_rms').data.compute())
@@ -368,6 +386,10 @@ def compare_stats(
         if include_ssim:
             temp_ssim.append(diff_calcs[i].get_diff_calc('ssim'))
 
+        if include_file_size:
+            this_fs = file_size_dict[my_cols2[i]]
+            temp_cr.append(round(fs_orig / this_fs, 2))
+
     df_dict2['normalized root mean squared diff'] = temp_nrms
     df_dict2['normalized max pointwise error'] = temp_max_pe
     df_dict2['pearson correlation coefficient'] = temp_pcc
@@ -377,9 +399,12 @@ def compare_stats(
     df_dict2[tmp_str] = temp_sre
 
     df_dict2['max spatial relative error'] = temp_max_spr
-    df_dict2['Data SSIM'] = temp_data_ssim
+    df_dict2['data SSIM'] = temp_data_ssim
     if include_ssim:
-        df_dict2['Image SSIM'] = temp_ssim
+        df_dict2['image SSIM'] = temp_ssim
+
+    if include_file_size:
+        df_dict2['file size ratio'] = temp_cr
 
     for d in df_dict2.keys():
         fo = [f'%.{significant_digits}g' % item for item in df_dict2[d]]

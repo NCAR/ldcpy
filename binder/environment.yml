@@ -26,5 +26,6 @@ dependencies:
   - xarray
   - xrft
   - pandas
+  - pooch
   - pip:
       - -e ..

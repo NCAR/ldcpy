@@ -15,3 +15,4 @@ nodejs
 pandas
 astropy
 ipython
+pooch
