@@ -18,7 +18,7 @@ def combine_datasets(ds_list):
     return new_ds
 
 
-def open_datasets(data_type, varnames, list_of_files, labels, **kwargs):
+def open_datasets(data_type, varnames, list_of_files, labels, weights=True, **kwargs):
     """
     Open several different netCDF files, concatenate across
     a new 'collection' dimension, which can be accessed with the specified
@@ -64,10 +64,10 @@ def open_datasets(data_type, varnames, list_of_files, labels, **kwargs):
     def preprocess_vars(ds):
         return ds[varnames]
 
-    if data_type == 'cam-fv':
+    if data_type == 'cam-fv' and weights is True:
         weights_name = 'gw'
         varnames.append(weights_name)
-    elif data_type == 'pop':
+    elif data_type == 'pop' and weights is True:
         weights_name = 'TAREA'
         varnames.append(weights_name)
 
@@ -81,9 +81,9 @@ def open_datasets(data_type, varnames, list_of_files, labels, **kwargs):
         **kwargs,
     )
 
-    if data_type == 'pop':
+    if data_type == 'pop' and weights is True:
         full_ds.coords['cell_area'] = xr.DataArray(full_ds.variables.mapping.get(weights_name))[0]
-    else:
+    elif weights is True:
         full_ds.coords['cell_area'] = (
             xr.DataArray(full_ds.variables.mapping.get(weights_name))
             .expand_dims(lon=full_ds.dims['lon'])
@@ -92,7 +92,8 @@ def open_datasets(data_type, varnames, list_of_files, labels, **kwargs):
 
     full_ds.attrs['cell_measures'] = 'area: cell_area'
 
-    full_ds = full_ds.drop(weights_name)
+    if weights is True:
+        full_ds = full_ds.drop(weights_name)
 
     full_ds['collection'] = xr.DataArray(labels, dims='collection')
     print('dataset size in GB {:0.2f}\n'.format(full_ds.nbytes / 1e9))

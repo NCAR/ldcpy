@@ -1,3 +1,5 @@
+from unittest import TestCase
+
 import pytest
 import xarray as xr
 
@@ -35,14 +37,35 @@ air_temp = xr.tutorial.open_dataset('air_temperature')
         (ds3.isel(time=0, lev=0), 'T', ['orig', 'orig'], {'aggregate_dims': ['lat', 'lon']}),
     ],
 )
-def test_compare_stats(ds, varname, sets, calcs_kwargs):
-    ldcpy.compare_stats(ds, varname, sets, **calcs_kwargs)
+class TestUtil(TestCase):
+    def test_compare_stats(self, ds, varname, sets, calcs_kwargs):
+        ldcpy.compare_stats(ds, varname, sets, **calcs_kwargs)
 
+    @pytest.mark.parametrize(
+        'ds, kwargs',
+        [(air_temp, {'subset': 'winter', 'lat': 10}), (ds3, {'lev': 10, 'lat': 10, 'lon': 20})],
+    )
+    def test_subset_data(self, ds, kwargs):
+        s = subset_data(ds, **kwargs)
+        assert isinstance(s, xr.Dataset)
 
-@pytest.mark.parametrize(
-    'ds, kwargs',
-    [(air_temp, {'subset': 'winter', 'lat': 10}), (ds3, {'lev': 10, 'lat': 10, 'lon': 20})],
-)
-def test_subset_data(ds, kwargs):
-    s = subset_data(ds, **kwargs)
-    assert isinstance(s, xr.Dataset)
+    def test_open_datasets(self):
+        dataDir = '/Users/alex/Desktop/data'
+
+        # Original file name:
+        # b.e11.B20TRC5CNBDRD.f09_g16.030.cam.h1.{daily_variable}.19200101-20051231.nc
+        cols_daily = {}
+        for daily_variable in ['TS']:
+            cols_daily[daily_variable] = ldcpy.open_datasets(
+                'cam-fv',
+                [daily_variable],
+                [
+                    f'{dataDir}/orig.{daily_variable.lower()}.100.nc',
+                    f'{dataDir}/0.0001.{daily_variable.lower()}.100.nc',
+                    f'{dataDir}/0.001.{daily_variable.lower()}.100.nc',
+                    f'{dataDir}/0.01.{daily_variable.lower()}.100.nc',
+                    f'{dataDir}/0.1.{daily_variable.lower()}.100.nc',
+                ],
+                ['orig', '0001', '001', '01', '1'],
+            )
+        self.assertTrue(True)
