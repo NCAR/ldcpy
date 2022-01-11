@@ -45,7 +45,6 @@ ds_pointwise_calcs = ldcpy.Datasetcalcs(d, [], weighted=False)
 
 calc_ds = ds_pointwise_calcs.get_calc_ds('derivative', 'd')
 
-test_pointwise_calcs = ldcpy.Datasetcalcs(test_data, [], weighted=False)
 test_overall_calcs = ldcpy.Datasetcalcs(test_data, ['time', 'lat', 'lon'], weighted=False)
 test_spatial_calcs = ldcpy.Datasetcalcs(test_data, ['time'], weighted=False)
 test_time_series_calcs = ldcpy.Datasetcalcs(test_data, ['lat', 'lon'], weighted=False)
