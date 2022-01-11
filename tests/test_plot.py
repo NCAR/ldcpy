@@ -234,7 +234,7 @@ class TestPlot(TestCase):
             ds2,
             'PRECT',
             sets=['orig', 'recon'],
-            calc='derivative',
+            calc='w_e_derivative',
             color='binary',
             plot_type='spatial',
             tex_format=False,
