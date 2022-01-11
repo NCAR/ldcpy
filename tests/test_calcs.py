@@ -43,7 +43,7 @@ test_data_2 = xr.DataArray(
 d = ds['TS'].sel(collection='orig')
 ds_pointwise_calcs = ldcpy.Datasetcalcs(d, 'cam-fv', [], weighted=False)
 
-calc_ds = ds_pointwise_calcs.get_calc_ds('derivative', 'd')
+calc_ds = ds_pointwise_calcs.get_calc_ds('w_e_derivative', 'd')
 
 test_pointwise_calcs = ldcpy.Datasetcalcs(test_data, 'cam-fv', [], weighted=False)
 test_overall_calcs = ldcpy.Datasetcalcs(test_data, 'cam-fv', ['time', 'lat', 'lon'], weighted=False)
