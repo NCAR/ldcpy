@@ -12,7 +12,7 @@ dependencies:
   - intake-esm
   - jupyter_contrib_nbextensions
   - jupyterlab
-  - matplotlib-base
+  - matplotlib-base=3.3.3
   - netcdf4
   - numpy
   - opencv
@@ -31,4 +31,5 @@ dependencies:
   - cf_xarray
   - astropy
   - ipython
+  - pooch
   - statsmodels

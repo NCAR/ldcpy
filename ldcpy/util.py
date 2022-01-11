@@ -10,6 +10,88 @@ import xarray as xr
 from .calcs import Datasetcalcs, Diffcalcs
 
 
+def collect_datasets(data_type, varnames, list_of_ds, labels, **kwargs):
+    """
+    Concatonate several different xarray datasets across a new
+    "collection" dimension, which can be accessed with the specified
+    labels.  Stores them in an xarray dataset which can be passed to
+    the ldcpy plot functions (Call this OR open_datasets() before
+    plotting.)
+
+
+    Parameters
+    ==========
+    data_type: string
+        Current data types: :cam-fv, pop
+    varnames : list
+        The variable(s) of interest to combine across input files (usually just one)
+    list_of_datasets : list
+        The datasets to be concatonated into a collection
+    labels : list
+        The respective label to access data from each dataset (also used in plotting fcns)
+
+        **kwargs :
+        (optional) – Additional arguments passed on to xarray.concat(). A list of available arguments can
+        be found here: https://xarray-test.readthedocs.io/en/latest/generated/xarray.concat.html
+
+    Returns
+    =======
+    out : xarray.Dataset
+          a collection containing all the data from the list datasets
+
+    """
+    # Error checking:
+    # list_of_files and labels must be same length
+    assert len(list_of_ds) == len(
+        labels
+    ), 'ERROR:collect_dataset dataset list and labels arguments must be the same length'
+
+    # the number of timeslices must be the same
+    sz = np.zeros(len(list_of_ds))
+    for i, myds in enumerate(list_of_ds):
+        sz[i] = myds.sizes['time']
+    indx = np.unique(sz)
+    assert indx.size == 1, 'ERROR: all datasets must have the same length time dimension'
+
+    if data_type == 'cam-fv':
+        weights_name = 'gw'
+        varnames.append(weights_name)
+    elif data_type == 'pop':
+        weights_name = 'TAREA'
+        varnames.append(weights_name)
+
+    # preprocess_vars is here for working on jupyter hub...
+    def preprocess_vars(ds, varnames):
+        return ds[varnames]
+
+    # preprocess
+    for i, myds in enumerate(list_of_ds):
+        list_of_ds[i] = preprocess_vars(myds, varnames)
+
+    full_ds = xr.concat(list_of_ds, 'collection', **kwargs)
+
+    if data_type == 'pop':
+        full_ds.coords['cell_area'] = xr.DataArray(full_ds.variables.mapping.get(weights_name))[0]
+    else:
+        full_ds.coords['cell_area'] = (
+            xr.DataArray(full_ds.variables.mapping.get(weights_name))
+            .expand_dims(lon=full_ds.dims['lon'])
+            .transpose()
+        )
+
+    full_ds.attrs['cell_measures'] = 'area: cell_area'
+
+    full_ds = full_ds.drop(weights_name)
+
+    full_ds['collection'] = xr.DataArray(labels, dims='collection')
+
+    print('dataset size in GB {:0.2f}\n'.format(full_ds.nbytes / 1e9))
+    full_ds.attrs['data_type'] = data_type
+    full_ds.attrs['file_size'] = None
+
+    return full_ds
+
+
 def combine_datasets(ds_list):
     new_ds = ds_list[0]
     for ds in ds_list[1:]:
@@ -27,6 +109,8 @@ def open_datasets(data_type, varnames, list_of_files, labels, weights=True, **kw
 
     Parameters
     ==========
+    data_type: string
+        Current data types: :cam-fv, pop
     varnames : list
            The variable(s) of interest to combine across input files (usually just one)
     list_of_files : list
@@ -53,10 +137,13 @@ def open_datasets(data_type, varnames, list_of_files, labels, weights=True, **kw
 
     # all must have the same time dimension
     sz = np.zeros(len(list_of_files))
+    file_size_dict = {}
     for i, myfile in enumerate(list_of_files):
         myds = xr.open_dataset(myfile)
         sz[i] = myds.sizes['time']
         myds.close()
+        fs = os.path.getsize(myfile)
+        file_size_dict[labels[i]] = fs
     indx = np.unique(sz)
     assert indx.size == 1, 'ERROR: all files must have the same length time dimension'
 
@@ -98,6 +185,7 @@ def open_datasets(data_type, varnames, list_of_files, labels, weights=True, **kw
     full_ds['collection'] = xr.DataArray(labels, dims='collection')
     print('dataset size in GB {:0.2f}\n'.format(full_ds.nbytes / 1e9))
     full_ds.attrs['data_type'] = data_type
+    full_ds.attrs['file_size'] = file_size_dict
 
     for v in varnames[:-1]:
         new_ds = []
@@ -154,6 +242,13 @@ def compare_stats(
     # (this is done seperately to work with cf_xarray)
 
     da = ds[varname]
+    data_type = ds.attrs['data_type']
+
+    file_size_dict = ds.attrs['file_size']
+    if file_size_dict is None:
+        include_file_size = False
+    else:
+        include_file_size = True
 
     da.attrs['cell_measures'] = 'area: cell_area'
 
@@ -184,19 +279,21 @@ def compare_stats(
     da_set_calcs = []
     for i in range(num):
         da_set_calcs.append(
-            Datasetcalcs(da_sets[i], aggregate_dims, **calcs_kwargs, weighted=weighted)
+            Datasetcalcs(da_sets[i], data_type, aggregate_dims, **calcs_kwargs, weighted=weighted)
         )
 
     dd_set_calcs = []
     for i in range(num - 1):
         dd_set_calcs.append(
-            Datasetcalcs(dd_sets[i], aggregate_dims, **calcs_kwargs, weighted=weighted)
+            Datasetcalcs(dd_sets[i], data_type, aggregate_dims, **calcs_kwargs, weighted=weighted)
         )
 
     diff_calcs = []
     for i in range(1, num):
         diff_calcs.append(
-            Diffcalcs(da_sets[0], da_sets[i], aggregate_dims, **calcs_kwargs, weighted=weighted)
+            Diffcalcs(
+                da_sets[0], da_sets[i], data_type, aggregate_dims, **calcs_kwargs, weighted=weighted
+            )
         )
 
     # DATA FRAME
@@ -215,6 +312,9 @@ def compare_stats(
     temp_max = []
     temp_pos = []
     temp_zeros = []
+    temp_ac_lat = []
+    temp_ac_lon = []
+    temp_entropy = []
 
     for i in range(num):
         temp_mean.append(da_set_calcs[i].get_calc('mean').data.compute())
@@ -224,6 +324,10 @@ def compare_stats(
         temp_min.append(da_set_calcs[i].get_calc('min_val').data.compute())
         temp_pos.append(da_set_calcs[i].get_calc('prob_positive').data.compute())
         temp_zeros.append(da_set_calcs[i].get_calc('num_zero').data.compute())
+        if data_type == 'cam-fv':
+            temp_ac_lat.append(da_set_calcs[i].get_single_calc('lat_autocorr'))
+            temp_ac_lon.append(da_set_calcs[i].get_single_calc('lon_autocorr'))
+        temp_entropy.append(da_set_calcs[i].get_single_calc('entropy'))
 
     df_dict['mean'] = temp_mean
     df_dict['variance'] = temp_var
@@ -232,6 +336,10 @@ def compare_stats(
     df_dict['max value'] = temp_max
     df_dict['probability positive'] = temp_pos
     df_dict['number of zeros'] = temp_zeros
+    if data_type == 'cam-fv':
+        df_dict['spatial autocorr - latitude'] = temp_ac_lat
+        df_dict['spatial autocorr - longitude'] = temp_ac_lon
+    df_dict['entropy estimate'] = temp_entropy
 
     for d in df_dict.keys():
         fo = [f'%.{significant_digits}g' % item for item in df_dict[d]]
@@ -273,6 +381,11 @@ def compare_stats(
     temp_max_spr = []
     temp_data_ssim = []
     temp_ssim = []
+    temp_cr = []
+
+    # compare to the first set
+    if include_file_size:
+        fs_orig = file_size_dict[sets[0]]
 
     for i in range(num - 1):
         temp_nrms.append(diff_calcs[i].get_diff_calc('n_rms').data.compute())
@@ -287,6 +400,10 @@ def compare_stats(
         if include_ssim:
             temp_ssim.append(diff_calcs[i].get_diff_calc('ssim'))
 
+        if include_file_size:
+            this_fs = file_size_dict[my_cols2[i]]
+            temp_cr.append(round(fs_orig / this_fs, 2))
+
     df_dict2['normalized root mean squared diff'] = temp_nrms
     df_dict2['normalized max pointwise error'] = temp_max_pe
     df_dict2['pearson correlation coefficient'] = temp_pcc
@@ -296,9 +413,12 @@ def compare_stats(
     df_dict2[tmp_str] = temp_sre
 
     df_dict2['max spatial relative error'] = temp_max_spr
-    df_dict2['Data SSIM'] = temp_data_ssim
+    df_dict2['data SSIM'] = temp_data_ssim
     if include_ssim:
-        df_dict2['Image SSIM'] = temp_ssim
+        df_dict2['image SSIM'] = temp_ssim
+
+    if include_file_size:
+        df_dict2['file size ratio'] = temp_cr
 
     for d in df_dict2.keys():
         fo = [f'%.{significant_digits}g' % item for item in df_dict2[d]]
@@ -380,10 +500,12 @@ def check_metrics(
     """
 
     print(f'Evaluating 4 calcs for {set1} data (set1) and {set2} data (set2):')
+    data_type = ds.attrs['data_type']
     aggregate_dims = calcs_kwargs.pop('aggregate_dims', None)
     diff_calcs = Diffcalcs(
         ds[varname].sel(collection=set1),
         ds[varname].sel(collection=set2),
+        data_type,
         aggregate_dims,
         **calcs_kwargs,
         weighted=False,

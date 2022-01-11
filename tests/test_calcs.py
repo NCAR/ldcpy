@@ -104,6 +104,7 @@ class TestErrorcalcs(TestCase):
     def test_error_01(self):
         em = Datasetcalcs(
             xr.DataArray(self._samples[0]['observed']) - xr.DataArray(self._samples[0]['measured']),
+            'cam-fv',
             [],
             weighted=False,
         )
@@ -113,6 +114,7 @@ class TestErrorcalcs(TestCase):
     def test_mean_error_01(self):
         em = Datasetcalcs(
             xr.DataArray(self._samples[0]['observed']) - xr.DataArray(self._samples[0]['measured']),
+            'cam-fv',
             [],
             weighted=False,
         )
@@ -121,6 +123,7 @@ class TestErrorcalcs(TestCase):
     def test_mean_error_02(self):
         em = Datasetcalcs(
             xr.DataArray(self._samples[0]['observed'] - xr.DataArray(self._samples[0]['measured'])),
+            'cam-fv',
             [],
             weighted=False,
         )
