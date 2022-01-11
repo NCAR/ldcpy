@@ -41,9 +41,7 @@ test_data_2 = xr.DataArray(
     dims=['lat', 'lon', 'time'],
 )
 d = ds['TS'].sel(collection='orig')
-ds_pointwise_calcs = ldcpy.Datasetcalcs(d, [], weighted=False)
 
-calc_ds = ds_pointwise_calcs.get_calc_ds('derivative', 'd')
 
 test_overall_calcs = ldcpy.Datasetcalcs(test_data, ['time', 'lat', 'lon'], weighted=False)
 test_spatial_calcs = ldcpy.Datasetcalcs(test_data, ['time'], weighted=False)
@@ -147,10 +145,6 @@ class TestErrorcalcs(TestCase):
         TS = ds.TS
 
         print(type(TS))
-
-    def test_calc_ds(self):
-        ds_pointwise_calcs.get_calc_ds('derivative', 'test_deriv')
-        self.assertTrue(True)
 
     def test_mean(self):
         self.assertTrue(test_overall_calcs.mean == -0.5)
