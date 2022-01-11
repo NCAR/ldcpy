@@ -38,9 +38,6 @@ air_temp = xr.tutorial.open_dataset('air_temperature')
     ],
 )
 class TestUtil(TestCase):
-    def test_compare_stats(self, ds, varname, sets, calcs_kwargs):
-        ldcpy.compare_stats(ds, varname, sets, **calcs_kwargs)
-
     @pytest.mark.parametrize(
         'ds, kwargs',
         [(air_temp, {'subset': 'winter', 'lat': 10}), (ds3, {'lev': 10, 'lat': 10, 'lon': 20})],

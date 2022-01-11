@@ -152,7 +152,7 @@ class TestErrorcalcs(TestCase):
         print(type(TS))
 
     def test_calc_ds(self):
-        ds_pointwise_calcs.get_calc_ds('derivative', 'test_deriv')
+        ds_pointwise_calcs.get_calc_ds('w_e_derivative', 'test_deriv')
         self.assertTrue(True)
 
     def test_mean(self):
