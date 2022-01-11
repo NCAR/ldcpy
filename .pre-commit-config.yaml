@@ -15,13 +15,8 @@ repos:
     hooks:
       - id: black-jupyter
 
-  - repo: https://github.com/keewis/blackdoc
-    rev: v0.3.4
-    hooks:
-      - id: blackdoc
-
-  - repo: https://github.com/PyCQA/flake8
-    rev: 4.0.1
+  - repo: https://gitlab.com/pycqa/flake8
+    rev: 3.8.4
     hooks:
       - id: flake8
 

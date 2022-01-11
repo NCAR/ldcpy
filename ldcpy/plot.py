@@ -69,7 +69,6 @@ class calcsPlot(object):
         color='coolwarm',
         standardized_err=False,
         quantile=None,
-        calc_ssim=False,
         contour_levs=24,
         short_title=False,
         axes_symmetric=False,
@@ -78,6 +77,7 @@ class calcsPlot(object):
         tex_format=False,
         legend_offset=None,
         weighted=True,
+        basic_plot=False,
     ):
 
         self._ds = ds
@@ -102,7 +102,6 @@ class calcsPlot(object):
         self._color = color
         self._short_title = short_title
         self._quantile = quantile
-        self._calc_ssim = calc_ssim
         self._contour_levs = contour_levs
         self._axes_symmetric = axes_symmetric
         self._legend_loc = legend_loc
@@ -110,6 +109,7 @@ class calcsPlot(object):
         self._tex_format = tex_format
         self._legend_offset = legend_offset
         self._weighted = weighted
+        self._basic_plot = basic_plot
 
     def verify_plot_parameters(self):
         if len(self._sets) < 2 and self._calc_type in [
@@ -143,32 +143,28 @@ class calcsPlot(object):
         ]:
             raise ValueError(f'Cannot plot {self._calc} in a non-spatial plot')
 
-    def get_calcs(self, da):
+    def get_calcs(self, da, data_type):
         da_data = da
         da_data.attrs = da.attrs
 
         # lat/lon dim names are different for ocn and atm
         dd = da_data.cf[da_data.cf.coordinates['latitude'][0]].dims
 
-        ll = len(dd)
-        if ll == 1:
+        if data_type == 'cam-fv':  # 1d
             lat_dim = dd[0]
             lon_dim = da_data.cf['longitude'].dims[0]
-        elif ll == 2:
+        elif data_type == 'pop':  # 2d
             lat_dim = dd[0]
             lon_dim = dd[1]
 
         if self._plot_type in ['spatial']:
-            calcs_da = lm.Datasetcalcs(da_data, ['time'], weighted=self._weighted)
+            calcs_da = lm.Datasetcalcs(da_data, data_type, ['time'], weighted=self._weighted)
         elif self._plot_type in ['time_series', 'periodogram', 'histogram']:
-            calcs_da = lm.Datasetcalcs(da_data, [lat_dim, lon_dim], weighted=self._weighted)
+            calcs_da = lm.Datasetcalcs(
+                da_data, data_type, [lat_dim, lon_dim], weighted=self._weighted
+            )
         else:
             raise ValueError(f'plot type {self._plot_type} not supported')
-
-        if self._calc_ssim and self._plot_type != 'spatial':
-            warnings.warn(
-                'SSIM is only calculated for spatial plots, ignoring calc_ssim option', UserWarning
-            )
 
         raw_data = calcs_da.get_calc(self._calc, self._quantile, self._group_by)
 
@@ -281,7 +277,7 @@ class calcsPlot(object):
         update_label(None)
         return
 
-    def spatial_plot(self, da_sets, titles):
+    def spatial_plot(self, da_sets, titles, data_type):
 
         if self.vert_plot:
             nrows = int((da_sets.sets.size))
@@ -320,10 +316,9 @@ class calcsPlot(object):
         lat_coord_name = da_sets[0].cf.coordinates['latitude'][0]
 
         # is the lat/lon 1d or 2d (to do: set error if > 2)
-        latdim = da_sets[0].cf[lon_coord_name].ndim
 
         central = 0.0  # might make this a parameter later
-        if latdim == 2:  # probably pop
+        if data_type == 'pop':
             central = 300.0
 
         for i in range(da_sets.sets.size):
@@ -340,7 +335,7 @@ class calcsPlot(object):
             axs[i].set_facecolor('#39ff14')
 
             # make data periodic
-            if latdim == 2:
+            if data_type == 'pop':
                 ylon = da_sets[i][lon_coord_name]
                 lon_sets = np.hstack((ylon, ylon[:, 0:1]))
 
@@ -348,7 +343,7 @@ class calcsPlot(object):
                 lat_sets = np.hstack((xlat, xlat[:, 0:1]))
 
                 cy_datas = add_cyclic_point(da_sets[i])
-            else:  # 1d
+            elif data_type == 'cam-fv':  # 1d
                 ylon = da_sets[i][lon_coord_name]
                 lon_sets = np.hstack((ylon, ylon[0]))
                 lat_sets = da_sets[i][lat_coord_name]
@@ -366,15 +361,15 @@ class calcsPlot(object):
                 cmin.append(np.min(cyxr.where(cyxr != -np.inf).min()))
                 cmax.append(np.max(cyxr.where(cyxr != np.inf).max()))
 
-            if latdim == 2:
+            if data_type == 'pop':
                 no_inf_data_set = np.nan_to_num(cyxr.astype(np.float32), nan=np.nan)
-            else:
+            elif data_type == 'cam-fv':
                 ncyxr = cyxr.roll(dim_1=145)
                 no_inf_data_set = np.nan_to_num(ncyxr.astype(np.float32), nan=np.nan)
 
             # casting to float32 from float64 using imshow prevents lots of tiny black dots from showing up in some plots with lots of
             # zeroes. See plot of probability of negative PRECT to see this in action.
-            if latdim == 2:
+            if data_type == 'pop':
                 psets[i] = psets[i] = axs[i].pcolormesh(
                     lon_sets,
                     lat_sets,
@@ -382,30 +377,16 @@ class calcsPlot(object):
                     transform=ccrs.PlateCarree(),
                     cmap=mymap,
                 )
-            else:
+            elif data_type == 'cam-fv':
                 psets[i] = axs[i].imshow(
                     img=flipud(no_inf_data_set), transform=ccrs.PlateCarree(), cmap=mymap
                 )
 
-            # psets[i] = axs[i].imshow(
-            #    img=flipud(no_inf_data_set), transform=ccrs.PlateCarree(), cmap=mymap
-            # )
             axs[i].set_global()
 
-            # if we want to get the ssim
-            if self._calc_ssim:
-                axs[i].axis('off')
-                plt.margins(0, 0)
-                extent1 = axs[i].get_window_extent().transformed(fig.dpi_scale_trans.inverted())
-
-                axs[i].imshow
-                plt.savefig(f'tmp_ssim{i+1}', bbox_inches=extent1, transparent=True, pad_inches=0)
-                axs[i].axis('on')
-
-            # may need to be modified for other components
-            if latdim == 1:
+            if data_type == 'cam-fv':
                 axs[i].coastlines()
-            else:
+            elif data_type == 'pop':
                 axs[i].add_feature(
                     cartopy.feature.NaturalEarthFeature(
                         'physical',
@@ -417,7 +398,8 @@ class calcsPlot(object):
                     )
                 )
 
-            axs[i].set_title(tex_escape(titles[i]))
+            if self._basic_plot is False:
+                axs[i].set_title(tex_escape(titles[i]))
             del cy_datas
 
             # end of for loopon plots
@@ -439,89 +421,92 @@ class calcsPlot(object):
             psets[i].set_clim(color_min, color_max)
             pass
 
-        # add colorbar
-        if self.vert_plot is False:
-            fig.subplots_adjust(left=0.1, right=0.9, bottom=0.2, top=0.95)
+        if self._basic_plot is False:
+            # add colorbar
+            if self.vert_plot is False:
+                fig.subplots_adjust(left=0.1, right=0.9, bottom=0.2, top=0.95)
 
-        cbs = []
-        if not all_nan_flag:
-            cax = fig.add_axes([0.1, 0, 0.8, 0.05])
+            cbs = []
+            if not all_nan_flag:
+                cax = fig.add_axes([0.1, 0, 0.8, 0.05])
 
-            for i in range(len(psets)):
-                cbs.append(fig.colorbar(psets[i], cax=cax, orientation='horizontal', shrink=0.95))
-                cbs[i].ax.set_title(f'{da_sets[i].units}')
-                if self.vert_plot:
-                    cbs[i].ax.set_aspect(0.03)
-                    cbs[i].ax.set_anchor((0, 1.35 + 0.15 * (nrows - 1)))
-                else:
-                    cbs[i].ax.set_aspect(0.03)
-                    if len(psets) > 2:
+                for i in range(len(psets)):
+                    cbs.append(
+                        fig.colorbar(psets[i], cax=cax, orientation='horizontal', shrink=0.95)
+                    )
+                    cbs[i].ax.set_title(f'{da_sets[i].units}')
+                    if self.vert_plot:
+                        cbs[i].ax.set_aspect(0.03)
                         cbs[i].ax.set_anchor((0, 1.35 + 0.15 * (nrows - 1)))
                     else:
-                        cbs[i].ax.set_anchor((0.5, 1.35 + 0.15 * (nrows - 1)))
-                cbs[i].ax.tick_params(labelsize=8, rotation=30)
-            if nan_inf_flag:
+                        cbs[i].ax.set_aspect(0.03)
+                        if len(psets) > 2:
+                            cbs[i].ax.set_anchor((0, 1.35 + 0.15 * (nrows - 1)))
+                        else:
+                            cbs[i].ax.set_anchor((0.5, 1.35 + 0.15 * (nrows - 1)))
+                    cbs[i].ax.tick_params(labelsize=8, rotation=30)
+                if nan_inf_flag:
+                    proxy = [
+                        plt.Rectangle((0, 0), 1, 1, fc='#39ff14'),
+                        plt.Rectangle((0, 1), 2, 2, fc='#000000'),
+                        plt.Rectangle((0, 1), 2, 2, fc='#ffffff', edgecolor='black'),
+                    ]
+                    if self.vert_plot:
+                        plt.rcParams.update({'font.size': 8})
+                        plt.legend(
+                            proxy,
+                            ['NaN', '-Inf', 'Inf'],
+                            loc='lower center',
+                            bbox_to_anchor=(0.51, -6),
+                            ncol=len(proxy),
+                        )
+                    else:
+                        plt.rcParams.update({'font.size': 10})
+                        if len(psets) > 2:
+                            plt.legend(
+                                proxy,
+                                ['NaN', '-Inf', 'Inf'],
+                                bbox_to_anchor=(0.672, 4),
+                                ncol=len(proxy),
+                            )
+                        else:
+                            plt.legend(
+                                proxy,
+                                ['NaN', '-Inf', 'Inf'],
+                                bbox_to_anchor=(0.78, -2),
+                                ncol=len(proxy),
+                            )
+            else:
+                fig.add_axes([0.1, 0, 0.8, 0.05])
                 proxy = [
                     plt.Rectangle((0, 0), 1, 1, fc='#39ff14'),
                     plt.Rectangle((0, 1), 2, 2, fc='#000000'),
                     plt.Rectangle((0, 1), 2, 2, fc='#ffffff', edgecolor='black'),
                 ]
-                if self.vert_plot:
-                    plt.rcParams.update({'font.size': 8})
-                    plt.legend(
-                        proxy,
-                        ['NaN', '-Inf', 'Inf'],
-                        loc='lower center',
-                        bbox_to_anchor=(0.51, -6),
-                        ncol=len(proxy),
-                    )
-                else:
-                    plt.rcParams.update({'font.size': 10})
-                    if len(psets) > 2:
-                        plt.legend(
-                            proxy,
-                            ['NaN', '-Inf', 'Inf'],
-                            bbox_to_anchor=(0.672, 4),
-                            ncol=len(proxy),
-                        )
-                    else:
-                        plt.legend(
-                            proxy,
-                            ['NaN', '-Inf', 'Inf'],
-                            bbox_to_anchor=(0.78, -2),
-                            ncol=len(proxy),
-                        )
-        else:
-            fig.add_axes([0.1, 0, 0.8, 0.05])
-            proxy = [
-                plt.Rectangle((0, 0), 1, 1, fc='#39ff14'),
-                plt.Rectangle((0, 1), 2, 2, fc='#000000'),
-                plt.Rectangle((0, 1), 2, 2, fc='#ffffff', edgecolor='black'),
-            ]
-            plt.legend(proxy, ['NaN', '-Inf', 'Inf'], bbox_to_anchor=(0.87, 2), ncol=len(proxy))
-            plt.axis('off')
+                plt.legend(proxy, ['NaN', '-Inf', 'Inf'], bbox_to_anchor=(0.87, 2), ncol=len(proxy))
+                plt.axis('off')
 
-        if self._calc_ssim:
-            import os
+        # if self._calc_ssim:
+        #    import os
 
-            import skimage.io
-            from skimage.metrics import structural_similarity as ssim
+        #    import skimage.io
+        #    from skimage.metrics import structural_similarity as ssim
 
-            for i in range(1, len(da_sets)):
-                img1 = skimage.io.imread('tmp_ssim1.png')
-                img2 = skimage.io.imread(f'tmp_ssim{i+1}.png')
-                # ssim_val = ssim(img1, img2, multichannel=True)
-                ssim_val = ssim(
-                    img1,
-                    img2,
-                    multichannel=True,
-                    gaussian_weights=True,
-                    use_sample_covariance=False,
-                )
-                print(f' SSIM 1 & {i+1} = % 5.5f\n' % (ssim_val))
-            for i in range(len(da_sets) + 1):
-                if os.path.exists(f'tmp_ssim{i}.png'):
-                    os.remove(f'tmp_ssim{i}.png')
+        #    for i in range(1, len(da_sets)):
+        #        img1 = skimage.io.imread('tmp_ssim1.png')
+        #        img2 = skimage.io.imread(f'tmp_ssim{i+1}.png')
+
+        #        ssim_val = ssim(
+        #            img1,
+        #            img2,
+        #            multichannel=True,
+        #            gaussian_weights=True,
+        #            use_sample_covariance=False,
+        #        )
+        #        print(f' SSIM 1 & {i+1} = % 5.5f\n' % (ssim_val))
+        #    for i in range(len(da_sets) + 1):
+        #        if os.path.exists(f'tmp_ssim{i}.png'):
+        #            os.remove(f'tmp_ssim{i}.png')
 
     def hist_plot(self, plot_data, title):
         fig, axs = mpl.pyplot.subplots(1, 1, sharey=True, tight_layout=True)
@@ -701,14 +686,14 @@ class calcsPlot(object):
 
         mpl.pyplot.title(tex_escape(titles[0]))
 
-    def get_calc_label(self, calc, data):
+    def get_calc_label(self, calc, data, data_type):
         dd = data.cf[data.cf.coordinates['latitude'][0]].dims
 
-        ll = len(dd)
-        if ll == 1:
+        # ll = len(dd)
+        if data_type == 'cam-fv':  # 1D
             lat_dim = dd[0]
             lon_dim = data.cf['longitude'].dims[0]
-        elif ll == 2:
+        elif data_type == 'pop':  # 2D
             lat_dim = dd[0]
             lon_dim = dd[1]
 
@@ -716,17 +701,17 @@ class calcsPlot(object):
         if self._short_title is False:
             if calc == 'zscore':
                 zscore_cutoff = lm.Datasetcalcs(
-                    (data), ['time'], weighted=self._weighted
+                    (data), data_type, ['time'], weighted=self._weighted
                 ).get_single_calc('zscore_cutoff')
                 percent_sig = lm.Datasetcalcs(
-                    (data), ['time'], weighted=self._weighted
+                    (data), data_type, ['time'], weighted=self._weighted
                 ).get_single_calc('zscore_percent_significant')
                 calc_name = f'{calc}: cutoff {zscore_cutoff[0]:.2f}, % sig: {percent_sig:.2f}'
             elif calc == 'mean' and self._plot_type == 'spatial' and self._calc_type == 'raw':
 
                 if self._weighted:
                     a1_data = (
-                        lm.Datasetcalcs(data, ['time'], weighted=self._weighted)
+                        lm.Datasetcalcs(data, data_type, ['time'], weighted=self._weighted)
                         .get_calc(calc)
                         .cf.weighted('area')
                         .mean()
@@ -734,7 +719,7 @@ class calcsPlot(object):
                     )
                 else:
                     a1_data = (
-                        lm.Datasetcalcs(data, ['time'], weighted=self._weighted)
+                        lm.Datasetcalcs(data, data_type, ['time'], weighted=self._weighted)
                         .get_calc(calc)
                         .mean()
                         .data.compute()
@@ -756,21 +741,21 @@ class calcsPlot(object):
                 calc_name = f'{calc} = {a1_data:.2f}'
             elif calc == 'pooled_var_ratio':
                 pooled_sd = np.sqrt(
-                    lm.Datasetcalcs((data), ['time'], weighted=self._weighted).get_single_calc(
-                        'pooled_variance'
-                    )
+                    lm.Datasetcalcs(
+                        (data), data_type, ['time'], weighted=self._weighted
+                    ).get_single_calc('pooled_variance')
                 )
                 d = pooled_sd.data.compute()
                 calc_name = f'{calc}: pooled SD = {d:.2f}'
             elif calc == 'ann_harmonic_ratio':
-                p = lm.Datasetcalcs((data), ['time'], weighted=self._weighted).get_single_calc(
-                    'annual_harmonic_relative_ratio_pct_sig'
-                )
+                p = lm.Datasetcalcs(
+                    (data), data_type, ['time'], weighted=self._weighted
+                ).get_single_calc('annual_harmonic_relative_ratio_pct_sig')
                 calc_name = f'{calc}: % sig = {p:.2f}'
             elif self._plot_type == 'spatial':
                 if self._weighted:
                     a1_data = (
-                        lm.Datasetcalcs(data, ['time'], weighted=self._weighted)
+                        lm.Datasetcalcs(data, data_type, ['time'], weighted=self._weighted)
                         .get_calc(calc)
                         .cf.weighted('area')
                         .mean()
@@ -778,7 +763,7 @@ class calcsPlot(object):
                     )
                 else:
                     a1_data = (
-                        lm.Datasetcalcs(data, ['time'], weighted=self._weighted)
+                        lm.Datasetcalcs(data, data_type, ['time'], weighted=self._weighted)
                         .get_calc(calc)
                         .mean()
                         .data.compute()
@@ -788,14 +773,18 @@ class calcsPlot(object):
             elif self._plot_type == 'time_series':
                 if self._weighted:
                     a1_data = (
-                        lm.Datasetcalcs(data, [lat_dim, lon_dim], weighted=self._weighted)
+                        lm.Datasetcalcs(
+                            data, data_type, [lat_dim, lon_dim], weighted=self._weighted
+                        )
                         .get_calc(calc)
                         .mean()
                         .data.compute()
                     )
                 else:
                     a1_data = (
-                        lm.Datasetcalcs(data, [lat_dim, lon_dim], weighted=self._weighted)
+                        lm.Datasetcalcs(
+                            data, data_type, [lat_dim, lon_dim], weighted=self._weighted
+                        )
                         .get_calc(calc)
                         .mean()
                         .data.compute()
@@ -828,7 +817,6 @@ def plot(
     quantile=None,
     start=None,
     end=None,
-    calc_ssim=False,
     short_title=False,
     axes_symmetric=False,
     legend_loc='upper right',
@@ -836,6 +824,7 @@ def plot(
     tex_format=False,
     legend_offset=None,
     weighted=True,
+    basic_plot=False,
 ):
     """
     Plots the data given an xarray dataset
@@ -983,7 +972,6 @@ def plot(
         lev,
         color,
         quantile,
-        calc_ssim=calc_ssim,
         legend_loc=legend_loc,
         axes_symmetric=axes_symmetric,
         short_title=short_title,
@@ -991,6 +979,7 @@ def plot(
         tex_format=tex_format,
         legend_offset=legend_offset,
         weighted=weighted,
+        basic_plot=basic_plot,
     )
 
     plt.rcParams.update(
@@ -1027,10 +1016,14 @@ def plot(
 
     if 'collection' in ds[varname].dims:
         if sets is not None:
+            i = 0
             for set in sets:
                 dss.append(ds[varname].sel(collection=set))
+                dss[i].attrs['data_type'] = ds.data_type
+                dss[i].attrs['set_name'] = set
     else:
         dss.append(ds[varname])
+        dss[0].attrs['data_type'] = ds.data_type
 
     subsets = []
     if sets is not None:
@@ -1050,35 +1043,38 @@ def plot(
         if subsets is not None:
             for i in range(len(subsets)):
                 datas.append(subsets[i])
+                datas[i - 1].attrs = subsets[0].attrs
 
     raw_calcs = []
 
     for d in datas:
-        raw_calcs.append(mp.get_calcs(d))
+        raw_calcs.append(mp.get_calcs(d, ds.data_type))
 
     # get lat/lon coordinate names:
     if ds.data_type == 'pop':
         lon_coord_name = datas[0].cf[datas[0].cf.coordinates['longitude'][0]].dims[1]
         lat_coord_name = datas[0].cf[datas[0].cf.coordinates['latitude'][0]].dims[0]
-    else:
+    elif ds.data_type == 'cam-fv':  # cam-fv
         lat_coord_name = datas[0].cf[datas[0].cf.coordinates['latitude'][0]].dims[0]
         lon_coord_name = datas[0].cf[datas[0].cf.coordinates['longitude'][0]].dims[0]
-
+    else:
+        print('ERROR: unknown data type')
     # Get calc names/values for plot title
     calc_names = []
     for i in range(len(datas)):
         if ds.variables.mapping.get('gw') is not None:
-            calc_names.append(mp.get_calc_label(calc, datas[i], ds['gw'].values))
+            # calc_names.append(mp.get_calc_label(calc, datas[i], ds['gw'].values, ds.data_type))
+            calc_names.append(mp.get_calc_label(calc, datas[i], ds.data_type))
         else:
-            calc_names.append(mp.get_calc_label(calc, datas[i]))
+            calc_names.append(mp.get_calc_label(calc, datas[i], ds.data_type))
     # Get plot data and title
     if lat is not None and lon is not None:
         # is this a 1D of 2D lat/lon?
-        dd = subsets[0].cf['latitude'].dims
-        if len(dd) == 1:
+        # dd = subsets[0].cf['latitude'].dims
+        if ds.data_type == 'cam-fv':  # 1D
             mp.title_lat = subsets[0][lat_coord_name].data[0]
             mp.title_lon = subsets[0][lon_coord_name].data[0] - 180
-        else:  # 2
+        elif ds.data_type == 'pop':  # 2D
             # lon should be 0- 360
             mylat = subsets[0][lat_coord_name].data[0]
             mylon = subsets[0][lon_coord_name].data[0]
@@ -1086,6 +1082,9 @@ def plot(
                 mylon = mylon + 360
             mp.title_lat = mylat
             mp.title_lon = mylon
+        else:
+            print('ERROR: unknown data type')
+
     else:
         mp.title_lat = lat
         mp.title_lon = lon
@@ -1122,7 +1121,7 @@ def plot(
 
     # Call plot functions
     if plot_type == 'spatial':
-        mp.spatial_plot(plot_dataset, titles)
+        mp.spatial_plot(plot_dataset, titles, ds.data_type)
     elif plot_type == 'time_series':
         mp.time_series_plot(plot_dataset, titles)
     elif plot_type == 'histogram':

@@ -8,7 +8,7 @@ dependencies:
   - codecov
   - dask
   - intake-esm
-  - matplotlib-base
+  - matplotlib-base=3.3.3
   - netcdf4
   - pip
   - pytest
@@ -19,6 +19,8 @@ dependencies:
   - astropy
   - jupyterlab
   - ipython
+  - pooch
+  - statsmodels
   - pip:
       - git+https://github.com/pydata/xarray.git
       - git+https://github.com/xarray-contrib/cf-xarray.git

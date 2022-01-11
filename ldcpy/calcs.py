@@ -1,4 +1,5 @@
 import copy
+import gzip
 from math import exp, pi, sqrt
 from typing import Optional
 
@@ -6,6 +7,8 @@ import cf_xarray as cf
 import dask
 import matplotlib as mpl
 import numpy as np
+import pandas as pd
+import statsmodels.api as sm
 import xarray as xr
 from cartopy import crs as ccrs
 from cartopy.util import add_cyclic_point
@@ -14,6 +17,8 @@ from scipy import stats as ss
 from scipy.ndimage import gaussian_filter
 from skimage.util import crop
 from xrft import dft
+
+from .collect_datasets import collect_datasets
 
 xr.set_options(keep_attrs=True)
 
@@ -27,6 +32,7 @@ class Datasetcalcs:
     def __init__(
         self,
         ds: xr.DataArray,
+        data_type: str,
         aggregate_dims: list,
         time_dim_name: str = 'time',
         lat_dim_name: str = None,
@@ -59,17 +65,20 @@ class Datasetcalcs:
         self._lat_coord_name = lat_coord_name
 
         dd = ds.cf[ds.cf.coordinates['latitude'][0]].dims
+
         ll = len(dd)
-        if ll == 1:
+        if data_type == 'cam-fv':  # ll == 1:
             if lat_dim_name is None:
                 lat_dim_name = dd[0]
             if lon_dim_name is None:
                 lon_dim_name = ds.cf['longitude'].dims[0]
-        elif ll == 2:
+        elif data_type == 'pop':  # ll == 2:
             if lat_dim_name is None:
                 lat_dim_name = dd[0]
             if lon_dim_name is None:
                 lon_dim_name = dd[1]
+        else:
+            print('Warning: unknown data_type: ', data_type)
 
         self._latlon_dims = ll
         self._lat_dim_name = lat_dim_name
@@ -89,6 +98,7 @@ class Datasetcalcs:
         self._spre_tol = spre_tol
         self._agg_dims = aggregate_dims
         self._frame_size = 1
+        self._data_type = data_type
 
         # array calcs
         self._weighted = weighted
@@ -124,6 +134,18 @@ class Datasetcalcs:
         self._max_val = None
         self._grouping = None
         self._annual_harmonic_relative_ratio = None
+        self._lon_autocorr = None
+        self._lat_autocorr = None
+        self._lev_autocorr = None
+        self._entropy = None
+        self._w_e_first_differences = None
+        self._n_s_first_differences = None
+        self._w_e_derivative = None
+        self._percent_unique = None
+        self._most_repeated = None
+        self._most_repeated_pct = None
+        self._cdf = None
+        self._dtype = ds.dtype
 
         # single value calcs
         self._zscore_cutoff = None
@@ -136,7 +158,6 @@ class Datasetcalcs:
         else:
             dp = np.count_nonzero(~np.isnan(self._ds))
             self._frame_size = dp
-            # print(self._frame_size)
 
     def _is_memoized(self, calc_name: str) -> bool:
         return hasattr(self, calc_name) and (self.__getattribute__(calc_name) is not None)
@@ -160,6 +181,10 @@ class Datasetcalcs:
         return con_var
 
     @property
+    def dtype(self) -> xr.DataArray:
+        return self._dtype
+
+    @property
     def pooled_variance(self) -> xr.DataArray:
         """
         The overall variance of the dataset
@@ -176,6 +201,82 @@ class Datasetcalcs:
                 self._pooled_variance_mean.attrs['units'] = f'{self._ds.units}$^2$'
 
         return self._pooled_variance_mean
+
+    @property
+    def w_e_first_differences(self) -> xr.DataArray:
+        """
+        First differences along the west-east direction
+        """
+        if not self._is_memoized('_w_e_first_differences'):
+            # self._first_differences = self._ds.diff('lat').mean(self._agg_dims)
+            self._w_e_first_differences = self._ds.roll(
+                {'lat': -1}, roll_coords=False
+            ) - self._ds.roll({'lat': 1}, roll_coords=False)
+        self._w_e_first_differences.attrs = self._ds.attrs
+
+        return self._w_e_first_differences.mean(self._agg_dims)
+
+    @property
+    def n_s_first_differences(self) -> xr.DataArray:
+        """
+        First differences along the west-east direction
+        """
+        if not self._is_memoized('_n_s_first_differences'):
+            self._n_s_first_differences = self._ds.diff('lon').mean(self._agg_dims)
+            # self._first_differences = self._ds.roll({"lon": -1}, roll_coords=False) - self._ds.roll({"lat": 1},                                                                                        roll_coords=False)
+        self._n_s_first_differences.attrs = self._ds.attrs
+        return self._n_s_first_differences
+
+    @property
+    def percent_unique(self) -> xr.DataArray:
+        """
+        Percentage of unique values in the dataset
+        """
+        if not self._is_memoized('_percent_unique'):
+            count_unique = len(pd.unique(self._ds.values.flatten()))
+            count_all = len(self._ds.values.flatten())
+            self._percent_unique = count_unique / count_all
+
+        return self._percent_unique
+
+    @property
+    def most_repeated(self) -> xr.DataArray:
+        """
+        Most repeated value in dataset
+        """
+        if not self._is_memoized('_most_repeated'):
+            self._most_repeated = ss.mode(self._ds.values.flatten())[0][0]
+        return self._most_repeated
+
+    @property
+    def most_repeated_percent(self) -> xr.DataArray:
+        """
+        Most repeated value in dataset
+        """
+        if not self._is_memoized('_most_repeated_pct'):
+            self._most_repeated_pct = ss.mode(self._ds.values.flatten())[1][0] / len(
+                self._ds.values.flatten()
+            )
+        return self._most_repeated_pct
+
+    @property
+    def range(self) -> xr.DataArray:
+        """
+        The range of the dataset
+        """
+        return self.max_val - self.min_val
+
+    @property
+    def w_e_derivative(self) -> xr.DataArray:
+        """
+        Derivative of dataset from west-east
+        """
+
+        if not self._is_memoized('_derivative'):
+            self._derivative = self._ds.differentiate('lon').mean(self._agg_dims)
+        self._derivative.attrs = self._ds.attrs
+
+        return self._derivative
 
     @property
     def ns_con_var(self) -> xr.DataArray:
@@ -226,6 +327,105 @@ class Datasetcalcs:
                 self._ew_con_var_mean.attrs['units'] = f'{self._ds.units}$^2$'
 
         return self._ew_con_var_mean
+
+    @property
+    def lat_autocorr(self) -> xr.DataArray:
+        """
+        Autocorrelation: the correlation of a variable with itself shifted in the latitude dimension
+        """
+        if not self._is_memoized('_lat_autocorr'):
+            dims = self._ds.dims
+            lat_dim_name = self._lat_dim_name
+            if lat_dim_name not in dims:
+                print('error: latitude not found for autocorrelation')
+                self._lat_autocorr = 0
+            else:
+                idx = dims.index(lat_dim_name)
+                sz = self._ds.sizes[lat_dim_name]
+                y_lat = np.roll(self._ds, -1, axis=idx)
+                x_lat = self._ds
+                # this one (longitude) should not wrap
+                yd_lat = np.delete(y_lat, sz - 1, axis=idx)
+                xd_lat = np.delete(x_lat, sz - 1, axis=idx)
+                y_lat_r = np.ravel(yd_lat)
+                x_lat_r = np.ravel(xd_lat)
+                aa = np.corrcoef(x_lat_r, y_lat_r)[0, 1]
+                self._lat_autocorr = aa
+
+        return self._lat_autocorr
+
+    @property
+    def lon_autocorr(self) -> xr.DataArray:
+        """
+        Autocorrelation: the correlation of a variable with itself shifted in the longitude dimension
+        """
+        if not self._is_memoized('_lon_autocorr'):
+            dims = self._ds.dims
+            lon_dim_name = self._lon_dim_name
+            if lon_dim_name not in dims:
+                print('error: longitude not found for autocorrelation')
+                self._lon_autocorr = 0
+            else:
+                idx = dims.index(lon_dim_name)
+                y_lon = np.roll(self._ds, -1, axis=idx)
+                x_lon = self._ds
+                y_lon_r = np.ravel(y_lon)
+                x_lon_r = np.ravel(x_lon)
+                aa = np.corrcoef(x_lon_r, y_lon_r)[0, 1]
+                self._lon_autocorr = aa
+
+        return self._lon_autocorr
+
+    @property
+    def lev_autocorr(self) -> xr.DataArray:
+        """
+        Autocorrelation: the correlation of a variable with itself shifted in the vertical dimension
+        """
+        if not self._is_memoized('_lev_autocorr'):
+            dims = self._ds.dims
+            vert_dim_name = self._vert_dim_name
+            if vert_dim_name not in dims:
+                print('error: vertical (lev) not found for autocorrelation')
+                self._lon_autocorr = 0
+            else:
+                idx = dims.index(vert_dim_name)
+                sz = self._ds.sizes[vert_dim_name]
+                # print(idx)
+                y = np.roll(self._ds, -1, axis=idx)
+                x = self._ds
+                # this one (vert level) should not wrap
+                yd = np.delete(y, sz - 1, axis=idx)
+                xd = np.delete(x, sz - 1, axis=idx)
+                yd_r = np.ravel(yd)
+                xd_r = np.ravel(xd)
+                aa = np.corrcoef(xd_r, yd_r)[0, 1]
+
+                self._lev_autocorr = aa
+
+        return self._lev_autocorr
+
+    @property
+    def entropy(self) -> xr.DataArray:
+        """
+        An estimate for the entropy of the data (using gzip)
+        # lower is better (1.0 means random - no compression possible)
+        """
+        if not self._is_memoized('_entropy'):
+
+            a1 = self._ds.data
+            if dask.is_dask_collection(a1):
+                a1 = a1.compute()
+
+            cc = gzip.compress(a1)
+            dd = gzip.decompress(cc)
+            cl = len(cc)
+            dl = len(dd)
+            if dl > 0:
+                e = cl / dl
+            else:
+                e = 0.0
+            self._entropy = e
+        return self._entropy
 
     @property
     def mean(self) -> xr.DataArray:
@@ -544,6 +744,18 @@ class Datasetcalcs:
         return self._mae_day_max
 
     @property
+    def cdf(self) -> xr.DataArray:
+        """
+        The empirical CDF of the dataset.
+        """
+        if not self._is_memoized('_cdf'):
+            # ecfd = sm.distributions.ECDF(self._ds)
+            x = np.linspace(min(self._ds), max(self._ds))
+            self._cdf = sm.distributions.ECDF(self._ds)(x)
+
+        return self._cdf
+
+    @property
     def quantile(self):
         return self._quantile
 
@@ -817,6 +1029,15 @@ class Datasetcalcs:
 
             return self._zscore_percent_significant
 
+    def get_calc_ds(self, calc_name: str, var_name: str) -> xr.Dataset:
+        da = self.get_calc(calc_name)
+        ds = da.squeeze().to_dataset(name=var_name, promote_attrs=True)
+        ds.attrs['data_type'] = da.data_type
+        # new_ds = collect_datasets(self._ds.data_type, [var_name], [ds],
+        #                                [self._ds.set_name])
+        # new_ds = new_ds.astype(self.dtype)
+        return ds
+
     def get_calc(self, name: str, q: Optional[int] = 0.5, grouping: Optional[str] = None, ddof=1):
         """
         Gets a calc aggregated across one or more dimensions of the dataset
@@ -835,11 +1056,18 @@ class Datasetcalcs:
             A DataArray of the same size and dimensions the original dataarray,
             minus those dimensions that were aggregated across.
         """
+
         if isinstance(name, str):
             if name == 'ns_con_var':
                 return self.ns_con_var
             if name == 'ew_con_var':
                 return self.ew_con_var
+            if name == 'w_e_first_differences':
+                return self.w_e_first_differences
+            if name == 'n_s_first_differences':
+                return self.n_s_first_differences
+            if name == 'w_e_derivative':
+                return self.w_e_derivative
             if name == 'mean':
                 return self.mean
             if name == 'std':
@@ -873,6 +1101,8 @@ class Datasetcalcs:
                 return self.mean_abs
             if name == 'mean_squared':
                 return self.mean_squared
+            if name == 'range':
+                return self.range
             if name == 'rms':
                 return self.root_mean_squared
             if name == 'sum':
@@ -896,6 +1126,8 @@ class Datasetcalcs:
                 return self.max_val
             if name == 'min_val':
                 return self.min_val
+            if name == 'cdf':
+                return self.cdf
             if name == 'ds':
                 return self._ds
             raise ValueError(f'there is no calc with the name: {name}.')
@@ -921,6 +1153,14 @@ class Datasetcalcs:
                 return self.zscore_cutoff
             if name == 'zscore_percent_significant':
                 return self.zscore_percent_significant
+            if name == 'lat_autocorr':
+                return self.lat_autocorr
+            if name == 'lon_autocorr':
+                return self.lon_autocorr
+            if name == 'lev_autocorr':
+                return self.lev_autocorr
+            if name == 'entropy':
+                return self.entropy
             if name == 'range':
                 return self.dyn_range
             if name == 'spre_tol':
@@ -929,6 +1169,12 @@ class Datasetcalcs:
                 return self.pooled_variance
             if name == 'annual_harmonic_relative_ratio_pct_sig':
                 return self.annual_harmonic_relative_ratio_pct_sig
+            if name == 'percent_unique':
+                return self.percent_unique
+            if name == 'most_repeated':
+                return self.most_repeated
+            if name == 'most_repeated_percent':
+                return self.most_repeated_percent
             raise ValueError(f'there is no calcs with the name: {name}.')
         else:
             raise TypeError('name must be a string.')
@@ -943,6 +1189,7 @@ class Diffcalcs:
         self,
         ds1: xr.DataArray,
         ds2: xr.DataArray,
+        data_type: str,
         aggregate_dims: Optional[list] = None,
         **calcs_kwargs,
     ) -> None:
@@ -955,8 +1202,9 @@ class Diffcalcs:
                 f'ds must be of type xarray.DataArray. Type(s): {str(type(ds1))} {str(type(ds2))}'
             )
 
-        self._calcs1 = Datasetcalcs(self._ds1, aggregate_dims, **calcs_kwargs)
-        self._calcs2 = Datasetcalcs(self._ds2, aggregate_dims, **calcs_kwargs)
+        self._calcs1 = Datasetcalcs(self._ds1, data_type, aggregate_dims, **calcs_kwargs)
+        self._calcs2 = Datasetcalcs(self._ds2, data_type, aggregate_dims, **calcs_kwargs)
+        self._data_type = data_type
         self._aggregate_dims = aggregate_dims
         self._pcc = None
         self._covariance = None
@@ -965,15 +1213,15 @@ class Diffcalcs:
         self._n_emax = None
         self._spatial_rel_error = None
         self._ssim_value = None  # uses images
-        self._ssim_value_fp_old = None  # like the old zchecker one
-        self._ssim_value_fp_fast = None  # faster use - use this for Data SSIM
-        self._ssim_value_fp_fast2 = None  # orig faster version
-        self._ssim_value_fp_orig = None  # slower version
+        self._ssim_value_fp_orig = (
+            None  # "straightforward" version for floating points - not recommended
+        )
+        self._ssim_value_fp_fast = None  # faster Data SSIM - the default
+        self._ssim_value_fp_slow = None  # slower non-matrix version of DSSIM - for experimenting
         self._max_spatial_rel_error = None
         self._ssim_mat_fp = None
         self._ssim_mat = None
         self._ssim_mat_fp_orig = None
-        self._ssim_mat_fp_fast2 = None
 
     def _is_memoized(self, calc_name: str) -> bool:
         return hasattr(self, calc_name) and (self.__getattribute__(calc_name) is not None)
@@ -1025,10 +1273,6 @@ class Diffcalcs:
             if self._ssim_value_fp_orig is None:
                 self.ssim_value_fp_orig
             mats = self._ssim_mat_fp_orig
-        elif ssim_type == 'ssim_fp_fast2':
-            if self._ssim_value_fp_fast2 is None:
-                self.ssim_value_fp_fast2
-            mats = self._ssim_mat_fp_fast2
         else:
             if self._ssim_value_fp_fast is None:
                 self.ssim_value_fp_fast
@@ -1233,6 +1477,7 @@ class Diffcalcs:
     def ssim_value(self):
         """
         We compute the SSIM (structural similarity index) on the visualization of the spatial data.
+        This creates two plots and uses the standard SSIM.
         """
 
         import tempfile
@@ -1255,12 +1500,12 @@ class Diffcalcs:
             lon1 = d1[self._calcs1._lon_coord_name]
             lon2 = d2[self._calcs2._lon_coord_name]
 
-            latdim = d1.cf[self._calcs1._lon_coord_name].ndim
+            # latdim = d1.cf[self._calcs1._lon_coord_name].ndim
             central = 0.0  # might make this a parameter later
-            if latdim == 2:  # probably pop
+            if self._data_type == 'pop':
                 central = 300.0
             # make periodic
-            if latdim == 2:
+            if self._data_type == 'pop':
                 cy_lon1 = np.hstack((lon1, lon1[:, 0:1]))
                 cy_lon2 = np.hstack((lon2, lon2[:, 0:1]))
 
@@ -1270,7 +1515,7 @@ class Diffcalcs:
                 cy1 = add_cyclic_point(d1)
                 cy2 = add_cyclic_point(d2)
 
-            else:  # 1d
+            else:  # cam-fv
                 cy1, cy_lon1 = add_cyclic_point(d1, coord=lon1)
                 cy2, cy_lon2 = add_cyclic_point(d2, coord=lon2)
                 cy_lat1 = lat1
@@ -1298,7 +1543,7 @@ class Diffcalcs:
                 np.max(d2.where(d2 != np.inf)).values.max(),
             )
 
-            mymap = copy.copy(plt.cm.get_cmap('coolwarm'))
+            mymap = copy.copy(plt.cm.get_cmap(self.color))
             mymap.set_under(color='black')
             mymap.set_over(color='white')
             mymap.set_bad(alpha=0)
@@ -1318,7 +1563,7 @@ class Diffcalcs:
                         this_no_inf_d1 = no_inf_d1
                         this_no_inf_d2 = no_inf_d2
                     else:
-                        # this assumes time level is first (TO DO: verify)
+                        # this assumes 3D level is first (TO DO: verify)
                         this_no_inf_d1 = no_inf_d1[this_lev, :, :]
                         this_no_inf_d2 = no_inf_d2[this_lev, :, :]
 
@@ -1401,15 +1646,14 @@ class Diffcalcs:
         return self._ssim_value
 
     @property
-    def ssim_value_fp_orig(self):
+    def ssim_value_fp_slow(self):
         """
         We compute the SSIM (structural similarity index) on the spatial data
-        - using the data itself (we do not create an image).
-
-        Here we scale from [0,1] - then quantize to 256 bins
+        - using the data itself (we do not create an image) - this is the slower
+        non-matrix implementation that is good for experiementing (not in practice).
 
         """
-        if not self._is_memoized('_ssim_value_fp'):
+        if not self._is_memoized('_ssim_value_fp_slow'):
 
             # if this is a 3D variable, we will do each level seperately
             if self._calcs1._vert_dim_name is not None:
@@ -1472,7 +1716,7 @@ class Diffcalcs:
                 # init ssim matrix
                 ssim_mat = np.zeros_like(sc_a1)
 
-                my_eps = 1.0e-15
+                my_eps = 1.0e-8
 
                 # DATA LOOP
                 # go through 2D arrays - each grid point x0, y0  has
@@ -1555,6 +1799,9 @@ class Diffcalcs:
                         ssim_2 = ssim_t2 / ssim_b2
                         ssim_mat[i, j] = ssim_1 * ssim_2
 
+                # add cropping
+                ssim_mat = crop(ssim_mat, k)
+
                 mean_ssim = np.nanmean(ssim_mat)
                 ssim_levs[this_lev] = mean_ssim
                 ssim_mats_array.append(ssim_mat)
@@ -1562,124 +1809,14 @@ class Diffcalcs:
             return_ssim = ssim_levs.min()
             self._ssim_value_fp_orig = return_ssim
             # save full matrix
-            self._ssim_mat_fp_orig = ssim_mats_array
+            self._ssim_mat_fp_slow = ssim_mats_array
 
-        return self._ssim_value_fp_orig
-
-    @property
-    def ssim_value_fp_fast2(self):
-        """
-        Faster implementation then ssim_value_fp_orig
-        Use other version below - not this one
-
-        """
-        from astropy.convolution import Gaussian2DKernel, convolve, interpolate_replace_nans
-
-        if not self._is_memoized('_ssim_value_fp_fast2'):
-
-            # if this is a 3D variable, we will do each level seperately
-            if self._calcs1._vert_dim_name is not None:
-                vname = self._calcs1._vert_dim_name
-                if vname not in self._calcs1.get_calc('ds').sizes:
-                    nlevels = 1
-                else:
-                    nlevels = self._calcs1.get_calc('ds').sizes[vname]
-            else:
-                nlevels = 1
-
-            ssim_levs = np.zeros(nlevels)
-            ssim_mats_array = []
-            my_eps = 1.0e-15
-
-            for this_lev in range(nlevels):
-                if nlevels == 1:
-                    a1 = self._calcs1.get_calc('ds').data
-                    a2 = self._calcs2.get_calc('ds').data
-                else:
-                    a1 = self._calcs1.get_calc('ds').isel({vname: this_lev}).data
-                    a2 = self._calcs2.get_calc('ds').isel({vname: this_lev}).data
-
-                if dask.is_dask_collection(a1):
-                    a1 = a1.compute()
-                if dask.is_dask_collection(a2):
-                    a2 = a2.compute()
-
-                # re-scale  to [0,1] - if not constant
-                smin = min(np.nanmin(a1), np.nanmin(a2))
-                smax = max(np.nanmax(a1), np.nanmax(a2))
-                r = smax - smin
-                if r == 0.0:  # scale by smax if field is a constant (and smax != 0)
-                    if smax == 0.0:
-                        sc_a1 = a1
-                        sc_a2 = a2
-                    else:
-                        sc_a1 = a1 / smax
-                        sc_a2 = a2 / smax
-                else:
-                    sc_a1 = (a1 - smin) / r
-                    sc_a2 = (a2 - smin) / r
-
-                # now quantize to 256 bins
-                sc_a1 = np.round(sc_a1 * 255) / 255
-                sc_a2 = np.round(sc_a2 * 255) / 255
-
-                # gaussian filter
-                kernel = Gaussian2DKernel(x_stddev=1.5, x_size=11, y_size=11)
-                k = 5
-                filter_args = {'boundary': 'fill', 'preserve_nan': True}
-                a1_mu = convolve(sc_a1, kernel, **filter_args)
-                self._filter_adjust_edges(a1_mu, kernel, k)
-
-                a2_mu = convolve(sc_a2, kernel, **filter_args)
-                self._filter_adjust_edges(a2_mu, kernel, k)
-
-                a1a1 = convolve(sc_a1 * sc_a1, kernel, **filter_args)
-                self._filter_adjust_edges(a1a1, kernel, k)
-
-                a2a2 = convolve(sc_a2 * sc_a2, kernel, **filter_args)
-                self._filter_adjust_edges(a2a2, kernel, k)
-
-                a1a2 = convolve(sc_a1 * sc_a2, kernel, **filter_args)
-                self._filter_adjust_edges(a1a2, kernel, k)
-
-                ###########
-                var_a1 = a1a1 - a1_mu * a1_mu
-                var_a2 = a2a2 - a2_mu * a2_mu
-                cov_a1a2 = a1a2 - a1_mu * a2_mu
-
-                # ssim constants
-                C1 = my_eps
-                C2 = my_eps
-
-                ssim_t1 = 2 * a1_mu * a2_mu + C1
-                ssim_t2 = 2 * cov_a1a2 + C2
-
-                ssim_b1 = a1_mu * a1_mu + a2_mu * a2_mu + C1
-                ssim_b2 = var_a1 + var_a2 + C2
-
-                ssim_1 = ssim_t1 / ssim_b1
-                ssim_2 = ssim_t2 / ssim_b2
-                ssim_mat = ssim_1 * ssim_2
-
-                # cropping (temp)
-                ssim_mat = crop(ssim_mat, k)
-
-                mean_ssim = np.nanmean(ssim_mat)
-                ssim_levs[this_lev] = mean_ssim
-                ssim_mats_array.append(ssim_mat)
-
-            # end of levels calculation
-            return_ssim = ssim_levs.min()
-            self._ssim_value_fp_fast2 = return_ssim
-
-            # save full matrix
-            self._ssim_mat_fp_fast2 = ssim_mats_array
-        return self._ssim_value_fp_fast2
+        return self._ssim_value_fp_slow
 
     @property
     def ssim_value_fp_fast(self):
         """
-        Faster implementation then ssim_value_fp_orig
+        Faster implementation then ssim_value_fp_orig (this is the default DSSIM option).
 
         """
         from astropy.convolution import Gaussian2DKernel, convolve, interpolate_replace_nans
@@ -1780,10 +1917,62 @@ class Diffcalcs:
         return self._ssim_value_fp_fast
 
     @property
-    def ssim_value_fp_old(self):
+    def ssim_value_fp_orig(self):
         """To mimic what zchecker does - the ssim on the fp data with
-        original constants and no scaling. This will return Nan on POP data.
+        original constants and no scaling (so-called "straightforward" approach.
+        This will return Nan on POP data or CAM data with NaNs because scikit
+        SSIM fuction does not handle NaNs.
         """
+
+        import numpy as np
+        from skimage.metrics import structural_similarity as ssim
+
+        if not self._is_memoized('_ssim_value_fp_orig'):
+
+            # if this is a 3D variable, we will do each level seperately
+            if self._calcs1._vert_dim_name is not None:
+                vname = self._calcs1._vert_dim_name
+                if vname not in self._calcs1.get_calc('ds').sizes:
+                    nlevels = 1
+                else:
+                    nlevels = self._calcs1.get_calc('ds').sizes[vname]
+            else:
+                nlevels = 1
+
+            ssim_levs = np.zeros(nlevels)
+
+            for this_lev in range(nlevels):
+                if nlevels == 1:
+                    a1 = self._calcs1.get_calc('ds').data
+                    a2 = self._calcs2.get_calc('ds').data
+                else:
+                    a1 = self._calcs1.get_calc('ds').isel({vname: this_lev}).data
+                    a2 = self._calcs2.get_calc('ds').isel({vname: this_lev}).data
+
+                if dask.is_dask_collection(a1):
+                    a1 = a1.compute()
+                if dask.is_dask_collection(a2):
+                    a2 = a2.compute()
+
+                maxr = max(a1.max(), a2.max())
+                minr = min(a1.min(), a2.min())
+                myrange = maxr - minr
+                mean_ssim = ssim(
+                    a1,
+                    a2,
+                    multichannel=False,
+                    data_range=myrange,
+                    gaussian_weights=True,
+                    use_sample_covariance=False,
+                )
+                ssim_levs[this_lev] = mean_ssim
+
+            # end of levels calculation
+            return_ssim = ssim_levs.min()
+
+            self._ssim_value_fp_orig = return_ssim
+
+        return self._ssim_value_fp_orig
 
         import numpy as np
         from skimage.metrics import structural_similarity as ssim
@@ -1821,7 +2010,7 @@ class Diffcalcs:
 
         return self._ssim_value_fp_old
 
-    def get_diff_calc(self, name: str):
+    def get_diff_calc(self, name: str, color: Optional[str] = 'coolwarm'):
         """
         Gets a calc on the dataset that requires more than one input dataset
 
@@ -1850,15 +2039,19 @@ class Diffcalcs:
             if name == 'max_spatial_rel_error':
                 return self.max_spatial_rel_error
             if name == 'ssim':
+                self.color = color
                 return self.ssim_value
-            if name == 'ssim_fp_orig':
+            if name == 'ssim_fp_orig':  # this is using standard SSIM with floats
+                # ("straightforward approach")
+                # not recommended
                 return self.ssim_value_fp_orig
             if name == 'ssim_fp':
                 return self.ssim_value_fp_fast
-            if name == 'ssim_fp_fast2':
-                return self.ssim_value_fp_fast2
-            if name == 'ssim_fp_old':
-                return self.ssim_value_fp_old
+            if (
+                name == 'ssim_fp_slow'
+            ):  # the non-matrix DSSIM implementation - good for experimenting
+                # not recommended in practice
+                return self.ssim_value_fp_slow
             raise ValueError(f'there is no calc with the name: {name}.')
         else:
             raise TypeError('name must be a string.')

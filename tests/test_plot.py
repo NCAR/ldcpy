@@ -37,8 +37,8 @@ class TestPlot(TestCase):
         my_data = ds['TS'].sel(collection='orig')
         my_data.attrs['cell_measures'] = 'area: cell_area'
 
-        ds_calcs_across_time = ldcpy.Datasetcalcs(my_data, ['time'])
-        ds_calcs_across_space = ldcpy.Datasetcalcs(my_data, ['lat', 'lon'])
+        ds_calcs_across_time = ldcpy.Datasetcalcs(my_data, 'cam-fv', ['time'])
+        ds_calcs_across_space = ldcpy.Datasetcalcs(my_data, 'cam-fv', ['lat', 'lon'])
 
         ds_calcs_across_time.get_calc('mean')
         ds_calcs_across_space.get_calc('mean')
@@ -200,7 +200,6 @@ class TestPlot(TestCase):
             calc='odds_positive',
             plot_type='time_series',
             group_by='time.month',
-            calc_ssim=True,
             vert_plot=True,
         )
         self.assertTrue(True)
@@ -214,6 +213,32 @@ class TestPlot(TestCase):
             color='binary',
             plot_type='spatial',
             tex_format=False,
+        )
+        self.assertTrue(True is True)
+
+    def test_first_differences(self):
+        ldcpy.plot(
+            ds,
+            'TS',
+            sets=['orig', 'recon'],
+            calc='w_e_first_differences',
+            color='binary',
+            plot_type='spatial',
+            tex_format=False,
+            weighted=False,
+        )
+        self.assertTrue(True is True)
+
+    def test_derivative(self):
+        ldcpy.plot(
+            ds2,
+            'PRECT',
+            sets=['orig', 'recon'],
+            calc='w_e_derivative',
+            color='binary',
+            plot_type='spatial',
+            tex_format=False,
+            weighted=False,
         )
         self.assertTrue(True is True)
 
@@ -310,17 +335,6 @@ class TestPlot(TestCase):
             tex_format=False,
         )
         self.assertTrue(True is True)
-
-    def test_ssim(self):
-        ldcpy.plot(
-            ds,
-            'TS',
-            sets=['orig', 'recon'],
-            calc='mean',
-            plot_type='spatial',
-            calc_ssim=True,
-            tex_format=False,
-        )
 
     def test_mae_max_day(self):
         ldcpy.plot(ds, 'TS', sets=['orig'], calc='mae_day_max', tex_format=False)

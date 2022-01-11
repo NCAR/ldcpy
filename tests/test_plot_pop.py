@@ -137,7 +137,6 @@ class TestPlotPop(TestCase):
             calc='odds_positive',
             plot_type='time_series',
             group_by='time.month',
-            calc_ssim=True,
             vert_plot=True,
         )
         self.assertTrue(True)
@@ -243,7 +242,6 @@ class TestPlotPop(TestCase):
             sets=['orig', 'recon'],
             calc='mean',
             plot_type='spatial',
-            calc_ssim=True,
             tex_format=False,
         )
 
