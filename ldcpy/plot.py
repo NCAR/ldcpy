@@ -77,6 +77,7 @@ class calcsPlot(object):
         tex_format=False,
         legend_offset=None,
         weighted=True,
+        basic_plot=False,
     ):
 
         self._ds = ds
@@ -108,6 +109,7 @@ class calcsPlot(object):
         self._tex_format = tex_format
         self._legend_offset = legend_offset
         self._weighted = weighted
+        self._basic_plot = basic_plot
 
     def verify_plot_parameters(self):
         if len(self._sets) < 2 and self._calc_type in [
@@ -396,7 +398,8 @@ class calcsPlot(object):
                     )
                 )
 
-            axs[i].set_title(tex_escape(titles[i]))
+            if self._basic_plot is False:
+                axs[i].set_title(tex_escape(titles[i]))
             del cy_datas
 
             # end of for loopon plots
@@ -418,67 +421,70 @@ class calcsPlot(object):
             psets[i].set_clim(color_min, color_max)
             pass
 
-        # add colorbar
-        if self.vert_plot is False:
-            fig.subplots_adjust(left=0.1, right=0.9, bottom=0.2, top=0.95)
+        if self._basic_plot is False:
+            # add colorbar
+            if self.vert_plot is False:
+                fig.subplots_adjust(left=0.1, right=0.9, bottom=0.2, top=0.95)
 
-        cbs = []
-        if not all_nan_flag:
-            cax = fig.add_axes([0.1, 0, 0.8, 0.05])
+            cbs = []
+            if not all_nan_flag:
+                cax = fig.add_axes([0.1, 0, 0.8, 0.05])
 
-            for i in range(len(psets)):
-                cbs.append(fig.colorbar(psets[i], cax=cax, orientation='horizontal', shrink=0.95))
-                cbs[i].ax.set_title(f'{da_sets[i].units}')
-                if self.vert_plot:
-                    cbs[i].ax.set_aspect(0.03)
-                    cbs[i].ax.set_anchor((0, 1.35 + 0.15 * (nrows - 1)))
-                else:
-                    cbs[i].ax.set_aspect(0.03)
-                    if len(psets) > 2:
+                for i in range(len(psets)):
+                    cbs.append(
+                        fig.colorbar(psets[i], cax=cax, orientation='horizontal', shrink=0.95)
+                    )
+                    cbs[i].ax.set_title(f'{da_sets[i].units}')
+                    if self.vert_plot:
+                        cbs[i].ax.set_aspect(0.03)
                         cbs[i].ax.set_anchor((0, 1.35 + 0.15 * (nrows - 1)))
                     else:
-                        cbs[i].ax.set_anchor((0.5, 1.35 + 0.15 * (nrows - 1)))
-                cbs[i].ax.tick_params(labelsize=8, rotation=30)
-            if nan_inf_flag:
+                        cbs[i].ax.set_aspect(0.03)
+                        if len(psets) > 2:
+                            cbs[i].ax.set_anchor((0, 1.35 + 0.15 * (nrows - 1)))
+                        else:
+                            cbs[i].ax.set_anchor((0.5, 1.35 + 0.15 * (nrows - 1)))
+                    cbs[i].ax.tick_params(labelsize=8, rotation=30)
+                if nan_inf_flag:
+                    proxy = [
+                        plt.Rectangle((0, 0), 1, 1, fc='#39ff14'),
+                        plt.Rectangle((0, 1), 2, 2, fc='#000000'),
+                        plt.Rectangle((0, 1), 2, 2, fc='#ffffff', edgecolor='black'),
+                    ]
+                    if self.vert_plot:
+                        plt.rcParams.update({'font.size': 8})
+                        plt.legend(
+                            proxy,
+                            ['NaN', '-Inf', 'Inf'],
+                            loc='lower center',
+                            bbox_to_anchor=(0.51, -6),
+                            ncol=len(proxy),
+                        )
+                    else:
+                        plt.rcParams.update({'font.size': 10})
+                        if len(psets) > 2:
+                            plt.legend(
+                                proxy,
+                                ['NaN', '-Inf', 'Inf'],
+                                bbox_to_anchor=(0.672, 4),
+                                ncol=len(proxy),
+                            )
+                        else:
+                            plt.legend(
+                                proxy,
+                                ['NaN', '-Inf', 'Inf'],
+                                bbox_to_anchor=(0.78, -2),
+                                ncol=len(proxy),
+                            )
+            else:
+                fig.add_axes([0.1, 0, 0.8, 0.05])
                 proxy = [
                     plt.Rectangle((0, 0), 1, 1, fc='#39ff14'),
                     plt.Rectangle((0, 1), 2, 2, fc='#000000'),
                     plt.Rectangle((0, 1), 2, 2, fc='#ffffff', edgecolor='black'),
                 ]
-                if self.vert_plot:
-                    plt.rcParams.update({'font.size': 8})
-                    plt.legend(
-                        proxy,
-                        ['NaN', '-Inf', 'Inf'],
-                        loc='lower center',
-                        bbox_to_anchor=(0.51, -6),
-                        ncol=len(proxy),
-                    )
-                else:
-                    plt.rcParams.update({'font.size': 10})
-                    if len(psets) > 2:
-                        plt.legend(
-                            proxy,
-                            ['NaN', '-Inf', 'Inf'],
-                            bbox_to_anchor=(0.672, 4),
-                            ncol=len(proxy),
-                        )
-                    else:
-                        plt.legend(
-                            proxy,
-                            ['NaN', '-Inf', 'Inf'],
-                            bbox_to_anchor=(0.78, -2),
-                            ncol=len(proxy),
-                        )
-        else:
-            fig.add_axes([0.1, 0, 0.8, 0.05])
-            proxy = [
-                plt.Rectangle((0, 0), 1, 1, fc='#39ff14'),
-                plt.Rectangle((0, 1), 2, 2, fc='#000000'),
-                plt.Rectangle((0, 1), 2, 2, fc='#ffffff', edgecolor='black'),
-            ]
-            plt.legend(proxy, ['NaN', '-Inf', 'Inf'], bbox_to_anchor=(0.87, 2), ncol=len(proxy))
-            plt.axis('off')
+                plt.legend(proxy, ['NaN', '-Inf', 'Inf'], bbox_to_anchor=(0.87, 2), ncol=len(proxy))
+                plt.axis('off')
 
         # if self._calc_ssim:
         #    import os
@@ -818,6 +824,7 @@ def plot(
     tex_format=False,
     legend_offset=None,
     weighted=True,
+    basic_plot=False,
 ):
     """
     Plots the data given an xarray dataset
@@ -972,6 +979,7 @@ def plot(
         tex_format=tex_format,
         legend_offset=legend_offset,
         weighted=weighted,
+        basic_plot=basic_plot,
     )
 
     plt.rcParams.update(
@@ -1008,10 +1016,14 @@ def plot(
 
     if 'collection' in ds[varname].dims:
         if sets is not None:
+            i = 0
             for set in sets:
                 dss.append(ds[varname].sel(collection=set))
+                dss[i].attrs['data_type'] = ds.data_type
+                dss[i].attrs['set_name'] = set
     else:
         dss.append(ds[varname])
+        dss[0].attrs['data_type'] = ds.data_type
 
     subsets = []
     if sets is not None:
@@ -1031,6 +1043,7 @@ def plot(
         if subsets is not None:
             for i in range(len(subsets)):
                 datas.append(subsets[i])
+                datas[i - 1].attrs = subsets[0].attrs
 
     raw_calcs = []
 

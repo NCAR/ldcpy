@@ -16,3 +16,4 @@ pandas
 astropy
 ipython
 pooch
+statsmodels

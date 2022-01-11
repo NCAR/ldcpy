@@ -27,5 +27,6 @@ dependencies:
   - xrft
   - pandas
   - pooch
+  - statsmodels
   - pip:
       - -e ..

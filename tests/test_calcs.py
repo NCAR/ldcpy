@@ -8,6 +8,17 @@ import xarray as xr
 import ldcpy
 from ldcpy.calcs import Datasetcalcs, Diffcalcs
 
+ds = ldcpy.open_datasets(
+    'cam-fv',
+    ['TS'],
+    [
+        'data/cam-fv/orig.TS.100days.nc',
+        'data/cam-fv/zfp1.0.TS.100days.nc',
+        'data/cam-fv/zfp1e-1.TS.100days.nc',
+    ],
+    ['orig', 'recon', 'recon2'],
+)
+
 times = pd.date_range('2000-01-01', periods=10)
 lats = [0, 1, 2, 3]
 lons = [0, 1, 2, 3, 4]
@@ -29,6 +40,12 @@ test_data_2 = xr.DataArray(
     ],
     dims=['lat', 'lon', 'time'],
 )
+d = ds['TS'].sel(collection='orig')
+ds_pointwise_calcs = ldcpy.Datasetcalcs(d, 'cam-fv', [], weighted=False)
+
+calc_ds = ds_pointwise_calcs.get_calc_ds('w_e_derivative', 'd')
+
+test_pointwise_calcs = ldcpy.Datasetcalcs(test_data, 'cam-fv', [], weighted=False)
 test_overall_calcs = ldcpy.Datasetcalcs(test_data, 'cam-fv', ['time', 'lat', 'lon'], weighted=False)
 test_spatial_calcs = ldcpy.Datasetcalcs(test_data, 'cam-fv', ['time'], weighted=False)
 test_time_series_calcs = ldcpy.Datasetcalcs(test_data, 'cam-fv', ['lat', 'lon'], weighted=False)
@@ -133,6 +150,10 @@ class TestErrorcalcs(TestCase):
         TS = ds.TS
 
         print(type(TS))
+
+    def test_calc_ds(self):
+        ds_pointwise_calcs.get_calc_ds('w_e_derivative', 'test_deriv')
+        self.assertTrue(True)
 
     def test_mean(self):
         self.assertTrue(test_overall_calcs.mean == -0.5)
