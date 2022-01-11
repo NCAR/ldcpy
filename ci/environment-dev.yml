@@ -25,6 +25,7 @@ dependencies:
   - scikit-image
   - scipy
   - setuptools
+  - statemodels
   - xarray
   - xrft
   - zfpy
