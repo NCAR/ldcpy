@@ -740,6 +740,7 @@ def save_metrics(
     diff_metrics = Diffcalcs(
         ds[varname].sel(collection=set1).isel(time=time),
         ds[varname].sel(collection=set2).isel(time=time),
+        'cam-fv',
         ['lat', 'lon'],
     )
 
