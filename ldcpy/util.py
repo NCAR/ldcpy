@@ -378,6 +378,9 @@ def compare_stats(
     temp_pcc = []
     temp_ks = []
     temp_sre = []
+    temp_sre_001 = []
+    temp_sre_05 = []
+    temp_sre_01 = []
     temp_max_spr = []
     temp_data_ssim = []
     temp_ssim = []
@@ -387,6 +390,7 @@ def compare_stats(
     if include_file_size:
         fs_orig = file_size_dict[sets[0]]
 
+    rel_errors = [0.0001, 0.001, 0.05, 0.01]
     for i in range(num - 1):
         temp_nrms.append(diff_calcs[i].get_diff_calc('n_rms').data.compute())
         temp_max_pe.append(diff_calcs[i].get_diff_calc('n_emax').data.compute())
@@ -394,7 +398,14 @@ def compare_stats(
             diff_calcs[i].get_diff_calc('pearson_correlation_coefficient').data.compute()
         )
         temp_ks.append(diff_calcs[i].get_diff_calc('ks_p_value'))
+        diff_calcs[i].spre_tol = rel_errors[0]
         temp_sre.append(diff_calcs[i].get_diff_calc('spatial_rel_error'))
+        diff_calcs[i].spre_tol = rel_errors[1]
+        temp_sre_001.append(diff_calcs[i].get_diff_calc('spatial_rel_error'))
+        diff_calcs[i].spre_tol = rel_errors[2]
+        temp_sre_05.append(diff_calcs[i].get_diff_calc('spatial_rel_error'))
+        diff_calcs[i].spre_tol = rel_errors[3]
+        temp_sre_01.append(diff_calcs[i].get_diff_calc('spatial_rel_error'))
         temp_max_spr.append(diff_calcs[i].get_diff_calc('max_spatial_rel_error'))
         temp_data_ssim.append(diff_calcs[i].get_diff_calc('ssim_fp'))
         if include_ssim:
@@ -409,8 +420,17 @@ def compare_stats(
     df_dict2['pearson correlation coefficient'] = temp_pcc
     df_dict2['ks p-value'] = temp_ks
 
-    tmp_str = 'spatial relative error(% > ' + str(da_set_calcs[0].get_single_calc('spre_tol')) + ')'
+    tmp_str = 'spatial relative error(% > ' + str(rel_errors[0]) + ')'
     df_dict2[tmp_str] = temp_sre
+
+    tmp_str2 = 'spatial relative error (% > ' + str(rel_errors[1]) + ')'
+    df_dict2[tmp_str2] = temp_sre_001
+
+    tmp_str3 = 'spatial relative error (% > ' + str(rel_errors[2]) + ')'
+    df_dict2[tmp_str3] = temp_sre_05
+
+    tmp_str4 = 'spatial relative error (% > ' + str(rel_errors[3]) + ')'
+    df_dict2[tmp_str4] = temp_sre_01
 
     df_dict2['max spatial relative error'] = temp_max_spr
     df_dict2['data SSIM'] = temp_data_ssim
@@ -529,6 +549,7 @@ def check_metrics(
         print('     PASSED ks test...(ks p_val = {0:.4f}'.format(ks), ')')
     # Spatial rel error fails if more than spre_tol
     spre = diff_calcs.get_diff_calc('spatial_rel_error')
+
     if spre > spre_tol:
         print('     *FAILED spatial relative error test ... (spre = {0:.2f}'.format(spre), ' %)')
         num_fail = num_fail + 1
