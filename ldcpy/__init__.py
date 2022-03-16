@@ -9,7 +9,14 @@ from .comp_checker import CompChecker
 from .convert import CalendarDateTime
 from .derived_vars import cam_budgets
 from .plot import plot
-from .util import check_metrics, combine_datasets, compare_stats, open_datasets, save_metrics
+from .util import (
+    check_metrics,
+    combine_datasets,
+    compare_stats,
+    open_datasets,
+    save_metrics,
+    subset_data,
+)
 
 try:
     __version__ = get_distribution(__name__).version
