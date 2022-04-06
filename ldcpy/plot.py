@@ -706,7 +706,13 @@ class calcsPlot(object):
                 percent_sig = lm.Datasetcalcs(
                     (data), data_type, ['time'], weighted=self._weighted
                 ).get_single_calc('zscore_percent_significant')
-                calc_name = f'{calc}: cutoff {zscore_cutoff[0]:.2f}, % sig: {percent_sig:.2f}'
+
+
+                if zscore_cutoff[0] > .01:
+                    calc_name = f'{calc}: cutoff {zscore_cutoff[0]:.2f}, % sig: {percent_sig:.2f}'
+                else:
+                    calc_name = f'{calc}: cutoff {zscore_cutoff[0]:.2e}, % sig: {percent_sig:.2f}'
+
             elif calc == 'mean' and self._plot_type == 'spatial' and self._calc_type == 'raw':
 
                 if self._weighted:
@@ -738,7 +744,11 @@ class calcsPlot(object):
 
                 # o_wt_mean = np.nanmean(a2_data)
 
-                calc_name = f'{calc} = {a1_data:.2f}'
+                if a1_data > .01:
+                    calc_name = f'{calc} = {a1_data:.2f}'
+                else:
+                    calc_name = f'{calc} = {a1_data:.2e}'
+
             elif calc == 'pooled_var_ratio':
                 pooled_sd = np.sqrt(
                     lm.Datasetcalcs(
@@ -746,12 +756,16 @@ class calcsPlot(object):
                     ).get_single_calc('pooled_variance')
                 )
                 d = pooled_sd.data.compute()
-                calc_name = f'{calc}: pooled SD = {d:.2f}'
+                if d > .01:
+                    calc_name = f'{calc}: pooled SD = {d:.2f}'
+                else:
+                    calc_name = f'{calc}: pooled SD = {d:.2e}'
             elif calc == 'ann_harmonic_ratio':
                 p = lm.Datasetcalcs(
                     (data), data_type, ['time'], weighted=self._weighted
                 ).get_single_calc('annual_harmonic_relative_ratio_pct_sig')
-                calc_name = f'{calc}: % sig = {p:.2f}'
+                pp = p.compute().data
+                calc_name = f'{calc}: % sig = {pp:.2f}'
             elif self._plot_type == 'spatial':
                 if self._weighted:
                     a1_data = (
@@ -768,8 +782,10 @@ class calcsPlot(object):
                         .mean()
                         .data.compute()
                     )
-
-                calc_name = f'{calc} = {a1_data:.2f}'
+                if a1_data > .01:
+                    calc_name = f'{calc} = {a1_data:.2f}'
+                else:
+                    calc_name = f'{calc} = {a1_data:.2e}'
             elif self._plot_type == 'time_series':
                 if self._weighted:
                     a1_data = (
@@ -790,7 +806,10 @@ class calcsPlot(object):
                         .data.compute()
                     )
 
-                calc_name = f'{calc} = {a1_data:.2f}'
+                if a1_data > .01:
+                    calc_name = f'{calc} = {a1_data:.2f}'
+                else:
+                    calc_name = f'{calc} = {a1_data:.2e}'
             else:
                 calc_name = calc
 

@@ -108,8 +108,8 @@ The AWSDataNotebook grabs data from AWS, so can be run on a laptop
 with the caveat that the files are large.
 
 The following notebooks asume that you are using NCAR's JupyterHub
-(https://jupyterhub.ucar.edu):
-LargeDataGladenotebook.ipynb, CompressionSamples.ipynb, and error_bias.ipynb
+(https://jupyterhub.hpc.ucar.edu):
+LargeDataGladenotebook.ipynb, CAMNotebook,ipynb, and error_bias.ipynb
 
 
 Re-create notebooks with Pangeo Binder
