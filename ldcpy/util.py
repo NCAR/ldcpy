@@ -671,6 +671,7 @@ def var_and_wt_coords(varname, ds_col):
 
     return ds0
 
+
 def save_metrics(
     full_ds,
     varname,
@@ -717,7 +718,7 @@ def save_metrics(
         ['lat', 'lon'],
     )
 
-    # SSIM 
+    # SSIM
     ssim_fp_val = diff_metrics.get_diff_calc('ssim_fp')
 
     file_exists = os.path.isfile(location)
