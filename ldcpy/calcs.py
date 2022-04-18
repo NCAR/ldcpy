@@ -1343,8 +1343,8 @@ class Diffcalcs:
         if not self._is_memoized('_pearson_correlation_coefficient'):
 
             # we need to do this with  unweighted data
-            c1_std = self._calcs1.get_calc('ds').std(skipna=True)
-            c2_std = self._calcs2.get_calc('ds').std(skipna=True)
+            c1_std = float(self._calcs1.get_calc('ds').std(skipna=True))
+            c2_std = float(self._calcs2.get_calc('ds').std(skipna=True))
 
             cov = self.covariance
 
