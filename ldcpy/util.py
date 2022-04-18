@@ -345,10 +345,16 @@ def compare_stats(
         fo = [f'%.{significant_digits}g' % item for item in df_dict[d]]
         df_dict[d] = fo
     df = pd.DataFrame.from_dict(df_dict, orient='index', columns=my_cols)
+    display(
+        HTML(
+            ' <span style="color:blue">Variable:  <b>{varname}</b> </span> '.format(varname=varname)
+        )
+    )
     display(HTML(' <span style="color:green">Comparison: </span>  '))
     display(df)
 
     # diff stuff
+
     df_dict2 = {}
     my_cols2 = []
     for i in range(1, num):
