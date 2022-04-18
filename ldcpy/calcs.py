@@ -41,7 +41,6 @@ class Datasetcalcs:
         lat_coord_name: str = None,
         lon_coord_name: str = None,
         q: float = 0.5,
-        spre_tol: float = 1.0e-4,
         weighted=True,
     ):
         self._ds = ds if (ds.dtype == np.float64) else ds.astype(np.float64)
@@ -95,7 +94,6 @@ class Datasetcalcs:
         self._time_dim_name = time_dim_name
 
         self._quantile = q
-        self._spre_tol = spre_tol
         self._agg_dims = aggregate_dims
         self._frame_size = 1
         self._data_type = data_type
@@ -764,14 +762,6 @@ class Datasetcalcs:
         self._quantile = q
 
     @property
-    def spre_tol(self):
-        return self._spre_tol
-
-    @spre_tol.setter
-    def spre_tol(self, t):
-        self._spre_tol = t
-
-    @property
     def quantile_value(self) -> xr.DataArray:
         self._quantile_value = self._ds.quantile(self.quantile, dim=self._agg_dims)
         self._quantile_value.attrs = self._ds.attrs
@@ -1163,8 +1153,6 @@ class Datasetcalcs:
                 return self.entropy
             if name == 'range':
                 return self.dyn_range
-            if name == 'spre_tol':
-                return self.spre_tol
             if name == 'pooled_variance':
                 return self.pooled_variance
             if name == 'annual_harmonic_relative_ratio_pct_sig':
@@ -1191,6 +1179,7 @@ class Diffcalcs:
         ds2: xr.DataArray,
         data_type: str,
         aggregate_dims: Optional[list] = None,
+        spre_tol: float = 1.0e-4,
         **calcs_kwargs,
     ) -> None:
         if isinstance(ds1, xr.DataArray) and isinstance(ds2, xr.DataArray):
@@ -1222,6 +1211,15 @@ class Diffcalcs:
         self._ssim_mat_fp = None
         self._ssim_mat = None
         self._ssim_mat_fp_orig = None
+        self._spre_tol = spre_tol
+
+    @property
+    def spre_tol(self):
+        return self._spre_tol
+
+    @spre_tol.setter
+    def spre_tol(self, t):
+        self._spre_tol = t
 
     def _is_memoized(self, calc_name: str) -> bool:
         return hasattr(self, calc_name) and (self.__getattribute__(calc_name) is not None)
@@ -1322,7 +1320,7 @@ class Diffcalcs:
                 (self._calcs2.get_calc('ds') - c2_mean) * (self._calcs1.get_calc('ds') - c1_mean)
             ).mean()
 
-        return self._covariance
+        return float(self._covariance)
 
     @property
     def ks_p_value(self):
@@ -1350,7 +1348,7 @@ class Diffcalcs:
 
             cov = self.covariance
 
-            self._pcc = cov / c1_std / c2_std
+            self._pcc = float(cov / c1_std / c2_std)
 
         return self._pcc
 
@@ -1364,7 +1362,7 @@ class Diffcalcs:
             tt = abs((self._calcs1.get_calc('ds') - self._calcs2.get_calc('ds')).max())
             self._n_emax = tt / self._calcs1.dyn_range
 
-        return self._n_emax
+        return float(self._n_emax)
 
     @property
     def normalized_root_mean_squared(self):
@@ -1380,7 +1378,7 @@ class Diffcalcs:
             )
             self._n_rms = tt / self._calcs1.dyn_range
 
-        return self._n_rms
+        return float(self._n_rms)
 
     @property
     def spatial_rel_error(self):
@@ -1389,53 +1387,54 @@ class Diffcalcs:
         relative error is above the specified tolerance (1e-4 by default).
         """
 
-        if not self._is_memoized('_spatial_rel_error'):
-            sp_tol = self._calcs1.spre_tol
-            # unraveling converts the dask array to numpy, but then
-            # we can assign the 1.0 and avoid zero (couldn't figure another way)
-            t1 = np.ravel(self._calcs1.get_calc('ds'))
-            t2 = np.ravel(self._calcs2.get_calc('ds'))
+        # We don't check for memoization here in case the spre_tol has changed
+        # since the last time it has been called
+        sp_tol = self._spre_tol
+        # unraveling converts the dask array to numpy, but then
+        # we can assign the 1.0 and avoid zero (couldn't figure another way)
+        t1 = np.ravel(self._calcs1.get_calc('ds'))
+        t2 = np.ravel(self._calcs2.get_calc('ds'))
 
-            # check for zeros in t1 (if zero then change to 1 - which
-            # does an absolute error at that point)
-            z = (np.where(abs(t1) == 0))[0]
+        # check for zeros in t1 (if zero then change to 1 - which
+        # does an absolute error at that point)
+        z = (np.where(abs(t1) == 0))[0]
+        if z.size > 0:
+            t1_denom = np.copy(t1)
+            t1_denom[z] = 1.0
+        else:
+            t1_denom = t1
+
+        # we don't want to use nan
+        # (ocassionally in cam data - often in ocn)
+        m_t2 = np.ma.masked_invalid(t2).compressed()
+        m_t1 = np.ma.masked_invalid(t1).compressed()
+
+        if m_t2.shape != m_t1.shape:
+            print('Warning: Spatial error not calculated with differing numbers of Nans')
+            self._spatial_rel_error = 0
+            self._max_spatial_rel_error = 0
+        else:
+
             if z.size > 0:
-                t1_denom = np.copy(t1)
-                t1_denom[z] = 1.0
+                m_t1_denom = np.ma.masked_invalid(t1_denom).compressed()
             else:
-                t1_denom = t1
+                m_t1_denom = m_t1
 
-            # we don't want to use nan
-            # (ocassionally in cam data - often in ocn)
-            m_t2 = np.ma.masked_invalid(t2).compressed()
-            m_t1 = np.ma.masked_invalid(t1).compressed()
+            m_tt = m_t1 - m_t2
+            m_tt = m_tt / m_t1_denom
 
-            if m_t2.shape != m_t1.shape:
-                print('Warning: Spatial error not calculated with differing numbers of Nans')
-                self._spatial_rel_error = 0
-                self._max_spatial_rel_error = 0
-            else:
+            # find the max spatial error also if None
+            if self._max_spatial_rel_error is None:
+                max_spre = np.max(m_tt)
+                self._max_spatial_rel_error = max_spre
 
-                if z.size > 0:
-                    m_t1_denom = np.ma.masked_invalid(t1_denom).compressed()
-                else:
-                    m_t1_denom = m_t1
+            # percentage greater than the tolerance
+            a = len(m_tt[abs(m_tt) > sp_tol])
+            sz = m_tt.shape[0]
 
-                m_tt = m_t1 - m_t2
-                m_tt = m_tt / m_t1_denom
+            self._spatial_rel_error = (a / sz) * 100
 
-                # find the max spatial error also if None
-                if self._max_spatial_rel_error is None:
-                    max_spre = np.max(m_tt)
-                    self._max_spatial_rel_error = max_spre
-
-                # percentage greater than the tolerance
-                a = len(m_tt[abs(m_tt) > sp_tol])
-                sz = m_tt.shape[0]
-
-                self._spatial_rel_error = (a / sz) * 100
-
-        return self._spatial_rel_error
+        return float(self._spatial_rel_error)
 
     @property
     def max_spatial_rel_error(self):
@@ -1471,7 +1470,7 @@ class Diffcalcs:
             max_spre = np.max(abs(m_tt))
             self._max_spatial_rel_error = max_spre
 
-        return self._max_spatial_rel_error
+        return float(self._max_spatial_rel_error)
 
     @property
     def ssim_value(self):
@@ -1643,7 +1642,7 @@ class Diffcalcs:
 
             self._ssim_value = return_ssim
 
-        return self._ssim_value
+        return float(self._ssim_value)
 
     @property
     def ssim_value_fp_slow(self):
@@ -1811,7 +1810,7 @@ class Diffcalcs:
             # save full matrix
             self._ssim_mat_fp_slow = ssim_mats_array
 
-        return self._ssim_value_fp_slow
+        return float(self._ssim_value_fp_slow)
 
     @property
     def ssim_value_fp_fast(self):
@@ -1914,7 +1913,7 @@ class Diffcalcs:
 
             # save full matrix
             self._ssim_mat_fp = ssim_mats_array
-        return self._ssim_value_fp_fast
+        return float(self._ssim_value_fp_fast)
 
     @property
     def ssim_value_fp_orig(self):
@@ -1972,7 +1971,7 @@ class Diffcalcs:
 
             self._ssim_value_fp_orig = return_ssim
 
-        return self._ssim_value_fp_orig
+        return float(self._ssim_value_fp_orig)
 
         import numpy as np
         from skimage.metrics import structural_similarity as ssim
@@ -2008,7 +2007,7 @@ class Diffcalcs:
 
             self._ssim_value_fp_old = mean_ssim
 
-        return self._ssim_value_fp_old
+        return float(self._ssim_value_fp_old)
 
     def get_diff_calc(self, name: str, color: Optional[str] = 'coolwarm'):
         """
@@ -2038,6 +2037,8 @@ class Diffcalcs:
                 return self.spatial_rel_error
             if name == 'max_spatial_rel_error':
                 return self.max_spatial_rel_error
+            if name == 'spre_tol':
+                return self.spre_tol
             if name == 'ssim':
                 self.color = color
                 return self.ssim_value
