@@ -721,7 +721,7 @@ class TestErrorcalcs(TestCase):
         self.assertTrue(
             np.isclose(
                 test_diff_calcs.get_diff_calc('pearson_correlation_coefficient'),
-                np.array(1),
+                1.0,
                 rtol=1e-09,
             ).all()
         )
@@ -730,7 +730,7 @@ class TestErrorcalcs(TestCase):
         self.assertTrue(
             np.isclose(
                 test_diff_calcs.get_diff_calc('ks_p_value'),
-                np.array(1.0),
+                1.0,
                 rtol=1e-09,
             ).all()
         )
@@ -739,7 +739,7 @@ class TestErrorcalcs(TestCase):
         self.assertTrue(
             np.isclose(
                 test_diff_calcs.get_diff_calc('covariance'),
-                np.array(3333.25),
+                3333.25,
                 rtol=1e-09,
             ).all()
         )

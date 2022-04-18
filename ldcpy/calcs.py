@@ -1320,7 +1320,7 @@ class Diffcalcs:
                 (self._calcs2.get_calc('ds') - c2_mean) * (self._calcs1.get_calc('ds') - c1_mean)
             ).mean()
 
-        return self._covariance
+        return float(self._covariance)
 
     @property
     def ks_p_value(self):
@@ -1348,7 +1348,7 @@ class Diffcalcs:
 
             cov = self.covariance
 
-            self._pcc = cov / c1_std / c2_std
+            self._pcc = float(cov / c1_std / c2_std)
 
         return self._pcc
 
@@ -1362,7 +1362,7 @@ class Diffcalcs:
             tt = abs((self._calcs1.get_calc('ds') - self._calcs2.get_calc('ds')).max())
             self._n_emax = tt / self._calcs1.dyn_range
 
-        return self._n_emax
+        return float(self._n_emax)
 
     @property
     def normalized_root_mean_squared(self):
@@ -1378,7 +1378,7 @@ class Diffcalcs:
             )
             self._n_rms = tt / self._calcs1.dyn_range
 
-        return self._n_rms
+        return float(self._n_rms)
 
     @property
     def spatial_rel_error(self):
@@ -1434,7 +1434,7 @@ class Diffcalcs:
 
             self._spatial_rel_error = (a / sz) * 100
 
-        return self._spatial_rel_error
+        return float(self._spatial_rel_error)
 
     @property
     def max_spatial_rel_error(self):
@@ -1470,7 +1470,7 @@ class Diffcalcs:
             max_spre = np.max(abs(m_tt))
             self._max_spatial_rel_error = max_spre
 
-        return self._max_spatial_rel_error
+        return float(self._max_spatial_rel_error)
 
     @property
     def ssim_value(self):
@@ -1642,7 +1642,7 @@ class Diffcalcs:
 
             self._ssim_value = return_ssim
 
-        return self._ssim_value
+        return float(self._ssim_value)
 
     @property
     def ssim_value_fp_slow(self):
@@ -1810,7 +1810,7 @@ class Diffcalcs:
             # save full matrix
             self._ssim_mat_fp_slow = ssim_mats_array
 
-        return self._ssim_value_fp_slow
+        return float(self._ssim_value_fp_slow)
 
     @property
     def ssim_value_fp_fast(self):
@@ -1913,7 +1913,7 @@ class Diffcalcs:
 
             # save full matrix
             self._ssim_mat_fp = ssim_mats_array
-        return self._ssim_value_fp_fast
+        return float(self._ssim_value_fp_fast)
 
     @property
     def ssim_value_fp_orig(self):
@@ -1971,7 +1971,7 @@ class Diffcalcs:
 
             self._ssim_value_fp_orig = return_ssim
 
-        return self._ssim_value_fp_orig
+        return float(self._ssim_value_fp_orig)
 
         import numpy as np
         from skimage.metrics import structural_similarity as ssim
@@ -2007,7 +2007,7 @@ class Diffcalcs:
 
             self._ssim_value_fp_old = mean_ssim
 
-        return self._ssim_value_fp_old
+        return float(self._ssim_value_fp_old)
 
     def get_diff_calc(self, name: str, color: Optional[str] = 'coolwarm'):
         """
