@@ -1348,9 +1348,9 @@ class Diffcalcs:
 
             cov = self.covariance
 
-            self._pcc = float(cov / c1_std / c2_std)
+            self._pcc = cov / c1_std / c2_std
 
-        return self._pcc
+        return float(self._pcc)
 
     @property
     def normalized_max_pointwise_error(self):
