@@ -707,7 +707,7 @@ class calcsPlot(object):
                     (data), data_type, ['time'], weighted=self._weighted
                 ).get_single_calc('zscore_percent_significant')
 
-                if zscore_cutoff[0] > 0.01:
+                if abs(zscore_cutoff[0]) > 0.01:
                     calc_name = f'{calc}: cutoff {zscore_cutoff[0]:.2f}, % sig: {percent_sig:.2f}'
                 else:
                     calc_name = f'{calc}: cutoff {zscore_cutoff[0]:.2e}, % sig: {percent_sig:.2f}'
@@ -743,7 +743,7 @@ class calcsPlot(object):
 
                 # o_wt_mean = np.nanmean(a2_data)
 
-                if a1_data > 0.01:
+                if abs(a1_data) > 0.01:
                     calc_name = f'{calc} = {a1_data:.2f}'
                 else:
                     calc_name = f'{calc} = {a1_data:.2e}'
@@ -755,7 +755,7 @@ class calcsPlot(object):
                     ).get_single_calc('pooled_variance')
                 )
                 d = pooled_sd.data.compute()
-                if d > 0.01:
+                if abs(d) > 0.01:
                     calc_name = f'{calc}: pooled SD = {d:.2f}'
                 else:
                     calc_name = f'{calc}: pooled SD = {d:.2e}'
@@ -784,7 +784,7 @@ class calcsPlot(object):
                         .mean()
                         .data.compute()
                     )
-                if a1_data > 0.01:
+                if abs(a1_data) > 0.01:
                     calc_name = f'{calc} = {a1_data:.2f}'
                 else:
                     calc_name = f'{calc} = {a1_data:.2e}'
@@ -808,7 +808,7 @@ class calcsPlot(object):
                         .data.compute()
                     )
 
-                if a1_data > 0.01:
+                if abs(a1_data) > 0.01:
                     calc_name = f'{calc} = {a1_data:.2f}'
                 else:
                     calc_name = f'{calc} = {a1_data:.2e}'

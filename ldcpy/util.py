@@ -398,11 +398,9 @@ def compare_stats(
 
     rel_errors = [0.0001, 0.001, 0.05, 0.01]
     for i in range(num - 1):
-        temp_nrms.append(diff_calcs[i].get_diff_calc('n_rms').data.compute())
-        temp_max_pe.append(diff_calcs[i].get_diff_calc('n_emax').data.compute())
-        temp_pcc.append(
-            diff_calcs[i].get_diff_calc('pearson_correlation_coefficient').data.compute()
-        )
+        temp_nrms.append(diff_calcs[i].get_diff_calc('n_rms'))
+        temp_max_pe.append(diff_calcs[i].get_diff_calc('n_emax'))
+        temp_pcc.append(diff_calcs[i].get_diff_calc('pearson_correlation_coefficient'))
         temp_ks.append(diff_calcs[i].get_diff_calc('ks_p_value'))
         diff_calcs[i].spre_tol = rel_errors[0]
         temp_sre.append(diff_calcs[i].get_diff_calc('spatial_rel_error'))
@@ -540,7 +538,7 @@ def check_metrics(
     # count the number of failures
     num_fail = 0
     # Pearson less than pcc_tol means fail
-    pcc = diff_calcs.get_diff_calc('pearson_correlation_coefficient').data.compute()
+    pcc = diff_calcs.get_diff_calc('pearson_correlation_coefficient')
     if pcc < pcc_tol:
         print('     *FAILED pearson correlation coefficient test...(pcc = {0:.5f}'.format(pcc), ')')
         num_fail = num_fail + 1
@@ -703,21 +701,22 @@ def save_metrics(
     location='names.csv',
 ):
     """
-    full_ds : xarray.Dataset
-        An xarray dataset containing multiple netCDF files concatenated across a 'collection' dimension
-    varname : str
-        The variable of interest in the dataset
-    set1 : str
-        The collection label of the "control" data
-    set2 : str
-        The collection label of the (1st) data to compare
-    time : int, optional
-        The time index used t (default = 0)
-    time : lev, optional
-        The level index of interest in a 3D dataset (default 0)
-    Returns
-    =======
-    out : Number of failing metrics
+        full_ds : xarray.Dataset
+            An xarray dataset containing multiple netCDF files concatenated across a 'collection' dimension
+        varname : str
+            The variable of interest in the dataset
+        set1 : str
+            The collection l
+    abel of the "control" data
+        set2 : str
+            The collection label of the (1st) data to compare
+        time : int, optional
+            The time index used t (default = 0)
+        time : lev, optional
+            The level index of interest in a 3D dataset (default 0)
+        Returns
+        =======
+        out : Number of failing metrics
     """
 
     ds = subset_data(full_ds)
