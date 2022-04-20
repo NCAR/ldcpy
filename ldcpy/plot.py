@@ -754,7 +754,8 @@ class calcsPlot(object):
                         (data), data_type, ['time'], weighted=self._weighted
                     ).get_single_calc('pooled_variance')
                 )
-                d = pooled_sd.data.compute()
+                d = pooled_sd
+                # print(type(d))
                 if abs(d) > 0.01:
                     calc_name = f'{calc}: pooled SD = {d:.2f}'
                 else:
@@ -763,10 +764,7 @@ class calcsPlot(object):
                 p = lm.Datasetcalcs(
                     (data), data_type, ['time'], weighted=self._weighted
                 ).get_single_calc('annual_harmonic_relative_ratio_pct_sig')
-                if isinstance(p, int):
-                    pp = p
-                else:
-                    pp = p.data.compute()
+                pp = p
                 calc_name = f'{calc}: % sig = {pp:.2f}'
             elif self._plot_type == 'spatial':
                 if self._weighted:
