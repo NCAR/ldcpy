@@ -614,12 +614,10 @@ class calcsPlot(object):
                 ax = plt.gca()
             else:
                 dtindex = da_sets[i].indexes['time']
-
 # this works but i get a warning message because uses a standard calendar (pandas object)
 #                c_d_time = dtindex.to_datetimeindex()
 # the original
 #                c_d_time = [CalendarDateTime(item, '365_day') for item in dtindex]
-                 
                 c_d_time = dtindex 
                 mpl.pyplot.plot(c_d_time, da_sets[i], f'C{i}', label=f'{da_sets.sets.data[i]}')
                 ax = plt.gca()
