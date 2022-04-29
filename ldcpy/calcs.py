@@ -627,7 +627,7 @@ class Datasetcalcs:
             self._pooled_variance_ratio.attrs = self._ds.attrs
             if hasattr(self._ds, 'units'):
                 self._pooled_variance_ratio.attrs['units'] = ''
-
+        
         return self._pooled_variance_ratio
 
     @property

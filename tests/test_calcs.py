@@ -143,7 +143,7 @@ class TestErrorcalcs(TestCase):
 
     def test_TS_02(self):
         import xarray as xr
-        import zfpy
+        #import zfpy
 
         ds = xr.open_dataset('data/cam-fv/orig.TS.100days.nc')
 

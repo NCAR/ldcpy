@@ -9,7 +9,8 @@ dependencies:
   - dask
   - intake-esm
   - jupyterlab
-  - matplotlib-base=3.3.3
+  - matplotlib
+  - matplotlib-base
   - netcdf4
   - pip
   - pytest

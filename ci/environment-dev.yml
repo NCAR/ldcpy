@@ -12,7 +12,8 @@ dependencies:
   - intake-esm
   - jupyter_contrib_nbextensions
   - jupyterlab
-  - matplotlib-base=3.3.3
+  - matplot-lib
+  - matplotlib-base
   - netcdf4
   - numpy
   - opencv
