@@ -6,7 +6,6 @@ from pkg_resources import DistributionNotFound, get_distribution
 from .calcs import Datasetcalcs, Diffcalcs
 from .collect_datasets import collect_datasets
 from .comp_checker import CompChecker
-from .convert import CalendarDateTime
 from .derived_vars import cam_budgets
 from .plot import plot
 from .util import (
