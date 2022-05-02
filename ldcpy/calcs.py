@@ -26,7 +26,6 @@ xr.set_options(keep_attrs=True)
 class Datasetcalcs:
     """
     This class contains calcs for each point of a dataset after aggregating across one or more dimensions, and a method to access these calcs. Expects a DataArray.
-
     """
 
     def __init__(
@@ -627,7 +626,7 @@ class Datasetcalcs:
             self._pooled_variance_ratio.attrs = self._ds.attrs
             if hasattr(self._ds, 'units'):
                 self._pooled_variance_ratio.attrs['units'] = ''
-        
+
         return self._pooled_variance_ratio
 
     @property
