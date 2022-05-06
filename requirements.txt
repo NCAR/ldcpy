@@ -1,7 +1,7 @@
 cmocean
 cartopy
 dask[complete]
-matplotlib==3.3.3
+matplotlib
 h5py
 netcdf4
 numpy

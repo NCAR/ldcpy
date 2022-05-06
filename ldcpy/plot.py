@@ -15,7 +15,6 @@ from matplotlib import pyplot as plt
 from pylab import flipud
 
 from ldcpy import calcs as lm, util as lu
-from ldcpy.convert import CalendarDateTime
 
 xr.set_options(keep_attrs=True)
 
@@ -429,17 +428,18 @@ class calcsPlot(object):
             cbs = []
             if not all_nan_flag:
                 cax = fig.add_axes([0.1, 0, 0.8, 0.05])
-
                 for i in range(len(psets)):
                     cbs.append(
                         fig.colorbar(psets[i], cax=cax, orientation='horizontal', shrink=0.95)
                     )
                     cbs[i].ax.set_title(f'{da_sets[i].units}')
                     if self.vert_plot:
-                        cbs[i].ax.set_aspect(0.03)
+                        cbs[i].ax.set_aspect('auto')
+                        # cbs[i].ax.set_aspect(0.03)
                         cbs[i].ax.set_anchor((0, 1.35 + 0.15 * (nrows - 1)))
                     else:
-                        cbs[i].ax.set_aspect(0.03)
+                        # cbs[i].ax.set_aspect(0.03)
+                        cbs[i].ax.set_aspect('auto')
                         if len(psets) > 2:
                             cbs[i].ax.set_anchor((0, 1.35 + 0.15 * (nrows - 1)))
                         else:
@@ -485,28 +485,6 @@ class calcsPlot(object):
                 ]
                 plt.legend(proxy, ['NaN', '-Inf', 'Inf'], bbox_to_anchor=(0.87, 2), ncol=len(proxy))
                 plt.axis('off')
-
-        # if self._calc_ssim:
-        #    import os
-
-        #    import skimage.io
-        #    from skimage.metrics import structural_similarity as ssim
-
-        #    for i in range(1, len(da_sets)):
-        #        img1 = skimage.io.imread('tmp_ssim1.png')
-        #        img2 = skimage.io.imread(f'tmp_ssim{i+1}.png')
-
-        #        ssim_val = ssim(
-        #            img1,
-        #            img2,
-        #            multichannel=True,
-        #            gaussian_weights=True,
-        #            use_sample_covariance=False,
-        #        )
-        #        print(f' SSIM 1 & {i+1} = % 5.5f\n' % (ssim_val))
-        #    for i in range(len(da_sets) + 1):
-        #        if os.path.exists(f'tmp_ssim{i}.png'):
-        #            os.remove(f'tmp_ssim{i}.png')
 
     def hist_plot(self, plot_data, title):
         fig, axs = mpl.pyplot.subplots(1, 1, sharey=True, tight_layout=True)
@@ -636,7 +614,10 @@ class calcsPlot(object):
                 ax = plt.gca()
             else:
                 dtindex = da_sets[i].indexes['time']
-                c_d_time = [CalendarDateTime(item, '365_day') for item in dtindex]
+                # may get a warning message because uses a standard calendar (fine for cesm)
+                c_d_time = dtindex.to_datetimeindex()
+                # this works with some but not all python versions
+                # c_d_time = dtindex
                 mpl.pyplot.plot(c_d_time, da_sets[i], f'C{i}', label=f'{da_sets.sets.data[i]}')
                 ax = plt.gca()
                 for label in ax.get_xticklabels():
@@ -754,8 +735,7 @@ class calcsPlot(object):
                         (data), data_type, ['time'], weighted=self._weighted
                     ).get_single_calc('pooled_variance')
                 )
-                d = pooled_sd
-                # print(type(d))
+                d = float(pooled_sd)
                 if abs(d) > 0.01:
                     calc_name = f'{calc}: pooled SD = {d:.2f}'
                 else:
@@ -764,7 +744,7 @@ class calcsPlot(object):
                 p = lm.Datasetcalcs(
                     (data), data_type, ['time'], weighted=self._weighted
                 ).get_single_calc('annual_harmonic_relative_ratio_pct_sig')
-                pp = p
+                pp = float(p)
                 calc_name = f'{calc}: % sig = {pp:.2f}'
             elif self._plot_type == 'spatial':
                 if self._weighted:

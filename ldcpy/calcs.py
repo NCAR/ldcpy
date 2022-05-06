@@ -26,7 +26,6 @@ xr.set_options(keep_attrs=True)
 class Datasetcalcs:
     """
     This class contains calcs for each point of a dataset after aggregating across one or more dimensions, and a method to access these calcs. Expects a DataArray.
-
     """
 
     def __init__(
@@ -554,7 +553,7 @@ class Datasetcalcs:
                         _biased_var = (
                             ((self._ds - self.mean) ** 2).cf.weighted('area').mean(dim=adims)
                         )
-                        self._std = np.sqrt(_biased_var * (1 / (1 - V2 / (V1 ** 2))))
+                        self._std = np.sqrt(_biased_var * (1 / (1 - V2 / (V1**2))))
                     else:
                         # same as unweighted
                         self._std = self._ds.std(adims, ddof=self._ddof, skipna=True)
@@ -1228,7 +1227,7 @@ class Diffcalcs:
     # sigma is the radius for the gaussian
     def _oned_gauss(self, n, sigma):
         r = range(-int(n / 2), int(n / 2) + 1)
-        return [(1 / (sigma * sqrt(2 * pi))) * exp(-float(x) ** 2 / (2 * sigma ** 2)) for x in r]
+        return [(1 / (sigma * sqrt(2 * pi))) * exp(-float(x) ** 2 / (2 * sigma**2)) for x in r]
 
     # this adjusts the boundary area after filtering with astropy
     # to account for the fact that we want to divide only by the weight in

@@ -125,7 +125,7 @@ class TestErrorcalcs(TestCase):
     def test_mean_error_02(self):
         em = Datasetcalcs(
             xr.DataArray(self._samples[0]['observed'] - xr.DataArray(self._samples[0]['measured'])),
-            'cam-fv',
+            'ca47774m0-fv',
             [],
             weighted=False,
         )
@@ -143,7 +143,8 @@ class TestErrorcalcs(TestCase):
 
     def test_TS_02(self):
         import xarray as xr
-        import zfpy
+
+        # import zfpy
 
         ds = xr.open_dataset('data/cam-fv/orig.TS.100days.nc')
 
