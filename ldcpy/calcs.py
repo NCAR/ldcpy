@@ -827,17 +827,24 @@ class Datasetcalcs:
         so can only be plotted in a spatial plot.
         """
         if not self._is_memoized('_lag1'):
-            key = f'{self._time_dim_name}.dayofyear'
-            grouped = self._ds.groupby(key)
-            self._deseas_resid = grouped - grouped.mean(dim=self._time_dim_name)
+            if 'dayofyear' in self._ds.attrs.keys():
+                key = f'{self._time_dim_name}.dayofyear'
+            else:
+                key = 'time'
+            grouped = self._ds.groupby(key, squeeze=False)
+            if self._time_dim_name in self._ds.attrs.keys():
+                self._deseas_resid = grouped - grouped.mean(dim=self._time_dim_name)
+            else:
+                # note: not actually deseasonalized
+                self._deseas_resid = grouped.mean(dim=self._time_dim_name) - self._ds.mean()
             time_length = self._deseas_resid.sizes[self._time_dim_name]
             current = self._deseas_resid.head({self._time_dim_name: time_length - 1})
             next = self._deseas_resid.shift({self._time_dim_name: -1}).head(
                 {self._time_dim_name: time_length - 1}
             )
 
-            num = current.dot(next, dims=self._time_dim_name)
-            denom = current.dot(current, dims=self._time_dim_name)
+            num = current.fillna(0).dot(next.fillna(0), dims=self._time_dim_name)
+            denom = current.fillna(0).dot(current.fillna(0), dims=self._time_dim_name)
             self._lag1 = num / denom
 
             self._lag1.attrs = self._ds.attrs
@@ -1346,6 +1353,10 @@ class Diffcalcs:
             c2_std = float(self._calcs2.get_calc('ds').std(skipna=True))
 
             cov = self.covariance
+
+            if c1_std == 0 or c2_std == 0:
+                self._pcc = -1.0
+                return float(self._pcc)
 
             self._pcc = cov / c1_std / c2_std
 
