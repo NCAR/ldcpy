@@ -1,3 +1,7 @@
+# needed to prevent issue with prettier
+default_language_version:
+  node: 16.14.2
+
 exclude: docs/source/notebooks/prect.ipynb
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
@@ -32,3 +36,8 @@ repos:
         additional_dependencies: [pyupgrade==2.7.3]
       - id: nbqa-isort
         additional_dependencies: [isort==5.9.3]
+
+  - repo: https://github.com/psf/black
+    rev: 22.3.0
+    hooks:
+      - id: black-jupyter
