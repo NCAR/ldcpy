@@ -15,6 +15,7 @@ from cartopy.util import add_cyclic_point
 from matplotlib import pyplot as plt
 from scipy import stats as ss
 from scipy.ndimage import gaussian_filter
+from scipy.signal import stft
 from skimage.util import crop
 from xrft import dft
 
@@ -138,11 +139,13 @@ class Datasetcalcs:
         self._w_e_first_differences = None
         self._n_s_first_differences = None
         self._w_e_derivative = None
+        self._fft2 = None
         self._percent_unique = None
         self._most_repeated = None
         self._most_repeated_pct = None
         self._cdf = None
         self._dtype = ds.dtype
+        self._stft = None
 
         # single value calcs
         self._zscore_cutoff = None
@@ -888,6 +891,38 @@ class Datasetcalcs:
         return self._lag1_first_difference
 
     @property
+    def fft2(self) -> xr.DataArray:
+        if not self._is_memoized('_fft2'):
+            self._fft2 = xr.DataArray(np.abs(np.fft.fft2(self.mean)))
+            self._fft2.attrs = self._ds.attrs
+            # if hasattr(self._ds, 'units'):
+            #    self._fft2.attrs['units'] = f'{self._ds.units}'
+            self._fft2 = self._fft2.rename({'dim_0': 'lat', 'dim_1': 'lon'})
+            self._fft2 = self._fft2.assign_coords(
+                {'lat': self._ds.coords['lat'], 'lon': self._ds.coords['lon']}
+            )
+        return self._fft2
+
+    @property
+    def stft(self) -> xr.DataArray:
+        if not self._is_memoized('_stft'):
+
+            f, t, self._stft = np.abs(
+                stft(
+                    self.mean.isel({'lat': 100}).squeeze(), nperseg=1, nfft=382, detrend='constant'
+                )
+            )
+            self._stft = xr.DataArray(self._stft)
+            self._stft.attrs = self._ds.attrs
+            # if hasattr(self._ds, 'units'):
+            #    self._stft.attrs['units'] = f'{self._ds.units}'
+            self._stft = self._stft.rename({'dim_0': 'lat', 'dim_1': 'lon'})
+            self._stft = self._stft.assign_coords(
+                {'lat': self._ds.coords['lat'], 'lon': self._ds.coords['lon']}
+            )
+        return self._stft
+
+    @property
     def annual_harmonic_relative_ratio(self) -> xr.DataArray:
         """
         The annual harmonic relative to the average periodogram value
@@ -898,10 +933,8 @@ class Datasetcalcs:
         if not self._is_memoized('_annual_harmonic_relative_ratio'):
             # drop time coordinate labels or else it will try to parse them as numbers to check spacing and fail
 
-            ds_copy = self._ds
-
             new_index = [i for i in range(0, self._ds[self._time_dim_name].size)]
-            new_ds = ds_copy.assign_coords({self._time_dim_name: new_index})
+            new_ds = self._ds.assign_coords({self._time_dim_name: new_index})
 
             lon_coord_name = self._lon_coord_name
             lat_coord_name = self._lat_coord_name
@@ -1058,6 +1091,10 @@ class Datasetcalcs:
                 return self.ns_con_var
             if name == 'ew_con_var':
                 return self.ew_con_var
+            if name == 'fft2':
+                return self.fft2
+            if name == 'stft':
+                return self.stft
             if name == 'w_e_first_differences':
                 return self.w_e_first_differences
             if name == 'n_s_first_differences':

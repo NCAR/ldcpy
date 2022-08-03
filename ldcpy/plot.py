@@ -77,9 +77,14 @@ class calcsPlot(object):
         legend_offset=None,
         weighted=True,
         basic_plot=False,
+        cmax=None,
+        cmin=None,
     ):
 
         self._ds = ds
+
+        self._cmax = cmax
+        self._cmin = cmin
 
         # calc settings used in plot titles
         self._varname = varname
@@ -356,7 +361,12 @@ class calcsPlot(object):
 
             cyxr = xr.DataArray(data=cy_datas)
 
-            if not np.isinf(cyxr).all():
+            if self._cmax is not None:
+                cmax.append(self._cmax)
+            if self._cmin is not None:
+                cmin.append(self._cmin)
+
+            if not np.isinf(cyxr).all() and len(cmax) == 0 and len(cmin) == 0:
                 cmin.append(np.min(cyxr.where(cyxr != -np.inf).min()))
                 cmax.append(np.max(cyxr.where(cyxr != np.inf).max()))
 
@@ -755,6 +765,13 @@ class calcsPlot(object):
                         .mean()
                         .data.compute()
                     )
+                elif calc in ['fft2', 'stft']:
+                    a1_data = (
+                        lm.Datasetcalcs(data, data_type, ['time'], weighted=self._weighted)
+                        .get_calc(calc)
+                        .mean()
+                        .data
+                    )
                 else:
                     a1_data = (
                         lm.Datasetcalcs(data, data_type, ['time'], weighted=self._weighted)
@@ -824,6 +841,8 @@ def plot(
     legend_offset=None,
     weighted=True,
     basic_plot=False,
+    cmax=None,
+    cmin=None,
 ):
     """
     Plots the data given an xarray dataset
@@ -979,6 +998,8 @@ def plot(
         legend_offset=legend_offset,
         weighted=weighted,
         basic_plot=basic_plot,
+        cmax=cmax,
+        cmin=cmin,
     )
 
     plt.rcParams.update(
