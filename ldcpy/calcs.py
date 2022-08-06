@@ -1281,6 +1281,14 @@ class Datasetcalcs:
                 return self.min_val
             if name == 'cdf':
                 return self.cdf
+            if name == 'fftratio':
+                return self.fftratio
+            if name == 'fftmax':
+                return self.fftmax
+            if name == 'vfftratio':
+                return self.vfftratio
+            if name == 'vfftmax':
+                return self.vfftmax
             if name == 'ds':
                 return self._ds
             raise ValueError(f'there is no calc with the name: {name}.')
