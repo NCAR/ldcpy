@@ -42,6 +42,7 @@ test_data_2 = xr.DataArray(
 )
 d = ds['TS'].sel(collection='orig')
 ds_pointwise_calcs = ldcpy.Datasetcalcs(d, 'cam-fv', [], weighted=False)
+ds_spatial_calcs = ldcpy.Datasetcalcs(d, 'cam-fv', ['time'], weighted=False)
 
 calc_ds = ds_pointwise_calcs.get_calc_ds('w_e_derivative', 'd')
 
@@ -95,6 +96,12 @@ class TestErrorcalcs(TestCase):
                 ),
             }
         ]
+
+    def test_fftsum(self):
+        f = ds_spatial_calcs.get_calc('fft2')
+        t = ldcpy.Datasetcalcs(f, 'cam-fv', [], weighted=False)
+        t.get_single_calc('fftsum')
+        self.assertTrue(True)
 
     def test_creation_01(self):
         Diffcalcs(

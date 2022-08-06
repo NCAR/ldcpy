@@ -146,6 +146,10 @@ class Datasetcalcs:
         self._cdf = None
         self._dtype = ds.dtype
         self._stft = None
+        self._fftratio = None
+        self._fftmax = None
+        self._vfftratio = None
+        self._vfftmax = None
 
         # single value calcs
         self._zscore_cutoff = None
@@ -901,7 +905,123 @@ class Datasetcalcs:
             self._fft2 = self._fft2.assign_coords(
                 {'lat': self._ds.coords['lat'], 'lon': self._ds.coords['lon']}
             )
-        return self._fft2
+        return self._fft2 / np.mean(self._fft2)
+
+    @property
+    def fftratio(self) -> xr.DataArray:
+        if not self._is_memoized('_fftratio'):
+            # get longitude length: self.fft2.shape[1]
+            # select second latitude coordinate: self.fft2.isel({"lat":2})
+            # select range: self.fft2.where(self.fft2.lat > 1, drop=True)
+            # multirange: self.fft2.where(self.fft2.lat > 1, drop=True).where(self.fft2.lon == 3, drop=True)
+            top_val = (
+                self._ds.where(
+                    self._ds.lat > self._ds.lat[int((self._ds.shape[0] - 1) * 3 / 4)], drop=True
+                )
+                .max(dim='lon')
+                .mean()
+            )
+            bottom_val = (
+                self._ds.where(
+                    np.logical_and(
+                        self._ds.lat > self._ds.lat[int((self._ds.shape[0] - 1) / 2)],
+                        self._ds.lat <= self._ds.lat[int((self._ds.shape[0] - 1) * 3 / 4)],
+                    ),
+                    drop=True,
+                )
+                .max(dim='lon')
+                .mean()
+            )
+            # greater than 1 = more higher frequencies than lower frequencies
+            self._fftratio = top_val / bottom_val
+        return self._fftratio
+
+    @property
+    def fftmax(self) -> xr.DataArray:
+        if not self._is_memoized('_fftmax'):
+            # get longitude length: self.fft2.shape[1]
+            # select second latitude coordinate: self.fft2.isel({"lat":2})
+            # select range: self.fft2.where(self.fft2.lat > 1, drop=True)
+            # multirange: self.fft2.where(self.fft2.lat > 1, drop=True).where(self.fft2.lon == 3, drop=True)
+            top_val = (
+                self._ds.where(
+                    self._ds.lat > self._ds.lat[int((self._ds.shape[0] - 1) * 15 / 16)], drop=True
+                )
+                .max(dim='lon')
+                .max()
+            )
+            bottom_val = (
+                self._ds.where(
+                    np.logical_and(
+                        self._ds.lat > self._ds.lat[int((self._ds.shape[0] - 1) / 2)],
+                        self._ds.lat <= self._ds.lat[int((self._ds.shape[0] - 1) * 9 / 16)],
+                    ),
+                    drop=True,
+                )
+                .max(dim='lon')
+                .max()
+            )
+            # greater than 1 = more higher frequencies than lower frequencies
+            self._fftmax = top_val / bottom_val
+        return self._fftmax
+
+    @property
+    def vfftratio(self) -> xr.DataArray:
+        if not self._is_memoized('_fftratio'):
+            # get longitude length: self.fft2.shape[1]
+            # select second latitude coordinate: self.fft2.isel({"lat":2})
+            # select range: self.fft2.where(self.fft2.lat > 1, drop=True)
+            # multirange: self.fft2.where(self.fft2.lat > 1, drop=True).where(self.fft2.lon == 3, drop=True)
+            top_val = (
+                self._ds.where(
+                    self._ds.lon > self._ds.lon[int((self._ds.shape[1] - 1) * 3 / 4)], drop=True
+                )
+                .max(dim='lat')
+                .mean()
+            )
+            bottom_val = (
+                self._ds.where(
+                    np.logical_and(
+                        self._ds.lon > self._ds.lon[int((self._ds.shape[1] - 1) / 2)],
+                        self._ds.lon <= self._ds.lon[int((self._ds.shape[1] - 1) * 3 / 4)],
+                    ),
+                    drop=True,
+                )
+                .max(dim='lat')
+                .mean()
+            )
+            # greater than 1 = more higher frequencies than lower frequencies
+            self._fftratio = top_val / bottom_val
+        return self._fftratio
+
+    @property
+    def vfftmax(self) -> xr.DataArray:
+        if not self._is_memoized('_fftmax'):
+            # get longitude length: self.fft2.shape[1]
+            # select second latitude coordinate: self.fft2.isel({"lat":2})
+            # select range: self.fft2.where(self.fft2.lat > 1, drop=True)
+            # multirange: self.fft2.where(self.fft2.lat > 1, drop=True).where(self.fft2.lon == 3, drop=True)
+            top_val = (
+                self._ds.where(
+                    self._ds.lon > self._ds.lon[int((self._ds.shape[1] - 1) * 15 / 16)], drop=True
+                )
+                .max(dim='lat')
+                .max()
+            )
+            bottom_val = (
+                self._ds.where(
+                    np.logical_and(
+                        self._ds.lon > self._ds.lon[int((self._ds.shape[1] - 1) / 2)],
+                        self._ds.lon <= self._ds.lon[int((self._ds.shape[1] - 1) * 9 / 16)],
+                    ),
+                    drop=True,
+                )
+                .max(dim='lat')
+                .max()
+            )
+            # greater than 1 = more higher frequencies than lower frequencies
+            self._fftmax = top_val / bottom_val
+        return self._fftmax
 
     @property
     def stft(self) -> xr.DataArray:
@@ -1206,6 +1326,14 @@ class Datasetcalcs:
                 return self.most_repeated
             if name == 'most_repeated_percent':
                 return self.most_repeated_percent
+            if name == 'fftratio':
+                return self.fftratio
+            if name == 'fftmax':
+                return self.fftmax
+            if name == 'vfftratio':
+                return self.vfftratio
+            if name == 'vfftmax':
+                return self.vfftmax
             raise ValueError(f'there is no calcs with the name: {name}.')
         else:
             raise TypeError('name must be a string.')
