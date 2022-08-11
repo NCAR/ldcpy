@@ -310,6 +310,7 @@ def compare_stats(
     temp_std = []
     temp_min = []
     temp_max = []
+    temp_min_abs_nonzero = []
     temp_pos = []
     temp_zeros = []
     temp_ac_lat = []
@@ -322,6 +323,7 @@ def compare_stats(
         temp_std.append(da_set_calcs[i].get_calc('std').data.compute())
         temp_max.append(da_set_calcs[i].get_calc('max_val').data.compute())
         temp_min.append(da_set_calcs[i].get_calc('min_val').data.compute())
+        temp_min_abs_nonzero.append(da_set_calcs[i].get_calc('min_abs_nonzero').data.compute())
         temp_pos.append(da_set_calcs[i].get_calc('prob_positive').data.compute())
         temp_zeros.append(da_set_calcs[i].get_calc('num_zero').data.compute())
         if data_type == 'cam-fv':
@@ -333,6 +335,7 @@ def compare_stats(
     df_dict['variance'] = temp_var
     df_dict['standard deviation'] = temp_std
     df_dict['min value'] = temp_min
+    df_dict['min (abs) nonzero value'] = temp_min_abs_nonzero
     df_dict['max value'] = temp_max
     df_dict['probability positive'] = temp_pos
     df_dict['number of zeros'] = temp_zeros

@@ -126,6 +126,8 @@ class Datasetcalcs:
         self._standardized_mean = None
         self._max_abs = None
         self._min_abs = None
+        self._min_abs_nonzero = None
+        self._min_val_nonzero = None
         self._d_range = None
         self._min_val = None
         self._max_val = None
@@ -790,6 +792,17 @@ class Datasetcalcs:
         return self._min_abs
 
     @property
+    def min_abs_nonzero(self) -> xr.DataArray:
+        if not self._is_memoized('_min_abs_nonzero'):
+            mx = abs(self._ds).where(self._ds != 0)
+            self._min_abs_nonzero = mx.min(dim=self._agg_dims)
+            self._min_abs_nonzero.attrs = self._ds.attrs
+            if hasattr(self._ds, 'units'):
+                self._min_abs_nonzero.attrs['units'] = f'{self._ds.units}'
+
+        return self._min_abs_nonzero
+
+    @property
     def max_val(self) -> xr.DataArray:
         if not self._is_memoized('_max_val'):
             self._max_val = self._ds.max(dim=self._agg_dims)
@@ -808,6 +821,17 @@ class Datasetcalcs:
                 self._min_val.attrs['units'] = f'{self._ds.units}'
 
         return self._min_val
+
+    @property
+    def min_val_nonzero(self) -> xr.DataArray:
+        if not self._is_memoized('_min_val_nonzero'):
+            mx = self._ds.where(self._ds != 0)
+            self._min_val_nonzero = mx.min(dim=self._agg_dims)
+            self._min_val_nonzero.attrs = self._ds.attrs
+            if hasattr(self._ds, 'units'):
+                self._min_val_nonzero.attrs['units'] = f'{self._ds.units}'
+
+        return self._min_val_nonzero
 
     @property
     def dyn_range(self) -> xr.DataArray:
@@ -1109,12 +1133,16 @@ class Datasetcalcs:
                 return self.lag1_first_difference
             if name == 'max_abs':
                 return self.max_abs
+            if name == 'min_abs_nonzero':
+                return self.min_abs_nonzero
             if name == 'min_abs':
                 return self.min_abs
             if name == 'max_val':
                 return self.max_val
             if name == 'min_val':
                 return self.min_val
+            if name == 'min_val_nonzero':
+                return self.min_val_nonzero
             if name == 'cdf':
                 return self.cdf
             if name == 'ds':
@@ -1211,6 +1239,7 @@ class Diffcalcs:
         self._ssim_mat = None
         self._ssim_mat_fp_orig = None
         self._spre_tol = spre_tol
+        self._ssim_levs = None
 
     @property
     def spre_tol(self):
@@ -1638,6 +1667,7 @@ class Diffcalcs:
 
             # save full matrix
             self._ssim_mat = ssim_mats_array
+            self._ssim_levs = ssim_levs
 
             self._ssim_value = return_ssim
 
@@ -1808,13 +1838,14 @@ class Diffcalcs:
             self._ssim_value_fp_orig = return_ssim
             # save full matrix
             self._ssim_mat_fp_slow = ssim_mats_array
+            self._ssim_levs = ssim_levs
 
         return float(self._ssim_value_fp_slow)
 
     @property
     def ssim_value_fp_fast(self):
         """
-        Faster implementation then ssim_value_fp_orig (this is the default DSSIM option).
+        Faster implementation then ssim_value_fp_slow (this is the default DSSIM option).
 
         """
         from astropy.convolution import Gaussian2DKernel, convolve, interpolate_replace_nans
@@ -1909,6 +1940,9 @@ class Diffcalcs:
             # end of levels calculation
             return_ssim = ssim_levs.min()
             self._ssim_value_fp_fast = return_ssim
+
+            # save ssim on each level
+            self._ssim_levs = ssim_levs
 
             # save full matrix
             self._ssim_mat_fp = ssim_mats_array
