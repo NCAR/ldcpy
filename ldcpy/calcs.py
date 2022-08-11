@@ -1232,6 +1232,7 @@ class Diffcalcs:
         self._ssim_value_fp_orig = (
             None  # "straightforward" version for floating points - not recommended
         )
+        self._ssim_value_fp_orig_exp = None
         self._ssim_value_fp_fast = None  # faster Data SSIM - the default
         self._ssim_value_fp_slow = None  # slower non-matrix version of DSSIM - for experimenting
         self._max_spatial_rel_error = None
@@ -1579,7 +1580,12 @@ class Diffcalcs:
             ssim_mats_array = []
 
             for this_lev in range(nlevels):
-
+                # temp output files
+                f1_name = 'im1.png'
+                f2_name = 'im2.png'
+                f1 = open(f1_name, 'w')
+                f2 = open(f2_name, 'w')
+                # end temp
                 with tempfile.TemporaryDirectory() as tmpdirname:
                     filename_1, filename_2 = (
                         f'{tmpdirname}/t_ssim1.png',
@@ -1615,6 +1621,10 @@ class Diffcalcs:
                     extent1 = ax1.get_window_extent().transformed(fig.dpi_scale_trans.inverted())
                     ax1.imshow
                     plt.savefig(filename_1, bbox_inches=extent1, transparent=True, pad_inches=0)
+                    # temp
+                    plt.savefig(f1_name, bbox_inches=extent1, transparent=True, pad_inches=0)
+                    f1.close()
+                    # end temp
                     ax1.axis('on')
 
                     ax2 = plt.subplot(1, 2, 2, projection=ccrs.Robinson(central_longitude=central))
@@ -1636,12 +1646,17 @@ class Diffcalcs:
                     ax2.axis('off')
                     extent2 = ax2.get_window_extent().transformed(fig.dpi_scale_trans.inverted())
                     plt.savefig(filename_2, bbox_inches=extent2, transparent=True, pad_inches=0)
+                    # temp
+                    plt.savefig(f2_name, bbox_inches=extent2, transparent=True, pad_inches=0)
+                    f2.close()
+                    # end temp
 
                     ax2.axis('on')
 
                     img1 = skimage.io.imread(filename_1)
                     img2 = skimage.io.imread(filename_2)
-                    # scikit is adding an alpha channel for some reason - get rid of it
+                    # scikit is adding an alpha channel of all zeros - get rid of it or it arificially
+                    # inflates the ssim
                     img1 = img1[:, :, :3]
                     img2 = img2[:, :, :3]
 
@@ -1713,7 +1728,7 @@ class Diffcalcs:
                 smin = min(np.nanmin(a1), np.nanmin(a2))
                 smax = max(np.nanmax(a1), np.nanmax(a2))
                 r = smax - smin
-                if r == 0.0:  # scale by smax if fiels is a constant (and smax != 0)
+                if r == 0.0:  # scale by smax if field is a constant (and smax != 0)
                     if smax == 0.0:
                         sc_a1 = a1
                         sc_a2 = a2
@@ -1724,9 +1739,10 @@ class Diffcalcs:
                     sc_a1 = (a1 - smin) / r
                     sc_a2 = (a2 - smin) / r
 
+                # TEMP - don't quantize
                 # now quantize to 256 bins
-                sc_a1 = np.round(sc_a1 * 255) / 255
-                sc_a2 = np.round(sc_a2 * 255) / 255
+                # sc_a1 = np.round(sc_a1 * 255) / 255
+                # sc_a2 = np.round(sc_a2 * 255) / 255
 
                 # gaussian filter
                 n = 11  # recommended window size
@@ -1835,7 +1851,7 @@ class Diffcalcs:
                 ssim_mats_array.append(ssim_mat)
 
             return_ssim = ssim_levs.min()
-            self._ssim_value_fp_orig = return_ssim
+            self._ssim_value_fp_slow = return_ssim
             # save full matrix
             self._ssim_mat_fp_slow = ssim_mats_array
             self._ssim_levs = ssim_levs
@@ -2006,41 +2022,64 @@ class Diffcalcs:
 
         return float(self._ssim_value_fp_orig)
 
+    @property
+    def ssim_value_fp_orig_exp(self):
+        # EXP VERSION
+        """To mimic what zchecker does - the ssim on the fp data with
+        original constants and no scaling (so-called "straightforward" approach.
+        This will return Nan on POP data or CAM data with NaNs because scikit
+        SSIM fuction does not handle NaNs.
+        """
+
         import numpy as np
         from skimage.metrics import structural_similarity as ssim
 
-        if not self._is_memoized('_ssim_value_fp_old'):
+        if not self._is_memoized('_ssim_value_fp_orig_exp'):
 
-            # if this is a 3D variable, we will just do level 0 for now...
-            # (consider doing each level seperately)
+            # if this is a 3D variable, we will do each level seperately
             if self._calcs1._vert_dim_name is not None:
                 vname = self._calcs1._vert_dim_name
-                a1 = self._calcs1.get_calc('ds').isel({vname: 0}).data
-                a2 = self._calcs2.get_calc('ds').isel({vname: 0}).data
+                if vname not in self._calcs1.get_calc('ds').sizes:
+                    nlevels = 1
+                else:
+                    nlevels = self._calcs1.get_calc('ds').sizes[vname]
             else:
-                a1 = self._calcs1.get_calc('ds').data
-                a2 = self._calcs2.get_calc('ds').data
+                nlevels = 1
 
-            if dask.is_dask_collection(a1):
-                a1 = a1.compute()
-            if dask.is_dask_collection(a2):
-                a2 = a2.compute()
+            ssim_levs = np.zeros(nlevels)
 
-            maxr = max(a1.max(), a2.max())
-            minr = min(a1.min(), a2.min())
-            myrange = maxr - minr
-            mean_ssim = ssim(
-                a1,
-                a2,
-                multichannel=False,
-                data_range=myrange,
-                gaussian_weights=True,
-                use_sample_covariance=False,
-            )
+            for this_lev in range(nlevels):
+                if nlevels == 1:
+                    a1 = self._calcs1.get_calc('ds').data
+                    a2 = self._calcs2.get_calc('ds').data
+                else:
+                    a1 = self._calcs1.get_calc('ds').isel({vname: this_lev}).data
+                    a2 = self._calcs2.get_calc('ds').isel({vname: this_lev}).data
 
-            self._ssim_value_fp_old = mean_ssim
+                if dask.is_dask_collection(a1):
+                    a1 = a1.compute()
+                if dask.is_dask_collection(a2):
+                    a2 = a2.compute()
 
-        return float(self._ssim_value_fp_old)
+                maxr = max(a1.max(), a2.max())
+                minr = min(a1.min(), a2.min())
+                myrange = maxr - minr
+                mean_ssim = ssim(
+                    a1,
+                    a2,
+                    multichannel=False,
+                    data_range=myrange,
+                    gaussian_weights=True,
+                    use_sample_covariance=False,
+                )
+                ssim_levs[this_lev] = mean_ssim
+
+            # end of levels calculation
+            return_ssim = ssim_levs.min()
+
+            self._ssim_value_fp_orig_exp = return_ssim
+
+        return float(self._ssim_value_fp_orig_exp)
 
     def get_diff_calc(self, name: str, color: Optional[str] = 'coolwarm'):
         """
@@ -2079,6 +2118,8 @@ class Diffcalcs:
                 # ("straightforward approach")
                 # not recommended
                 return self.ssim_value_fp_orig
+            if name == 'ssim_fp_orig_exp':
+                return self.ssim_value_fp_orig_exp
             if name == 'ssim_fp':
                 return self.ssim_value_fp_fast
             if (
