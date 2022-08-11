@@ -391,6 +391,8 @@ def compare_stats(
     temp_data_ssim = []
     temp_ssim = []
     temp_cr = []
+    temp_sf_ssim = []
+    temp_ssim_fp_slow = []
 
     # compare to the first set
     if include_file_size:
@@ -414,6 +416,8 @@ def compare_stats(
         temp_data_ssim.append(diff_calcs[i].get_diff_calc('ssim_fp'))
         if include_ssim:
             temp_ssim.append(diff_calcs[i].get_diff_calc('ssim'))
+            temp_sf_ssim.append(diff_calcs[i].get_diff_calc('ssim_fp_orig'))
+            temp_ssim_fp_slow.append(diff_calcs[i].get_diff_calc('ssim_fp_slow'))
 
         if include_file_size:
             this_fs = file_size_dict[my_cols2[i]]
@@ -440,6 +444,8 @@ def compare_stats(
     df_dict2['data SSIM'] = temp_data_ssim
     if include_ssim:
         df_dict2['image SSIM'] = temp_ssim
+        df_dict2['SF data SSIM'] = temp_sf_ssim
+        df_dict2['Exp. data SSIM'] = temp_ssim_fp_slow
 
     if include_file_size:
         df_dict2['file size ratio'] = temp_cr
@@ -540,6 +546,7 @@ def check_metrics(
     # Pearson less than pcc_tol means fail
     pcc = diff_calcs.get_diff_calc('pearson_correlation_coefficient')
     if pcc < pcc_tol:
+
         print('     *FAILED pearson correlation coefficient test...(pcc = {0:.5f}'.format(pcc), ')')
         num_fail = num_fail + 1
     else:
