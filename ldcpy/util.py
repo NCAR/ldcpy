@@ -152,6 +152,7 @@ def open_datasets(data_type, varnames, list_of_files, labels, weights=True, **kw
         return ds[varnames]
 
     if data_type == 'cam-fv' and weights is True:
+        pass
         weights_name = 'gw'
         varnames.append(weights_name)
     elif data_type == 'pop' and weights is True:
