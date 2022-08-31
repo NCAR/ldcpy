@@ -2001,7 +2001,6 @@ class Diffcalcs:
         Faster implementation then ssim_value_fp_orig (this is the default DSSIM option).
 
         """
-        import time
 
         from astropy.convolution import Gaussian2DKernel, convolve, interpolate_replace_nans
 
@@ -2021,7 +2020,6 @@ class Diffcalcs:
             ssim_mats_array = []
             my_eps = 1.0e-8
 
-            start = time.time()
             for this_lev in range(nlevels):
                 if nlevels == 1:
                     a1 = self._calcs1.get_calc('ds').data
@@ -2093,8 +2091,6 @@ class Diffcalcs:
                 ssim_levs[this_lev] = mean_ssim
                 ssim_mats_array.append(ssim_mat)
 
-            now = time.time() - start
-            print(now)
             # end of levels calculation
             return_ssim = ssim_levs.min()
             self._ssim_value_fp_fast = return_ssim
