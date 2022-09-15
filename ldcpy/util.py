@@ -396,6 +396,7 @@ def compare_stats(
     temp_cr = []
     temp_sf_ssim = []
     temp_ssim_fp_slow = []
+    temp_sf_ssim_exp = []
 
     # compare to the first set
     if include_file_size:
@@ -421,6 +422,7 @@ def compare_stats(
             temp_ssim.append(diff_calcs[i].get_diff_calc('ssim'))
             temp_sf_ssim.append(diff_calcs[i].get_diff_calc('ssim_fp_orig'))
             temp_ssim_fp_slow.append(diff_calcs[i].get_diff_calc('ssim_fp_slow'))
+            temp_sf_ssim_exp.append(diff_calcs[i].get_diff_calc('ssim_fp_orig_exp'))
 
         if include_file_size:
             this_fs = file_size_dict[my_cols2[i]]
@@ -444,11 +446,12 @@ def compare_stats(
     df_dict2[tmp_str4] = temp_sre_01
 
     df_dict2['max spatial relative error'] = temp_max_spr
-    df_dict2['data SSIM'] = temp_data_ssim
+    df_dict2['DSSIM'] = temp_data_ssim
     if include_ssim:
         df_dict2['image SSIM'] = temp_ssim
-        df_dict2['SF data SSIM'] = temp_sf_ssim
-        df_dict2['Exp. data SSIM'] = temp_ssim_fp_slow
+        df_dict2['SF DSSIM'] = temp_sf_ssim
+        df_dict2['DSSIM (no quant)'] = temp_ssim_fp_slow
+        df_dict2['SF DSSIM (exp)'] = temp_sf_ssim_exp
 
     if include_file_size:
         df_dict2['file size ratio'] = temp_cr
