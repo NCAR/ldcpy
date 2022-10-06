@@ -451,7 +451,7 @@ def compare_stats(
         df_dict2['image SSIM'] = temp_ssim
         df_dict2['SF DSSIM'] = temp_sf_ssim
         df_dict2['DSSIM (no quant)'] = temp_ssim_fp_slow
-        df_dict2['SF DSSIM (exp)'] = temp_sf_ssim_exp
+        # df_dict2['SF DSSIM (exp)'] = temp_sf_ssim_exp
 
     if include_file_size:
         df_dict2['file size ratio'] = temp_cr

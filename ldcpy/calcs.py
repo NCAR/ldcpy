@@ -1614,10 +1614,10 @@ class Diffcalcs:
 
             for this_lev in range(nlevels):
                 # temp output files
-                f1_name = 'im1.png'
-                f2_name = 'im2.png'
-                f1 = open(f1_name, 'w')
-                f2 = open(f2_name, 'w')
+                # f1_name = 'im1.png'
+                # f2_name = 'im2.png'
+                # f1 = open(f1_name, 'w')
+                # f2 = open(f2_name, 'w')
                 # end temp
                 with tempfile.TemporaryDirectory() as tmpdirname:
                     filename_1, filename_2 = (
@@ -1655,8 +1655,8 @@ class Diffcalcs:
                     ax1.imshow
                     plt.savefig(filename_1, bbox_inches=extent1, transparent=True, pad_inches=0)
                     # temp
-                    plt.savefig(f1_name, bbox_inches=extent1, transparent=True, pad_inches=0)
-                    f1.close()
+                    # plt.savefig(f1_name, bbox_inches=extent1, transparent=True, pad_inches=0)
+                    # f1.close()
                     # end temp
                     ax1.axis('on')
 
@@ -1680,8 +1680,8 @@ class Diffcalcs:
                     extent2 = ax2.get_window_extent().transformed(fig.dpi_scale_trans.inverted())
                     plt.savefig(filename_2, bbox_inches=extent2, transparent=True, pad_inches=0)
                     # temp
-                    plt.savefig(f2_name, bbox_inches=extent2, transparent=True, pad_inches=0)
-                    f2.close()
+                    # plt.savefig(f2_name, bbox_inches=extent2, transparent=True, pad_inches=0)
+                    # f2.close()
                     # end temp
 
                     ax2.axis('on')
@@ -1731,6 +1731,7 @@ class Diffcalcs:
         We compute the SSIM (structural similarity index) on the spatial data
         - using the data itself (we do not create an image) - this is the slower
         non-matrix implementation that is good for experiementing (not in practice).
+        TEMP - no quantization
 
         """
 
@@ -2087,7 +2088,7 @@ class Diffcalcs:
 
                 C1 = k1 * k1
                 C2 = k2 * k2
-
+                # over write for now
                 C1 = my_eps
                 C2 = my_eps
 
