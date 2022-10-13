@@ -311,6 +311,7 @@ def compare_stats(
     temp_std = []
     temp_min = []
     temp_max = []
+    temp_min_abs_nonzero = []
     temp_pos = []
     temp_zeros = []
     temp_ac_lat = []
@@ -323,6 +324,7 @@ def compare_stats(
         temp_std.append(da_set_calcs[i].get_calc('std').data.compute())
         temp_max.append(da_set_calcs[i].get_calc('max_val').data.compute())
         temp_min.append(da_set_calcs[i].get_calc('min_val').data.compute())
+        temp_min_abs_nonzero.append(da_set_calcs[i].get_calc('min_abs_nonzero').data.compute())
         temp_pos.append(da_set_calcs[i].get_calc('prob_positive').data.compute())
         temp_zeros.append(da_set_calcs[i].get_calc('num_zero').data.compute())
         if data_type == 'cam-fv':
@@ -334,6 +336,7 @@ def compare_stats(
     df_dict['variance'] = temp_var
     df_dict['standard deviation'] = temp_std
     df_dict['min value'] = temp_min
+    df_dict['min (abs) nonzero value'] = temp_min_abs_nonzero
     df_dict['max value'] = temp_max
     df_dict['probability positive'] = temp_pos
     df_dict['number of zeros'] = temp_zeros
@@ -385,9 +388,6 @@ def compare_stats(
     temp_pcc = []
     temp_ks = []
     temp_sre = []
-    temp_sre_001 = []
-    temp_sre_05 = []
-    temp_sre_01 = []
     temp_max_spr = []
     temp_data_ssim = []
     temp_ssim = []
@@ -405,12 +405,6 @@ def compare_stats(
         temp_ks.append(diff_calcs[i].get_diff_calc('ks_p_value'))
         diff_calcs[i].spre_tol = rel_errors[0]
         temp_sre.append(diff_calcs[i].get_diff_calc('spatial_rel_error'))
-        diff_calcs[i].spre_tol = rel_errors[1]
-        temp_sre_001.append(diff_calcs[i].get_diff_calc('spatial_rel_error'))
-        diff_calcs[i].spre_tol = rel_errors[2]
-        temp_sre_05.append(diff_calcs[i].get_diff_calc('spatial_rel_error'))
-        diff_calcs[i].spre_tol = rel_errors[3]
-        temp_sre_01.append(diff_calcs[i].get_diff_calc('spatial_rel_error'))
         temp_max_spr.append(diff_calcs[i].get_diff_calc('max_spatial_rel_error'))
         temp_data_ssim.append(diff_calcs[i].get_diff_calc('ssim_fp'))
         if include_ssim:
@@ -428,17 +422,8 @@ def compare_stats(
     tmp_str = 'spatial relative error(% > ' + str(rel_errors[0]) + ')'
     df_dict2[tmp_str] = temp_sre
 
-    tmp_str2 = 'spatial relative error (% > ' + str(rel_errors[1]) + ')'
-    df_dict2[tmp_str2] = temp_sre_001
-
-    tmp_str3 = 'spatial relative error (% > ' + str(rel_errors[2]) + ')'
-    df_dict2[tmp_str3] = temp_sre_05
-
-    tmp_str4 = 'spatial relative error (% > ' + str(rel_errors[3]) + ')'
-    df_dict2[tmp_str4] = temp_sre_01
-
     df_dict2['max spatial relative error'] = temp_max_spr
-    df_dict2['data SSIM'] = temp_data_ssim
+    df_dict2['DSSIM'] = temp_data_ssim
     if include_ssim:
         df_dict2['image SSIM'] = temp_ssim
 
@@ -541,6 +526,7 @@ def check_metrics(
     # Pearson less than pcc_tol means fail
     pcc = diff_calcs.get_diff_calc('pearson_correlation_coefficient')
     if pcc < pcc_tol:
+
         print('     *FAILED pearson correlation coefficient test...(pcc = {0:.5f}'.format(pcc), ')')
         num_fail = num_fail + 1
     else:

@@ -127,6 +127,8 @@ class Datasetcalcs:
         self._standardized_mean = None
         self._max_abs = None
         self._min_abs = None
+        self._min_abs_nonzero = None
+        self._min_val_nonzero = None
         self._d_range = None
         self._min_val = None
         self._max_val = None
@@ -797,6 +799,17 @@ class Datasetcalcs:
         return self._min_abs
 
     @property
+    def min_abs_nonzero(self) -> xr.DataArray:
+        if not self._is_memoized('_min_abs_nonzero'):
+            mx = abs(self._ds).where(self._ds != 0)
+            self._min_abs_nonzero = mx.min(dim=self._agg_dims)
+            self._min_abs_nonzero.attrs = self._ds.attrs
+            if hasattr(self._ds, 'units'):
+                self._min_abs_nonzero.attrs['units'] = f'{self._ds.units}'
+
+        return self._min_abs_nonzero
+
+    @property
     def max_val(self) -> xr.DataArray:
         if not self._is_memoized('_max_val'):
             self._max_val = self._ds.max(dim=self._agg_dims)
@@ -815,6 +828,17 @@ class Datasetcalcs:
                 self._min_val.attrs['units'] = f'{self._ds.units}'
 
         return self._min_val
+
+    @property
+    def min_val_nonzero(self) -> xr.DataArray:
+        if not self._is_memoized('_min_val_nonzero'):
+            mx = self._ds.where(self._ds != 0)
+            self._min_val_nonzero = mx.min(dim=self._agg_dims)
+            self._min_val_nonzero.attrs = self._ds.attrs
+            if hasattr(self._ds, 'units'):
+                self._min_val_nonzero.attrs['units'] = f'{self._ds.units}'
+
+        return self._min_val_nonzero
 
     @property
     def dyn_range(self) -> xr.DataArray:
@@ -1275,12 +1299,16 @@ class Datasetcalcs:
                 return self.lag1_first_difference
             if name == 'max_abs':
                 return self.max_abs
+            if name == 'min_abs_nonzero':
+                return self.min_abs_nonzero
             if name == 'min_abs':
                 return self.min_abs
             if name == 'max_val':
                 return self.max_val
             if name == 'min_val':
                 return self.min_val
+            if name == 'min_val_nonzero':
+                return self.min_val_nonzero
             if name == 'cdf':
                 return self.cdf
             if name == 'fftratio':
@@ -1361,6 +1389,8 @@ class Diffcalcs:
         data_type: str,
         aggregate_dims: Optional[list] = None,
         spre_tol: float = 1.0e-4,
+        k1: float = 0.01,
+        k2: float = 0.03,
         **calcs_kwargs,
     ) -> None:
         if isinstance(ds1, xr.DataArray) and isinstance(ds2, xr.DataArray):
@@ -1386,13 +1416,19 @@ class Diffcalcs:
         self._ssim_value_fp_orig = (
             None  # "straightforward" version for floating points - not recommended
         )
+        self._ssim_value_fp_orig_exp = None
         self._ssim_value_fp_fast = None  # faster Data SSIM - the default
+        self._ssim_value_fp_fast_exp = None  # experimenting
         self._ssim_value_fp_slow = None  # slower non-matrix version of DSSIM - for experimenting
         self._max_spatial_rel_error = None
         self._ssim_mat_fp = None
         self._ssim_mat = None
         self._ssim_mat_fp_orig = None
         self._spre_tol = spre_tol
+        self._ssim_levs = None
+        self._k1 = k1
+        self._k2 = k2
+        self._quant = 256
 
     @property
     def spre_tol(self):
@@ -1401,6 +1437,30 @@ class Diffcalcs:
     @spre_tol.setter
     def spre_tol(self, t):
         self._spre_tol = t
+
+    @property
+    def k1(self):
+        return self._k1
+
+    @k1.setter
+    def k1(self, t):
+        self._k1 = t
+
+    @property
+    def k2(self):
+        return self._k2
+
+    @k2.setter
+    def k2(self, t):
+        self._k2 = t
+
+    @property
+    def quant(self):
+        return self._quant
+
+    @quant.setter
+    def quant(self, t):
+        self._quant = t
 
     def _is_memoized(self, calc_name: str) -> bool:
         return hasattr(self, calc_name) and (self.__getattribute__(calc_name) is not None)
@@ -1670,8 +1730,11 @@ class Diffcalcs:
         import skimage.metrics
         from skimage.metrics import structural_similarity as ssim
 
-        if not self._is_memoized('_ssim_value'):
+        k1 = self._k1
+        k2 = self._k2
 
+        #        if not self._is_memoized('_ssim_value'):
+        if True:
             # Prevent showing stuff
             backend_ = mpl.get_backend()
             mpl.use('Agg')
@@ -1798,21 +1861,26 @@ class Diffcalcs:
 
                     img1 = skimage.io.imread(filename_1)
                     img2 = skimage.io.imread(filename_2)
-                    # scikit is adding an alpha channel for some reason - get rid of it
+                    # scikit is adding an alpha channel of all zeros - get rid of it or it arificially
+                    # inflates the ssim
                     img1 = img1[:, :, :3]
                     img2 = img2[:, :, :3]
 
                     # s = ssim(img1, img2, multichannel=True)
+                    # channel_axis =
                     # the following version closer to matlab version (and orig ssim paper)
                     s, ssim_mat = ssim(
                         img1,
                         img2,
-                        multichannel=True,
+                        #                        multichannel=True,
+                        channel_axis=2,
                         gaussian_weights=True,
                         use_sample_covariance=False,
                         full=True,
+                        K1=k1,
+                        K2=k2,
                     )
-                    # print(s)
+
                     ssim_levs[this_lev] = s
                     plt.close(fig)
                     ssim_mats_array.append(np.mean(ssim_mat, axis=2))
@@ -1824,6 +1892,7 @@ class Diffcalcs:
 
             # save full matrix
             self._ssim_mat = ssim_mats_array
+            self._ssim_levs = ssim_levs
 
             self._ssim_value = return_ssim
 
@@ -1837,6 +1906,7 @@ class Diffcalcs:
         non-matrix implementation that is good for experiementing (not in practice).
 
         """
+
         if not self._is_memoized('_ssim_value_fp_slow'):
 
             # if this is a 3D variable, we will do each level seperately
@@ -1869,7 +1939,7 @@ class Diffcalcs:
                 smin = min(np.nanmin(a1), np.nanmin(a2))
                 smax = max(np.nanmax(a1), np.nanmax(a2))
                 r = smax - smin
-                if r == 0.0:  # scale by smax if fiels is a constant (and smax != 0)
+                if r == 0.0:  # scale by smax if field is a constant (and smax != 0)
                     if smax == 0.0:
                         sc_a1 = a1
                         sc_a2 = a2
@@ -1880,6 +1950,7 @@ class Diffcalcs:
                     sc_a1 = (a1 - smin) / r
                     sc_a2 = (a2 - smin) / r
 
+                # TEMP - don't quantize
                 # now quantize to 256 bins
                 sc_a1 = np.round(sc_a1 * 255) / 255
                 sc_a2 = np.round(sc_a2 * 255) / 255
@@ -1991,16 +2062,17 @@ class Diffcalcs:
                 ssim_mats_array.append(ssim_mat)
 
             return_ssim = ssim_levs.min()
-            self._ssim_value_fp_orig = return_ssim
+            self._ssim_value_fp_slow = return_ssim
             # save full matrix
             self._ssim_mat_fp_slow = ssim_mats_array
+            self._ssim_levs = ssim_levs
 
         return float(self._ssim_value_fp_slow)
 
     @property
     def ssim_value_fp_fast(self):
         """
-        Faster implementation then ssim_value_fp_orig (this is the default DSSIM option).
+        Faster implementation then ssim_value_fp_slow (this is the default DSSIM option).
 
         """
 
@@ -2097,103 +2169,12 @@ class Diffcalcs:
             return_ssim = ssim_levs.min()
             self._ssim_value_fp_fast = return_ssim
 
+            # save ssim on each level
+            self._ssim_levs = ssim_levs
+
             # save full matrix
             self._ssim_mat_fp = ssim_mats_array
         return float(self._ssim_value_fp_fast)
-
-    @property
-    def ssim_value_fp_orig(self):
-        """To mimic what zchecker does - the ssim on the fp data with
-        original constants and no scaling (so-called "straightforward" approach.
-        This will return Nan on POP data or CAM data with NaNs because scikit
-        SSIM fuction does not handle NaNs.
-        """
-
-        import numpy as np
-        from skimage.metrics import structural_similarity as ssim
-
-        if not self._is_memoized('_ssim_value_fp_orig'):
-
-            # if this is a 3D variable, we will do each level seperately
-            if self._calcs1._vert_dim_name is not None:
-                vname = self._calcs1._vert_dim_name
-                if vname not in self._calcs1.get_calc('ds').sizes:
-                    nlevels = 1
-                else:
-                    nlevels = self._calcs1.get_calc('ds').sizes[vname]
-            else:
-                nlevels = 1
-
-            ssim_levs = np.zeros(nlevels)
-
-            for this_lev in range(nlevels):
-                if nlevels == 1:
-                    a1 = self._calcs1.get_calc('ds').data
-                    a2 = self._calcs2.get_calc('ds').data
-                else:
-                    a1 = self._calcs1.get_calc('ds').isel({vname: this_lev}).data
-                    a2 = self._calcs2.get_calc('ds').isel({vname: this_lev}).data
-
-                if dask.is_dask_collection(a1):
-                    a1 = a1.compute()
-                if dask.is_dask_collection(a2):
-                    a2 = a2.compute()
-
-                maxr = max(a1.max(), a2.max())
-                minr = min(a1.min(), a2.min())
-                myrange = maxr - minr
-                mean_ssim = ssim(
-                    a1,
-                    a2,
-                    multichannel=False,
-                    data_range=myrange,
-                    gaussian_weights=True,
-                    use_sample_covariance=False,
-                )
-                ssim_levs[this_lev] = mean_ssim
-
-            # end of levels calculation
-            return_ssim = ssim_levs.min()
-
-            self._ssim_value_fp_orig = return_ssim
-
-        return float(self._ssim_value_fp_orig)
-
-        import numpy as np
-        from skimage.metrics import structural_similarity as ssim
-
-        if not self._is_memoized('_ssim_value_fp_old'):
-
-            # if this is a 3D variable, we will just do level 0 for now...
-            # (consider doing each level seperately)
-            if self._calcs1._vert_dim_name is not None:
-                vname = self._calcs1._vert_dim_name
-                a1 = self._calcs1.get_calc('ds').isel({vname: 0}).data
-                a2 = self._calcs2.get_calc('ds').isel({vname: 0}).data
-            else:
-                a1 = self._calcs1.get_calc('ds').data
-                a2 = self._calcs2.get_calc('ds').data
-
-            if dask.is_dask_collection(a1):
-                a1 = a1.compute()
-            if dask.is_dask_collection(a2):
-                a2 = a2.compute()
-
-            maxr = max(a1.max(), a2.max())
-            minr = min(a1.min(), a2.min())
-            myrange = maxr - minr
-            mean_ssim = ssim(
-                a1,
-                a2,
-                multichannel=False,
-                data_range=myrange,
-                gaussian_weights=True,
-                use_sample_covariance=False,
-            )
-
-            self._ssim_value_fp_old = mean_ssim
-
-        return float(self._ssim_value_fp_old)
 
     def get_diff_calc(self, name: str, color: Optional[str] = 'coolwarm'):
         """
@@ -2228,17 +2209,9 @@ class Diffcalcs:
             if name == 'ssim':
                 self.color = color
                 return self.ssim_value
-            if name == 'ssim_fp_orig':  # this is using standard SSIM with floats
-                # ("straightforward approach")
-                # not recommended
-                return self.ssim_value_fp_orig
             if name == 'ssim_fp':
                 return self.ssim_value_fp_fast
-            if (
-                name == 'ssim_fp_slow'
-            ):  # the non-matrix DSSIM implementation - good for experimenting
-                # not recommended in practice
-                return self.ssim_value_fp_slow
+
             raise ValueError(f'there is no calc with the name: {name}.')
         else:
             raise TypeError('name must be a string.')
