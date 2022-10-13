@@ -688,22 +688,21 @@ def save_metrics(
     location='names.csv',
 ):
     """
-        full_ds : xarray.Dataset
-            An xarray dataset containing multiple netCDF files concatenated across a 'collection' dimension
-        varname : str
-            The variable of interest in the dataset
-        set1 : str
-            The collection l
-    abel of the "control" data
-        set2 : str
-            The collection label of the (1st) data to compare
-        time : int, optional
-            The time index used t (default = 0)
-        time : lev, optional
-            The level index of interest in a 3D dataset (default 0)
-        Returns
-        =======
-        out : Number of failing metrics
+    full_ds : xarray.Dataset
+        An xarray dataset containing multiple netCDF files concatenated across a 'collection' dimension
+    varname : str
+        The variable of interest in the dataset
+    set1 : str
+        The collection label of the "control" data
+    set2 : str
+        The collection label of the (1st) data to compare
+    time : int, optional
+        The time index used t (default = 0)
+    time : lev, optional
+        The level index of interest in a 3D dataset (default 0)
+    Returns
+    =======
+    out : Number of failing metrics
     """
 
     ds = subset_data(full_ds)
