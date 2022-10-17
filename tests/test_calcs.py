@@ -97,11 +97,11 @@ class TestErrorcalcs(TestCase):
             }
         ]
 
-    def test_fftsum(self):
-        f = ds_spatial_calcs.get_calc('fft2')
-        t = ldcpy.Datasetcalcs(f, 'cam-fv', [], weighted=False)
-        t.get_single_calc('fftsum')
-        self.assertTrue(True)
+    #    def test_fftsum(self):
+    #        f = ds_spatial_calcs.get_calc('fft2')
+    #        t = ldcpy.Datasetcalcs(f, 'cam-fv', [], weighted=False)
+    #        t.get_single_calc('fftsum')
+    #        self.assertTrue(True)
 
     def test_creation_01(self):
         Diffcalcs(
