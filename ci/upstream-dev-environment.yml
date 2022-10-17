@@ -3,7 +3,7 @@ channels:
   - conda-forge
 dependencies:
   - python=*=*cp*
-  - cartopy=0.18
+  - cartopy
   - cmocean
   - codecov
   - dask
