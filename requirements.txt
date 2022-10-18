@@ -2,7 +2,6 @@ cmocean
 cartopy
 dask[complete]
 matplotlib
-h5py
 netcdf4
 numpy
 scikit-image
