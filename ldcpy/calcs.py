@@ -152,6 +152,7 @@ class Datasetcalcs:
         self._fftmax = None
         self._vfftratio = None
         self._vfftmax = None
+        self._magnitude_range = None
 
         # single value calcs
         self._zscore_cutoff = None
@@ -264,6 +265,17 @@ class Datasetcalcs:
                 self._ds.values.flatten()
             )
         return self._most_repeated_pct
+
+    @property
+    def magnitude_range(self) -> xr.DataArray:
+        """
+        The range of the dataset
+        """
+        if not self._is_memoized('_magnitude_range'):
+            # Get the range in exponent space
+            self._magnitude_range = int(np.log10(self._ds.max())) - int(np.log10(self._ds.min()))
+        self._magnitude_range.attrs = self._ds.attrs
+        return self._magnitude_range
 
     @property
     def range(self) -> xr.DataArray:
@@ -1233,6 +1245,8 @@ class Datasetcalcs:
         """
 
         if isinstance(name, str):
+            if name == 'magnitude_range':
+                return self.magnitude_range
             if name == 'ns_con_var':
                 return self.ns_con_var
             if name == 'ew_con_var':

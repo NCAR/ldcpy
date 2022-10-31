@@ -33,6 +33,18 @@ class TestPlot(TestCase):
     parameters. Tests still need to be written for the methods in the plot.py class.
     """
 
+    def test_magnitude_range(self):
+        ldcpy.plot(
+            ds,
+            'TS',
+            sets=['orig', 'recon'],
+            calc='magnitude_range',
+            vert_plot=True,
+            tex_format=False,
+            weighted=False,
+        )
+        self.assertTrue(True)
+
     def test_fft2(self):
         ldcpy.plot(
             ds,

@@ -84,7 +84,7 @@ jobs:
 
       - name: Install ldcpy
         run: |
-          python -m pip install -e .
+          conda install ldcpy
           conda list
 
       - name: Run Tests
