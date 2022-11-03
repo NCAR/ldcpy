@@ -274,7 +274,7 @@ class Datasetcalcs:
         if not self._is_memoized('_magnitude_range'):
             # Get the range in exponent space
             self._magnitude_range = int(np.log10(self._ds.max())) - int(np.log10(self._ds.min()))
-        self._magnitude_range.attrs = self._ds.attrs
+        # self._magnitude_range.attrs = self._ds.attrs
         return self._magnitude_range
 
     @property
@@ -1245,8 +1245,6 @@ class Datasetcalcs:
         """
 
         if isinstance(name, str):
-            if name == 'magnitude_range':
-                return self.magnitude_range
             if name == 'ns_con_var':
                 return self.ns_con_var
             if name == 'ew_con_var':
@@ -1354,6 +1352,8 @@ class Datasetcalcs:
             The calc value
         """
         if isinstance(name, str):
+            if name == 'magnitude_range':
+                return self.magnitude_range
             if name == 'zscore_cutoff':
                 return self.zscore_cutoff
             if name == 'zscore_percent_significant':
