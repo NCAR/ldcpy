@@ -139,7 +139,9 @@ class Datasetcalcs:
         self._lev_autocorr = None
         self._entropy = None
         self._w_e_first_differences = None
+        self._w_e_first_differences_max = None
         self._n_s_first_differences = None
+        self._n_s_first_differences_max = None
         self._w_e_derivative = None
         self._fft2 = None
         self._percent_unique = None
@@ -153,6 +155,8 @@ class Datasetcalcs:
         self._vfftratio = None
         self._vfftmax = None
         self._magnitude_range = None
+        self._magnitude_diff_ew = None
+        self._magnitude_diff_ns = None
 
         # single value calcs
         self._zscore_cutoff = None
@@ -224,12 +228,37 @@ class Datasetcalcs:
         return self._w_e_first_differences.mean(self._agg_dims)
 
     @property
-    def n_s_first_differences(self) -> xr.DataArray:
+    def w_e_first_differences_max(self) -> xr.DataArray:
         """
         First differences along the west-east direction
         """
+        if not self._is_memoized('_w_e_first_differences'):
+            # self._first_differences = self._ds.diff('lat').mean(self._agg_dims)
+            self._w_e_first_differences = self._ds.roll(
+                {'lat': -1}, roll_coords=False
+            ) - self._ds.roll({'lat': 1}, roll_coords=False)
+        self._w_e_first_differences.attrs = self._ds.attrs
+
+        return self._w_e_first_differences.max(self._agg_dims)
+
+    @property
+    def n_s_first_differences(self) -> xr.DataArray:
+        """
+        First differences along the north-south direction
+        """
         if not self._is_memoized('_n_s_first_differences'):
             self._n_s_first_differences = self._ds.diff('lon').mean(self._agg_dims)
+            # self._first_differences = self._ds.roll({"lon": -1}, roll_coords=False) - self._ds.roll({"lat": 1},                                                                                        roll_coords=False)
+        self._n_s_first_differences.attrs = self._ds.attrs
+        return self._n_s_first_differences
+
+    @property
+    def n_s_first_differences_max(self) -> xr.DataArray:
+        """
+        First differences along the n-s direction
+        """
+        if not self._is_memoized('_n_s_first_differences'):
+            self._n_s_first_differences = self._ds.diff('lon').max(self._agg_dims)
             # self._first_differences = self._ds.roll({"lon": -1}, roll_coords=False) - self._ds.roll({"lat": 1},                                                                                        roll_coords=False)
         self._n_s_first_differences.attrs = self._ds.attrs
         return self._n_s_first_differences
@@ -276,6 +305,32 @@ class Datasetcalcs:
             self._magnitude_range = int(np.log10(self._ds.max())) - int(np.log10(self._ds.min()))
         # self._magnitude_range.attrs = self._ds.attrs
         return self._magnitude_range
+
+    @property
+    def magnitude_diff_ew(self) -> xr.DataArray:
+        """
+        Maximum magnitude differences along ew direction
+        """
+        if not self._is_memoized('_magnitude_diff_ew'):
+            # self._first_differences = self._ds.diff('lat').mean(self._agg_dims)
+            self._magnitude_diff_ew = abs(
+                int(np.log10(self._ds.roll({'lat': -1}, roll_coords=False)))
+                - int(np.log10(self._ds.roll({'lat': 1}, roll_coords=False)))
+            )
+        self._magnitude_diff_ew.attrs = self._ds.attrs
+
+        return self._magnitude_diff_ew.max(self._agg_dims)
+
+    @property
+    def magnitude_diff_ns(self) -> xr.DataArray:
+        """
+        First differences along the n-s direction
+        """
+        if not self._is_memoized('_magnitude_diff_ns'):
+            self._magnitude_diff_ns = abs(int(np.log10(self._ds.diff('lon')))).max(self._agg_dims)
+            # self._first_differences = self._ds.roll({"lon": -1}, roll_coords=False) - self._ds.roll({"lat": 1},                                                                                        roll_coords=False)
+        self._magnitude_diff_ns.attrs = self._ds.attrs
+        return self._magnitude_diff_ns
 
     @property
     def range(self) -> xr.DataArray:
@@ -1257,6 +1312,10 @@ class Datasetcalcs:
                 return self.w_e_first_differences
             if name == 'n_s_first_differences':
                 return self.n_s_first_differences
+            if name == 'w_e_first_differences_max':
+                return self.w_e_first_differences_max
+            if name == 'n_s_first_differences_max':
+                return self.n_s_first_differences_max
             if name == 'w_e_derivative':
                 return self.w_e_derivative
             if name == 'mean':
@@ -1333,6 +1392,10 @@ class Datasetcalcs:
                 return self.vfftmax
             if name == 'ds':
                 return self._ds
+            if name == 'magnitude_diff_ew':
+                return self.magnitude_diff_ew
+            if name == 'magnitude_diff_ns':
+                return self.magnitude_diff_ns
             raise ValueError(f'there is no calc with the name: {name}.')
         else:
             raise TypeError('name must be a string.')
