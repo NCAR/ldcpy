@@ -302,7 +302,12 @@ class Datasetcalcs:
         """
         if not self._is_memoized('_magnitude_range'):
             # Get the range in exponent space
-            self._magnitude_range = int(np.log10(self._ds.max())) - int(np.log10(self._ds.min()))
+            max = np.log10(abs(self._ds.max(self._agg_dims)))
+            min = np.log10(abs(self._ds.min(self._agg_dims)))
+            if np.isinf(max) or np.isinf(min) or np.isnan(max) or np.isnan(min):
+                self._magnitude_range = -1
+            else:
+                self._magnitude_range = int(max) - int(min)
         # self._magnitude_range.attrs = self._ds.attrs
         return self._magnitude_range
 
@@ -313,12 +318,13 @@ class Datasetcalcs:
         """
         if not self._is_memoized('_magnitude_diff_ew'):
             # self._first_differences = self._ds.diff('lat').mean(self._agg_dims)
-            self._magnitude_diff_ew = abs(
-                int(np.log10(self._ds.roll({'lat': -1}, roll_coords=False)))
-                - int(np.log10(self._ds.roll({'lat': 1}, roll_coords=False)))
-            )
+            max = np.log10(abs(self._ds.roll({'lat': -1}, roll_coords=False)))
+            min = np.log10(abs(self._ds.roll({'lat': 1}, roll_coords=False)))
+            if np.isinf(max) or np.isinf(min) or np.isnan(max) or np.isnan(min):
+                self._magnitude_diff_ew = -1
+            else:
+                self._magnitude_diff_ew = int(max) - int(min)
         self._magnitude_diff_ew.attrs = self._ds.attrs
-
         return self._magnitude_diff_ew.max(self._agg_dims)
 
     @property
@@ -327,7 +333,12 @@ class Datasetcalcs:
         First differences along the n-s direction
         """
         if not self._is_memoized('_magnitude_diff_ns'):
-            self._magnitude_diff_ns = abs(int(np.log10(self._ds.diff('lon')))).max(self._agg_dims)
+            max = np.log10(abs(self._ds.diff('lon').max(self._agg_dims)))
+            min = np.log10(abs(self._ds.diff('lon').min(self._agg_dims)))
+            if np.isinf(max) or np.isinf(min) or np.isnan(max) or np.isnan(min):
+                self._magnitude_diff_ns = -1
+            else:
+                self._magnitude_diff_ns = int(max) - int(min)
             # self._first_differences = self._ds.roll({"lon": -1}, roll_coords=False) - self._ds.roll({"lat": 1},                                                                                        roll_coords=False)
         self._magnitude_diff_ns.attrs = self._ds.attrs
         return self._magnitude_diff_ns
