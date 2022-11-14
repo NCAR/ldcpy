@@ -1,5 +1,8 @@
 import copy
+import ctypes
 import gzip
+import struct
+import time
 from math import exp, pi, sqrt
 from typing import Optional
 
@@ -157,6 +160,8 @@ class Datasetcalcs:
         self._magnitude_range = None
         self._magnitude_diff_ew = None
         self._magnitude_diff_ns = None
+        self._real_information = None
+        self._real_information_cutoff = None
 
         # single value calcs
         self._zscore_cutoff = None
@@ -318,12 +323,17 @@ class Datasetcalcs:
         """
         if not self._is_memoized('_magnitude_diff_ew'):
             # self._first_differences = self._ds.diff('lat').mean(self._agg_dims)
-            max = np.log10(abs(self._ds.roll({'lat': -1}, roll_coords=False)))
-            min = np.log10(abs(self._ds.roll({'lat': 1}, roll_coords=False)))
-            if np.isinf(max) or np.isinf(min) or np.isnan(max) or np.isnan(min):
+            here = np.log10(abs(self._ds.roll({'lon': 0}, roll_coords=False)))
+            there = np.log10(abs(self._ds.roll({'lon': 1}, roll_coords=False)))
+            if (
+                np.isinf(here).any()
+                or np.isinf(there).any()
+                or np.isnan(here).any()
+                or np.isnan(there).any()
+            ):
                 self._magnitude_diff_ew = -1
             else:
-                self._magnitude_diff_ew = int(max) - int(min)
+                self._magnitude_diff_ew = here - there
         self._magnitude_diff_ew.attrs = self._ds.attrs
         return self._magnitude_diff_ew.max(self._agg_dims)
 
@@ -333,12 +343,17 @@ class Datasetcalcs:
         First differences along the n-s direction
         """
         if not self._is_memoized('_magnitude_diff_ns'):
-            max = np.log10(abs(self._ds.diff('lon').max(self._agg_dims)))
-            min = np.log10(abs(self._ds.diff('lon').min(self._agg_dims)))
-            if np.isinf(max) or np.isinf(min) or np.isnan(max) or np.isnan(min):
+            max = np.log10(abs(self._ds.diff('lat').max(self._agg_dims)))
+            min = np.log10(abs(self._ds.diff('lat').min(self._agg_dims)))
+            if (
+                np.isinf(max).any()
+                or np.isinf(min).any()
+                or np.isnan(max).any()
+                or np.isnan(min).any()
+            ):
                 self._magnitude_diff_ns = -1
             else:
-                self._magnitude_diff_ns = int(max) - int(min)
+                self._magnitude_diff_ns = max - min
             # self._first_differences = self._ds.roll({"lon": -1}, roll_coords=False) - self._ds.roll({"lat": 1},                                                                                        roll_coords=False)
         self._magnitude_diff_ns.attrs = self._ds.attrs
         return self._magnitude_diff_ns
@@ -928,6 +943,117 @@ class Datasetcalcs:
 
         return self._dyn_range
 
+    def dec_to_binary(self, num):
+        b = bin(ctypes.c_uint32.from_buffer(ctypes.c_float(num)).value)
+        strip = b.lstrip('0b')
+        return strip.zfill(32)
+
+    def dec_to_binary_3(self, num):
+        a = time.perf_counter()
+        int32bits = np.asarray(num, dtype=np.float32).view(np.int32).item()
+        b = time.perf_counter() - a
+        print(b)
+        return '{:032b}'.format(int32bits)
+
+    def get_adj_bit(self, bit_pos):
+        return [bit_pos[0] - 1, bit_pos[1]]
+
+    def get_dict_list(self, data_array, x_index):
+        dict_list_H = []
+        N_BITS = 32
+        for i in range(N_BITS - 1):
+            new_dict = {'00': 0, '01': 0, '10': 0, '11': 0}
+            dict_list_H.append(new_dict)
+
+        b = np.empty(data_array[x_index].shape[0] * data_array[x_index].shape[1], dtype=object)
+        i = 0
+        for y in np.nditer(np.asarray(data_array[x_index], dtype=np.float32).view(np.int32)):
+            b[i] = '{:032b}'.format(y)
+            i += 1
+
+        for y in range(1, len(b) - 1):
+            for i in range(N_BITS - 1):
+                current_bit = int(b[y][i])
+                adjacent_bit = int(b[y + 1][i])
+
+                p00 = p01 = p10 = p11 = 0
+                if adjacent_bit == 0 and current_bit == 0:
+                    p00 = 1
+                elif adjacent_bit == 1 and current_bit == 0:
+                    p10 = 1
+                elif adjacent_bit == 0 and current_bit == 1:
+                    p01 = 1
+                elif adjacent_bit == 1 and current_bit == 1:
+                    p11 = 1
+
+                dict_list_H[i]['00'] += p00
+                dict_list_H[i]['01'] += p01
+                dict_list_H[i]['10'] += p10
+                dict_list_H[i]['11'] += p11
+
+        return dict_list_H
+
+    def get_mutual_info(self, p00, p01, p10, p11):
+        p0 = p00 + p10  # current bit is 0
+        p1 = p11 + p01  # current bit is 1
+        p0_prev = p00 + p01  # prev bit was 0
+        p1_prev = p11 + p10  # prev bit was 1
+
+        # From (4) in paper
+        mutual_info = 0
+        if p00 > 0:
+            mutual_info += p00 * np.log2(p00 / p0_prev / p0)
+        if p11 > 0:
+            mutual_info += p11 * np.log2(p11 / p1_prev / p1)
+        if p01 > 0:
+            mutual_info += p01 * np.log2(p01 / p0_prev / p1)
+        if p10 > 0:
+            mutual_info += p10 * np.log2(p10 / p1_prev / p0)
+
+        return mutual_info
+
+    def get_real_info(self, x_index):
+        dict_list_H = self.get_dict_list(self._ds, x_index)
+
+        # Total number of recordings. Sum all counts for first dictionary
+        num_measurements = np.sum(list(dict_list_H[0].values()))
+
+        mutual_info_array = []
+        for bit_pos_dict in dict_list_H:
+            p00 = np.divide(bit_pos_dict['00'], num_measurements, dtype=np.float64)
+            p01 = np.divide(bit_pos_dict['01'], num_measurements, dtype=np.float64)
+            p10 = np.divide(bit_pos_dict['10'], num_measurements, dtype=np.float64)
+            p11 = np.divide(bit_pos_dict['11'], num_measurements, dtype=np.float64)
+
+            mutual_info = self.get_mutual_info(p00, p01, p10, p11)
+
+            mutual_info_array.append(mutual_info)
+
+        mutual_info_array = np.array(mutual_info_array)
+        return xr.DataArray(mutual_info_array)
+
+    @property
+    def real_information(self) -> xr.DataArray:
+        if not self._is_memoized('_real_information'):
+            # get the first binary digit
+            self._real_information = self.get_real_info(0)
+            if hasattr(self._ds, 'units'):
+                self._real_information.attrs['units'] = f'{self._ds.units}'
+
+        return self._real_information
+
+    @property
+    def real_information_cutoff(self) -> xr.DataArray:
+        if not self._is_memoized('_real_information_cutoff'):
+            # get the first binary digit
+            self._real_information_cutoff = 0
+            self._captured_information = 0
+            normalized_information = self.real_information / self.real_information.sum()
+            while self._captured_information < 0.99:
+                self._captured_information += normalized_information[self._real_information_cutoff]
+                self._real_information_cutoff += 1
+        return self._real_information_cutoff
+
     @property
     def lag1(self) -> xr.DataArray:
         """
@@ -1407,6 +1533,8 @@ class Datasetcalcs:
                 return self.magnitude_diff_ew
             if name == 'magnitude_diff_ns':
                 return self.magnitude_diff_ns
+            if name == 'real_information':
+                return self.real_information
             raise ValueError(f'there is no calc with the name: {name}.')
         else:
             raise TypeError('name must be a string.')
@@ -1426,6 +1554,8 @@ class Datasetcalcs:
             The calc value
         """
         if isinstance(name, str):
+            if name == 'real_information_cutoff':
+                return self.real_information_cutoff
             if name == 'magnitude_range':
                 return self.magnitude_range
             if name == 'zscore_cutoff':

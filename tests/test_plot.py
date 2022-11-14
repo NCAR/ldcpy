@@ -33,15 +33,28 @@ class TestPlot(TestCase):
     parameters. Tests still need to be written for the methods in the plot.py class.
     """
 
-    def test_magnitude_range(self):
+    def test_magnitude_diff(self):
         ldcpy.plot(
             ds,
             'TS',
             sets=['orig', 'recon'],
-            calc='magnitude_range',
+            calc='magnitude_diff_ew',
             vert_plot=True,
             tex_format=False,
             weighted=False,
+        )
+        self.assertTrue(True)
+
+    def test_real_information(self):
+        ldcpy.plot(
+            ds,
+            'TS',
+            sets=['orig'],
+            calc='real_information',
+            vert_plot=True,
+            tex_format=False,
+            weighted=False,
+            plot_type='1D',
         )
         self.assertTrue(True)
 

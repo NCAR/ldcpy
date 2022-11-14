@@ -163,7 +163,7 @@ class calcsPlot(object):
 
         if self._plot_type in ['spatial']:
             calcs_da = lm.Datasetcalcs(da_data, data_type, ['time'], weighted=self._weighted)
-        elif self._plot_type in ['time_series', 'periodogram', 'histogram']:
+        elif self._plot_type in ['time_series', 'periodogram', 'histogram', '1D']:
             calcs_da = lm.Datasetcalcs(
                 da_data, data_type, [lat_dim, lon_dim], weighted=self._weighted
             )
@@ -519,6 +519,10 @@ class calcsPlot(object):
                     bbox_to_anchor=self._legend_offset, loc=self._legend_loc, borderaxespad=0.0
                 )
 
+    def plot_1d(self, plot_data, title):
+        plt.plot(range(plot_data.shape[1]), plot_data.values.squeeze())
+        mpl.pyplot.title(tex_escape(title[0]))
+
     def periodogram_plot(self, plot_data, title):
         plt.figure()
         for j in range(plot_data.sets.size):
@@ -765,7 +769,7 @@ class calcsPlot(object):
                         .mean()
                         .data.compute()
                     )
-                elif calc in ['fft2', 'stft']:
+                elif calc in ['fft2', 'stft', 'real_information']:
                     a1_data = (
                         lm.Datasetcalcs(data, data_type, ['time'], weighted=self._weighted)
                         .get_calc(calc)
@@ -1148,3 +1152,5 @@ def plot(
         mp.hist_plot(plot_dataset, titles)
     elif plot_type == 'periodogram':
         mp.periodogram_plot(plot_dataset, titles)
+    elif plot_type == '1D':
+        mp.plot_1d(plot_dataset, titles)
