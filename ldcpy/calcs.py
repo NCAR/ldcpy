@@ -309,7 +309,12 @@ class Datasetcalcs:
             # Get the range in exponent space
             max = np.log10(abs(self._ds.max(self._agg_dims)))
             min = np.log10(abs(self._ds.min(self._agg_dims)))
-            if np.isinf(max) or np.isinf(min) or np.isnan(max) or np.isnan(min):
+            if (
+                np.isinf(max).any()
+                or np.isinf(min).any()
+                or np.isnan(max).any()
+                or np.isnan(min).any()
+            ):
                 self._magnitude_range = -1
             else:
                 self._magnitude_range = int(max) - int(min)
