@@ -307,8 +307,8 @@ class Datasetcalcs:
         """
         if not self._is_memoized('_magnitude_range'):
             # Get the range in exponent space
-            max = np.log10(abs(self._ds.max(self._agg_dims)))
-            min = np.log10(abs(self._ds.min(self._agg_dims)))
+            max = np.log10(abs(self._ds.max()))
+            min = np.log10(abs(self._ds.min()))
             if (
                 np.isinf(max).any()
                 or np.isinf(min).any()
