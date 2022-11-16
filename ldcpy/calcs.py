@@ -970,7 +970,7 @@ class Datasetcalcs:
             new_dict = {'00': 0, '01': 0, '10': 0, '11': 0}
             dict_list_H.append(new_dict)
 
-        b = np.empty(data_array[x_index].shape[0] * data_array[x_index].shape[1], dtype=object)
+        b = np.empty(data_array[x_index].size, dtype=object)
         i = 0
         for y in np.nditer(np.asarray(data_array[x_index], dtype=np.float32).view(np.int32)):
             b[i] = '{:032b}'.format(y)
