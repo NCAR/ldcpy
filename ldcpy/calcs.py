@@ -980,23 +980,25 @@ class Datasetcalcs:
 
         for y in range(1, len(b) - 1):
             for i in range(N_BITS - 1):
-                current_bit = int(b[y][i])
-                adjacent_bit = int(b[y + 1][i])
+                if b[y][i] in ('0', '1') and b[y + 1][i] in ('0', '1'):
+                    dict_list_H[i][b[y][i] + b[y + 1][i]] += 1
+                    current_bit = int(b[y][i])
+                    adjacent_bit = int(b[y + 1][i])
 
-                p00 = p01 = p10 = p11 = 0
-                if adjacent_bit == 0 and current_bit == 0:
-                    p00 = 1
-                elif adjacent_bit == 1 and current_bit == 0:
-                    p10 = 1
-                elif adjacent_bit == 0 and current_bit == 1:
-                    p01 = 1
-                elif adjacent_bit == 1 and current_bit == 1:
-                    p11 = 1
+                    p00 = p01 = p10 = p11 = 0
+                    if adjacent_bit == 0 and current_bit == 0:
+                        p00 = 1
+                    elif adjacent_bit == 1 and current_bit == 0:
+                        p10 = 1
+                    elif adjacent_bit == 0 and current_bit == 1:
+                        p01 = 1
+                    elif adjacent_bit == 1 and current_bit == 1:
+                        p11 = 1
 
-                dict_list_H[i]['00'] += p00
-                dict_list_H[i]['01'] += p01
-                dict_list_H[i]['10'] += p10
-                dict_list_H[i]['11'] += p11
+                    dict_list_H[i]['00'] += p00
+                    dict_list_H[i]['01'] += p01
+                    dict_list_H[i]['10'] += p10
+                    dict_list_H[i]['11'] += p11
 
         return dict_list_H
 
