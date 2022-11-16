@@ -336,9 +336,10 @@ class Datasetcalcs:
                 or np.isnan(here).any()
                 or np.isnan(there).any()
             ):
-                self._magnitude_diff_ew = -1
+                self._magnitude_diff_ew_int = -1
             else:
-                self._magnitude_diff_ew = here - there
+                self._magnitude_diff_ew_int = here - there
+        self._magnitude_diff_ew = xr.DataArray(self._magnitude_diff_ew_int)
         self._magnitude_diff_ew.attrs = self._ds.attrs
         return self._magnitude_diff_ew.max(self._agg_dims)
 
@@ -356,10 +357,11 @@ class Datasetcalcs:
                 or np.isnan(max).any()
                 or np.isnan(min).any()
             ):
-                self._magnitude_diff_ns = -1
+                self._magnitude_diff_ns_int = -1
             else:
-                self._magnitude_diff_ns = max - min
+                self._magnitude_diff_ns_int = max - min
             # self._first_differences = self._ds.roll({"lon": -1}, roll_coords=False) - self._ds.roll({"lat": 1},                                                                                        roll_coords=False)
+        self._magnitude_diff_ns = xr.DataArray(self._magnitude_diff_ns_int)
         self._magnitude_diff_ns.attrs = self._ds.attrs
         return self._magnitude_diff_ns
 
