@@ -978,27 +978,34 @@ class Datasetcalcs:
             b[i] = '{:032b}'.format(y)
             i += 1
 
-        for y in range(1, len(b) - 1):
-            for i in range(N_BITS - 1):
+        for i in range(N_BITS - 1):
+            count = 0
+            for y in range(1, len(b) - 1):
                 if b[y][i] in ('0', '1') and b[y + 1][i] in ('0', '1'):
-                    dict_list_H[i][b[y][i] + b[y + 1][i]] += 1
-                    current_bit = int(b[y][i])
-                    adjacent_bit = int(b[y + 1][i])
-
+                    count += 1
                     p00 = p01 = p10 = p11 = 0
-                    if adjacent_bit == 0 and current_bit == 0:
-                        p00 = 1
-                    elif adjacent_bit == 1 and current_bit == 0:
-                        p10 = 1
-                    elif adjacent_bit == 0 and current_bit == 1:
-                        p01 = 1
-                    elif adjacent_bit == 1 and current_bit == 1:
-                        p11 = 1
+                    dict_list_H[i][b[y][i] + b[y + 1][i]] += 1
+                    # current_bit = int(b[y][i])
+                    # adjacent_bit = int(b[y + 1][i])
+
+                    # if adjacent_bit == 0 and current_bit == 0:
+                    #     p00 = 1
+                    # elif adjacent_bit == 1 and current_bit == 0:
+                    #     p10 = 1
+                    # elif adjacent_bit == 0 and current_bit == 1:
+                    #     p01 = 1
+                    # elif adjacent_bit == 1 and current_bit == 1:
+                    #     p11 = 1
 
                     dict_list_H[i]['00'] += p00
                     dict_list_H[i]['01'] += p01
                     dict_list_H[i]['10'] += p10
                     dict_list_H[i]['11'] += p11
+
+            dict_list_H[i]['00'] /= count
+            dict_list_H[i]['01'] /= count
+            dict_list_H[i]['10'] /= count
+            dict_list_H[i]['11'] /= count
 
         return dict_list_H
 
@@ -1025,14 +1032,14 @@ class Datasetcalcs:
         dict_list_H = self.get_dict_list(self._ds, x_index)
 
         # Total number of recordings. Sum all counts for first dictionary
-        num_measurements = np.sum(list(dict_list_H[0].values()))
+        # num_measurements = np.sum(list(dict_list_H[0].values()))
 
         mutual_info_array = []
         for bit_pos_dict in dict_list_H:
-            p00 = np.divide(bit_pos_dict['00'], num_measurements, dtype=np.float64)
-            p01 = np.divide(bit_pos_dict['01'], num_measurements, dtype=np.float64)
-            p10 = np.divide(bit_pos_dict['10'], num_measurements, dtype=np.float64)
-            p11 = np.divide(bit_pos_dict['11'], num_measurements, dtype=np.float64)
+            p00 = bit_pos_dict['00']
+            p01 = bit_pos_dict['01']
+            p10 = bit_pos_dict['10']
+            p11 = bit_pos_dict['11']
 
             mutual_info = self.get_mutual_info(p00, p01, p10, p11)
 
