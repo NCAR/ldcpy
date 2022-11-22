@@ -985,18 +985,6 @@ class Datasetcalcs:
                     count += 1
                     p00 = p01 = p10 = p11 = 0
                     dict_list_H[i][b[y][i] + b[y + 1][i]] += 1
-                    # current_bit = int(b[y][i])
-                    # adjacent_bit = int(b[y + 1][i])
-
-                    # if adjacent_bit == 0 and current_bit == 0:
-                    #     p00 = 1
-                    # elif adjacent_bit == 1 and current_bit == 0:
-                    #     p10 = 1
-                    # elif adjacent_bit == 0 and current_bit == 1:
-                    #     p01 = 1
-                    # elif adjacent_bit == 1 and current_bit == 1:
-                    #     p11 = 1
-
                     dict_list_H[i]['00'] += p00
                     dict_list_H[i]['01'] += p01
                     dict_list_H[i]['10'] += p10
@@ -1030,9 +1018,6 @@ class Datasetcalcs:
 
     def get_real_info(self, x_index):
         dict_list_H = self.get_dict_list(self._ds, x_index)
-
-        # Total number of recordings. Sum all counts for first dictionary
-        # num_measurements = np.sum(list(dict_list_H[0].values()))
 
         mutual_info_array = []
         for bit_pos_dict in dict_list_H:
@@ -1141,7 +1126,7 @@ class Datasetcalcs:
     @property
     def fft2(self) -> xr.DataArray:
         if not self._is_memoized('_fft2'):
-            self._fft2 = xr.DataArray(np.abs(np.fft.fft2(self.mean)))
+            self._fft2 = xr.DataArray(np.abs(np.fft.fft2(self._ds)))
             self._fft2.attrs = self._ds.attrs
             # if hasattr(self._ds, 'units'):
             #    self._fft2.attrs['units'] = f'{self._ds.units}'
