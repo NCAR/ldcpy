@@ -993,11 +993,16 @@ class Datasetcalcs:
                     dict_list_H[i]['10'] += p10
                     dict_list_H[i]['11'] += p11
 
-            dict_list_H[i]['00'] /= count
-            dict_list_H[i]['01'] /= count
-            dict_list_H[i]['10'] /= count
-            dict_list_H[i]['11'] /= count
-
+            if count == 0:
+                dict_list_H[i]['00'] = 0
+                dict_list_H[i]['01'] = 0
+                dict_list_H[i]['10'] = 0
+                dict_list_H[i]['11'] = 0
+            else:
+                dict_list_H[i]['00'] /= count
+                dict_list_H[i]['01'] /= count
+                dict_list_H[i]['10'] /= count
+                dict_list_H[i]['11'] /= count
         return dict_list_H
 
     def get_mutual_info(self, p00, p01, p10, p11):
@@ -1052,11 +1057,14 @@ class Datasetcalcs:
             # get the first binary digit
             self._real_information_cutoff = 0
             self._captured_information = 0
+            # if self.real_information.sum() > 0:
             normalized_information = self.real_information / self.real_information.sum()
             while self._captured_information < 0.99:
                 self._captured_information += normalized_information[self._real_information_cutoff]
                 self._real_information_cutoff += 1
-        return self._real_information_cutoff
+            return self._real_information_cutoff
+            # else:
+            #     return 0
 
     @property
     def lag1(self) -> xr.DataArray:
