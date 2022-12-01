@@ -1141,7 +1141,7 @@ class Datasetcalcs:
             self._fft2.attrs = self._ds.attrs
             # if hasattr(self._ds, 'units'):
             #    self._fft2.attrs['units'] = f'{self._ds.units}'
-            self._fft2 = self._fft2.rename({'dim_0': 'lat', 'dim_1': 'lon'})
+            self._fft2 = self._fft2.rename({'dim_1': 'lat', 'dim_2': 'lon'})
             self._fft2 = self._fft2.assign_coords(
                 {'lat': self._ds.coords['lat'], 'lon': self._ds.coords['lon']}
             )
