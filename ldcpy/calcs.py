@@ -1141,7 +1141,7 @@ class Datasetcalcs:
             self._fft2.attrs = self._ds.attrs
             # if hasattr(self._ds, 'units'):
             #    self._fft2.attrs['units'] = f'{self._ds.units}'
-            self._fft2 = self._fft2.rename({'dim_1': 'lat', 'dim_2': 'lon'})
+            self._fft2 = self._fft2.rename({'dim_0': 'time', 'dim_1': 'lat', 'dim_2': 'lon'})
             self._fft2 = self._fft2.assign_coords(
                 {'lat': self._ds.coords['lat'], 'lon': self._ds.coords['lon']}
             )
@@ -1156,7 +1156,7 @@ class Datasetcalcs:
             # multirange: self.fft2.where(self.fft2.lat > 1, drop=True).where(self.fft2.lon == 3, drop=True)
             top_val = (
                 self.fft2.where(
-                    self.fft2.lat > self.fft2.lat[int((self.fft2.shape[0] - 1) * 3 / 4)], drop=True
+                    self.fft2.lat > self.fft2.lat[int((self.fft2.shape[1] - 1) * 3 / 4)], drop=True
                 )
                 .max(dim='lon')
                 .mean()
@@ -1164,8 +1164,8 @@ class Datasetcalcs:
             bottom_val = (
                 self.fft2.where(
                     np.logical_and(
-                        self.fft2.lat > self.fft2.lat[int((self.fft2.shape[0] - 1) / 2)],
-                        self.fft2.lat <= self.fft2.lat[int((self.fft2.shape[0] - 1) * 3 / 4)],
+                        self.fft2.lat > self.fft2.lat[int((self.fft2.shape[1] - 1) / 2)],
+                        self.fft2.lat <= self.fft2.lat[int((self.fft2.shape[1] - 1) * 3 / 4)],
                     ),
                     drop=True,
                 )
@@ -1185,7 +1185,7 @@ class Datasetcalcs:
             # multirange: self.fft2.where(self.fft2.lat > 1, drop=True).where(self.fft2.lon == 3, drop=True)
             top_val = (
                 self.fft2.where(
-                    self.fft2.lat > self.fft2.lat[int((self.fft2.shape[0] - 1) * 15 / 16)],
+                    self.fft2.lat > self.fft2.lat[int((self.fft2.shape[1] - 1) * 15 / 16)],
                     drop=True,
                 )
                 .max(dim='lon')
@@ -1194,8 +1194,8 @@ class Datasetcalcs:
             bottom_val = (
                 self.fft2.where(
                     np.logical_and(
-                        self.fft2.lat > self.fft2.lat[int((self.fft2.shape[0] - 1) / 2)],
-                        self.fft2.lat <= self.fft2.lat[int((self.fft2.shape[0] - 1) * 9 / 16)],
+                        self.fft2.lat > self.fft2.lat[int((self.fft2.shape[1] - 1) / 2)],
+                        self.fft2.lat <= self.fft2.lat[int((self.fft2.shape[1] - 1) * 9 / 16)],
                     ),
                     drop=True,
                 )
@@ -1215,7 +1215,7 @@ class Datasetcalcs:
             # multirange: self.fft2.where(self.fft2.lat > 1, drop=True).where(self.fft2.lon == 3, drop=True)
             top_val = (
                 self.fft2.where(
-                    self.fft2.lon > self.fft2.lon[int((self.fft2.shape[1] - 1) * 3 / 4)], drop=True
+                    self.fft2.lon > self.fft2.lon[int((self.fft2.shape[2] - 1) * 3 / 4)], drop=True
                 )
                 .max(dim='lat')
                 .mean()
@@ -1223,8 +1223,8 @@ class Datasetcalcs:
             bottom_val = (
                 self.fft2.where(
                     np.logical_and(
-                        self.fft2.lon > self.fft2.lon[int((self.fft2.shape[1] - 1) / 2)],
-                        self.fft2.lon <= self.fft2.lon[int((self.fft2.shape[1] - 1) * 3 / 4)],
+                        self.fft2.lon > self.fft2.lon[int((self.fft2.shape[2] - 1) / 2)],
+                        self.fft2.lon <= self.fft2.lon[int((self.fft2.shape[2] - 1) * 3 / 4)],
                     ),
                     drop=True,
                 )
@@ -1244,7 +1244,7 @@ class Datasetcalcs:
             # multirange: self.fft2.where(self.fft2.lat > 1, drop=True).where(self.fft2.lon == 3, drop=True)
             top_val = (
                 self.fft2.where(
-                    self.fft2.lon > self.fft2.lon[int((self.fft2.shape[1] - 1) * 15 / 16)],
+                    self.fft2.lon > self.fft2.lon[int((self.fft2.shape[2] - 1) * 15 / 16)],
                     drop=True,
                 )
                 .max(dim='lat')
@@ -1253,8 +1253,8 @@ class Datasetcalcs:
             bottom_val = (
                 self.fft2.where(
                     np.logical_and(
-                        self.fft2.lon > self.fft2.lon[int((self.fft2.shape[1] - 1) / 2)],
-                        self.fft2.lon <= self.fft2.lon[int((self.fft2.shape[1] - 1) * 9 / 16)],
+                        self.fft2.lon > self.fft2.lon[int((self.fft2.shape[2] - 1) / 2)],
+                        self.fft2.lon <= self.fft2.lon[int((self.fft2.shape[2] - 1) * 9 / 16)],
                     ),
                     drop=True,
                 )
