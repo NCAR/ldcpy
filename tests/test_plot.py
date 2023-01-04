@@ -25,6 +25,18 @@ ds2 = ldcpy.open_datasets(
     ['orig', 'recon', 'recon2'],
 )
 ds3 = ldcpy.open_datasets('cam-fv', ['T'], ['data/cam-fv/cam-fv.T.3months.nc'], ['orig'])
+ds4 = ldcpy.open_datasets(
+    'cam-fv',
+    ['LHFLX'],
+    ['data/cam-fv/b.e11.BRCP85C5CNBDRD.f09_g16.031.cam.h1.LHFLX.20060101-20071231.nc'],
+    ['orig'],
+)
+ds5 = ldcpy.open_datasets(
+    'cam-fv',
+    ['TS'],
+    ['data/cam-fv/b.e11.BRCP85C5CNBDRD.f09_g16.031.cam.h1.TS.20060101-20071231.nc'],
+    ['orig'],
+)
 
 
 class TestPlot(TestCase):
@@ -47,7 +59,7 @@ class TestPlot(TestCase):
 
     def test_real_information(self):
         ldcpy.plot(
-            ds,
+            ds5,
             'TS',
             sets=['orig'],
             calc='real_information',
@@ -56,6 +68,17 @@ class TestPlot(TestCase):
             weighted=False,
             plot_type='1D',
         )
+        self.assertTrue(True)
+
+    def test_real_information_cutoff(self):
+        my_data = ds5['TS'].sel(collection='orig').isel(time=0)
+        my_data.attrs['data_type'] = ds5.data_type
+        my_data.attrs['set_name'] = 'orig'
+        # Here just ask for the spatial mean at the first time step
+        ds_calcs_across_space = ldcpy.Datasetcalcs(my_data, 'cam-fv', ['lat', 'lon'])
+        # trigger computation
+        d = ds_calcs_across_space.get_single_calc('real_information_cutoff')
+        print(d)
         self.assertTrue(True)
 
     def test_fft2(self):

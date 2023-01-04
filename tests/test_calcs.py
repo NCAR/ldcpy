@@ -166,6 +166,9 @@ class TestErrorcalcs(TestCase):
     def test_mean(self):
         self.assertTrue(test_overall_calcs.mean == -0.5)
 
+    def test_magnitude_range(self):
+        self.assertTrue(test_spatial_calcs.magnitude_range == 2)
+
     def test_mean_abs(self):
         self.assertTrue(test_overall_calcs.mean_abs == 50)
 

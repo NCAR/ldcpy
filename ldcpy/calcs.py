@@ -307,8 +307,8 @@ class Datasetcalcs:
         """
         if not self._is_memoized('_magnitude_range'):
             # Get the range in exponent space
-            max = np.log10(abs(self._ds.max()))
-            min = np.log10(abs(self._ds.min()))
+            max = np.log10(abs(self._ds)).where(np.log10(abs(self._ds)) != -np.inf).max(skipna=True)
+            min = np.log10(abs(self._ds)).where(np.log10(abs(self._ds)) != -np.inf).min(skipna=True)
             if (
                 np.isinf(max).any()
                 or np.isinf(min).any()
@@ -343,12 +343,12 @@ class Datasetcalcs:
                 self._magnitude_diff_ew_int = here - there
         self._magnitude_diff_ew = xr.DataArray(self._magnitude_diff_ew_int)
         self._magnitude_diff_ew.attrs = self._ds.attrs
-        return self._magnitude_diff_ew.max(self._agg_dims)
+        return self._magnitude_diff_ew.max(self._agg_dims, skipna=True)
 
     @property
     def magnitude_diff_ns(self) -> xr.DataArray:
         """
-        First differences along the n-s direction
+        Maximum magnitude irst difference along the n-s direction
         """
         if not self._is_memoized('_magnitude_diff_ns'):
             max = np.log10(abs(self._ds.diff('lat').max(self._agg_dims)))
@@ -360,13 +360,13 @@ class Datasetcalcs:
                 or np.isnan(min).any()
             ):
                 self._magnitude_diff_ns_int = -1
-                return xr.DataArray(self._magnitude_diff_ew_int)
+                return xr.DataArray(self._magnitude_diff_ns_int)
             else:
                 self._magnitude_diff_ns_int = max - min
             # self._first_differences = self._ds.roll({"lon": -1}, roll_coords=False) - self._ds.roll({"lat": 1},                                                                                        roll_coords=False)
         self._magnitude_diff_ns = xr.DataArray(self._magnitude_diff_ns_int)
         self._magnitude_diff_ns.attrs = self._ds.attrs
-        return self._magnitude_diff_ns
+        return self._magnitude_diff_ns.max(self._agg_dims, skipna=True)
 
     @property
     def range(self) -> xr.DataArray:
