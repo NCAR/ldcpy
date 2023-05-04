@@ -366,9 +366,17 @@ class calcsPlot(object):
             if self._cmin is not None:
                 cmin.append(self._cmin)
 
+            offset_factor = 1e-6
+
             if not np.isinf(cyxr).all() and len(cmax) == 0 and len(cmin) == 0:
-                cmin.append(np.min(cyxr.where(cyxr != -np.inf).min()))
-                cmax.append(np.max(cyxr.where(cyxr != np.inf).max()))
+                data_range = np.max(cyxr.where(cyxr != np.inf).max()) - np.min(
+                    cyxr.where(cyxr != -np.inf).min()
+                )
+                # Calculate dynamic offsets based on the order of magnitude of the values
+                c_offset = data_range * offset_factor
+
+                cmin.append(np.min(cyxr.where(cyxr != -np.inf).min()) - c_offset)
+                cmax.append(np.max(cyxr.where(cyxr != np.inf).max()) + c_offset)
 
             if data_type == 'pop':
                 no_inf_data_set = np.nan_to_num(cyxr.astype(np.float32), nan=np.nan)
