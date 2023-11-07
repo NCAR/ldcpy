@@ -2331,6 +2331,22 @@ class Diffcalcs:
         return float(self._ssim_value_fp_slow)
 
     @property
+    def xsize(self):
+        return self._xsize
+
+    @xsize.setter
+    def xsize(self, xsize):
+        self._xsize = xsize
+
+    @property
+    def ysize(self):
+        return self._ysize
+
+    @ysize.setter
+    def ysize(self, ysize):
+        self._ysize = ysize
+
+    @property
     def ssim_value_fp_fast(self):
         """
         Faster implementation then ssim_value_fp_slow (this is the default DSSIM option).
@@ -2388,7 +2404,7 @@ class Diffcalcs:
                 sc_a2 = np.round(sc_a2 * 255) / 255
 
                 # gaussian filter
-                kernel = Gaussian2DKernel(x_stddev=1.5, x_size=11, y_size=11)
+                kernel = Gaussian2DKernel(x_stddev=1.5, x_size=self.xsize, y_size=self.ysize)
                 k = 5
                 filter_args = {'boundary': 'fill', 'preserve_nan': True}
 
@@ -2437,7 +2453,7 @@ class Diffcalcs:
             self._ssim_mat_fp = ssim_mats_array
         return float(self._ssim_value_fp_fast)
 
-    def get_diff_calc(self, name: str, color: Optional[str] = 'coolwarm'):
+    def get_diff_calc(self, name: str, color: Optional[str] = 'coolwarm', xsize=11, ysize=11):
         """
         Gets a calc on the dataset that requires more than one input dataset
 
@@ -2471,6 +2487,8 @@ class Diffcalcs:
                 self.color = color
                 return self.ssim_value
             if name == 'ssim_fp':
+                self.xsize = xsize
+                self.ysize = ysize
                 return self.ssim_value_fp_fast
 
             raise ValueError(f'there is no calc with the name: {name}.')
