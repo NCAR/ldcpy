@@ -172,6 +172,15 @@ class Datasetcalcs:
         self._zscore_cutoff = None
         self._zscore_percent_significant = None
 
+        adims = self._agg_dims
+        self._not_agg_dims = []
+        if adims is None:
+            adims = self._ds.dims
+        else:
+            for d in self._ds.dims:
+                if d not in adims:
+                    self._not_agg_dims.append(d)
+
         # for probability functions, what is the size
         if aggregate_dims is not None:
             for dim in aggregate_dims:
@@ -231,8 +240,8 @@ class Datasetcalcs:
         if not self._is_memoized('_w_e_first_differences'):
             # self._first_differences = self._ds.diff('lat').mean(self._agg_dims)
             self._w_e_first_differences = self._ds.roll(
-                {'lat': -1}, roll_coords=False
-            ) - self._ds.roll({'lat': 1}, roll_coords=False)
+                {self._lat_dim_name: -1}, roll_coords=False
+            ) - self._ds.roll({self._lat_dim_name: 1}, roll_coords=False)
         self._w_e_first_differences.attrs = self._ds.attrs
 
         return self._w_e_first_differences.mean(self._agg_dims)
@@ -245,8 +254,8 @@ class Datasetcalcs:
         if not self._is_memoized('_w_e_first_differences'):
             # self._first_differences = self._ds.diff('lat').mean(self._agg_dims)
             self._w_e_first_differences = self._ds.roll(
-                {'lat': -1}, roll_coords=False
-            ) - self._ds.roll({'lat': 1}, roll_coords=False)
+                {self._lat_dim_name: -1}, roll_coords=False
+            ) - self._ds.roll({self._lat_dim_name: 1}, roll_coords=False)
         self._w_e_first_differences.attrs = self._ds.attrs
 
         return self._w_e_first_differences.max(self._agg_dims)
@@ -257,7 +266,7 @@ class Datasetcalcs:
         First differences along the north-south direction
         """
         if not self._is_memoized('_n_s_first_differences'):
-            self._n_s_first_differences = self._ds.diff('lon').mean(self._agg_dims)
+            self._n_s_first_differences = self._ds.diff(self._lon_dim_name).mean(self._agg_dims)
             # self._first_differences = self._ds.roll({"lon": -1}, roll_coords=False) - self._ds.roll({"lat": 1},                                                                                        roll_coords=False)
         self._n_s_first_differences.attrs = self._ds.attrs
         return self._n_s_first_differences
@@ -268,7 +277,7 @@ class Datasetcalcs:
         First differences along the n-s direction
         """
         if not self._is_memoized('_n_s_first_differences'):
-            self._n_s_first_differences = self._ds.diff('lon').max(self._agg_dims)
+            self._n_s_first_differences = self._ds.diff(self._lon_dim_name).max(self._agg_dims)
             # self._first_differences = self._ds.roll({"lon": -1}, roll_coords=False) - self._ds.roll({"lat": 1},                                                                                        roll_coords=False)
         self._n_s_first_differences.attrs = self._ds.attrs
         return self._n_s_first_differences
@@ -305,6 +314,9 @@ class Datasetcalcs:
             )
         return self._most_repeated_pct
 
+    def log_max(ds):
+        return np.log10(abs(ds)).where(np.log10(abs(ds)) != -np.inf).max(skipna=True)
+
     @property
     def magnitude_range(self) -> xr.DataArray:
         """
@@ -312,19 +324,29 @@ class Datasetcalcs:
         """
         if not self._is_memoized('_magnitude_range'):
             # Get the range in exponent space
-            max = np.log10(abs(self._ds.max()))
-            min = np.log10(abs(self._ds.min()))
+            log_ds = np.log10(abs(self._ds)).where(np.log10(abs(self._ds)) != -np.inf)
+            stack = log_ds.stack(multi_index=tuple(self._not_agg_dims))
+
+            def max_agg(ds):
+                return ds.max(skipna=True)
+
+            def min_agg(ds):
+                return ds.min(skipna=True)
+
+            my_max = stack.groupby('multi_index').map(max_agg)
+            my_min = stack.groupby('multi_index').map(min_agg)
+
             if (
-                np.isinf(max).any()
-                or np.isinf(min).any()
-                or np.isnan(max).any()
-                or np.isnan(min).any()
+                np.isinf(my_max).any()
+                or np.isinf(my_min).any()
+                or np.isnan(my_max).any()
+                or np.isnan(my_min).any()
             ):
                 self._magnitude_range = -1
                 return self._magnitude_range
             else:
-                self._magnitude_range = int(max) - int(min)
-        # self._magnitude_range.attrs = self._ds.attrs
+                self._magnitude_range = my_max - my_min
+            # self._magnitude_range.attrs = self._ds.attrs
         return self._magnitude_range
 
     @property
@@ -348,12 +370,12 @@ class Datasetcalcs:
                 self._magnitude_diff_ew_int = here - there
         self._magnitude_diff_ew = xr.DataArray(self._magnitude_diff_ew_int)
         self._magnitude_diff_ew.attrs = self._ds.attrs
-        return self._magnitude_diff_ew.max(self._agg_dims)
+        return self._magnitude_diff_ew.max(self._agg_dims, skipna=True)
 
     @property
     def magnitude_diff_ns(self) -> xr.DataArray:
         """
-        First differences along the n-s direction
+        Maximum magnitude irst difference along the n-s direction
         """
         if not self._is_memoized('_magnitude_diff_ns'):
             max = np.log10(abs(self._ds.diff('lat').max(self._agg_dims)))
@@ -365,13 +387,13 @@ class Datasetcalcs:
                 or np.isnan(min).any()
             ):
                 self._magnitude_diff_ns_int = -1
-                return xr.DataArray(self._magnitude_diff_ew_int)
+                return xr.DataArray(self._magnitude_diff_ns_int)
             else:
                 self._magnitude_diff_ns_int = max - min
             # self._first_differences = self._ds.roll({"lon": -1}, roll_coords=False) - self._ds.roll({"lat": 1},                                                                                        roll_coords=False)
         self._magnitude_diff_ns = xr.DataArray(self._magnitude_diff_ns_int)
         self._magnitude_diff_ns.attrs = self._ds.attrs
-        return self._magnitude_diff_ns
+        return self._magnitude_diff_ns.max(self._agg_dims, skipna=True)
 
     @property
     def range(self) -> xr.DataArray:
@@ -525,20 +547,22 @@ class Datasetcalcs:
         # lower is better (1.0 means random - no compression possible)
         """
         if not self._is_memoized('_entropy'):
+            es = []
+            stack = self._ds.stack(multi_index=tuple(self._not_agg_dims))
+            for d, slice in stack.groupby('multi_index'):
+                cc = gzip.compress(slice.data)
+                dd = gzip.decompress(cc)
+                cl = len(cc)
+                dl = len(dd)
+                if dl > 0:
+                    e = cl / dl
+                else:
+                    e = 0.0
+                es.append(e)
 
-            a1 = self._ds.data
-            if dask.is_dask_collection(a1):
-                a1 = a1.compute()
-
-            cc = gzip.compress(a1)
-            dd = gzip.decompress(cc)
-            cl = len(cc)
-            dl = len(dd)
-            if dl > 0:
-                e = cl / dl
-            else:
-                e = 0.0
-            self._entropy = e
+            self._entropy = xr.DataArray(es, dims=self._not_agg_dims)
+            self._entropy = self._ds.attrs
+            self._entropy.attrs['units'] = ''
         return self._entropy
 
     @property
@@ -1146,9 +1170,14 @@ class Datasetcalcs:
             self._fft2.attrs = self._ds.attrs
             # if hasattr(self._ds, 'units'):
             #    self._fft2.attrs['units'] = f'{self._ds.units}'
-            self._fft2 = self._fft2.rename({'dim_0': 'time', 'dim_1': 'lat', 'dim_2': 'lon'})
+            self._fft2 = self._fft2.rename(
+                {'dim_1': 'time', 'dim_2': self._lat_dim_name, 'dim_3': self._lon_dim_name}
+            )
             self._fft2 = self._fft2.assign_coords(
-                {'lat': self._ds.coords['lat'], 'lon': self._ds.coords['lon']}
+                {
+                    self._lat_dim_name: self._ds.coords[self._lat_dim_name],
+                    self._lon_dim_name: self._ds.coords[self._lon_dim_name],
+                }
             )
         return self._fft2 / np.mean(self._fft2)
 
@@ -1161,21 +1190,23 @@ class Datasetcalcs:
             # multirange: self.fft2.where(self.fft2.lat > 1, drop=True).where(self.fft2.lon == 3, drop=True)
             top_val = (
                 self.fft2.where(
-                    self.fft2.lat > self.fft2.lat[int((self.fft2.shape[1] - 1) * 3 / 4)], drop=True
+                    self.fft2.latitude > self.fft2.latitude[int((self.fft2.shape[2] - 1) * 3 / 4)],
+                    drop=True,
                 )
-                .max(dim='lon')
-                .mean()
+                .max(dim=self._lon_dim_name)
+                .mean(dim=self._lat_dim_name)
             )
             bottom_val = (
                 self.fft2.where(
                     np.logical_and(
-                        self.fft2.lat > self.fft2.lat[int((self.fft2.shape[1] - 1) / 2)],
-                        self.fft2.lat <= self.fft2.lat[int((self.fft2.shape[1] - 1) * 3 / 4)],
+                        self.fft2.latitude > self.fft2.latitude[int((self.fft2.shape[2] - 1) / 2)],
+                        self.fft2.latitude
+                        <= self.fft2.latitude[int((self.fft2.shape[2] - 1) * 3 / 4)],
                     ),
                     drop=True,
                 )
-                .max(dim='lon')
-                .mean()
+                .max(dim=self._lon_dim_name)
+                .mean(dim=self._lat_dim_name)
             )
             # greater than 1 = more higher frequencies than lower frequencies
             self._fftratio = top_val / bottom_val
@@ -1552,6 +1583,8 @@ class Datasetcalcs:
                 return self.magnitude_diff_ns
             if name == 'real_information':
                 return self.real_information
+            if name == 'magnitude_range':
+                return self.magnitude_range
             raise ValueError(f'there is no calc with the name: {name}.')
         else:
             raise TypeError('name must be a string.')
@@ -1573,8 +1606,6 @@ class Datasetcalcs:
         if isinstance(name, str):
             if name == 'real_information_cutoff':
                 return self.real_information_cutoff
-            if name == 'magnitude_range':
-                return self.magnitude_range
             if name == 'zscore_cutoff':
                 return self.zscore_cutoff
             if name == 'zscore_percent_significant':
@@ -2304,6 +2335,22 @@ class Diffcalcs:
         return float(self._ssim_value_fp_slow)
 
     @property
+    def xsize(self):
+        return self._xsize
+
+    @xsize.setter
+    def xsize(self, xsize):
+        self._xsize = xsize
+
+    @property
+    def ysize(self):
+        return self._ysize
+
+    @ysize.setter
+    def ysize(self, ysize):
+        self._ysize = ysize
+
+    @property
     def ssim_value_fp_fast(self):
         """
         Faster implementation then ssim_value_fp_slow (this is the default DSSIM option).
@@ -2361,7 +2408,7 @@ class Diffcalcs:
                 sc_a2 = np.round(sc_a2 * 255) / 255
 
                 # gaussian filter
-                kernel = Gaussian2DKernel(x_stddev=1.5, x_size=11, y_size=11)
+                kernel = Gaussian2DKernel(x_stddev=1.5, x_size=self.xsize, y_size=self.ysize)
                 k = 5
                 filter_args = {'boundary': 'fill', 'preserve_nan': True}
 
@@ -2575,7 +2622,7 @@ class Diffcalcs:
 
         return self._ssim_value_fp_orig
 
-    def get_diff_calc(self, name: str, color: Optional[str] = 'coolwarm'):
+    def get_diff_calc(self, name: str, color: Optional[str] = 'coolwarm', xsize=11, ysize=11):
         """
         Gets a calc on the dataset that requires more than one input dataset
 
@@ -2609,6 +2656,8 @@ class Diffcalcs:
                 self.color = color
                 return self.ssim_value
             if name == 'ssim_fp':
+                self.xsize = xsize
+                self.ysize = ysize
                 return self.ssim_value_fp_fast
             if name == 'ssim_fp_exp':
                 return self.ssim_value_fp_fast_exp

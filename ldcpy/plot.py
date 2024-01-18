@@ -5,6 +5,7 @@ import warnings
 import cartopy
 import cf_xarray as cf
 import cmocean
+import dask
 import matplotlib as mpl
 import numpy as np
 import xarray as xr
@@ -366,9 +367,17 @@ class calcsPlot(object):
             if self._cmin is not None:
                 cmin.append(self._cmin)
 
+            offset_factor = 1e-6
+
             if not np.isinf(cyxr).all() and len(cmax) == 0 and len(cmin) == 0:
-                cmin.append(np.min(cyxr.where(cyxr != -np.inf).min()))
-                cmax.append(np.max(cyxr.where(cyxr != np.inf).max()))
+                data_range = np.max(cyxr.where(cyxr != np.inf).max()) - np.min(
+                    cyxr.where(cyxr != -np.inf).min()
+                )
+                # Calculate dynamic offsets based on the order of magnitude of the values
+                c_offset = data_range * offset_factor
+
+                cmin.append(np.min(cyxr.where(cyxr != -np.inf).min()) - c_offset)
+                cmax.append(np.max(cyxr.where(cyxr != np.inf).max()) + c_offset)
 
             if data_type == 'pop':
                 no_inf_data_set = np.nan_to_num(cyxr.astype(np.float32), nan=np.nan)
@@ -387,6 +396,9 @@ class calcsPlot(object):
                     cmap=mymap,
                 )
             elif data_type == 'cam-fv':
+                # psets[i] = axs[i].imshow(
+                #     img=flipud(no_inf_data_set), transform=ccrs.PlateCarree(), cmap=mymap
+                # )
                 psets[i] = axs[i].imshow(
                     img=flipud(no_inf_data_set), transform=ccrs.PlateCarree(), cmap=mymap
                 )
@@ -715,15 +727,24 @@ class calcsPlot(object):
                         .get_calc(calc)
                         .cf.weighted('area')
                         .mean()
-                        .data.compute()
+                        .data
                     )
+                    if type(a1_data) == np.ndarray:
+                        dask.array.from_array(data)
+                        a1_data = a1_data.compute()
+                    else:
+                        a1_data = a1_data.compute()
                 else:
                     a1_data = (
                         lm.Datasetcalcs(data, data_type, ['time'], weighted=self._weighted)
                         .get_calc(calc)
                         .mean()
-                        .data.compute()
+                        .data
                     )
+                    if type(a1_data) == np.ndarray:
+                        a1_data = dask.array.from_array(a1_data).compute()
+                    else:
+                        a1_data = a1_data.compute()
                     print(a1_data)
                 # check for NANs
                 # indices = ~np.isnan(a1_data)
@@ -767,8 +788,13 @@ class calcsPlot(object):
                         .get_calc(calc)
                         .cf.weighted('area')
                         .mean()
-                        .data.compute()
+                        .data
                     )
+                    if type(a1_data) == np.ndarray:
+                        dask.array.from_array(data)
+                        a1_data = a1_data.compute()
+                    else:
+                        a1_data = a1_data.compute()
                 elif calc in ['fft2', 'stft', 'real_information']:
                     a1_data = (
                         lm.Datasetcalcs(data, data_type, ['time'], weighted=self._weighted)
@@ -776,13 +802,23 @@ class calcsPlot(object):
                         .mean()
                         .data
                     )
+                    if type(a1_data) == np.ndarray:
+                        dask.array.from_array(data)
+                        a1_data = a1_data.compute()
+                    else:
+                        a1_data = a1_data.compute()
                 else:
                     a1_data = (
                         lm.Datasetcalcs(data, data_type, ['time'], weighted=self._weighted)
                         .get_calc(calc)
                         .mean()
-                        .data.compute()
+                        .data
                     )
+                    if type(a1_data) == np.ndarray:
+                        dask.array.from_array(data)
+                        a1_data = a1_data.compute()
+                    else:
+                        a1_data = a1_data.compute()
                 if abs(a1_data) > 0.01:
                     calc_name = f'{calc} = {a1_data:.2f}'
                 else:
@@ -795,8 +831,13 @@ class calcsPlot(object):
                         )
                         .get_calc(calc)
                         .mean()
-                        .data.compute()
+                        .data
                     )
+                    if type(a1_data) == np.ndarray:
+                        dask.array.from_array(data)
+                        a1_data = a1_data.compute()
+                    else:
+                        a1_data = a1_data.compute()
                 else:
                     a1_data = (
                         lm.Datasetcalcs(
@@ -804,8 +845,13 @@ class calcsPlot(object):
                         )
                         .get_calc(calc)
                         .mean()
-                        .data.compute()
+                        .data
                     )
+                    if type(a1_data) == np.ndarray:
+                        dask.array.from_array(data)
+                        a1_data = a1_data.compute()
+                    else:
+                        a1_data = a1_data.compute()
 
                 if abs(a1_data) > 0.01:
                     calc_name = f'{calc} = {a1_data:.2f}'

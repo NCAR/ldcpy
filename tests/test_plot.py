@@ -58,6 +58,17 @@ class TestPlot(TestCase):
         )
         self.assertTrue(True)
 
+    def test_real_information_cutoff(self):
+        my_data = ds['TS'].sel(collection='orig').isel(time=0)
+        my_data.attrs['data_type'] = ds.data_type
+        my_data.attrs['set_name'] = 'orig'
+        # Here just ask for the spatial mean at the first time step
+        ds_calcs_across_space = ldcpy.Datasetcalcs(my_data, 'cam-fv', ['lat', 'lon'])
+        # trigger computation
+        d = ds_calcs_across_space.get_single_calc('real_information_cutoff')
+        print(d)
+        self.assertTrue(True)
+
     def test_fft2(self):
         ldcpy.plot(
             ds,
