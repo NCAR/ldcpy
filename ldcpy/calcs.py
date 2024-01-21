@@ -1815,27 +1815,44 @@ class Diffcalcs:
         if not self._is_memoized('_covariance'):
 
             # need to use unweighted means
-            c1_mean = self._calcs1.get_calc('ds').mean(skipna=True)
-            c2_mean = self._calcs2.get_calc('ds').mean(skipna=True)
+            c1_mean = self._calcs1.get_calc('ds').mean(dim=self._aggregate_dims, skipna=True)
+            c2_mean = self._calcs2.get_calc('ds').mean(dim=self._aggregate_dims, skipna=True)
 
             self._covariance = (
                 (self._calcs2.get_calc('ds') - c2_mean) * (self._calcs1.get_calc('ds') - c1_mean)
-            ).mean()
+            ).mean(dim=self._aggregate_dims)
 
-        return float(self._covariance)
+        return self._covariance
+
+    # @property
+    # def ks_p_value(self):
+    #     """
+    #     The Kolmogorov-Smirnov p-value
+    #     """
+    #     # Note: ravel() forces a compute for dask, but ks test in scipy can't
+    #     # work with uncomputed dask arrays
+    #     if not self._is_memoized('_ks_p_value'):
+    #         d1_p = (np.ravel(self._ds1)).astype('float64')
+    #         d2_p = (np.ravel(self._ds2)).astype('float64')
+    #         self._ks_p_value = np.asanyarray(ss.ks_2samp(d2_p, d1_p))
+    #     return self._ks_p_value[1]
 
     @property
     def ks_p_value(self):
         """
-        The Kolmogorov-Smirnov p-value
+        The Kolmogorov-Smirnov p-value, calculated for slices of the data defined by specified dimensions.
+        :param dim: Dimensions over which to apply the KS test. Can be a string or a list of strings.
         """
-        # Note: ravel() forces a compute for dask, but ks test in scipy can't
-        # work with uncomputed dask arrays
         if not self._is_memoized('_ks_p_value'):
-            d1_p = (np.ravel(self._ds1)).astype('float64')
-            d2_p = (np.ravel(self._ds2)).astype('float64')
-            self._ks_p_value = np.asanyarray(ss.ks_2samp(d2_p, d1_p))
-        return self._ks_p_value[1]
+            # Apply the KS test across the specified dimensions
+                # This will create a DataArray of p-values
+            self._ks_p_value = xr.apply_ufunc(
+                lambda x, y: ss.ks_2samp(x.ravel(), y.ravel())[1],
+                self._ds1, self._ds2,
+                input_core_dims=[self._aggregate_dims, self._aggregate_dims],
+                vectorize=True)
+
+        return self._ks_p_value
 
     @property
     def pearson_correlation_coefficient(self):
@@ -1844,19 +1861,15 @@ class Diffcalcs:
         """
         if not self._is_memoized('_pearson_correlation_coefficient'):
 
-            # we need to do this with  unweighted data
-            c1_std = float(self._calcs1.get_calc('ds').std(skipna=True))
-            c2_std = float(self._calcs2.get_calc('ds').std(skipna=True))
+            # Calculate standard deviation over the specified dimensions
+            c1_std = self._calcs1.get_calc('ds').std(dim=self._aggregate_dims, skipna=True)
+            c2_std = self._calcs2.get_calc('ds').std(dim=self._aggregate_dims, skipna=True)
 
-            cov = self.covariance
+            # Handle cases where standard deviations are zero
+            zero_std = (c1_std == 0) | (c2_std == 0)
+            self._pcc = xr.where(zero_std, -1.0, self.covariance / c1_std / c2_std)
 
-            if c1_std == 0 or c2_std == 0:
-                self._pcc = -1.0
-                return float(self._pcc)
-
-            self._pcc = cov / c1_std / c2_std
-
-        return float(self._pcc)
+        return self._pcc
 
     @property
     def normalized_max_pointwise_error(self):
@@ -1886,61 +1899,96 @@ class Diffcalcs:
 
         return float(self._n_rms)
 
+    # @property
+    # def spatial_rel_error(self):
+    #     """
+    #     At each grid point, we compute the relative error.  Then we report the percentage of grid point whose
+    #     relative error is above the specified tolerance (1e-4 by default).
+    #     """
+    #
+    #     # We don't check for memoization here in case the spre_tol has changed
+    #     # since the last time it has been called
+    #     sp_tol = self._spre_tol
+    #     # unraveling converts the dask array to numpy, but then
+    #     # we can assign the 1.0 and avoid zero (couldn't figure another way)
+    #     t1 = np.ravel(self._calcs1.get_calc('ds'))
+    #     t2 = np.ravel(self._calcs2.get_calc('ds'))
+    #
+    #     # check for zeros in t1 (if zero then change to 1 - which
+    #     # does an absolute error at that point)
+    #     z = (np.where(abs(t1) == 0))[0]
+    #     if z.size > 0:
+    #         t1_denom = np.copy(t1)
+    #         t1_denom[z] = 1.0
+    #     else:
+    #         t1_denom = t1
+    #
+    #     # we don't want to use nan
+    #     # (ocassionally in cam data - often in ocn)
+    #     m_t2 = np.ma.masked_invalid(t2).compressed()
+    #     m_t1 = np.ma.masked_invalid(t1).compressed()
+    #
+    #     if m_t2.shape != m_t1.shape:
+    #         print('Warning: Spatial error not calculated with differing numbers of Nans')
+    #         self._spatial_rel_error = 0
+    #         self._max_spatial_rel_error = 0
+    #     else:
+    #
+    #         if z.size > 0:
+    #             m_t1_denom = np.ma.masked_invalid(t1_denom).compressed()
+    #         else:
+    #             m_t1_denom = m_t1
+    #
+    #         m_tt = m_t1 - m_t2
+    #         m_tt = m_tt / m_t1_denom
+    #
+    #         # find the max spatial error also if None
+    #         if self._max_spatial_rel_error is None:
+    #             max_spre = np.max(m_tt)
+    #             self._max_spatial_rel_error = max_spre
+    #
+    #         # percentage greater than the tolerance
+    #         a = len(m_tt[abs(m_tt) > sp_tol])
+    #         sz = m_tt.shape[0]
+    #
+    #         self._spatial_rel_error = (a / sz) * 100
+    #
+    #     return float(self._spatial_rel_error)
+
     @property
     def spatial_rel_error(self):
         """
-        At each grid point, we compute the relative error.  Then we report the percentage of grid point whose
-        relative error is above the specified tolerance (1e-4 by default).
+        At each grid point, we compute the relative error. Then we report the percentage of grid points whose
+        relative error is above the specified tolerance (1e-4 by default), optionally calculated over specified dimensions.
+        :param dim: Dimensions over which to calculate the spatial relative error. Can be a string or a list of strings.
         """
 
-        # We don't check for memoization here in case the spre_tol has changed
-        # since the last time it has been called
         sp_tol = self._spre_tol
-        # unraveling converts the dask array to numpy, but then
-        # we can assign the 1.0 and avoid zero (couldn't figure another way)
-        t1 = np.ravel(self._calcs1.get_calc('ds'))
-        t2 = np.ravel(self._calcs2.get_calc('ds'))
 
-        # check for zeros in t1 (if zero then change to 1 - which
-        # does an absolute error at that point)
-        z = (np.where(abs(t1) == 0))[0]
-        if z.size > 0:
-            t1_denom = np.copy(t1)
-            t1_denom[z] = 1.0
+        t1 = self._calcs1.get_calc('ds')
+        t2 = self._calcs2.get_calc('ds')
+
+        # Replace zeros in t1 with 1.0 (to avoid division by zero)
+        t1_denom = xr.where(t1 == 0, 1.0, t1)
+
+        # Compute the relative error
+        rel_error = xr.where(t1 != 0, abs(t1 - t2) / abs(t1_denom), abs(t1 - t2))
+
+        # Aggregate the relative error over the specified dimensions
+        # Here we calculate the fraction of data points with error above tolerance in each slice
+        if self._aggregate_dims is not None:
+            # Mask invalid values
+            rel_error = rel_error.where(rel_error.notnull(), 0)
+
+            # Calculate the fraction of points above the tolerance for each slice
+            error_fraction = (rel_error > sp_tol).mean(dim=self._aggregate_dims) * 100
         else:
-            t1_denom = t1
+            # Global calculation (as in the original function)
+            valid_points = rel_error.count()
+            error_points = rel_error.where(rel_error > sp_tol).count()
+            error_fraction = (error_points / valid_points) * 100
 
-        # we don't want to use nan
-        # (ocassionally in cam data - often in ocn)
-        m_t2 = np.ma.masked_invalid(t2).compressed()
-        m_t1 = np.ma.masked_invalid(t1).compressed()
-
-        if m_t2.shape != m_t1.shape:
-            print('Warning: Spatial error not calculated with differing numbers of Nans')
-            self._spatial_rel_error = 0
-            self._max_spatial_rel_error = 0
-        else:
-
-            if z.size > 0:
-                m_t1_denom = np.ma.masked_invalid(t1_denom).compressed()
-            else:
-                m_t1_denom = m_t1
-
-            m_tt = m_t1 - m_t2
-            m_tt = m_tt / m_t1_denom
-
-            # find the max spatial error also if None
-            if self._max_spatial_rel_error is None:
-                max_spre = np.max(m_tt)
-                self._max_spatial_rel_error = max_spre
-
-            # percentage greater than the tolerance
-            a = len(m_tt[abs(m_tt) > sp_tol])
-            sz = m_tt.shape[0]
-
-            self._spatial_rel_error = (a / sz) * 100
-
-        return float(self._spatial_rel_error)
+        return error_fraction
 
     @property
     def max_spatial_rel_error(self):
