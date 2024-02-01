@@ -167,7 +167,7 @@ class TestErrorcalcs(TestCase):
         self.assertTrue(test_overall_calcs.mean == -0.5)
 
     def test_magnitude_range(self):
-        #check if the sum of the magnitude range is 3.7 with a tolerance of 1e-09
+        # check if the sum of the magnitude range is 3.7 with a tolerance of 1e-09
         self.assertTrue(np.isclose(test_overall_calcs.magnitude_range.values.sum(), 2, rtol=1e-04))
 
     def test_mean_abs(self):
