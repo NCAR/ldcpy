@@ -803,8 +803,8 @@ class calcsPlot(object):
                         .data
                     )
                     if type(a1_data) == np.ndarray:
-                        dask.array.from_array(data)
-                        a1_data = a1_data.compute()
+                        # dask.array.from_array(data)
+                        a1_data = a1_data
                     else:
                         a1_data = a1_data.compute()
                 else:

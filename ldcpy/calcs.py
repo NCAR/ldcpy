@@ -319,17 +319,21 @@ class Datasetcalcs:
         """
         if not self._is_memoized('_magnitude_range'):
             # Get the range in exponent space
-            log_ds = np.log10(abs(self._ds)).where(np.log10(abs(self._ds)) != -np.inf)
-            stack = log_ds.stack(multi_index=tuple(self._not_agg_dims))
-
             def max_agg(ds):
                 return ds.max(skipna=True)
 
             def min_agg(ds):
                 return ds.min(skipna=True)
 
-            my_max = stack.groupby('multi_index').map(max_agg)
-            my_min = stack.groupby('multi_index').map(min_agg)
+            log_ds = np.log10(abs(self._ds)).where(np.log10(abs(self._ds)) != -np.inf)
+
+            if len(self._not_agg_dims) == 0:
+                my_max = max_agg(log_ds)
+                my_min = min_agg(log_ds)
+            else:
+                stack = log_ds.stack(multi_index=tuple(self._not_agg_dims))
+                my_max = stack.groupby('multi_index').map(max_agg)
+                my_min = stack.groupby('multi_index').map(min_agg)
 
             if (
                 np.isinf(my_max).any()
@@ -1186,7 +1190,7 @@ class Datasetcalcs:
             # if hasattr(self._ds, 'units'):
             #    self._fft2.attrs['units'] = f'{self._ds.units}'
             self._fft2 = self._fft2.rename(
-                {'dim_1': 'time', 'dim_2': self._lat_dim_name, 'dim_3': self._lon_dim_name}
+                {'dim_0': 'time', 'dim_1': self._lat_dim_name, 'dim_2': self._lon_dim_name}
             )
             self._fft2 = self._fft2.assign_coords(
                 {
@@ -1352,7 +1356,9 @@ class Datasetcalcs:
             lon_coord_name = self._lon_coord_name
             lat_coord_name = self._lat_coord_name
 
-            DF = dft(new_ds, dim=[self._time_dim_name], detrend='constant')
+            # rechunk to a single time chunk
+            new_ds2 = new_ds.chunk({self._time_dim_name: new_ds[self._time_dim_name].size})
+            DF = dft(new_ds2, dim=[self._time_dim_name], detrend='constant')
             # the above does not preserve the lat/lon attributes
             DF[lon_coord_name].attrs = new_ds[lon_coord_name].attrs
             DF[lat_coord_name].attrs = new_ds[lat_coord_name].attrs

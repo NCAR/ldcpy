@@ -23,7 +23,8 @@ jobs:
       fail-fast: false
       matrix:
         os: ['ubuntu-latest']
-        python-version: ['3.7', '3.8', '3.9']
+#        python-version: ['3.7', '3.8', '3.9']
+        python-version: ['3.8']
     steps:
       - name: Cancel previous runs
         uses: styfle/cancel-workflow-action@0.11.0
@@ -61,7 +62,7 @@ jobs:
   upstream-dev:
     if: |
       github.repository == 'NCAR/ldcpy'
-    name: upstream-dev-py39
+    name: upstream-dev-py38
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -79,7 +80,7 @@ jobs:
           mamba-version: '*'
           activate-environment: ldcpy # Defined in ci/environment.yml
           auto-update-conda: false
-          python-version: 3.9
+          python-version: 3.8
           environment-file: ci/upstream-dev-environment.yml
 
       - name: Install ldcpy
