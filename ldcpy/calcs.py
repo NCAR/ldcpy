@@ -543,9 +543,14 @@ class Datasetcalcs:
         """
         if not self._is_memoized('_entropy'):
             es = []
-            stack = self._ds.stack(multi_index=tuple(self._not_agg_dims))
-            for d, slice in stack.groupby('multi_index'):
-                cc = gzip.compress(slice.data)
+
+            a1 = self._ds.data
+            if dask.is_dask_collection(a1):
+                a1 = a1.compute()
+
+            if len(self._not_agg_dims) == 0:
+                # don't stack at all, just make a single multi_index group
+                cc = gzip.compress(a1)
                 dd = gzip.decompress(cc)
                 cl = len(cc)
                 dl = len(dd)
@@ -554,9 +559,24 @@ class Datasetcalcs:
                 else:
                     e = 0.0
                 es.append(e)
+            else:
+                stack = a1.stack(multi_index=tuple(self._not_agg_dims))
+                for d, slice in stack.groupby('multi_index'):
+                    cc = gzip.compress(slice.data)
+                    dd = gzip.decompress(cc)
+                    cl = len(cc)
+                    dl = len(dd)
+                    if dl > 0:
+                        e = cl / dl
+                    else:
+                        e = 0.0
+                    es.append(e)
 
-            self._entropy = xr.DataArray(es, dims=self._not_agg_dims)
-            self._entropy = self._ds.attrs
+            if len(self._not_agg_dims) == 0:
+                self._entropy = xr.DataArray(es)
+            else:
+                self._entropy = xr.DataArray(es, dims=self._not_agg_dims)
+            self._entropy.attrs = self._ds.attrs
             self._entropy.attrs['units'] = ''
         return self._entropy
 
