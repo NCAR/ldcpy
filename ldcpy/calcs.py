@@ -1363,7 +1363,6 @@ class Datasetcalcs:
             DF[lon_coord_name].attrs = new_ds[lon_coord_name].attrs
             DF[lat_coord_name].attrs = new_ds[lat_coord_name].attrs
             DF.attrs = new_ds.attrs
-
             S = np.real(DF * np.conj(DF) / self._ds.sizes[self._time_dim_name])
             S_annual = S.isel(
                 freq_time=int(self._ds.sizes[self._time_dim_name] / 2)

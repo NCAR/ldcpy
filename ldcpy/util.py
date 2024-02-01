@@ -360,8 +360,6 @@ def compare_stats(
     display(HTML(' <span style="color:green">Comparison: </span>  '))
     display(df)
 
-    # diff stuff
-
     df_dict2 = {}
     my_cols2 = []
     for i in range(1, num):
