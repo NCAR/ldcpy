@@ -7,18 +7,31 @@ dependencies:
   - cartopy
   - cmocean
   - codecov
+  - cython
   - dask
+  - graphviz
   - intake-esm
-  - matplotlib-base=3.3.3
+  - jupyter_contrib_nbextensions
+  - jupyterlab
+  - matplotlib
+  - matplotlib-base
   - netcdf4
+  - numpy
+  - opencv
+  - pandas
   - pip
+  - pre-commit
   - pytest
   - pytest-cov
+  - pytest-xdist
   - scikit-image
+  - scipy
+  - setuptools
+  - xarray
+  - xrft
   - zfpy
-  - pandas
+  - cf_xarray
   - astropy
-  - jupyterlab
   - ipython
   - pooch
   - statsmodels
