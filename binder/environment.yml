@@ -21,7 +21,7 @@ dependencies:
   - netcdf4
   - nodejs
   - pip
-  - python=3.8
+  - python=3.9
   - s3fs
   - scikit-image
   - xarray
