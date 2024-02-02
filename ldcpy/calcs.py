@@ -559,7 +559,7 @@ class Datasetcalcs:
 
             if len(self._not_agg_dims) == 0:
                 # don't stack at all, just make a single multi_index group
-                cc = gzip.compress(a1)
+                cc = gzip.compress(a1, mtime=0)
                 dd = gzip.decompress(cc)
                 cl = len(cc)
                 dl = len(dd)
