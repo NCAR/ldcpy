@@ -16,5 +16,5 @@ dependencies:
       - sphinx-reload
       - pillow
       - ipython
-      - -r ../requirements.txt
-      - -e ..
+#      - -r ../requirements.txt
+#      - -e ..
