@@ -11,5 +11,4 @@ python:
       method: setuptools
 
 conda:
-  environment: environment.yml
-  file: docs/environment.yml
+  environment: docs/environment.yml
