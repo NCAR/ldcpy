@@ -11,6 +11,7 @@ dependencies:
   - dask
   - graphviz
   - intake-esm
+  - notebook
   - jupyter_contrib_nbextensions
   - jupyterlab
   - matplotlib
