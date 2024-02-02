@@ -11,7 +11,8 @@ dependencies:
   - dask
   - graphviz
   - intake-esm
-  - notebook
+  - notebook=6.4.12
+  - jupyter_contrib_nbextensions
   - jupyterlab
   - matplotlib
   - matplotlib-base
@@ -27,10 +28,7 @@ dependencies:
   - scikit-image
   - scipy
   - setuptools
-  - xarray
-  - xrft
   - zfpy
-  - cf_xarray
   - astropy
   - ipython
   - pooch
