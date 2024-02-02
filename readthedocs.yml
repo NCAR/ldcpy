@@ -6,9 +6,10 @@ build:
     python: '3.9'
 
 python:
-  version: 3.9
   install:
-    - method: setuptools
+    - path: docs/environment.yml
+      method: setuptools
 
 conda:
+  environment: environment.yml
   file: docs/environment.yml
