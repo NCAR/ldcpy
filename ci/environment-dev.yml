@@ -2,7 +2,8 @@ name: ldcpy_dev
 channels:
   - conda-forge
 dependencies:
-  - python=*=*cp*
+  #  - python=*=*cp*
+  - python=3.8
   - cartopy
   - cmocean
   - codecov
