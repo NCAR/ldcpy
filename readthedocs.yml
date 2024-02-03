@@ -5,8 +5,8 @@ build:
   tools:
     python: '3.12'
 
-#conda:
-#  environment: docs/environment.yml
+conda:
+  environment: docs/environment.yml
 
 sphinx:
   configuration: docs/source/conf.py
