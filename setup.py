@@ -24,7 +24,7 @@ setup(
     name='ldcpy',
     description='A library for lossy compression of netCDF files using xarray',
     long_description=long_description,
-    python_requires='=3.9',
+    python_requires='>=3.9',
     maintainer='Alex Pinard',
     maintainer_email='apinard@mines.edu',
     classifiers=CLASSIFIERS,
