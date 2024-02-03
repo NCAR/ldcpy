@@ -1,8 +1,8 @@
-.. image:: https://img.shields.io/github/actions/workflow/status/NCAR/ldcpy/ci.yaml?branch=dev&style=for-the-badge&logo=github
+.. image:: https://img.shields.io/github/actions/workflow/status/NCAR/ldcpy/ci.yaml?branch=dev&style=for-the-badge&logo=github&label=Build
     :target: https://github.com/NCAR/ldcpy/actions
     :alt: GitHub Workflow CI Status
 
-.. image:: https://img.shields.io/github/actions/workflow/status/NCAR/ldcpy/linting.yaml?branch=dev&style=for-the-badge&logo=github
+.. image:: https://img.shields.io/github/actions/workflow/status/NCAR/ldcpy/linting.yaml?branch=dev&style=for-the-badge&logo=github&label=Code Style
     :target: https://github.com/NCAR/ldcpy/actions
     :alt: GitHub Workflow Code Style Status
 
