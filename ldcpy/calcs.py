@@ -300,7 +300,7 @@ class Datasetcalcs:
         Most repeated value in dataset
         """
         if not self._is_memoized('_most_repeated'):
-            self._most_repeated = ss.mode(self._ds.values.flatten())[0][0]
+            self._most_repeated = ss.mode(self._ds.values.flatten())[0]
         return self._most_repeated
 
     @property
