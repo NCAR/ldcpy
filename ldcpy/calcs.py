@@ -1078,7 +1078,10 @@ class Datasetcalcs:
         return mutual_info
 
     def get_real_info(self, x_index):
-        dict_list_H = self.get_dict_list(self._ds, x_index)
+        # first, flatten the data array by stacking all the dimensions and removing the coordinates
+        flattened_ds = self._ds.stack(flattened=['lat', 'lon', 'time']).reset_index('flattened')
+
+        dict_list_H = self.get_dict_list(flattened_ds, x_index)
 
         mutual_info_array = []
         for bit_pos_dict in dict_list_H:
