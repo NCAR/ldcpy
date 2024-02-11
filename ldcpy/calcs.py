@@ -1092,6 +1092,7 @@ class Datasetcalcs:
             mutual_info_array.append(mutual_info)
 
         mutual_info_array = np.array(mutual_info_array)
+        #print(mutual_info_array)
         return xr.DataArray(mutual_info_array)
 
     @property
@@ -1112,6 +1113,7 @@ class Datasetcalcs:
             self._captured_information = 0
             # if self.real_information.sum() > 0:
             normalized_information = self.real_information / self.real_information.sum()
+            #print(self.real_information)
             while self._captured_information < 0.99:
                 self._captured_information += normalized_information[self._real_information_cutoff]
                 self._real_information_cutoff += 1
