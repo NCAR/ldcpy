@@ -3,7 +3,7 @@ channels:
   - conda-forge
 dependencies:
   #  - python=*=*cp*
-  - python=3.8
+  - python=3.9
   - cartopy
   - cmocean
   - codecov
@@ -11,6 +11,7 @@ dependencies:
   - dask
   - graphviz
   - intake-esm
+  - notebook=6.4.12
   - jupyter_contrib_nbextensions
   - jupyterlab
   - matplotlib
@@ -27,8 +28,6 @@ dependencies:
   - scikit-image
   - scipy
   - setuptools
-  - xarray
-  - xrft
   - zfpy
   - cf_xarray
   - astropy
