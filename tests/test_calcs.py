@@ -176,6 +176,9 @@ class TestErrorcalcs(TestCase):
     def test_mean_squared(self):
         self.assertTrue(np.isclose(test_overall_calcs.mean_squared, 0.25, rtol=1e-09))
 
+    def test_most_repeated(self):
+        self.assertTrue(test_overall_calcs.most_repeated == -100)
+
     def test_min_abs(self):
         self.assertTrue(test_overall_calcs.min_abs == 0)
 

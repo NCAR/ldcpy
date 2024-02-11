@@ -17,7 +17,7 @@ import ldcpy
 # -- Project information -----------------------------------------------------
 
 project = 'ldcpy'
-copyright = u'2020, University Corporation for Atmospheric Research'
+copyright = u'2024, University Corporation for Atmospheric Research'
 author = u'Alex Pinard, Allison Baker, Anderson Banihirwe, Dorit Hammerling'
 
 

@@ -349,7 +349,6 @@ def compare_stats(
     df_dict['entropy estimate'] = temp_entropy
 
     for d in df_dict.keys():
-        #print(d)
         fo = [f'%.{significant_digits}g' % item for item in df_dict[d]]
         df_dict[d] = fo
     df = pd.DataFrame.from_dict(df_dict, orient='index', columns=my_cols)
