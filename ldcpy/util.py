@@ -317,7 +317,7 @@ def compare_stats(
     temp_ac_lat = []
     temp_ac_lon = []
     temp_entropy = []
-    temp_info = []
+    # temp_info = []
 
     for i in range(num):
         temp_mean.append(da_set_calcs[i].get_calc('mean').data.compute())
@@ -343,7 +343,7 @@ def compare_stats(
     df_dict['max value'] = temp_max
     df_dict['probability positive'] = temp_pos
     df_dict['number of zeros'] = temp_zeros
- #   df_dict['99% real information cutoff bit'] = temp_info
+    #   df_dict['99% real information cutoff bit'] = temp_info
     if data_type == 'cam-fv':
         df_dict['spatial autocorr - latitude'] = temp_ac_lat
         df_dict['spatial autocorr - longitude'] = temp_ac_lon
