@@ -328,7 +328,8 @@ def compare_stats(
         temp_min_abs_nonzero.append(da_set_calcs[i].get_calc('min_abs_nonzero').data.compute())
         temp_pos.append(da_set_calcs[i].get_calc('prob_positive').data.compute())
         temp_zeros.append(da_set_calcs[i].get_calc('num_zero').data.compute())
-#        temp_info.append(da_set_calcs[i].get_single_calc('real_information_cutoff'))
+        # Alex is fixing ..
+        # temp_info.append(da_set_calcs[i].get_single_calc('real_information_cutoff'))
         if data_type == 'cam-fv':
             temp_ac_lat.append(da_set_calcs[i].get_single_calc('lat_autocorr'))
             temp_ac_lon.append(da_set_calcs[i].get_single_calc('lon_autocorr'))
