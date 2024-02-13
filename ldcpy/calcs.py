@@ -1858,39 +1858,48 @@ class Diffcalcs:
 
         return self._covariance
 
-    # @property
-    # def ks_p_value(self):
-    #     """
-    #     The Kolmogorov-Smirnov p-value
-    #     """
-    #     # Note: ravel() forces a compute for dask, but ks test in scipy can't
-    #     # work with uncomputed dask arrays
-    #     if not self._is_memoized('_ks_p_value'):
-    #         d1_p = (np.ravel(self._ds1)).astype('float64')
-    #         d2_p = (np.ravel(self._ds2)).astype('float64')
-    #         self._ks_p_value = np.asanyarray(ss.ks_2samp(d2_p, d1_p))
-    #     return self._ks_p_value[1]
-
     @property
     def ks_p_value(self):
         """
-        The Kolmogorov-Smirnov p-value, calculated for slices of the data defined by specified dimensions.
-        :param dim: Dimensions over which to apply the KS test. Can be a string or a list of strings.
+        The Kolmogorov-Smirnov p-value
         """
+        # Note: ravel() forces a compute for dask, but ks test in scipy can't
+        # work with uncomputed dask arrays
         if not self._is_memoized('_ks_p_value'):
-            # Apply the KS test across the specified dimensions
-            # This will create a DataArray of p-values
-            self._ks_p_value = xr.apply_ufunc(
-                lambda x, y: ss.ks_2samp(x.ravel(), y.ravel())[1],
-                self._ds1,
-                self._ds2,
-                input_core_dims=[self._aggregate_dims, self._aggregate_dims],
-                dask='parallelized',
-                dask_gufunc_kwargs={'allow_rechunk': True},
-                vectorize=True,
-            )
+            d1_p = (np.ravel(self._ds1)).astype('float64')
+            d2_p = (np.ravel(self._ds2)).astype('float64')
+            self._ks_p_value = np.asanyarray(ss.ks_2samp(d2_p, d1_p))
+        return self._ks_p_value[1]
 
-        return self._ks_p_value
+    # @property
+    # def ks_p_value(self):
+    #     """
+    #     The Kolmogorov-Smirnov p-value, calculated for slices of the data defined by specified dimensions.
+    #     :param dim: Dimensions over which to apply the KS test. Can be a string or a list of strings.
+    #     """
+    #     if not self._is_memoized('_ks_p_value'):
+    #         # Apply the KS test across the specified dimensions
+    #         # This will create a DataArray of p-values
+    #         adims = self._aggregate_dims
+    #         self._not_agg_dims = []
+    #         if adims is None:
+    #             adims = self._ds1.dims
+    #         else:
+    #             for d in self._ds1.dims:
+    #                 if d not in adims:
+    #                     self._not_agg_dims.append(d)
+    #
+    #         self._ks_p_value = xr.apply_ufunc(
+    #             lambda x, y: ss.ks_2samp(x.ravel(), y.ravel())[1],
+    #             self._ds1,
+    #             self._ds2,
+    #             input_core_dims=[self._not_agg_dims, self._not_agg_dims],
+    #             dask='parallelized',
+    #             dask_gufunc_kwargs={'allow_rechunk': True},
+    #             vectorize=True,
+    #         )
+    #
+    #     return self._ks_p_value
 
     @property
     def pearson_correlation_coefficient(self):
