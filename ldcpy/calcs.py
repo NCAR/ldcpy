@@ -1079,7 +1079,9 @@ class Datasetcalcs:
 
     def get_real_info(self, x_index):
         # first, flatten the data array by stacking all the dimensions and removing the coordinates
-        flattened_ds = self._ds.stack(flattened=['lat', 'lon', 'time']).reset_index('flattened')
+        # like this:        flattened_ds = self._ds.stack(flattened=['lat', 'lon', 'time']).reset_index('flattened')
+        # but over any number of dimensions
+        flattened_ds = self._ds.stack(flattened=self._ds.dims).reset_index('flattened')
 
         dict_list_H = self.get_dict_list(flattened_ds, x_index)
 
@@ -1885,6 +1887,8 @@ class Diffcalcs:
                 self._ds1,
                 self._ds2,
                 input_core_dims=[self._aggregate_dims, self._aggregate_dims],
+                dask='parallelized',
+                dask_gufunc_kwargs={'allow_rechunk': True},
                 vectorize=True,
             )
 
