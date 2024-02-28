@@ -144,11 +144,15 @@ def open_datasets(data_type, varnames, list_of_files, labels, weights=True, **kw
         myds.close()
         fs = os.path.getsize(myfile)
         file_size_dict[labels[i]] = fs
-    indx = np.unique(sz)
-    assert indx.size == 1, 'ERROR: all files must have the same length time dimension'
+    # indx = np.unique(sz)
+    min_time_steps = np.min(sz)  # Find the minimum size among all time dimensions
+    # assert indx.size == 1, 'ERROR: all files must have the same length time dimension'
 
     # preprocess_vars is here for working on jupyter hub...
     def preprocess_vars(ds):
+        # Trim the dataset to the minimum number of time steps
+        ds = ds.isel(time=slice(0, min_time_steps))
+        # Select the specified variables
         return ds[varnames]
 
     if data_type == 'cam-fv' and weights is True:
