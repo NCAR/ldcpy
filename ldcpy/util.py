@@ -145,7 +145,7 @@ def open_datasets(data_type, varnames, list_of_files, labels, weights=True, **kw
         fs = os.path.getsize(myfile)
         file_size_dict[labels[i]] = fs
     # indx = np.unique(sz)
-    min_time_steps = np.min(sz)  # Find the minimum size among all time dimensions
+    min_time_steps = int(np.min(sz))  # Find the minimum size among all time dimensions
     # assert indx.size == 1, 'ERROR: all files must have the same length time dimension'
 
     # preprocess_vars is here for working on jupyter hub...
