@@ -2,12 +2,12 @@ name: CI
 on:
   push:
     branches:
-      - '*'
+      - "*"
   pull_request:
     branches:
-      - '*'
+      - "*"
   schedule:
-    - cron: '0 0 * * *' # Daily “At 00:00” UTC
+    - cron: "0 0 * * *" # Daily “At 00:00” UTC
   workflow_dispatch: # allows you to trigger the workflow run manually
 
 jobs:
@@ -22,8 +22,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: ['ubuntu-latest']
-        python-version: ['3.7', '3.8', '3.9']
+        os: ["ubuntu-latest"]
+        python-version: ["3.7", "3.8", "3.9"]
     steps:
       - name: Cancel previous runs
         uses: styfle/cancel-workflow-action@0.11.0
@@ -34,7 +34,7 @@ jobs:
         with:
           channels: conda-forge
           channel-priority: strict
-          mamba-version: '*'
+          mamba-version: "*"
           activate-environment: ldcpy # Defined in ci/environment.yml
           auto-update-conda: false
           python-version: ${{ matrix.python-version }}
@@ -76,7 +76,7 @@ jobs:
         with:
           channels: conda-forge
           channel-priority: strict
-          mamba-version: '*'
+          mamba-version: "*"
           activate-environment: ldcpy # Defined in ci/environment.yml
           auto-update-conda: false
           python-version: 3.9
