@@ -151,7 +151,7 @@ def open_datasets(data_type, varnames, list_of_files, labels, weights=True, **kw
     # preprocess_vars is here for working on jupyter hub...
     def preprocess_vars(ds):
         # Trim the dataset to the minimum number of time steps
-        ds = ds.isel(time=slice(0, 600))
+        ds = ds.isel(time=slice(0, 6000))
         # Select the specified variables
 
         return ds[varnames]
