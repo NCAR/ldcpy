@@ -2,7 +2,8 @@ name: myenv
 channels:
   - conda-forge
 dependencies:
-  - python=*=*cp*
+  #  - python=*=*cp*
+  - python=3.9
   - cartopy
   - cf_xarray
   - cmocean
@@ -20,7 +21,7 @@ dependencies:
   - netcdf4
   - nodejs
   - pip
-  - python=3.8
+  - python=3.9
   - s3fs
   - scikit-image
   - xarray

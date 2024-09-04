@@ -1,5 +1,9 @@
 import copy
+import ctypes
 import gzip
+import struct
+import tempfile
+import time
 from math import exp, pi, sqrt
 from typing import Optional
 
@@ -8,14 +12,18 @@ import dask
 import matplotlib as mpl
 import numpy as np
 import pandas as pd
+import skimage.io
+import skimage.metrics
 import statsmodels.api as sm
 import xarray as xr
+from astropy.convolution import Gaussian2DKernel, convolve, interpolate_replace_nans
 from cartopy import crs as ccrs
 from cartopy.util import add_cyclic_point
 from matplotlib import pyplot as plt
 from scipy import stats as ss
 from scipy.ndimage import gaussian_filter
 from scipy.signal import stft
+from skimage.metrics import structural_similarity as ssim
 from skimage.util import crop
 from xrft import dft
 
@@ -139,7 +147,9 @@ class Datasetcalcs:
         self._lev_autocorr = None
         self._entropy = None
         self._w_e_first_differences = None
+        self._w_e_first_differences_max = None
         self._n_s_first_differences = None
+        self._n_s_first_differences_max = None
         self._w_e_derivative = None
         self._fft2 = None
         self._percent_unique = None
@@ -152,10 +162,24 @@ class Datasetcalcs:
         self._fftmax = None
         self._vfftratio = None
         self._vfftmax = None
+        self._magnitude_range = None
+        self._magnitude_diff_ew = None
+        self._magnitude_diff_ns = None
+        self._real_information = None
+        self._real_information_cutoff = None
 
         # single value calcs
         self._zscore_cutoff = None
         self._zscore_percent_significant = None
+
+        adims = self._agg_dims
+        self._not_agg_dims = []
+        if adims is None:
+            adims = self._ds.dims
+        else:
+            for d in self._ds.dims:
+                if d not in adims:
+                    self._not_agg_dims.append(d)
 
         # for probability functions, what is the size
         if aggregate_dims is not None:
@@ -216,19 +240,44 @@ class Datasetcalcs:
         if not self._is_memoized('_w_e_first_differences'):
             # self._first_differences = self._ds.diff('lat').mean(self._agg_dims)
             self._w_e_first_differences = self._ds.roll(
-                {'lat': -1}, roll_coords=False
-            ) - self._ds.roll({'lat': 1}, roll_coords=False)
+                {self._lat_dim_name: -1}, roll_coords=False
+            ) - self._ds.roll({self._lat_dim_name: 1}, roll_coords=False)
         self._w_e_first_differences.attrs = self._ds.attrs
 
         return self._w_e_first_differences.mean(self._agg_dims)
 
     @property
-    def n_s_first_differences(self) -> xr.DataArray:
+    def w_e_first_differences_max(self) -> xr.DataArray:
         """
         First differences along the west-east direction
         """
+        if not self._is_memoized('_w_e_first_differences'):
+            # self._first_differences = self._ds.diff('lat').mean(self._agg_dims)
+            self._w_e_first_differences = self._ds.roll(
+                {self._lat_dim_name: -1}, roll_coords=False
+            ) - self._ds.roll({self._lat_dim_name: 1}, roll_coords=False)
+        self._w_e_first_differences.attrs = self._ds.attrs
+
+        return self._w_e_first_differences.max(self._agg_dims)
+
+    @property
+    def n_s_first_differences(self) -> xr.DataArray:
+        """
+        First differences along the north-south direction
+        """
         if not self._is_memoized('_n_s_first_differences'):
-            self._n_s_first_differences = self._ds.diff('lon').mean(self._agg_dims)
+            self._n_s_first_differences = self._ds.diff(self._lon_dim_name).mean(self._agg_dims)
+            # self._first_differences = self._ds.roll({"lon": -1}, roll_coords=False) - self._ds.roll({"lat": 1},                                                                                        roll_coords=False)
+        self._n_s_first_differences.attrs = self._ds.attrs
+        return self._n_s_first_differences
+
+    @property
+    def n_s_first_differences_max(self) -> xr.DataArray:
+        """
+        First differences along the n-s direction
+        """
+        if not self._is_memoized('_n_s_first_differences'):
+            self._n_s_first_differences = self._ds.diff(self._lon_dim_name).max(self._agg_dims)
             # self._first_differences = self._ds.roll({"lon": -1}, roll_coords=False) - self._ds.roll({"lat": 1},                                                                                        roll_coords=False)
         self._n_s_first_differences.attrs = self._ds.attrs
         return self._n_s_first_differences
@@ -251,7 +300,7 @@ class Datasetcalcs:
         Most repeated value in dataset
         """
         if not self._is_memoized('_most_repeated'):
-            self._most_repeated = ss.mode(self._ds.values.flatten())[0][0]
+            self._most_repeated = ss.mode(self._ds.values.flatten())[0]
         return self._most_repeated
 
     @property
@@ -264,6 +313,91 @@ class Datasetcalcs:
                 self._ds.values.flatten()
             )
         return self._most_repeated_pct
+
+    def log_max(ds):
+        return np.log10(abs(ds)).where(np.log10(abs(ds)) != -np.inf).max(skipna=True)
+
+    @property
+    def magnitude_range(self) -> xr.DataArray:
+        """
+        The range of the dataset
+        """
+        if not self._is_memoized('_magnitude_range'):
+            # Get the range in exponent space
+            def max_agg(ds):
+                return ds.max(skipna=True)
+
+            def min_agg(ds):
+                return ds.min(skipna=True)
+
+            log_ds = np.log10(abs(self._ds)).where(np.log10(abs(self._ds)) != -np.inf)
+
+            if len(self._not_agg_dims) == 0:
+                my_max = max_agg(log_ds)
+                my_min = min_agg(log_ds)
+            else:
+                stack = log_ds.stack(multi_index=tuple(self._not_agg_dims))
+                my_max = stack.groupby('multi_index').map(max_agg)
+                my_min = stack.groupby('multi_index').map(min_agg)
+
+            if (
+                np.isinf(my_max).any()
+                or np.isinf(my_min).any()
+                or np.isnan(my_max).any()
+                or np.isnan(my_min).any()
+            ):
+                self._magnitude_range = -1
+                return self._magnitude_range
+            else:
+                self._magnitude_range = my_max - my_min
+            # self._magnitude_range.attrs = self._ds.attrs
+        return self._magnitude_range
+
+    @property
+    def magnitude_diff_ew(self) -> xr.DataArray:
+        """
+        Maximum magnitude differences along ew direction
+        """
+        if not self._is_memoized('_magnitude_diff_ew'):
+            # self._first_differences = self._ds.diff('lat').mean(self._agg_dims)
+            here = np.log10(abs(self._ds.roll({'lon': 0}, roll_coords=False)))
+            there = np.log10(abs(self._ds.roll({'lon': 1}, roll_coords=False)))
+            if (
+                np.isinf(here).any()
+                or np.isinf(there).any()
+                or np.isnan(here).any()
+                or np.isnan(there).any()
+            ):
+                self._magnitude_diff_ew_int = -1
+                return xr.DataArray(self._magnitude_diff_ew_int)
+            else:
+                self._magnitude_diff_ew_int = here - there
+        self._magnitude_diff_ew = xr.DataArray(self._magnitude_diff_ew_int)
+        self._magnitude_diff_ew.attrs = self._ds.attrs
+        return self._magnitude_diff_ew.max(self._agg_dims, skipna=True)
+
+    @property
+    def magnitude_diff_ns(self) -> xr.DataArray:
+        """
+        Maximum magnitude irst difference along the n-s direction
+        """
+        if not self._is_memoized('_magnitude_diff_ns'):
+            max = np.log10(abs(self._ds.diff('lat').max(self._agg_dims)))
+            min = np.log10(abs(self._ds.diff('lat').min(self._agg_dims)))
+            if (
+                np.isinf(max).any()
+                or np.isinf(min).any()
+                or np.isnan(max).any()
+                or np.isnan(min).any()
+            ):
+                self._magnitude_diff_ns_int = -1
+                return xr.DataArray(self._magnitude_diff_ns_int)
+            else:
+                self._magnitude_diff_ns_int = max - min
+            # self._first_differences = self._ds.roll({"lon": -1}, roll_coords=False) - self._ds.roll({"lat": 1},                                                                                        roll_coords=False)
+        self._magnitude_diff_ns = xr.DataArray(self._magnitude_diff_ns_int)
+        self._magnitude_diff_ns.attrs = self._ds.attrs
+        return self._magnitude_diff_ns.max(self._agg_dims, skipna=True)
 
     @property
     def range(self) -> xr.DataArray:
@@ -417,20 +551,42 @@ class Datasetcalcs:
         # lower is better (1.0 means random - no compression possible)
         """
         if not self._is_memoized('_entropy'):
+            es = []
 
             a1 = self._ds.data
             if dask.is_dask_collection(a1):
                 a1 = a1.compute()
 
-            cc = gzip.compress(a1)
-            dd = gzip.decompress(cc)
-            cl = len(cc)
-            dl = len(dd)
-            if dl > 0:
-                e = cl / dl
+            if len(self._not_agg_dims) == 0:
+                # don't stack at all, just make a single multi_index group
+                cc = gzip.compress(a1, mtime=0)
+                dd = gzip.decompress(cc)
+                cl = len(cc)
+                dl = len(dd)
+                if dl > 0:
+                    e = cl / dl
+                else:
+                    e = 0.0
+                es.append(e)
             else:
-                e = 0.0
-            self._entropy = e
+                stack = a1.stack(multi_index=tuple(self._not_agg_dims))
+                for d, slice in stack.groupby('multi_index'):
+                    cc = gzip.compress(slice.data)
+                    dd = gzip.decompress(cc)
+                    cl = len(cc)
+                    dl = len(dd)
+                    if dl > 0:
+                        e = cl / dl
+                    else:
+                        e = 0.0
+                    es.append(e)
+
+            if len(self._not_agg_dims) == 0:
+                self._entropy = xr.DataArray(es)
+            else:
+                self._entropy = xr.DataArray(es, dims=self._not_agg_dims)
+            self._entropy.attrs = self._ds.attrs
+            self._entropy.attrs['units'] = ''
         return self._entropy
 
     @property
@@ -850,6 +1006,126 @@ class Datasetcalcs:
 
         return self._dyn_range
 
+    def dec_to_binary(self, num):
+        b = bin(ctypes.c_uint32.from_buffer(ctypes.c_float(num)).value)
+        strip = b.lstrip('0b')
+        return strip.zfill(32)
+
+    def dec_to_binary_3(self, num):
+        a = time.perf_counter()
+        int32bits = np.asarray(num, dtype=np.float32).view(np.int32).item()
+        b = time.perf_counter() - a
+        print(b)
+        return '{:032b}'.format(int32bits)
+
+    def get_adj_bit(self, bit_pos):
+        return [bit_pos[0] - 1, bit_pos[1]]
+
+    def get_dict_list(self, data_array, x_index):
+        dict_list_H = []
+        N_BITS = 32
+        for i in range(N_BITS - 1):
+            new_dict = {'00': 0, '01': 0, '10': 0, '11': 0}
+            dict_list_H.append(new_dict)
+
+        b = np.empty(data_array[x_index].size, dtype=object)
+        i = 0
+        for y in np.nditer(np.asarray(data_array[x_index], dtype=np.float32).view(np.int32)):
+            b[i] = '{:032b}'.format(y)
+            i += 1
+
+        for i in range(N_BITS - 1):
+            count = 0
+            for y in range(1, len(b) - 1):
+                if b[y][i] in ('0', '1') and b[y + 1][i] in ('0', '1'):
+                    count += 1
+                    p00 = p01 = p10 = p11 = 0
+                    dict_list_H[i][b[y][i] + b[y + 1][i]] += 1
+                    dict_list_H[i]['00'] += p00
+                    dict_list_H[i]['01'] += p01
+                    dict_list_H[i]['10'] += p10
+                    dict_list_H[i]['11'] += p11
+
+            if count == 0:
+                dict_list_H[i]['00'] = 0
+                dict_list_H[i]['01'] = 0
+                dict_list_H[i]['10'] = 0
+                dict_list_H[i]['11'] = 0
+            else:
+                dict_list_H[i]['00'] /= count
+                dict_list_H[i]['01'] /= count
+                dict_list_H[i]['10'] /= count
+                dict_list_H[i]['11'] /= count
+        return dict_list_H
+
+    def get_mutual_info(self, p00, p01, p10, p11):
+        p0 = p00 + p10  # current bit is 0
+        p1 = p11 + p01  # current bit is 1
+        p0_prev = p00 + p01  # prev bit was 0
+        p1_prev = p11 + p10  # prev bit was 1
+
+        # From (4) in paper
+        mutual_info = 0
+        if p00 > 0:
+            mutual_info += p00 * np.log2(p00 / p0_prev / p0)
+        if p11 > 0:
+            mutual_info += p11 * np.log2(p11 / p1_prev / p1)
+        if p01 > 0:
+            mutual_info += p01 * np.log2(p01 / p0_prev / p1)
+        if p10 > 0:
+            mutual_info += p10 * np.log2(p10 / p1_prev / p0)
+
+        return mutual_info
+
+    def get_real_info(self, x_index):
+        # first, flatten the data array by stacking all the dimensions and removing the coordinates
+        # like this:        flattened_ds = self._ds.stack(flattened=['lat', 'lon', 'time']).reset_index('flattened')
+        # but over any number of dimensions
+        flattened_ds = self._ds.stack(flattened=self._ds.dims).reset_index('flattened')
+
+        dict_list_H = self.get_dict_list(flattened_ds, x_index)
+
+        mutual_info_array = []
+        for bit_pos_dict in dict_list_H:
+            p00 = bit_pos_dict['00']
+            p01 = bit_pos_dict['01']
+            p10 = bit_pos_dict['10']
+            p11 = bit_pos_dict['11']
+
+            mutual_info = self.get_mutual_info(p00, p01, p10, p11)
+
+            mutual_info_array.append(mutual_info)
+
+        mutual_info_array = np.array(mutual_info_array)
+        # print(mutual_info_array)
+        return xr.DataArray(mutual_info_array)
+
+    @property
+    def real_information(self) -> xr.DataArray:
+        if not self._is_memoized('_real_information'):
+            # get the first binary digit
+            self._real_information = self.get_real_info(0)
+            if hasattr(self._ds, 'units'):
+                self._real_information.attrs['units'] = f'{self._ds.units}'
+
+        return self._real_information
+
+    @property
+    def real_information_cutoff(self) -> xr.DataArray:
+        if not self._is_memoized('_real_information_cutoff'):
+            # get the first binary digit
+            self._real_information_cutoff = 0
+            self._captured_information = 0
+            # if self.real_information.sum() > 0:
+            normalized_information = self.real_information / self.real_information.sum()
+            # print(self.real_information)
+            while self._captured_information < 0.99:
+                self._captured_information += normalized_information[self._real_information_cutoff]
+                self._real_information_cutoff += 1
+            return self._real_information_cutoff
+            # else:
+            #     return 0
+
     @property
     def lag1(self) -> xr.DataArray:
         """
@@ -921,13 +1197,18 @@ class Datasetcalcs:
     @property
     def fft2(self) -> xr.DataArray:
         if not self._is_memoized('_fft2'):
-            self._fft2 = xr.DataArray(np.abs(np.fft.fft2(self.mean)))
+            self._fft2 = xr.DataArray(np.abs(np.fft.fft2(self._ds)))
             self._fft2.attrs = self._ds.attrs
             # if hasattr(self._ds, 'units'):
             #    self._fft2.attrs['units'] = f'{self._ds.units}'
-            self._fft2 = self._fft2.rename({'dim_0': 'lat', 'dim_1': 'lon'})
+            self._fft2 = self._fft2.rename(
+                {'dim_0': 'time', 'dim_1': self._lat_dim_name, 'dim_2': self._lon_dim_name}
+            )
             self._fft2 = self._fft2.assign_coords(
-                {'lat': self._ds.coords['lat'], 'lon': self._ds.coords['lon']}
+                {
+                    self._lat_dim_name: self._ds.coords[self._lat_dim_name],
+                    self._lon_dim_name: self._ds.coords[self._lon_dim_name],
+                }
             )
         return self._fft2 / np.mean(self._fft2)
 
@@ -940,21 +1221,23 @@ class Datasetcalcs:
             # multirange: self.fft2.where(self.fft2.lat > 1, drop=True).where(self.fft2.lon == 3, drop=True)
             top_val = (
                 self.fft2.where(
-                    self.fft2.lat > self.fft2.lat[int((self.fft2.shape[0] - 1) * 3 / 4)], drop=True
+                    self.fft2.latitude > self.fft2.latitude[int((self.fft2.shape[2] - 1) * 3 / 4)],
+                    drop=True,
                 )
-                .max(dim='lon')
-                .mean()
+                .max(dim=self._lon_dim_name)
+                .mean(dim=self._lat_dim_name)
             )
             bottom_val = (
                 self.fft2.where(
                     np.logical_and(
-                        self.fft2.lat > self.fft2.lat[int((self.fft2.shape[0] - 1) / 2)],
-                        self.fft2.lat <= self.fft2.lat[int((self.fft2.shape[0] - 1) * 3 / 4)],
+                        self.fft2.latitude > self.fft2.latitude[int((self.fft2.shape[2] - 1) / 2)],
+                        self.fft2.latitude
+                        <= self.fft2.latitude[int((self.fft2.shape[2] - 1) * 3 / 4)],
                     ),
                     drop=True,
                 )
-                .max(dim='lon')
-                .mean()
+                .max(dim=self._lon_dim_name)
+                .mean(dim=self._lat_dim_name)
             )
             # greater than 1 = more higher frequencies than lower frequencies
             self._fftratio = top_val / bottom_val
@@ -969,7 +1252,7 @@ class Datasetcalcs:
             # multirange: self.fft2.where(self.fft2.lat > 1, drop=True).where(self.fft2.lon == 3, drop=True)
             top_val = (
                 self.fft2.where(
-                    self.fft2.lat > self.fft2.lat[int((self.fft2.shape[0] - 1) * 15 / 16)],
+                    self.fft2.lat > self.fft2.lat[int((self.fft2.shape[1] - 1) * 15 / 16)],
                     drop=True,
                 )
                 .max(dim='lon')
@@ -978,8 +1261,8 @@ class Datasetcalcs:
             bottom_val = (
                 self.fft2.where(
                     np.logical_and(
-                        self.fft2.lat > self.fft2.lat[int((self.fft2.shape[0] - 1) / 2)],
-                        self.fft2.lat <= self.fft2.lat[int((self.fft2.shape[0] - 1) * 9 / 16)],
+                        self.fft2.lat > self.fft2.lat[int((self.fft2.shape[1] - 1) / 2)],
+                        self.fft2.lat <= self.fft2.lat[int((self.fft2.shape[1] - 1) * 9 / 16)],
                     ),
                     drop=True,
                 )
@@ -999,7 +1282,7 @@ class Datasetcalcs:
             # multirange: self.fft2.where(self.fft2.lat > 1, drop=True).where(self.fft2.lon == 3, drop=True)
             top_val = (
                 self.fft2.where(
-                    self.fft2.lon > self.fft2.lon[int((self.fft2.shape[1] - 1) * 3 / 4)], drop=True
+                    self.fft2.lon > self.fft2.lon[int((self.fft2.shape[2] - 1) * 3 / 4)], drop=True
                 )
                 .max(dim='lat')
                 .mean()
@@ -1007,8 +1290,8 @@ class Datasetcalcs:
             bottom_val = (
                 self.fft2.where(
                     np.logical_and(
-                        self.fft2.lon > self.fft2.lon[int((self.fft2.shape[1] - 1) / 2)],
-                        self.fft2.lon <= self.fft2.lon[int((self.fft2.shape[1] - 1) * 3 / 4)],
+                        self.fft2.lon > self.fft2.lon[int((self.fft2.shape[2] - 1) / 2)],
+                        self.fft2.lon <= self.fft2.lon[int((self.fft2.shape[2] - 1) * 3 / 4)],
                     ),
                     drop=True,
                 )
@@ -1028,7 +1311,7 @@ class Datasetcalcs:
             # multirange: self.fft2.where(self.fft2.lat > 1, drop=True).where(self.fft2.lon == 3, drop=True)
             top_val = (
                 self.fft2.where(
-                    self.fft2.lon > self.fft2.lon[int((self.fft2.shape[1] - 1) * 15 / 16)],
+                    self.fft2.lon > self.fft2.lon[int((self.fft2.shape[2] - 1) * 15 / 16)],
                     drop=True,
                 )
                 .max(dim='lat')
@@ -1037,8 +1320,8 @@ class Datasetcalcs:
             bottom_val = (
                 self.fft2.where(
                     np.logical_and(
-                        self.fft2.lon > self.fft2.lon[int((self.fft2.shape[1] - 1) / 2)],
-                        self.fft2.lon <= self.fft2.lon[int((self.fft2.shape[1] - 1) * 9 / 16)],
+                        self.fft2.lon > self.fft2.lon[int((self.fft2.shape[2] - 1) / 2)],
+                        self.fft2.lon <= self.fft2.lon[int((self.fft2.shape[2] - 1) * 9 / 16)],
                     ),
                     drop=True,
                 )
@@ -1085,12 +1368,13 @@ class Datasetcalcs:
             lon_coord_name = self._lon_coord_name
             lat_coord_name = self._lat_coord_name
 
-            DF = dft(new_ds, dim=[self._time_dim_name], detrend='constant')
+            # rechunk to a single time chunk
+            new_ds2 = new_ds.chunk({self._time_dim_name: new_ds[self._time_dim_name].size})
+            DF = dft(new_ds2, dim=[self._time_dim_name], detrend='constant')
             # the above does not preserve the lat/lon attributes
             DF[lon_coord_name].attrs = new_ds[lon_coord_name].attrs
             DF[lat_coord_name].attrs = new_ds[lat_coord_name].attrs
             DF.attrs = new_ds.attrs
-
             S = np.real(DF * np.conj(DF) / self._ds.sizes[self._time_dim_name])
             S_annual = S.isel(
                 freq_time=int(self._ds.sizes[self._time_dim_name] / 2)
@@ -1245,6 +1529,10 @@ class Datasetcalcs:
                 return self.w_e_first_differences
             if name == 'n_s_first_differences':
                 return self.n_s_first_differences
+            if name == 'w_e_first_differences_max':
+                return self.w_e_first_differences_max
+            if name == 'n_s_first_differences_max':
+                return self.n_s_first_differences_max
             if name == 'w_e_derivative':
                 return self.w_e_derivative
             if name == 'mean':
@@ -1321,6 +1609,14 @@ class Datasetcalcs:
                 return self.vfftmax
             if name == 'ds':
                 return self._ds
+            if name == 'magnitude_diff_ew':
+                return self.magnitude_diff_ew
+            if name == 'magnitude_diff_ns':
+                return self.magnitude_diff_ns
+            if name == 'real_information':
+                return self.real_information
+            if name == 'magnitude_range':
+                return self.magnitude_range
             raise ValueError(f'there is no calc with the name: {name}.')
         else:
             raise TypeError('name must be a string.')
@@ -1340,6 +1636,8 @@ class Datasetcalcs:
             The calc value
         """
         if isinstance(name, str):
+            if name == 'real_information_cutoff':
+                return self.real_information_cutoff
             if name == 'zscore_cutoff':
                 return self.zscore_cutoff
             if name == 'zscore_percent_significant':
@@ -1416,7 +1714,6 @@ class Diffcalcs:
         self._ssim_value_fp_orig = (
             None  # "straightforward" version for floating points - not recommended
         )
-        self._ssim_value_fp_orig_exp = None
         self._ssim_value_fp_fast = None  # faster Data SSIM - the default
         self._ssim_value_fp_fast_exp = None  # experimenting
         self._ssim_value_fp_slow = None  # slower non-matrix version of DSSIM - for experimenting
@@ -1554,27 +1851,48 @@ class Diffcalcs:
         if not self._is_memoized('_covariance'):
 
             # need to use unweighted means
-            c1_mean = self._calcs1.get_calc('ds').mean(skipna=True)
-            c2_mean = self._calcs2.get_calc('ds').mean(skipna=True)
+            c1_mean = self._calcs1.get_calc('ds').mean(dim=self._aggregate_dims, skipna=True)
+            c2_mean = self._calcs2.get_calc('ds').mean(dim=self._aggregate_dims, skipna=True)
 
             self._covariance = (
                 (self._calcs2.get_calc('ds') - c2_mean) * (self._calcs1.get_calc('ds') - c1_mean)
-            ).mean()
+            ).mean(dim=self._aggregate_dims)
 
-        return float(self._covariance)
+        return self._covariance
+
+    # @property
+    # def ks_p_value(self):
+    #     """
+    #     The Kolmogorov-Smirnov p-value
+    #     """
+    #     # Note: ravel() forces a compute for dask, but ks test in scipy can't
+    #     # work with uncomputed dask arrays
+    #     if not self._is_memoized('_ks_p_value'):
+    #         d1_p = (np.ravel(self._ds1)).astype('float64')
+    #         d2_p = (np.ravel(self._ds2)).astype('float64')
+    #         self._ks_p_value = np.asanyarray(ss.ks_2samp(d2_p, d1_p))
+    #     return self._ks_p_value[1]
 
     @property
     def ks_p_value(self):
         """
-        The Kolmogorov-Smirnov p-value
+        The Kolmogorov-Smirnov p-value, calculated for slices of the data defined by specified dimensions.
+        :param dim: Dimensions over which to apply the KS test. Can be a string or a list of strings.
         """
-        # Note: ravel() forces a compute for dask, but ks test in scipy can't
-        # work with uncomputed dask arrays
         if not self._is_memoized('_ks_p_value'):
-            d1_p = (np.ravel(self._ds1)).astype('float64')
-            d2_p = (np.ravel(self._ds2)).astype('float64')
-            self._ks_p_value = np.asanyarray(ss.ks_2samp(d2_p, d1_p))
-        return self._ks_p_value[1]
+            # Apply the KS test across the specified dimensions
+            # This will create a DataArray of p-values
+            self._ks_p_value = xr.apply_ufunc(
+                lambda x, y: ss.ks_2samp(x.ravel(), y.ravel())[1],
+                self._ds1,
+                self._ds2,
+                input_core_dims=[self._aggregate_dims, self._aggregate_dims],
+                dask='parallelized',
+                dask_gufunc_kwargs={'allow_rechunk': True},
+                vectorize=True,
+            )
+
+        return self._ks_p_value
 
     @property
     def pearson_correlation_coefficient(self):
@@ -1583,19 +1901,15 @@ class Diffcalcs:
         """
         if not self._is_memoized('_pearson_correlation_coefficient'):
 
-            # we need to do this with  unweighted data
-            c1_std = float(self._calcs1.get_calc('ds').std(skipna=True))
-            c2_std = float(self._calcs2.get_calc('ds').std(skipna=True))
+            # Calculate standard deviation over the specified dimensions
+            c1_std = self._calcs1.get_calc('ds').std(dim=self._aggregate_dims, skipna=True)
+            c2_std = self._calcs2.get_calc('ds').std(dim=self._aggregate_dims, skipna=True)
 
-            cov = self.covariance
+            # Handle cases where standard deviations are zero
+            zero_std = (c1_std == 0) | (c2_std == 0)
+            self._pcc = xr.where(zero_std, -1.0, self.covariance / c1_std / c2_std)
 
-            if c1_std == 0 or c2_std == 0:
-                self._pcc = -1.0
-                return float(self._pcc)
-
-            self._pcc = cov / c1_std / c2_std
-
-        return float(self._pcc)
+        return self._pcc
 
     @property
     def normalized_max_pointwise_error(self):
@@ -1625,61 +1939,96 @@ class Diffcalcs:
 
         return float(self._n_rms)
 
+    # @property
+    # def spatial_rel_error(self):
+    #     """
+    #     At each grid point, we compute the relative error.  Then we report the percentage of grid point whose
+    #     relative error is above the specified tolerance (1e-4 by default).
+    #     """
+    #
+    #     # We don't check for memoization here in case the spre_tol has changed
+    #     # since the last time it has been called
+    #     sp_tol = self._spre_tol
+    #     # unraveling converts the dask array to numpy, but then
+    #     # we can assign the 1.0 and avoid zero (couldn't figure another way)
+    #     t1 = np.ravel(self._calcs1.get_calc('ds'))
+    #     t2 = np.ravel(self._calcs2.get_calc('ds'))
+    #
+    #     # check for zeros in t1 (if zero then change to 1 - which
+    #     # does an absolute error at that point)
+    #     z = (np.where(abs(t1) == 0))[0]
+    #     if z.size > 0:
+    #         t1_denom = np.copy(t1)
+    #         t1_denom[z] = 1.0
+    #     else:
+    #         t1_denom = t1
+    #
+    #     # we don't want to use nan
+    #     # (ocassionally in cam data - often in ocn)
+    #     m_t2 = np.ma.masked_invalid(t2).compressed()
+    #     m_t1 = np.ma.masked_invalid(t1).compressed()
+    #
+    #     if m_t2.shape != m_t1.shape:
+    #         print('Warning: Spatial error not calculated with differing numbers of Nans')
+    #         self._spatial_rel_error = 0
+    #         self._max_spatial_rel_error = 0
+    #     else:
+    #
+    #         if z.size > 0:
+    #             m_t1_denom = np.ma.masked_invalid(t1_denom).compressed()
+    #         else:
+    #             m_t1_denom = m_t1
+    #
+    #         m_tt = m_t1 - m_t2
+    #         m_tt = m_tt / m_t1_denom
+    #
+    #         # find the max spatial error also if None
+    #         if self._max_spatial_rel_error is None:
+    #             max_spre = np.max(m_tt)
+    #             self._max_spatial_rel_error = max_spre
+    #
+    #         # percentage greater than the tolerance
+    #         a = len(m_tt[abs(m_tt) > sp_tol])
+    #         sz = m_tt.shape[0]
+    #
+    #         self._spatial_rel_error = (a / sz) * 100
+    #
+    #     return float(self._spatial_rel_error)
+
     @property
     def spatial_rel_error(self):
         """
-        At each grid point, we compute the relative error.  Then we report the percentage of grid point whose
-        relative error is above the specified tolerance (1e-4 by default).
+        At each grid point, we compute the relative error. Then we report the percentage of grid points whose
+        relative error is above the specified tolerance (1e-4 by default), optionally calculated over specified dimensions.
+        :param dim: Dimensions over which to calculate the spatial relative error. Can be a string or a list of strings.
         """
 
-        # We don't check for memoization here in case the spre_tol has changed
-        # since the last time it has been called
         sp_tol = self._spre_tol
-        # unraveling converts the dask array to numpy, but then
-        # we can assign the 1.0 and avoid zero (couldn't figure another way)
-        t1 = np.ravel(self._calcs1.get_calc('ds'))
-        t2 = np.ravel(self._calcs2.get_calc('ds'))
 
-        # check for zeros in t1 (if zero then change to 1 - which
-        # does an absolute error at that point)
-        z = (np.where(abs(t1) == 0))[0]
-        if z.size > 0:
-            t1_denom = np.copy(t1)
-            t1_denom[z] = 1.0
+        t1 = self._calcs1.get_calc('ds')
+        t2 = self._calcs2.get_calc('ds')
+
+        # Replace zeros in t1 with 1.0 (to avoid division by zero)
+        t1_denom = xr.where(t1 == 0, 1.0, t1)
+
+        # Compute the relative error
+        rel_error = xr.where(t1 != 0, abs(t1 - t2) / abs(t1_denom), abs(t1 - t2))
+
+        # Aggregate the relative error over the specified dimensions
+        # Here we calculate the fraction of data points with error above tolerance in each slice
+        if self._aggregate_dims is not None:
+            # Mask invalid values
+            rel_error = rel_error.where(rel_error.notnull(), 0)
+
+            # Calculate the fraction of points above the tolerance for each slice
+            error_fraction = (rel_error > sp_tol).mean(dim=self._aggregate_dims) * 100
         else:
-            t1_denom = t1
+            # Global calculation (as in the original function)
+            valid_points = rel_error.count()
+            error_points = rel_error.where(rel_error > sp_tol).count()
+            error_fraction = (error_points / valid_points) * 100
 
-        # we don't want to use nan
-        # (ocassionally in cam data - often in ocn)
-        m_t2 = np.ma.masked_invalid(t2).compressed()
-        m_t1 = np.ma.masked_invalid(t1).compressed()
-
-        if m_t2.shape != m_t1.shape:
-            print('Warning: Spatial error not calculated with differing numbers of Nans')
-            self._spatial_rel_error = 0
-            self._max_spatial_rel_error = 0
-        else:
-
-            if z.size > 0:
-                m_t1_denom = np.ma.masked_invalid(t1_denom).compressed()
-            else:
-                m_t1_denom = m_t1
-
-            m_tt = m_t1 - m_t2
-            m_tt = m_tt / m_t1_denom
-
-            # find the max spatial error also if None
-            if self._max_spatial_rel_error is None:
-                max_spre = np.max(m_tt)
-                self._max_spatial_rel_error = max_spre
-
-            # percentage greater than the tolerance
-            a = len(m_tt[abs(m_tt) > sp_tol])
-            sz = m_tt.shape[0]
-
-            self._spatial_rel_error = (a / sz) * 100
-
-        return float(self._spatial_rel_error)
+        return error_fraction
 
     @property
     def max_spatial_rel_error(self):
@@ -1724,11 +2073,11 @@ class Diffcalcs:
         This creates two plots and uses the standard SSIM.
         """
 
-        import tempfile
+        # import tempfile
 
-        import skimage.io
-        import skimage.metrics
-        from skimage.metrics import structural_similarity as ssim
+        # import skimage.io
+        # import skimage.metrics
+        # from skimage.metrics import structural_similarity as ssim
 
         k1 = self._k1
         k2 = self._k2
@@ -2070,13 +2419,29 @@ class Diffcalcs:
         return float(self._ssim_value_fp_slow)
 
     @property
+    def xsize(self):
+        return self._xsize
+
+    @xsize.setter
+    def xsize(self, xsize):
+        self._xsize = xsize
+
+    @property
+    def ysize(self):
+        return self._ysize
+
+    @ysize.setter
+    def ysize(self, ysize):
+        self._ysize = ysize
+
+    @property
     def ssim_value_fp_fast(self):
         """
         Faster implementation then ssim_value_fp_slow (this is the default DSSIM option).
 
         """
 
-        from astropy.convolution import Gaussian2DKernel, convolve, interpolate_replace_nans
+        #        from astropy.convolution import Gaussian2DKernel, convolve, interpolate_replace_nans
 
         if not self._is_memoized('_ssim_value_fp_fast'):
 
@@ -2127,7 +2492,7 @@ class Diffcalcs:
                 sc_a2 = np.round(sc_a2 * 255) / 255
 
                 # gaussian filter
-                kernel = Gaussian2DKernel(x_stddev=1.5, x_size=11, y_size=11)
+                kernel = Gaussian2DKernel(x_stddev=1.5, x_size=self.xsize, y_size=self.ysize)
                 k = 5
                 filter_args = {'boundary': 'fill', 'preserve_nan': True}
 
@@ -2176,7 +2541,172 @@ class Diffcalcs:
             self._ssim_mat_fp = ssim_mats_array
         return float(self._ssim_value_fp_fast)
 
-    def get_diff_calc(self, name: str, color: Optional[str] = 'coolwarm'):
+    @property
+    def ssim_value_fp_fast_exp(self):
+        """
+        EXP:
+
+        """
+
+        # from astropy.convolution import Gaussian2DKernel, convolve, interpolate_replace_nans
+
+        if not self._is_memoized('_ssim_value_fp_fast_exp'):
+
+            # if this is a 3D variable, we will do each level separately
+            if self._calcs1._vert_dim_name is not None:
+                vname = self._calcs1._vert_dim_name
+                if vname not in self._calcs1.get_calc('ds').sizes:
+                    nlevels = 1
+                else:
+                    nlevels = self._calcs1.get_calc('ds').sizes[vname]
+            else:
+                nlevels = 1
+
+            ssim_levs = np.zeros(nlevels)
+            ssim_mats_array = []
+            my_eps = 1.0e-8
+
+            for this_lev in range(nlevels):
+                if nlevels == 1:
+                    a1 = self._calcs1.get_calc('ds').data
+                    a2 = self._calcs2.get_calc('ds').data
+                else:
+                    a1 = self._calcs1.get_calc('ds').isel({vname: this_lev}).data
+                    a2 = self._calcs2.get_calc('ds').isel({vname: this_lev}).data
+
+                if dask.is_dask_collection(a1):
+                    a1 = a1.compute()
+                if dask.is_dask_collection(a2):
+                    a2 = a2.compute()
+
+                # re-scale  to [0,1] - if not constant
+                smin = min(np.nanmin(a1), np.nanmin(a2))
+                smax = max(np.nanmax(a1), np.nanmax(a2))
+                r = smax - smin
+                if r == 0.0:  # scale by smax if field is a constant (and smax != 0)
+                    if smax == 0.0:
+                        sc_a1 = a1
+                        sc_a2 = a2
+                    else:
+                        sc_a1 = a1 / smax
+                        sc_a2 = a2 / smax
+                else:
+                    sc_a1 = (a1 - smin) / r
+                    sc_a2 = (a2 - smin) / r
+
+                # now quantize to 256 bins
+                # sc_a1 = np.round(sc_a1 * 255) / 255
+                # sc_a2 = np.round(sc_a2 * 255) / 255
+
+                # gaussian filter
+                kernel = Gaussian2DKernel(x_stddev=1.5, x_size=11, y_size=11)
+                k = 5
+                filter_args = {'boundary': 'fill', 'preserve_nan': True}
+
+                a1_mu = convolve(sc_a1, kernel, **filter_args)
+                a2_mu = convolve(sc_a2, kernel, **filter_args)
+
+                a1a1 = convolve(sc_a1 * sc_a1, kernel, **filter_args)
+                a2a2 = convolve(sc_a2 * sc_a2, kernel, **filter_args)
+
+                a1a2 = convolve(sc_a1 * sc_a2, kernel, **filter_args)
+
+                ###########
+                var_a1 = a1a1 - a1_mu * a1_mu
+                var_a2 = a2a2 - a2_mu * a2_mu
+                cov_a1a2 = a1a2 - a1_mu * a2_mu
+
+                # ssim constants
+                C1 = my_eps
+                C2 = my_eps
+
+                ssim_t1 = 2 * a1_mu * a2_mu + C1
+                ssim_t2 = 2 * cov_a1a2 + C2
+
+                ssim_b1 = a1_mu * a1_mu + a2_mu * a2_mu + C1
+                ssim_b2 = var_a1 + var_a2 + C2
+
+                ssim_1 = ssim_t1 / ssim_b1
+                ssim_2 = ssim_t2 / ssim_b2
+                ssim_mat = ssim_1 * ssim_2
+
+                # cropping (the border region)
+                ssim_mat = crop(ssim_mat, k)
+
+                mean_ssim = np.nanmean(ssim_mat)
+                ssim_levs[this_lev] = mean_ssim
+                ssim_mats_array.append(ssim_mat)
+
+            # end of levels calculation
+            return_ssim = ssim_levs.min()
+            self._ssim_value_fp_fast_exp = return_ssim
+
+            # save ssim on each level
+            self._ssim_levs = ssim_levs
+
+            # save full matrix
+            self._ssim_mat_fp = ssim_mats_array
+        return float(self._ssim_value_fp_fast_exp)
+
+    @property
+    def ssim_value_fp_orig(self):
+        """the ssim on the fp data with
+        original constants and no scaling (so-called "straightforward" approach.
+        This will return Nan on POP data or CAM data with NaNs because scikit
+        SSIM fuction does not handle NaNs.
+        """
+
+        import numpy as np
+        from skimage.metrics import structural_similarity as ssim
+
+        if not self._is_memoized('_ssim_value_fp_orig'):
+
+            # if this is a 3D variable, we will do each level seperately
+            if self._calcs1._vert_dim_name is not None:
+                vname = self._calcs1._vert_dim_name
+                if vname not in self._calcs1.get_calc('ds').sizes:
+                    nlevels = 1
+                else:
+                    nlevels = self._calcs1.get_calc('ds').sizes[vname]
+            else:
+                nlevels = 1
+
+            ssim_levs = np.zeros(nlevels)
+
+            for this_lev in range(nlevels):
+                if nlevels == 1:
+                    a1 = self._calcs1.get_calc('ds').data
+                    a2 = self._calcs2.get_calc('ds').data
+                else:
+                    a1 = self._calcs1.get_calc('ds').isel({vname: this_lev}).data
+                    a2 = self._calcs2.get_calc('ds').isel({vname: this_lev}).data
+
+                if dask.is_dask_collection(a1):
+                    a1 = a1.compute()
+                if dask.is_dask_collection(a2):
+                    a2 = a2.compute()
+
+                maxr = max(a1.max(), a2.max())
+                minr = min(a1.min(), a2.min())
+                myrange = maxr - minr
+                mean_ssim = ssim(
+                    a1,
+                    a2,
+                    multichannel=False,
+                    data_range=myrange,
+                    gaussian_weights=True,
+                    use_sample_covariance=False,
+                )
+                ssim_levs[this_lev] = mean_ssim
+
+            # end of levels calculation
+            return_ssim = ssim_levs.min()
+
+            self._ssim_value_fp_orig = return_ssim
+
+        return self._ssim_value_fp_orig
+
+    def get_diff_calc(self, name: str, color: Optional[str] = 'coolwarm', xsize=11, ysize=11):
         """
         Gets a calc on the dataset that requires more than one input dataset
 
@@ -2210,8 +2740,19 @@ class Diffcalcs:
                 self.color = color
                 return self.ssim_value
             if name == 'ssim_fp':
+                self.xsize = xsize
+                self.ysize = ysize
                 return self.ssim_value_fp_fast
-
+            if name == 'ssim_fp_exp':
+                return self.ssim_value_fp_fast_exp
+            if name == 'ssim_fp_orig':  # this is using standard SSIM with floats
+                # ("straightforward approach")
+                # not recommended
+                return self.ssim_value_fp_orig
+            if name == 'ssim_fp_slow':
+                # the non-matrix DSSIM implementation - good for experimenting
+                # not recommended in practice
+                return self.ssim_value_fp_slow
             raise ValueError(f'there is no calc with the name: {name}.')
         else:
             raise TypeError('name must be a string.')

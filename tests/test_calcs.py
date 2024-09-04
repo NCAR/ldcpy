@@ -166,11 +166,18 @@ class TestErrorcalcs(TestCase):
     def test_mean(self):
         self.assertTrue(test_overall_calcs.mean == -0.5)
 
+    def test_magnitude_range(self):
+        # check if the sum of the magnitude range is 3.7 with a tolerance of 1e-09
+        self.assertTrue(np.isclose(test_overall_calcs.magnitude_range.values.sum(), 2, rtol=1e-04))
+
     def test_mean_abs(self):
         self.assertTrue(test_overall_calcs.mean_abs == 50)
 
     def test_mean_squared(self):
         self.assertTrue(np.isclose(test_overall_calcs.mean_squared, 0.25, rtol=1e-09))
+
+    def test_most_repeated(self):
+        self.assertTrue(test_overall_calcs.most_repeated == -100)
 
     def test_min_abs(self):
         self.assertTrue(test_overall_calcs.min_abs == 0)

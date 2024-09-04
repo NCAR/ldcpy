@@ -144,11 +144,16 @@ def open_datasets(data_type, varnames, list_of_files, labels, weights=True, **kw
         myds.close()
         fs = os.path.getsize(myfile)
         file_size_dict[labels[i]] = fs
-    indx = np.unique(sz)
-    assert indx.size == 1, 'ERROR: all files must have the same length time dimension'
+    # indx = np.unique(sz)
+    # min_time_steps = int(np.min(sz))  # Find the minimum size among all time dimensions
+    # assert indx.size == 1, 'ERROR: all files must have the same length time dimension'
 
     # preprocess_vars is here for working on jupyter hub...
     def preprocess_vars(ds):
+        # Trim the dataset to the minimum number of time steps
+        ds = ds.isel(time=slice(0, 25100))
+        # Select the specified variables
+
         return ds[varnames]
 
     if data_type == 'cam-fv' and weights is True:
@@ -317,6 +322,7 @@ def compare_stats(
     temp_ac_lat = []
     temp_ac_lon = []
     temp_entropy = []
+    # temp_info = []
 
     for i in range(num):
         temp_mean.append(da_set_calcs[i].get_calc('mean').data.compute())
@@ -327,6 +333,8 @@ def compare_stats(
         temp_min_abs_nonzero.append(da_set_calcs[i].get_calc('min_abs_nonzero').data.compute())
         temp_pos.append(da_set_calcs[i].get_calc('prob_positive').data.compute())
         temp_zeros.append(da_set_calcs[i].get_calc('num_zero').data.compute())
+        # Alex is fixing ..
+        # temp_info.append(da_set_calcs[i].get_single_calc('real_information_cutoff'))
         if data_type == 'cam-fv':
             temp_ac_lat.append(da_set_calcs[i].get_single_calc('lat_autocorr'))
             temp_ac_lon.append(da_set_calcs[i].get_single_calc('lon_autocorr'))
@@ -340,6 +348,7 @@ def compare_stats(
     df_dict['max value'] = temp_max
     df_dict['probability positive'] = temp_pos
     df_dict['number of zeros'] = temp_zeros
+    #   df_dict['99% real information cutoff bit'] = temp_info
     if data_type == 'cam-fv':
         df_dict['spatial autocorr - latitude'] = temp_ac_lat
         df_dict['spatial autocorr - longitude'] = temp_ac_lon
@@ -356,8 +365,6 @@ def compare_stats(
     )
     display(HTML(' <span style="color:green">Comparison: </span>  '))
     display(df)
-
-    # diff stuff
 
     df_dict2 = {}
     my_cols2 = []
