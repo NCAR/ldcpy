@@ -1097,6 +1097,7 @@ class Datasetcalcs:
             mutual_info_array.append(mutual_info)
 
         mutual_info_array = np.array(mutual_info_array)
+        # print(mutual_info_array)
         return xr.DataArray(mutual_info_array)
 
     @property
@@ -1117,6 +1118,7 @@ class Datasetcalcs:
             self._captured_information = 0
             # if self.real_information.sum() > 0:
             normalized_information = self.real_information / self.real_information.sum()
+            # print(self.real_information)
             while self._captured_information < 0.99:
                 self._captured_information += normalized_information[self._real_information_cutoff]
                 self._real_information_cutoff += 1
@@ -1880,7 +1882,6 @@ class Diffcalcs:
         if not self._is_memoized('_ks_p_value'):
             # Apply the KS test across the specified dimensions
             # This will create a DataArray of p-values
-
             self._ks_p_value = xr.apply_ufunc(
                 lambda x, y: ss.ks_2samp(x.ravel(), y.ravel())[1],
                 self._ds1,
