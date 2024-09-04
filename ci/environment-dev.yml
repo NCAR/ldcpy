@@ -16,7 +16,7 @@ dependencies:
   - matplotlib
   - matplotlib-base
   - netcdf4
-  - numpy
+  - numpy<1.23
   - opencv
   - pandas
   - pip
@@ -35,3 +35,6 @@ dependencies:
   - ipython
   - pooch
   - statsmodels
+  - pip:
+      - tensorflow[and-cuda]=2.15
+      - keras
