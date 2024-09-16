@@ -22,7 +22,7 @@ def collect_datasets(data_type, varnames, list_of_ds, labels, **kwargs):
     Parameters
     ==========
     data_type: string
-        Current data types: :cam-fv, pop
+        Current data types: :cam-fv, pop, wrf
     varnames : list
         The variable(s) of interest to combine across input files (usually just one)
     list_of_datasets : list
@@ -39,6 +39,12 @@ def collect_datasets(data_type, varnames, list_of_ds, labels, **kwargs):
     out : xarray.Dataset
           a collection containing all the data from the list datasets
 
+    Notes
+    ======
+    -WRF data must be postprocessed with xWRF before passing to ldcpy
+    (e.g., ds = xr.open_dataset(wrf_file, engine="netcdf4").xwrf.postprocess())
+    -For now lat/lon info must be in the same file!
+
     """
     # Error checking:
     # list_of_files and labels must be same length
@@ -49,16 +55,31 @@ def collect_datasets(data_type, varnames, list_of_ds, labels, **kwargs):
     # the number of timeslices must be the same
     sz = np.zeros(len(list_of_ds))
     for i, myds in enumerate(list_of_ds):
-        sz[i] = myds.sizes['time']
+        time_name = myds.cf.coordinates['time'][0]
+        sz[i] = myds.sizes[time_name]
     indx = np.unique(sz)
     assert indx.size == 1, 'ERROR: all datasets must have the same length time dimension'
 
+    # wrf data must contain lat/lon info in same file (for now)
+    if data_type == 'wrf':
+        latlon_found = np.zeros(len(list_of_ds))
+        for i, myds in enumerate(list_of_ds):
+            # XLAT,XLONG,XLAT_U,XLONG_U,XLAT_V,XLONG_V
+            for j in myds.coords.keys():
+                if j == 'XLAT' or j == 'XLONG':
+                    latlon_found[i] += 1
+        indx = np.where(latlon_found > 1)[0]
+        assert len(indx) == len(list_of_ds), 'ERROR: WRF datasets must contain XLAT and XLONG'
+
+    # weights?
     if data_type == 'cam-fv':
         weights_name = 'gw'
         varnames.append(weights_name)
     elif data_type == 'pop':
         weights_name = 'TAREA'
         varnames.append(weights_name)
+    elif data_type == 'wrf':
+        weights_name = None
 
     # preprocess_vars is here for working on jupyter hub...
     def preprocess_vars(ds, varnames):
@@ -72,7 +93,7 @@ def collect_datasets(data_type, varnames, list_of_ds, labels, **kwargs):
 
     if data_type == 'pop':
         full_ds.coords['cell_area'] = xr.DataArray(full_ds.variables.mapping.get(weights_name))[0]
-    else:
+    elif data_type == 'cam-fv':
         full_ds.coords['cell_area'] = (
             xr.DataArray(full_ds.variables.mapping.get(weights_name))
             .expand_dims(lon=full_ds.dims['lon'])
@@ -81,13 +102,27 @@ def collect_datasets(data_type, varnames, list_of_ds, labels, **kwargs):
 
     full_ds.attrs['cell_measures'] = 'area: cell_area'
 
-    full_ds = full_ds.drop(weights_name)
+    if weights_name:
+        full_ds = full_ds.drop(weights_name)
 
     full_ds['collection'] = xr.DataArray(labels, dims='collection')
 
     print('dataset size in GB {:0.2f}\n'.format(full_ds.nbytes / 1e9))
     full_ds.attrs['data_type'] = data_type
     full_ds.attrs['file_size'] = None
+
+    # from other copy of this function
+    for v in varnames[:-1]:
+        new_ds = []
+        i = 0
+        for label in labels:
+            new_ds.append(full_ds[v].sel(collection=label))
+            new_ds[i].attrs['data_type'] = data_type
+            new_ds[i].attrs['set_name'] = label
+
+        # d = xr.combine_by_coords(new_ds)
+        d = xr.concat(new_ds, 'collection')
+        full_ds[v] = d
 
     return full_ds
 
@@ -106,6 +141,7 @@ def open_datasets(data_type, varnames, list_of_files, labels, weights=True, **kw
     a new 'collection' dimension, which can be accessed with the specified
     labels. Stores them in an xarray dataset which can be passed to the ldcpy
     plot functions.
+
 
     Parameters
     ==========
@@ -127,6 +163,12 @@ def open_datasets(data_type, varnames, list_of_files, labels, weights=True, **kw
     out : xarray.Dataset
           a collection containing all the data from the list of files
 
+
+    Notes
+    ======
+    wrf netcdf data must be postprocessed with xwrf, e.g.
+    ds = xr.open_dataset(wrf_file, engine="netcdf4").xwrf.postprocess()
+    So need to use collect_data instead.
     """
 
     # Error checking:
@@ -134,6 +176,10 @@ def open_datasets(data_type, varnames, list_of_files, labels, weights=True, **kw
     assert len(list_of_files) == len(
         labels
     ), 'ERROR: open_dataset file list and labels arguments must be the same length'
+    # can't use wrf wwith this function
+    assert (
+        data_type != 'wrf'
+    ), 'ERROR: WRF files must be postprocessed with xWRF and passed to collect_dataset'
 
     # all must have the same time dimension
     sz = np.zeros(len(list_of_files))
@@ -163,6 +209,9 @@ def open_datasets(data_type, varnames, list_of_files, labels, weights=True, **kw
     elif data_type == 'pop' and weights is True:
         weights_name = 'TAREA'
         varnames.append(weights_name)
+    elif data_type == 'wrf':
+        weights = False
+        weights_name = None
 
     full_ds = xr.open_mfdataset(
         list_of_files,
@@ -176,7 +225,7 @@ def open_datasets(data_type, varnames, list_of_files, labels, weights=True, **kw
 
     if data_type == 'pop' and weights is True:
         full_ds.coords['cell_area'] = xr.DataArray(full_ds.variables.mapping.get(weights_name))[0]
-    elif weights is True:
+    elif data_type == 'cam-fv' and weights is True:
         full_ds.coords['cell_area'] = (
             xr.DataArray(full_ds.variables.mapping.get(weights_name))
             .expand_dims(lon=full_ds.dims['lon'])
@@ -249,6 +298,10 @@ def compare_stats(
 
     da = ds[varname]
     data_type = ds.attrs['data_type']
+
+    # no weights for wrf
+    if data_type == 'wrf':
+        weighted = False
 
     file_size_dict = ds.attrs['file_size']
     if file_size_dict is None:

@@ -159,7 +159,7 @@ class calcsPlot(object):
         if data_type == 'cam-fv':  # 1d
             lat_dim = dd[0]
             lon_dim = da_data.cf['longitude'].dims[0]
-        elif data_type == 'pop':  # 2d
+        elif data_type == 'pop' or data_type == 'wrf':  # 2d
             lat_dim = dd[0]
             lon_dim = dd[1]
 
@@ -318,6 +318,7 @@ class calcsPlot(object):
         cmin = []
 
         # lat/lon could be 1 or 2d and have different names
+        # TO  - will need to adjust for WRF for U and V?
         lon_coord_name = da_sets[0].cf.coordinates['longitude'][0]
         lat_coord_name = da_sets[0].cf.coordinates['latitude'][0]
 
@@ -327,16 +328,18 @@ class calcsPlot(object):
         if data_type == 'pop':
             central = 300.0
 
+        # projection:
+        if data_type == 'wrf':
+            myproj = ccrs.PlateCarree()
+        else:
+            myproj = ccrs.Robinson(central_longitude=central)
+
         for i in range(da_sets.sets.size):
 
             if self.vert_plot:
-                axs[i] = plt.subplot(
-                    nrows, 1, i + 1, projection=ccrs.Robinson(central_longitude=central)
-                )
+                axs[i] = plt.subplot(nrows, 1, i + 1, projection=myproj)
             else:
-                axs[i] = plt.subplot(
-                    nrows, ncols, i + 1, projection=ccrs.Robinson(central_longitude=central)
-                )
+                axs[i] = plt.subplot(nrows, ncols, i + 1, projection=myproj)
 
             axs[i].set_facecolor('#39ff14')
 
@@ -355,6 +358,10 @@ class calcsPlot(object):
                 lat_sets = da_sets[i][lat_coord_name]
 
                 cy_datas = add_cyclic_point(da_sets[i])
+            elif data_type == 'wrf':
+                lat_sets = da_sets[i][lat_coord_name]
+                lon_sets = da_sets[i][lon_coord_name]
+                cy_datas = da_sets[i]
 
             if np.isnan(cy_datas).any() or np.isinf(cy_datas).any():
                 nan_inf_flag = 1
@@ -388,7 +395,7 @@ class calcsPlot(object):
 
             # casting to float32 from float64 using imshow prevents lots of tiny black dots from showing up in some plots with lots of
             # zeroes. See plot of probability of negative PRECT to see this in action.
-            if data_type == 'pop':
+            if data_type == 'pop' or data_type == 'wrf':
                 psets[i] = psets[i] = axs[i].pcolormesh(
                     lon_sets,
                     lat_sets,
@@ -406,7 +413,7 @@ class calcsPlot(object):
 
             axs[i].set_global()
 
-            if data_type == 'cam-fv':
+            if data_type == 'cam-fv' or data_type == 'wrf':
                 axs[i].coastlines()
             elif data_type == 'pop':
                 axs[i].add_feature(
@@ -701,7 +708,7 @@ class calcsPlot(object):
         if data_type == 'cam-fv':  # 1D
             lat_dim = dd[0]
             lon_dim = data.cf['longitude'].dims[0]
-        elif data_type == 'pop':  # 2D
+        elif data_type == 'pop' or data_type == 'wrf':  # 2D
             lat_dim = dd[0]
             lon_dim = dd[1]
 
@@ -1120,7 +1127,7 @@ def plot(
         raw_calcs.append(mp.get_calcs(d, ds.data_type))
 
     # get lat/lon coordinate names:
-    if ds.data_type == 'pop':
+    if ds.data_type == 'pop' or ds.data_type == 'wrf':
         lon_coord_name = datas[0].cf[datas[0].cf.coordinates['longitude'][0]].dims[1]
         lat_coord_name = datas[0].cf[datas[0].cf.coordinates['latitude'][0]].dims[0]
     elif ds.data_type == 'cam-fv':  # cam-fv
@@ -1143,7 +1150,7 @@ def plot(
         if ds.data_type == 'cam-fv':  # 1D
             mp.title_lat = subsets[0][lat_coord_name].data[0]
             mp.title_lon = subsets[0][lon_coord_name].data[0] - 180
-        elif ds.data_type == 'pop':  # 2D
+        elif ds.data_type == 'pop' or 'wrf':  # 2D
             # lon should be 0- 360
             mylat = subsets[0][lat_coord_name].data[0]
             mylon = subsets[0][lon_coord_name].data[0]
