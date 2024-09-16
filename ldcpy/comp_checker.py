@@ -4,7 +4,7 @@
 
 # Notes:
 # - if initial try passes, move on or try more aggressive?
-
+# this is still in progress
 
 from math import exp, pi, sqrt
 
