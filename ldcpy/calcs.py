@@ -56,6 +56,9 @@ class Datasetcalcs:
         # For some reason, casting to float64 removes all attrs from the dataset
         self._ds.attrs = ds.attrs
 
+        if data_type == 'wrf':
+            weighted = False
+        
         if weighted:
             if 'cell_measures' not in self._ds.attrs:
                 self._ds.attrs['cell_measures'] = 'area: cell_area'
@@ -75,6 +78,7 @@ class Datasetcalcs:
         # WARNING WRF ALSO HAS XLAT_U and XLONG_U, XLAT_v and XLONG_V
         dd = ds.cf[ds.cf.coordinates['latitude'][0]].dims
 
+        
         ll = len(dd)
         if data_type == 'cam-fv':  # ll == 1:
             if lat_dim_name is None:
@@ -110,9 +114,9 @@ class Datasetcalcs:
                     vert_dim_name = ds.cf['vertical'].name
         self._vert_dim_name = vert_dim_name
 
-        # time dimension TO DO: check this (after cf_xarray update)
+        # time dimension
         if time_dim_name is None:
-            time_dim_name = ds.cf.coordinates['time']
+            time_dim_name = ds.cf.coordinates['time'][0]
         self._time_dim_name = time_dim_name
 
         self._quantile = q

@@ -163,8 +163,10 @@ class calcsPlot(object):
             lat_dim = dd[0]
             lon_dim = dd[1]
 
+        time_dim = da.cf.coordinates['time'][0]
+        
         if self._plot_type in ['spatial']:
-            calcs_da = lm.Datasetcalcs(da_data, data_type, ['time'], weighted=self._weighted)
+            calcs_da = lm.Datasetcalcs(da_data, data_type, [time_dim], weighted=self._weighted)
         elif self._plot_type in ['time_series', 'periodogram', 'histogram', '1D']:
             calcs_da = lm.Datasetcalcs(
                 da_data, data_type, [lat_dim, lon_dim], weighted=self._weighted
@@ -318,7 +320,7 @@ class calcsPlot(object):
         cmin = []
 
         # lat/lon could be 1 or 2d and have different names
-        # TO  - will need to adjust for WRF for U and V?
+        # TODO  - will need to adjust for WRF for U and V?
         lon_coord_name = da_sets[0].cf.coordinates['longitude'][0]
         lat_coord_name = da_sets[0].cf.coordinates['latitude'][0]
 
@@ -341,7 +343,8 @@ class calcsPlot(object):
             else:
                 axs[i] = plt.subplot(nrows, ncols, i + 1, projection=myproj)
 
-            axs[i].set_facecolor('#39ff14')
+            if data_type != 'wrf':
+                axs[i].set_facecolor('#39ff14')
 
             # make data periodic
             if data_type == 'pop':
@@ -358,11 +361,14 @@ class calcsPlot(object):
                 lat_sets = da_sets[i][lat_coord_name]
 
                 cy_datas = add_cyclic_point(da_sets[i])
-            elif data_type == 'wrf':
+
+            elif data_type == 'wrf': #Not periodic
                 lat_sets = da_sets[i][lat_coord_name]
                 lon_sets = da_sets[i][lon_coord_name]
                 cy_datas = da_sets[i]
 
+                #breakpoint()
+                
             if np.isnan(cy_datas).any() or np.isinf(cy_datas).any():
                 nan_inf_flag = 1
             if np.isnan(cy_datas).all():
@@ -387,7 +393,7 @@ class calcsPlot(object):
                 cmin.append(np.min(cyxr.where(cyxr != -np.inf).min()) - c_offset)
                 cmax.append(np.max(cyxr.where(cyxr != np.inf).max()) + c_offset)
 
-            if data_type == 'pop':
+            if data_type == 'pop' or data_type == 'wrf':
                 no_inf_data_set = np.nan_to_num(cyxr.astype(np.float32), nan=np.nan)
             elif data_type == 'cam-fv':
                 ncyxr = cyxr.roll(dim_1=145)
@@ -395,14 +401,22 @@ class calcsPlot(object):
 
             # casting to float32 from float64 using imshow prevents lots of tiny black dots from showing up in some plots with lots of
             # zeroes. See plot of probability of negative PRECT to see this in action.
-            if data_type == 'pop' or data_type == 'wrf':
-                psets[i] = psets[i] = axs[i].pcolormesh(
+            if data_type == 'pop':
+                psets[i] = axs[i].pcolormesh(
                     lon_sets,
                     lat_sets,
                     no_inf_data_set,
                     transform=ccrs.PlateCarree(),
                     cmap=mymap,
                 )
+            elif data_type == 'wrf':
+                psets[i] = axs[i].pcolormesh(
+                    lon_sets,
+                    lat_sets,
+                    no_inf_data_set,
+                    cmap=mymap,
+                )
+
             elif data_type == 'cam-fv':
                 # psets[i] = axs[i].imshow(
                 #     img=flipud(no_inf_data_set), transform=ccrs.PlateCarree(), cmap=mymap
@@ -411,7 +425,8 @@ class calcsPlot(object):
                     img=flipud(no_inf_data_set), transform=ccrs.PlateCarree(), cmap=mymap
                 )
 
-            axs[i].set_global()
+            if data_type != 'wrf':    
+                axs[i].set_global()
 
             if data_type == 'cam-fv' or data_type == 'wrf':
                 axs[i].coastlines()
@@ -431,7 +446,7 @@ class calcsPlot(object):
                 axs[i].set_title(tex_escape(titles[i]))
             del cy_datas
 
-            # end of for loopon plots
+            # end of for loop on plots
 
         if len(cmin) > 0:
             color_min = np.min(cmin)
@@ -581,6 +596,10 @@ class calcsPlot(object):
         time series plot
         """
 
+
+        time_dim = da_sets[0].cf.coordinates['time'][0]
+        data_type =  da_sets[0].attrs['data_type'] 
+        
         group_string = 'time.year'
         xlabel = 'date'
         tick_interval = int(da_sets.size / da_sets.sets.size / 5) + 1
@@ -647,11 +666,15 @@ class calcsPlot(object):
                 )
                 ax = plt.gca()
             else:
-                dtindex = da_sets[i].indexes['time']
-                # may get a warning message because uses a standard calendar (fine for cesm)
-                c_d_time = dtindex.to_datetimeindex()
-                # this works with some but not all python versions
-                # c_d_time = dtindex
+                dtindex = da_sets[i].indexes[time_dim]
+                #print(dtindex)
+
+                if data_type == 'wrf':
+                    c_d_time = dtindex
+                else:
+                    # may get a warning message because uses a standard calendar (fine for cesm)
+                    c_d_time = dtindex.to_datetimeindex()
+
                 mpl.pyplot.plot(c_d_time, da_sets[i], f'C{i}', label=f'{da_sets.sets.data[i]}')
                 ax = plt.gca()
                 for label in ax.get_xticklabels():
@@ -704,6 +727,7 @@ class calcsPlot(object):
     def get_calc_label(self, calc, data, data_type):
         dd = data.cf[data.cf.coordinates['latitude'][0]].dims
 
+        
         # ll = len(dd)
         if data_type == 'cam-fv':  # 1D
             lat_dim = dd[0]
@@ -712,14 +736,16 @@ class calcsPlot(object):
             lat_dim = dd[0]
             lon_dim = dd[1]
 
+        time_dim = data.cf.coordinates['time'][0]
+
         # Get special calc names
         if self._short_title is False:
             if calc == 'zscore':
                 zscore_cutoff = lm.Datasetcalcs(
-                    (data), data_type, ['time'], weighted=self._weighted
+                    (data), data_type, [time_dim], weighted=self._weighted
                 ).get_single_calc('zscore_cutoff')
                 percent_sig = lm.Datasetcalcs(
-                    (data), data_type, ['time'], weighted=self._weighted
+                    (data), data_type, [time_dim], weighted=self._weighted
                 ).get_single_calc('zscore_percent_significant')
 
                 if abs(zscore_cutoff[0]) > 0.01:
@@ -728,44 +754,34 @@ class calcsPlot(object):
                     calc_name = f'{calc}: cutoff {zscore_cutoff[0]:.2e}, % sig: {percent_sig:.2f}'
 
             elif calc == 'mean' and self._plot_type == 'spatial' and self._calc_type == 'raw':
-
                 if self._weighted:
                     a1_data = (
-                        lm.Datasetcalcs(data, data_type, ['time'], weighted=self._weighted)
+                        lm.Datasetcalcs(data, data_type, [time_dim], weighted=self._weighted)
                         .get_calc(calc)
                         .cf.weighted('area')
                         .mean()
                         .data
                     )
-                    if type(a1_data) == np.ndarray:
+                    if type(a1_data) == np.float64:
+                        pass
+                    elif type(a1_data) == np.ndarray:
                         dask.array.from_array(data)
                         a1_data = a1_data.compute()
                     else:
                         a1_data = a1_data.compute()
                 else:
                     a1_data = (
-                        lm.Datasetcalcs(data, data_type, ['time'], weighted=self._weighted)
+                        lm.Datasetcalcs(data, data_type, [time_dim], weighted=self._weighted)
                         .get_calc(calc)
                         .mean()
                         .data
                     )
-                    if type(a1_data) == np.ndarray:
+                    if type(a1_data) == np.float64:
+                        pass
+                    elif type(a1_data) == np.ndarray:
                         a1_data = dask.array.from_array(a1_data).compute()
                     else:
                         a1_data = a1_data.compute()
-                    print(a1_data)
-                # check for NANs
-                # indices = ~np.isnan(a1_data)
-                # if weights is not None:
-                #    weights = weights[indices]
-
-                # a2_data = np.average(
-                #    a1_data[indices],
-                #    axis=0,
-                #    weights=weights,
-                # ).compute()
-
-                # o_wt_mean = np.nanmean(a2_data)
 
                 if abs(a1_data) > 0.01:
                     calc_name = f'{calc} = {a1_data:.2f}'
@@ -775,7 +791,7 @@ class calcsPlot(object):
             elif calc == 'pooled_var_ratio':
                 pooled_sd = np.sqrt(
                     lm.Datasetcalcs(
-                        (data), data_type, ['time'], weighted=self._weighted
+                        (data), data_type, [time_dim], weighted=self._weighted
                     ).get_single_calc('pooled_variance')
                 )
                 d = float(pooled_sd)
@@ -785,43 +801,49 @@ class calcsPlot(object):
                     calc_name = f'{calc}: pooled SD = {d:.2e}'
             elif calc == 'ann_harmonic_ratio':
                 p = lm.Datasetcalcs(
-                    (data), data_type, ['time'], weighted=self._weighted
+                    (data), data_type, [time_dim], weighted=self._weighted
                 ).get_single_calc('annual_harmonic_relative_ratio_pct_sig')
                 pp = float(p)
                 calc_name = f'{calc}: % sig = {pp:.2f}'
             elif self._plot_type == 'spatial':
                 if self._weighted:
                     a1_data = (
-                        lm.Datasetcalcs(data, data_type, ['time'], weighted=self._weighted)
+                        lm.Datasetcalcs(data, data_type, [time_dim], weighted=self._weighted)
                         .get_calc(calc)
                         .cf.weighted('area')
                         .mean()
                         .data
                     )
-                    if type(a1_data) == np.ndarray:
+                    if type(a1_data) == np.float64:
+                        pass
+                    elif type(a1_data) == np.ndarray:
                         dask.array.from_array(data)
                         a1_data = a1_data.compute()
                     else:
                         a1_data = a1_data.compute()
                 elif calc in ['fft2', 'stft', 'real_information']:
                     a1_data = (
-                        lm.Datasetcalcs(data, data_type, ['time'], weighted=self._weighted)
+                        lm.Datasetcalcs(data, data_type, [time_dim], weighted=self._weighted)
                         .get_calc(calc)
                         .mean()
                         .data
                     )
-                    if type(a1_data) == np.ndarray:
+                    if type(a1_data) == np.float64:
+                        pass
+                    elif type(a1_data) == np.ndarray:
                         a1_data = a1_data
                     else:
                         a1_data = a1_data.compute()
                 else:
                     a1_data = (
-                        lm.Datasetcalcs(data, data_type, ['time'], weighted=self._weighted)
+                        lm.Datasetcalcs(data, data_type, [time_dim], weighted=self._weighted)
                         .get_calc(calc)
                         .mean()
                         .data
                     )
-                    if type(a1_data) == np.ndarray:
+                    if type(a1_data) == np.float64:
+                        pass
+                    elif type(a1_data) == np.ndarray:
                         dask.array.from_array(a1_data).compute()
                     else:
                         a1_data = a1_data.compute()
@@ -839,7 +861,9 @@ class calcsPlot(object):
                         .mean()
                         .data
                     )
-                    if type(a1_data) == np.ndarray:
+                    if type(a1_data) == np.float64:
+                        pass    
+                    elif type(a1_data) == np.ndarray:
                         dask.array.from_array(data)
                         a1_data = a1_data.compute()
                     else:
@@ -853,7 +877,9 @@ class calcsPlot(object):
                         .mean()
                         .data
                     )
-                    if type(a1_data) == np.ndarray:
+                    if type(a1_data) == np.float64:
+                        pass    
+                    elif type(a1_data) == np.ndarray:
                         dask.array.from_array(data)
                         a1_data = a1_data.compute()
                     else:
@@ -895,7 +921,7 @@ def plot(
     vert_plot=False,
     tex_format=False,
     legend_offset=None,
-    weighted=True,
+    weighted=None,
     basic_plot=False,
     cmax=None,
     cmin=None,
@@ -1030,6 +1056,13 @@ def plot(
     out : None
     """
 
+    #weighted needs to be set if it's None
+    if weighted is None:
+        if ds.attrs['data_type'] == 'wrf':
+            weighted = False
+        else:
+            weighted = True
+            
     mp = calcsPlot(
         ds,
         varname,
@@ -1058,6 +1091,7 @@ def plot(
         cmin=cmin,
     )
 
+    
     plt.rcParams.update(
         {
             'text.usetex': tex_format,
@@ -1069,27 +1103,11 @@ def plot(
     # Subset data (by var and collection)
     dss = []
 
-    # update when new release of cf_xarray is released (won't need to do this - just trying to avoid
-    # an uneeded arror message for now)
-    if 'bounds' in ds['time'].attrs.keys():
-        ds['time'].attrs.pop('bounds')
-
-    # if varname == 'T':  # work around for cf_xarray (until new tag that
-    #     # includes issue 130 updated to main on 1/27/21)
-    #     ds.T.attrs['standard_name'] = 'tt'
-    #     if 'collection' in ds[varname].dims:
-    #         if sets is not None:
-    #             for set in sets:
-    #                 d = ds.cf['tt'].sel(collection=set)
-    #                 d.coords["cell_area"] = ds.coords["cell_area"]
-    #                 dss.append(d)
-    #     else:
-    #         d = ds.cf['tt']
-    #         d.coords["cell_area"] = ds.coords["cell_area"]
-    #         dss.append(ds.cf['tt'])
-    #
-    # else:
-
+    time_dim = ds.cf.coordinates['time'][0]
+        
+    if 'bounds' in ds[time_dim].attrs.keys():
+        ds[time_dim].attrs.pop('bounds')
+        
     if 'collection' in ds[varname].dims:
         if sets is not None:
             i = 0

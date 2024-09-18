@@ -10,7 +10,7 @@ import xarray as xr
 from .calcs import Datasetcalcs, Diffcalcs
 
 
-def collect_datasets(data_type, varnames, list_of_ds, labels, **kwargs):
+def collect_datasets(data_type, varnames, list_of_ds, labels, coords_ds=None, **kwargs):
     """
     Concatonate several different xarray datasets across a new
     "collection" dimension, which can be accessed with the specified
@@ -26,11 +26,12 @@ def collect_datasets(data_type, varnames, list_of_ds, labels, **kwargs):
     varnames : list
         The variable(s) of interest to combine across input files (usually just one)
     list_of_datasets : list
-        The datasets to be concatonated into a collection
+        The xarray datasets to be concatonated into a collection
     labels : list
         The respective label to access data from each dataset (also used in plotting fcns)
-
-        **kwargs :
+    coords_ds : xarray dataset
+        (optional) Specify an additional file that contains lat/lon corrds (common for WRF data)
+    **kwargs :
         (optional) – Additional arguments passed on to xarray.concat(). A list of available arguments can
         be found here: https://xarray-test.readthedocs.io/en/latest/generated/xarray.concat.html
 
@@ -60,17 +61,23 @@ def collect_datasets(data_type, varnames, list_of_ds, labels, **kwargs):
     indx = np.unique(sz)
     assert indx.size == 1, 'ERROR: all datasets must have the same length time dimension'
 
-    # wrf data must contain lat/lon info in same file (for now)
+    # wrf data must contain lat/lon info in same file if a coord_file is not specified
     if data_type == 'wrf':
-        latlon_found = np.zeros(len(list_of_ds))
-        for i, myds in enumerate(list_of_ds):
-            # XLAT,XLONG,XLAT_U,XLONG_U,XLAT_V,XLONG_V
-            for j in myds.coords.keys():
-                if j == 'XLAT' or j == 'XLONG':
-                    latlon_found[i] += 1
-        indx = np.where(latlon_found > 1)[0]
-        assert len(indx) == len(list_of_ds), 'ERROR: WRF datasets must contain XLAT and XLONG'
-
+        if coords_ds is None:
+            latlon_found = np.zeros(len(list_of_ds))
+            for i, myds in enumerate(list_of_ds):
+                # XLAT,XLONG,XLAT_U,XLONG_U,XLAT_V,XLONG_V
+                for j in myds.coords.keys():
+                    if j == 'XLAT' or j == 'XLONG':
+                        latlon_found[i] += 1
+            indx = np.where(latlon_found > 1)[0]
+            assert len(indx) == len(list_of_ds), 'ERROR: WRF datasets must contain XLAT and XLONG'
+        else: #has a coords ds
+            #copy corrds to the datasets
+            for i, myds in enumerate (list_of_ds):
+                ds_new = myds.assign_coords(coords_ds.coords)
+                list_of_ds[i] = ds_new.copy(deep=True)
+        
     # weights?
     if data_type == 'cam-fv':
         weights_name = 'gw'
@@ -355,6 +362,13 @@ def compare_stats(
             )
         )
 
+    #are the arrays using dask    
+    if da_sets[0].chunks is not None:
+        using_dask = True
+    else:
+        using_dask = False
+
+        
     # DATA FRAME
     import pandas as pd
     from IPython.display import HTML, display
@@ -378,14 +392,64 @@ def compare_stats(
     # temp_info = []
 
     for i in range(num):
-        temp_mean.append(da_set_calcs[i].get_calc('mean').data.compute())
-        temp_var.append(da_set_calcs[i].get_calc('variance').data.compute())
-        temp_std.append(da_set_calcs[i].get_calc('std').data.compute())
-        temp_max.append(da_set_calcs[i].get_calc('max_val').data.compute())
-        temp_min.append(da_set_calcs[i].get_calc('min_val').data.compute())
-        temp_min_abs_nonzero.append(da_set_calcs[i].get_calc('min_abs_nonzero').data.compute())
-        temp_pos.append(da_set_calcs[i].get_calc('prob_positive').data.compute())
-        temp_zeros.append(da_set_calcs[i].get_calc('num_zero').data.compute())
+        #only use compute if it's a dask array
+        #temp_mean.append(da_set_calcs[i].get_calc('mean').data.compute())
+        temp_return = da_set_calcs[i].get_calc('mean').data
+        if using_dask:
+            temp_mean.append(temp_return.compute())
+        else:
+            temp_mean.append(temp_return)
+        
+        #temp_var.append(da_set_calcs[i].get_calc('variance').data.compute())
+        temp_return = da_set_calcs[i].get_calc('variance').data
+        if using_dask:
+            temp_var.append(temp_return.compute())
+        else:
+            temp_var.append(temp_return)
+
+        #temp_std.append(da_set_calcs[i].get_calc('std').data.compute())
+        temp_return = da_set_calcs[i].get_calc('std').data
+        if using_dask:
+            temp_std.append(temp_return.compute())
+        else:
+            temp_std.append(temp_return)
+
+        #temp_max.append(da_set_calcs[i].get_calc('max_val').data.compute())
+        temp_return = da_set_calcs[i].get_calc('max_val').data
+        if using_dask:
+            temp_max.append(temp_return.compute())
+        else:
+            temp_max.append(temp_return)
+            
+        #temp_min.append(da_set_calcs[i].get_calc('min_val').data.compute())
+        temp_return = da_set_calcs[i].get_calc('min_val').data
+        if using_dask:
+            temp_min.append(temp_return.compute())
+        else:
+            temp_min.append(temp_return)
+
+        #temp_min_abs_nonzero.append(da_set_calcs[i].get_calc('min_abs_nonzero').data.compute())
+        temp_return = da_set_calcs[i].get_calc('min_abs_nonzero').data
+        if using_dask:
+            temp_min_abs_nonzero.append(temp_return.compute())
+        else:
+            temp_min_abs_nonzero.append(temp_return)
+
+            
+        #temp_pos.append(da_set_calcs[i].get_calc('prob_positive').data.compute())
+        temp_return = da_set_calcs[i].get_calc('prob_positive').data
+        if using_dask:
+            temp_pos.append(temp_return.compute())
+        else:
+            temp_pos.append(temp_return)
+
+        #temp_zeros.append(da_set_calcs[i].get_calc('num_zero').data.compute())
+        temp_return = da_set_calcs[i].get_calc('num_zero').data
+        if using_dask:
+            temp_zeros.append(temp_return.compute())
+        else:
+            temp_zeros.append(temp_return)
+
         # Alex is fixing ..
         # temp_info.append(da_set_calcs[i].get_single_calc('real_information_cutoff'))
         if data_type == 'cam-fv':
@@ -431,12 +495,42 @@ def compare_stats(
     temp_rms = []
 
     for i in range(num - 1):
-        temp_max_abs.append(dd_set_calcs[i].get_calc('max_abs').data.compute())
-        temp_min_abs.append(dd_set_calcs[i].get_calc('min_abs').data.compute())
-        temp_mean_abs.append(dd_set_calcs[i].get_calc('mean_abs').data.compute())
-        temp_mean_sq.append(dd_set_calcs[i].get_calc('mean_squared').data.compute())
-        temp_rms.append(dd_set_calcs[i].get_calc('rms').data.compute())
+        #temp_max_abs.append(dd_set_calcs[i].get_calc('max_abs').data.compute())
+        temp_return = dd_set_calcs[i].get_calc('max_abs').data
+        if using_dask:
+            temp_max_abs.append(temp_return.compute())
+        else:
+            temp_max_abs.append(temp_return)
 
+        #temp_min_abs.append(dd_set_calcs[i].get_calc('min_abs').data.compute())
+        temp_return = dd_set_calcs[i].get_calc('min_abs').data
+        if using_dask:
+            temp_min_abs.append(temp_return.compute())
+        else:
+            temp_min_abs.append(temp_return)
+
+        #temp_mean_abs.append(dd_set_calcs[i].get_calc('mean_abs').data.compute())
+        temp_return = dd_set_calcs[i].get_calc('mean_abs').data
+        if using_dask:
+            temp_mean_abs.append(temp_return.compute())
+        else:
+            temp_mean_abs.append(temp_return)
+
+        #temp_mean_sq.append(dd_set_calcs[i].get_calc('mean_squared').data.compute())
+        temp_return = dd_set_calcs[i].get_calc('mean_squared').data
+        if using_dask:
+            temp_mean_sq.append(temp_return.compute())
+        else:
+            temp_mean_sq.append(temp_return)
+
+        #temp_rms.append(dd_set_calcs[i].get_calc('rms').data.compute())
+        temp_return = dd_set_calcs[i].get_calc('rms').data
+        if using_dask:
+            temp_rms.append(temp_return.compute())
+        else:
+            temp_rms.append(temp_return)
+
+        
     df_dict2['max abs diff'] = temp_max_abs
     df_dict2['min abs diff'] = temp_min_abs
     df_dict2['mean abs diff'] = temp_mean_abs
@@ -490,6 +584,8 @@ def compare_stats(
     if include_file_size:
         df_dict2['file size ratio'] = temp_cr
 
+    #print(df_dict2)
+        
     for d in df_dict2.keys():
         fo = [f'%.{significant_digits}g' % item for item in df_dict2[d]]
         df_dict2[d] = fo
