@@ -73,9 +73,10 @@ def collect_datasets(data_type, varnames, list_of_ds, labels, coords_ds=None, **
             indx = np.where(latlon_found > 1)[0]
             assert len(indx) == len(list_of_ds), 'ERROR: WRF datasets must contain XLAT and XLONG'
         else: #has a coords ds
-            #copy corrds to the datasets
+            ds_notime = coords_ds.drop_dims("Time")
+            #copy coords to EACH of the datasets
             for i, myds in enumerate (list_of_ds):
-                ds_new = myds.assign_coords(coords_ds.coords)
+                ds_new = myds.assign_coords(ds_notime.coords)
                 list_of_ds[i] = ds_new.copy(deep=True)
         
     # weights?

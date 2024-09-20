@@ -179,6 +179,9 @@ class calcsPlot(object):
         return raw_data
 
     def get_plot_data(self, raw_data_1, raw_data_2=None):
+
+        time_dim = self._ds.cf.coordinates['time'][0]
+
         if self._calc_type == 'diff':
             plot_data = raw_data_1 - raw_data_2
             plot_data.attrs = raw_data_1.attrs
@@ -198,7 +201,7 @@ class calcsPlot(object):
             'odds_positive',
         ]:
             plot_attrs = plot_data.attrs
-            plot_data = plot_data.groupby(self._group_by).mean(dim='time')
+            plot_data = plot_data.groupby(self._group_by).mean(dim=time_dim)
             plot_data.attrs = plot_attrs
 
         if self._transform == 'none':
@@ -374,6 +377,10 @@ class calcsPlot(object):
             if np.isnan(cy_datas).all():
                 all_nan_flag = 1
 
+            if data_type == 'wrf':
+                if nan_inf_flag == 1 or all_nan_flag == 1:
+                    axs[i].set_facecolor('#39ff14')
+                
             cyxr = xr.DataArray(data=cy_datas)
 
             if self._cmax is not None:
@@ -418,9 +425,6 @@ class calcsPlot(object):
                 )
 
             elif data_type == 'cam-fv':
-                # psets[i] = axs[i].imshow(
-                #     img=flipud(no_inf_data_set), transform=ccrs.PlateCarree(), cmap=mymap
-                # )
                 psets[i] = axs[i].imshow(
                     img=flipud(no_inf_data_set), transform=ccrs.PlateCarree(), cmap=mymap
                 )
@@ -591,32 +595,31 @@ class calcsPlot(object):
         self,
         da_sets,
         titles,
+        time_dim,
     ):
         """
         time series plot
         """
 
-
-        time_dim = da_sets[0].cf.coordinates['time'][0]
         data_type =  da_sets[0].attrs['data_type'] 
         
-        group_string = 'time.year'
+        group_string =  time_dim + '.year'
         xlabel = 'date'
         tick_interval = int(da_sets.size / da_sets.sets.size / 5) + 1
         if da_sets.size / da_sets.sets.size == 1:
             tick_interval = 1
-        if self._group_by == 'time.dayofyear':
+        if self._group_by == 'time.dayofyear' or self._group_by == 'Time.dayofyear':
 
             group_string = 'dayofyear'
             xlabel = 'Day of Year'
-        elif self._group_by == 'time.month':
+        elif self._group_by == 'time.month' or self._group_by == 'Time.month':
             group_string = 'month'
             xlabel = 'Month'
             tick_interval = 1
-        elif self._group_by == 'time.year':
+        elif self._group_by == 'time.year' or self._group_by == 'Time.year':
             group_string = 'year'
             xlabel = 'Year'
-        elif self._group_by == 'time.day':
+        elif self._group_by == 'time.day' or self._group_by == 'time.day':
             group_string = 'day'
             xlabel = 'Day'
 
@@ -656,6 +659,8 @@ class calcsPlot(object):
             }
         )
 
+
+        print(group_string)
         for i in range(da_sets.sets.size):
             if self._group_by is not None:
                 plt.plot(
@@ -703,7 +708,7 @@ class calcsPlot(object):
             mpl.pyplot.xticks(
                 np.arange(min(da_sets[group_string]), max(da_sets[group_string]) + 1, tick_interval)
             )
-            if self._group_by == 'time.month':
+            if self._group_by == 'time.month' or self._group_by == 'Time.month':
                 int_labels = plt.xticks()[0]
                 month_labels = [
                     calendar.month_name[i] for i in int_labels if calendar.month_name[i] != ''
@@ -747,11 +752,13 @@ class calcsPlot(object):
                 percent_sig = lm.Datasetcalcs(
                     (data), data_type, [time_dim], weighted=self._weighted
                 ).get_single_calc('zscore_percent_significant')
-
-                if abs(zscore_cutoff[0]) > 0.01:
-                    calc_name = f'{calc}: cutoff {zscore_cutoff[0]:.2f}, % sig: {percent_sig:.2f}'
-                else:
-                    calc_name = f'{calc}: cutoff {zscore_cutoff[0]:.2e}, % sig: {percent_sig:.2f}'
+                if percent_sig == 0:
+                    calc_name = f'{calc}'
+                else:     
+                    if abs(zscore_cutoff[0]) > 0.01:
+                        calc_name = f'{calc}: cutoff {zscore_cutoff[0]:.2f}, % sig: {percent_sig:.2f}'
+                    else:
+                        calc_name = f'{calc}: cutoff {zscore_cutoff[0]:.2e}, % sig: {percent_sig:.2f}'
 
             elif calc == 'mean' and self._plot_type == 'spatial' and self._calc_type == 'raw':
                 if self._weighted:
@@ -1217,7 +1224,7 @@ def plot(
     if plot_type == 'spatial':
         mp.spatial_plot(plot_dataset, titles, ds.data_type)
     elif plot_type == 'time_series':
-        mp.time_series_plot(plot_dataset, titles)
+        mp.time_series_plot(plot_dataset, titles, time_dim)
     elif plot_type == 'histogram':
         mp.hist_plot(plot_dataset, titles)
     elif plot_type == 'periodogram':

@@ -1496,10 +1496,13 @@ class Datasetcalcs:
                 sorted_pvals = np.sort(pvals_array).flatten()
             fdr_zscore = 0.01
             p = np.argwhere(sorted_pvals <= fdr_zscore * np.arange(1, pvals.size + 1) / pvals.size)
-            pval_cutoff = sorted_pvals[p[len(p) - 1]]
-            if not (pval_cutoff.size == 0):
-                sig_locs = np.argwhere(pvals <= pval_cutoff)
-                percent_sig = 100 * np.size(sig_locs, 0) / pvals.size
+            if p.size > 0:
+                pval_cutoff = sorted_pvals[p[len(p) - 1]]
+                if not (pval_cutoff.size == 0):
+                    sig_locs = np.argwhere(pvals <= pval_cutoff)
+                    percent_sig = 100 * np.size(sig_locs, 0) / pvals.size
+                else:
+                    percent_sig = 0
             else:
                 percent_sig = 0
             self._zscore_percent_significant = percent_sig
