@@ -1155,7 +1155,8 @@ class Datasetcalcs:
             if 'dayofyear' in self._ds.attrs.keys():
                 key = f'{self._time_dim_name}.dayofyear'
             else:
-                key = 'time'
+                key = f'{self._time_dim_name}'
+                
             grouped = self._ds.groupby(key, squeeze=False)
             if self._time_dim_name in self._ds.attrs.keys():
                 self._deseas_resid = grouped - grouped.mean(dim=self._time_dim_name)
@@ -1220,7 +1221,7 @@ class Datasetcalcs:
             # if hasattr(self._ds, 'units'):
             #    self._fft2.attrs['units'] = f'{self._ds.units}'
             self._fft2 = self._fft2.rename(
-                {'dim_0': 'time', 'dim_1': self._lat_dim_name, 'dim_2': self._lon_dim_name}
+                {'dim_0': self._time_dim_name, 'dim_1': self._lat_dim_name, 'dim_2': self._lon_dim_name}
             )
             self._fft2 = self._fft2.assign_coords(
                 {

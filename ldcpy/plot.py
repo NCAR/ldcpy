@@ -323,7 +323,7 @@ class calcsPlot(object):
         cmin = []
 
         # lat/lon could be 1 or 2d and have different names
-        # TODO  - will need to adjust for WRF for U and V?
+        #print(da_sets[0].cf.coordinates)
         lon_coord_name = da_sets[0].cf.coordinates['longitude'][0]
         lat_coord_name = da_sets[0].cf.coordinates['latitude'][0]
 
@@ -660,7 +660,7 @@ class calcsPlot(object):
         )
 
 
-        print(group_string)
+        #print(group_string)
         for i in range(da_sets.sets.size):
             if self._group_by is not None:
                 plt.plot(
@@ -962,7 +962,6 @@ def plot(
             - rms
             - sum
             - sum_squared
-            - corr_lag1
             - quantile
             - lag1
             - standardized_mean
@@ -1175,7 +1174,7 @@ def plot(
         if ds.data_type == 'cam-fv':  # 1D
             mp.title_lat = subsets[0][lat_coord_name].data[0]
             mp.title_lon = subsets[0][lon_coord_name].data[0] - 180
-        elif ds.data_type == 'pop' or 'wrf':  # 2D
+        elif ds.data_type == 'pop' :  # 2D
             # lon should be 0- 360
             mylat = subsets[0][lat_coord_name].data[0]
             mylon = subsets[0][lon_coord_name].data[0]
@@ -1183,6 +1182,15 @@ def plot(
                 mylon = mylon + 360
             mp.title_lat = mylat
             mp.title_lon = mylon
+        elif ds.data_type == 'wrf':
+            #for wrf, we don't want the x and y values, we need to
+            # convert to lat and long (to do)
+            # so for now, we output user's input for the title
+            mylat = lat
+            mylon = lon
+            mp.title_lat = mylat
+            mp.title_lon = mylon
+
         else:
             print('ERROR: unknown data type')
 

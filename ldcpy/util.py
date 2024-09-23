@@ -10,7 +10,7 @@ import xarray as xr
 from .calcs import Datasetcalcs, Diffcalcs
 
 
-def collect_datasets(data_type, varnames, list_of_ds, labels, coords_ds=None, **kwargs):
+def collect_datasets(data_type, varnames, list_of_ds, labels, coords_ds=None, file_sizes=None, **kwargs):
     """
     Concatonate several different xarray datasets across a new
     "collection" dimension, which can be accessed with the specified
@@ -31,6 +31,8 @@ def collect_datasets(data_type, varnames, list_of_ds, labels, coords_ds=None, **
         The respective label to access data from each dataset (also used in plotting fcns)
     coords_ds : xarray dataset
         (optional) Specify an additional file that contains lat/lon corrds (common for WRF data)
+    file_sizes : list
+         (optional) sizes of files that each dataset corresponds to (used to print in compare_stats table
     **kwargs :
         (optional) – Additional arguments passed on to xarray.concat(). A list of available arguments can
         be found here: https://xarray-test.readthedocs.io/en/latest/generated/xarray.concat.html
@@ -61,6 +63,10 @@ def collect_datasets(data_type, varnames, list_of_ds, labels, coords_ds=None, **
     indx = np.unique(sz)
     assert indx.size == 1, 'ERROR: all datasets must have the same length time dimension'
 
+    #file sizes?
+    if file_sizes is not None:
+        assert len(file_sizes) == len(labels), 'ERROR::collect_dataset dataset list and file sizes arguments must be the same length'
+    
     # wrf data must contain lat/lon info in same file if a coord_file is not specified
     if data_type == 'wrf':
         if coords_ds is None:
@@ -119,6 +125,13 @@ def collect_datasets(data_type, varnames, list_of_ds, labels, coords_ds=None, **
     full_ds.attrs['data_type'] = data_type
     full_ds.attrs['file_size'] = None
 
+    #file sizes?    
+    if file_sizes is not None:
+        file_size_dict = {}
+        for i, myfile in enumerate(list_of_ds):
+            file_size_dict[labels[i]]  = file_sizes[i]
+        full_ds.attrs['file_size'] = file_size_dict
+    
     # from other copy of this function
     for v in varnames[:-1]:
         new_ds = []
@@ -723,7 +736,7 @@ def subset_data(
     lev=None,
     start=None,
     end=None,
-    time_dim_name='time',
+    time_dim_name=None,
     vertical_dim_name=None,
     lat_coord_name=None,
     lon_coord_name=None,
@@ -733,7 +746,9 @@ def subset_data(
     """
     ds_subset = ds
 
-    # print(ds.cf.describe())
+
+    
+    #print(ds.cf.describe())
 
     if lon_coord_name is None:
         lon_coord_name = ds.cf.coordinates['longitude'][0]
@@ -750,6 +765,10 @@ def subset_data(
 
     # print(lat_coord_name, lon_coord_name, vertical_dim_name)
 
+    if time_dim_name is None:
+        time_dim_name = ds.cf.coordinates['time'][0]
+
+            
     latdim = ds_subset.cf[lon_coord_name].ndim
     # need dim names
     dd = ds_subset.cf['latitude'].dims
@@ -789,33 +808,48 @@ def subset_data(
 
     elif latdim == 2:
 
-        # print(ds_subset)
 
         if lat is not None:
             if lon is not None:
 
-                # lat is -90 to 90
-                # lon should be 0- 360
-                ad_lon = lon
-                if ad_lon < 0:
-                    ad_lon = ad_lon + 360
+                if ds_subset.data_type == "pop":
 
-                mlat = ds_subset[lat_coord_name].compute()
-                mlon = ds_subset[lon_coord_name].compute()
-                # euclidean dist for now....
-                di = np.sqrt(np.square(ad_lon - mlon) + np.square(lat - mlat))
-                index = np.where(di == np.min(di))
-                xmin = index[0][0]
-                ymin = index[1][0]
+                    # lat is -90 to 90
+                    # lon should be 0- 360
+                    ad_lon = lon
+                    if ad_lon < 0:
+                        ad_lon = ad_lon + 360
 
-                # Don't want if it's a land point
-                check = ds_subset.isel(nlat=xmin, nlon=ymin, time=1).compute()
-                if np.isnan(check):
-                    print(
-                        'You have chosen a lat/lon point with Nan values (i.e., a land point). Plot will not make sense.'
+                    mlat = ds_subset[lat_coord_name].compute()
+                    mlon = ds_subset[lon_coord_name].compute()
+                    # euclidean dist for now....
+                    di = np.sqrt(np.square(ad_lon - mlon) + np.square(lat - mlat))
+                    index = np.where(di == np.min(di))
+                    xmin = index[0][0]
+                    ymin = index[1][0]
+
+                    # Don't want if it's a land point
+                    check = ds_subset.isel(nlat=xmin, nlon=ymin, time=1).compute()
+                    if np.isnan(check):
+                        print('You have chosen a lat/lon point with Nan values (i.e., a land point). Plot will not make sense.'
                     )
-                ds_subset = ds_subset.isel({lat_dim_name: [xmin], lon_dim_name: [ymin]})
+                    ds_subset = ds_subset.isel({lat_dim_name: [xmin], lon_dim_name: [ymin]})
 
+                elif ds_subset.data_type == 'wrf':
+                    #print(lat_dim_name, lon_dim_name)
+                    ad_lon = lon
+                    mlat = ds_subset[lat_coord_name].compute()
+                    mlon = ds_subset[lon_coord_name].compute()
+                    di = np.sqrt(np.square(ad_lon - mlon) + np.square(lat - mlat))
+                    index = np.where(di == np.min(di))
+                    xmin = index[0][0]
+                    ymin = index[1][0]
+                    #print(xmin, ymin)
+                    #TO DO: add error checking for if it's out of bounds
+                    #check = ds_subset.isel({lat_dim_name: [xmin], lon_dim_name : [ymin], time_dim_name: [1]}).compute()
+                    #print(check)
+                    ds_subset = ds_subset.isel({lat_dim_name: [xmin], lon_dim_name : [ymin]})
+                    
                 # ds_subset.compute()
 
     return ds_subset
