@@ -1066,10 +1066,7 @@ def plot(
 
     # weighted needs to be set if it's None
     if weighted is None:
-        if ds.attrs['data_type'] == 'wrf':
-            weighted = False
-        else:
-            weighted = True
+        weighted = False
 
     mp = calcsPlot(
         ds,
