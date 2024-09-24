@@ -10,7 +10,9 @@ import xarray as xr
 from .calcs import Datasetcalcs, Diffcalcs
 
 
-def collect_datasets(data_type, varnames, list_of_ds, labels, coords_ds=None, file_sizes=None, **kwargs):
+def collect_datasets(
+    data_type, varnames, list_of_ds, labels, coords_ds=None, file_sizes=None, **kwargs
+):
     """
     Concatonate several different xarray datasets across a new
     "collection" dimension, which can be accessed with the specified
@@ -63,10 +65,12 @@ def collect_datasets(data_type, varnames, list_of_ds, labels, coords_ds=None, fi
     indx = np.unique(sz)
     assert indx.size == 1, 'ERROR: all datasets must have the same length time dimension'
 
-    #file sizes?
+    # file sizes?
     if file_sizes is not None:
-        assert len(file_sizes) == len(labels), 'ERROR::collect_dataset dataset list and file sizes arguments must be the same length'
-    
+        assert len(file_sizes) == len(
+            labels
+        ), 'ERROR::collect_dataset dataset list and file sizes arguments must be the same length'
+
     # wrf data must contain lat/lon info in same file if a coord_file is not specified
     if data_type == 'wrf':
         if coords_ds is None:
@@ -78,13 +82,13 @@ def collect_datasets(data_type, varnames, list_of_ds, labels, coords_ds=None, fi
                         latlon_found[i] += 1
             indx = np.where(latlon_found > 1)[0]
             assert len(indx) == len(list_of_ds), 'ERROR: WRF datasets must contain XLAT and XLONG'
-        else: #has a coords ds
-            ds_notime = coords_ds.drop_dims("Time")
-            #copy coords to EACH of the datasets
-            for i, myds in enumerate (list_of_ds):
+        else:  # has a coords ds
+            ds_notime = coords_ds.drop_dims('Time')
+            # copy coords to EACH of the datasets
+            for i, myds in enumerate(list_of_ds):
                 ds_new = myds.assign_coords(ds_notime.coords)
                 list_of_ds[i] = ds_new.copy(deep=True)
-        
+
     # weights?
     if data_type == 'cam-fv':
         weights_name = 'gw'
@@ -125,13 +129,13 @@ def collect_datasets(data_type, varnames, list_of_ds, labels, coords_ds=None, fi
     full_ds.attrs['data_type'] = data_type
     full_ds.attrs['file_size'] = None
 
-    #file sizes?    
+    # file sizes?
     if file_sizes is not None:
         file_size_dict = {}
         for i, myfile in enumerate(list_of_ds):
-            file_size_dict[labels[i]]  = file_sizes[i]
+            file_size_dict[labels[i]] = file_sizes[i]
         full_ds.attrs['file_size'] = file_size_dict
-    
+
     # from other copy of this function
     for v in varnames[:-1]:
         new_ds = []
@@ -376,13 +380,12 @@ def compare_stats(
             )
         )
 
-    #are the arrays using dask    
+    # are the arrays using dask
     if da_sets[0].chunks is not None:
         using_dask = True
     else:
         using_dask = False
 
-        
     # DATA FRAME
     import pandas as pd
     from IPython.display import HTML, display
@@ -406,58 +409,57 @@ def compare_stats(
     # temp_info = []
 
     for i in range(num):
-        #only use compute if it's a dask array
-        #temp_mean.append(da_set_calcs[i].get_calc('mean').data.compute())
+        # only use compute if it's a dask array
+        # temp_mean.append(da_set_calcs[i].get_calc('mean').data.compute())
         temp_return = da_set_calcs[i].get_calc('mean').data
         if using_dask:
             temp_mean.append(temp_return.compute())
         else:
             temp_mean.append(temp_return)
-        
-        #temp_var.append(da_set_calcs[i].get_calc('variance').data.compute())
+
+        # temp_var.append(da_set_calcs[i].get_calc('variance').data.compute())
         temp_return = da_set_calcs[i].get_calc('variance').data
         if using_dask:
             temp_var.append(temp_return.compute())
         else:
             temp_var.append(temp_return)
 
-        #temp_std.append(da_set_calcs[i].get_calc('std').data.compute())
+        # temp_std.append(da_set_calcs[i].get_calc('std').data.compute())
         temp_return = da_set_calcs[i].get_calc('std').data
         if using_dask:
             temp_std.append(temp_return.compute())
         else:
             temp_std.append(temp_return)
 
-        #temp_max.append(da_set_calcs[i].get_calc('max_val').data.compute())
+        # temp_max.append(da_set_calcs[i].get_calc('max_val').data.compute())
         temp_return = da_set_calcs[i].get_calc('max_val').data
         if using_dask:
             temp_max.append(temp_return.compute())
         else:
             temp_max.append(temp_return)
-            
-        #temp_min.append(da_set_calcs[i].get_calc('min_val').data.compute())
+
+        # temp_min.append(da_set_calcs[i].get_calc('min_val').data.compute())
         temp_return = da_set_calcs[i].get_calc('min_val').data
         if using_dask:
             temp_min.append(temp_return.compute())
         else:
             temp_min.append(temp_return)
 
-        #temp_min_abs_nonzero.append(da_set_calcs[i].get_calc('min_abs_nonzero').data.compute())
+        # temp_min_abs_nonzero.append(da_set_calcs[i].get_calc('min_abs_nonzero').data.compute())
         temp_return = da_set_calcs[i].get_calc('min_abs_nonzero').data
         if using_dask:
             temp_min_abs_nonzero.append(temp_return.compute())
         else:
             temp_min_abs_nonzero.append(temp_return)
 
-            
-        #temp_pos.append(da_set_calcs[i].get_calc('prob_positive').data.compute())
+        # temp_pos.append(da_set_calcs[i].get_calc('prob_positive').data.compute())
         temp_return = da_set_calcs[i].get_calc('prob_positive').data
         if using_dask:
             temp_pos.append(temp_return.compute())
         else:
             temp_pos.append(temp_return)
 
-        #temp_zeros.append(da_set_calcs[i].get_calc('num_zero').data.compute())
+        # temp_zeros.append(da_set_calcs[i].get_calc('num_zero').data.compute())
         temp_return = da_set_calcs[i].get_calc('num_zero').data
         if using_dask:
             temp_zeros.append(temp_return.compute())
@@ -509,42 +511,41 @@ def compare_stats(
     temp_rms = []
 
     for i in range(num - 1):
-        #temp_max_abs.append(dd_set_calcs[i].get_calc('max_abs').data.compute())
+        # temp_max_abs.append(dd_set_calcs[i].get_calc('max_abs').data.compute())
         temp_return = dd_set_calcs[i].get_calc('max_abs').data
         if using_dask:
             temp_max_abs.append(temp_return.compute())
         else:
             temp_max_abs.append(temp_return)
 
-        #temp_min_abs.append(dd_set_calcs[i].get_calc('min_abs').data.compute())
+        # temp_min_abs.append(dd_set_calcs[i].get_calc('min_abs').data.compute())
         temp_return = dd_set_calcs[i].get_calc('min_abs').data
         if using_dask:
             temp_min_abs.append(temp_return.compute())
         else:
             temp_min_abs.append(temp_return)
 
-        #temp_mean_abs.append(dd_set_calcs[i].get_calc('mean_abs').data.compute())
+        # temp_mean_abs.append(dd_set_calcs[i].get_calc('mean_abs').data.compute())
         temp_return = dd_set_calcs[i].get_calc('mean_abs').data
         if using_dask:
             temp_mean_abs.append(temp_return.compute())
         else:
             temp_mean_abs.append(temp_return)
 
-        #temp_mean_sq.append(dd_set_calcs[i].get_calc('mean_squared').data.compute())
+        # temp_mean_sq.append(dd_set_calcs[i].get_calc('mean_squared').data.compute())
         temp_return = dd_set_calcs[i].get_calc('mean_squared').data
         if using_dask:
             temp_mean_sq.append(temp_return.compute())
         else:
             temp_mean_sq.append(temp_return)
 
-        #temp_rms.append(dd_set_calcs[i].get_calc('rms').data.compute())
+        # temp_rms.append(dd_set_calcs[i].get_calc('rms').data.compute())
         temp_return = dd_set_calcs[i].get_calc('rms').data
         if using_dask:
             temp_rms.append(temp_return.compute())
         else:
             temp_rms.append(temp_return)
 
-        
     df_dict2['max abs diff'] = temp_max_abs
     df_dict2['min abs diff'] = temp_min_abs
     df_dict2['mean abs diff'] = temp_mean_abs
@@ -598,8 +599,8 @@ def compare_stats(
     if include_file_size:
         df_dict2['file size ratio'] = temp_cr
 
-    #print(df_dict2)
-        
+    # print(df_dict2)
+
     for d in df_dict2.keys():
         fo = [f'%.{significant_digits}g' % item for item in df_dict2[d]]
         df_dict2[d] = fo
@@ -746,9 +747,7 @@ def subset_data(
     """
     ds_subset = ds
 
-
-    
-    #print(ds.cf.describe())
+    # print(ds.cf.describe())
 
     if lon_coord_name is None:
         lon_coord_name = ds.cf.coordinates['longitude'][0]
@@ -768,7 +767,6 @@ def subset_data(
     if time_dim_name is None:
         time_dim_name = ds.cf.coordinates['time'][0]
 
-            
     latdim = ds_subset.cf[lon_coord_name].ndim
     # need dim names
     dd = ds_subset.cf['latitude'].dims
@@ -808,11 +806,10 @@ def subset_data(
 
     elif latdim == 2:
 
-
         if lat is not None:
             if lon is not None:
 
-                if ds_subset.data_type == "pop":
+                if ds_subset.data_type == 'pop':
 
                     # lat is -90 to 90
                     # lon should be 0- 360
@@ -831,12 +828,13 @@ def subset_data(
                     # Don't want if it's a land point
                     check = ds_subset.isel(nlat=xmin, nlon=ymin, time=1).compute()
                     if np.isnan(check):
-                        print('You have chosen a lat/lon point with Nan values (i.e., a land point). Plot will not make sense.'
-                    )
+                        print(
+                            'You have chosen a lat/lon point with Nan values (i.e., a land point). Plot will not make sense.'
+                        )
                     ds_subset = ds_subset.isel({lat_dim_name: [xmin], lon_dim_name: [ymin]})
 
                 elif ds_subset.data_type == 'wrf':
-                    #print(lat_dim_name, lon_dim_name)
+                    # print(lat_dim_name, lon_dim_name)
                     ad_lon = lon
                     mlat = ds_subset[lat_coord_name].compute()
                     mlon = ds_subset[lon_coord_name].compute()
@@ -844,12 +842,12 @@ def subset_data(
                     index = np.where(di == np.min(di))
                     xmin = index[0][0]
                     ymin = index[1][0]
-                    #print(xmin, ymin)
-                    #TO DO: add error checking for if it's out of bounds
-                    #check = ds_subset.isel({lat_dim_name: [xmin], lon_dim_name : [ymin], time_dim_name: [1]}).compute()
-                    #print(check)
-                    ds_subset = ds_subset.isel({lat_dim_name: [xmin], lon_dim_name : [ymin]})
-                    
+                    # print(xmin, ymin)
+                    # TO DO: add error checking for if it's out of bounds
+                    # check = ds_subset.isel({lat_dim_name: [xmin], lon_dim_name : [ymin], time_dim_name: [1]}).compute()
+                    # print(check)
+                    ds_subset = ds_subset.isel({lat_dim_name: [xmin], lon_dim_name: [ymin]})
+
                 # ds_subset.compute()
 
     return ds_subset
