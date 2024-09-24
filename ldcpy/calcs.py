@@ -7,7 +7,6 @@ import time
 from math import exp, pi, sqrt
 from typing import Optional
 
-
 import cf_xarray as cf
 import dask
 import matplotlib as mpl
@@ -58,7 +57,7 @@ class Datasetcalcs:
 
         if data_type == 'wrf':
             weighted = False
-        
+
         if weighted:
             if 'cell_measures' not in self._ds.attrs:
                 self._ds.attrs['cell_measures'] = 'area: cell_area'
@@ -78,7 +77,6 @@ class Datasetcalcs:
         # WARNING WRF ALSO HAS XLAT_U and XLONG_U, XLAT_v and XLONG_V
         dd = ds.cf[ds.cf.coordinates['latitude'][0]].dims
 
-        
         ll = len(dd)
         if data_type == 'cam-fv':  # ll == 1:
             if lat_dim_name is None:
@@ -1156,7 +1154,7 @@ class Datasetcalcs:
                 key = f'{self._time_dim_name}.dayofyear'
             else:
                 key = f'{self._time_dim_name}'
-                
+
             grouped = self._ds.groupby(key, squeeze=False)
             if self._time_dim_name in self._ds.attrs.keys():
                 self._deseas_resid = grouped - grouped.mean(dim=self._time_dim_name)
@@ -1221,7 +1219,11 @@ class Datasetcalcs:
             # if hasattr(self._ds, 'units'):
             #    self._fft2.attrs['units'] = f'{self._ds.units}'
             self._fft2 = self._fft2.rename(
-                {'dim_0': self._time_dim_name, 'dim_1': self._lat_dim_name, 'dim_2': self._lon_dim_name}
+                {
+                    'dim_0': self._time_dim_name,
+                    'dim_1': self._lat_dim_name,
+                    'dim_2': self._lon_dim_name,
+                }
             )
             self._fft2 = self._fft2.assign_coords(
                 {
