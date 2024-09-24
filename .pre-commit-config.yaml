@@ -36,7 +36,7 @@ repos:
       - id: prettier
 
   - repo: https://github.com/nbQA-dev/nbQA
-    rev: 1.5.3
+    rev: 1.8.7
     hooks:
       - id: nbqa-pyupgrade
         additional_dependencies: [pyupgrade==2.7.3]
