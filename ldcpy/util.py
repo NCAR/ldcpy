@@ -106,7 +106,7 @@ def collect_datasets(
         weighted = False
     else:
         weighted = True
-        
+
     # preprocess_vars is here for working on jupyter hub...
     def preprocess_vars(ds, varnames):
         return ds[varnames]
@@ -137,7 +137,7 @@ def collect_datasets(
     full_ds.attrs['data_type'] = data_type
     full_ds.attrs['file_size'] = None
     full_ds.attrs['weighted'] = weighted
-    
+
     # file sizes?
     if file_sizes is not None:
         file_size_dict = {}
@@ -154,7 +154,7 @@ def collect_datasets(
             new_ds[i].attrs['data_type'] = data_type
             new_ds[i].attrs['set_name'] = label
             new_ds[i].attrs['weighted'] = weighted
-            
+
         # d = xr.combine_by_coords(new_ds)
         d = xr.concat(new_ds, 'collection')
         full_ds[v] = d
@@ -237,7 +237,7 @@ def open_datasets(data_type, varnames, list_of_files, labels, weights=True, **kw
 
         return ds[varnames]
 
-    #check the weights
+    # check the weights
     tmp_ds = xr.open_dataset(list_of_files[0])
     if data_type == 'cam-fv' and weights is True:
         weights_name = 'gw'
@@ -256,7 +256,7 @@ def open_datasets(data_type, varnames, list_of_files, labels, weights=True, **kw
         weighted = False
     else:
         weighted = True
-        
+
     full_ds = xr.open_mfdataset(
         list_of_files,
         concat_dim='collection',
@@ -286,7 +286,7 @@ def open_datasets(data_type, varnames, list_of_files, labels, weights=True, **kw
     full_ds.attrs['data_type'] = data_type
     full_ds.attrs['file_size'] = file_size_dict
     full_ds.attrs['weighted'] = weighted
-    
+
     for v in varnames[:-1]:
         new_ds = []
         i = 0
@@ -295,7 +295,7 @@ def open_datasets(data_type, varnames, list_of_files, labels, weights=True, **kw
             new_ds[i].attrs['data_type'] = data_type
             new_ds[i].attrs['set_name'] = label
             new_ds[i].attrs['weighted'] = weighted
-            
+
         # d = xr.combine_by_coords(new_ds)
         d = xr.concat(new_ds, 'collection')
         full_ds[v] = d
@@ -345,13 +345,15 @@ def compare_stats(
     da = ds[varname]
     data_type = ds.attrs['data_type']
     attr_weighted = ds.attrs['weighted']
-    
+
     # no weights for wrf
     if data_type == 'cam-fv':
         if weighted:
             if not attr_weighted:
-                print('Warning - this data does not contain weights, so averages will be unweighted.')
-                weighted  = False
+                print(
+                    'Warning - this data does not contain weights, so averages will be unweighted.'
+                )
+                weighted = False
     if data_type == 'wrf':
         weighted = False
 
@@ -723,7 +725,7 @@ def check_metrics(
     num_fail = 0
     # Pearson less than pcc_tol means fail
     pcc = diff_calcs.get_diff_calc('pearson_correlation_coefficient')
-    #print(type(pcc))
+    # print(type(pcc))
     if pcc < pcc_tol:
 
         print('     *FAILED pearson correlation coefficient test...(pcc = {0:.5f}'.format(pcc), ')')
