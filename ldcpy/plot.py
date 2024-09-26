@@ -771,9 +771,9 @@ class calcsPlot(object):
                         .mean()
                         .data
                     )
-                    if type(a1_data) == np.float64:
+                    if isinstance(a1_data, np.float64):
                         pass
-                    elif type(a1_data) == np.ndarray:
+                    elif isinstance(a1_data, np.ndarray):
                         dask.array.from_array(data)
                         a1_data = a1_data.compute()
                     else:
@@ -785,9 +785,9 @@ class calcsPlot(object):
                         .mean()
                         .data
                     )
-                    if type(a1_data) == np.float64:
+                    if isinstance(a1_data, np.float64):
                         pass
-                    elif type(a1_data) == np.ndarray:
+                    elif isinstance(a1_data, np.ndarray):
                         a1_data = dask.array.from_array(a1_data).compute()
                     else:
                         a1_data = a1_data.compute()
@@ -823,9 +823,9 @@ class calcsPlot(object):
                         .mean()
                         .data
                     )
-                    if type(a1_data) == np.float64:
+                    if isinstance(a1_data, np.float64):
                         pass
-                    elif type(a1_data) == np.ndarray:
+                    elif isinstance(a1_data, np.ndarray):
                         dask.array.from_array(data)
                         a1_data = a1_data.compute()
                     else:
@@ -837,9 +837,9 @@ class calcsPlot(object):
                         .mean()
                         .data
                     )
-                    if type(a1_data) == np.float64:
+                    if isinstance(a1_data, np.float64):
                         pass
-                    elif type(a1_data) == np.ndarray:
+                    elif isinstance(a1_data, np.ndarray):
                         a1_data = a1_data
                     else:
                         a1_data = a1_data.compute()
@@ -850,9 +850,9 @@ class calcsPlot(object):
                         .mean()
                         .data
                     )
-                    if type(a1_data) == np.float64:
+                    if isinstance(a1_data, np.float64):
                         pass
-                    elif type(a1_data) == np.ndarray:
+                    elif isinstance(a1_data, np.ndarray):
                         dask.array.from_array(a1_data).compute()
                     else:
                         a1_data = a1_data.compute()
@@ -870,9 +870,9 @@ class calcsPlot(object):
                         .mean()
                         .data
                     )
-                    if type(a1_data) == np.float64:
+                    if isinstance(a1_data, np.float64):
                         pass
-                    elif type(a1_data) == np.ndarray:
+                    elif isinstance(a1_data, np.ndarray):
                         dask.array.from_array(data)
                         a1_data = a1_data.compute()
                     else:
@@ -886,9 +886,9 @@ class calcsPlot(object):
                         .mean()
                         .data
                     )
-                    if type(a1_data) == np.float64:
+                    if isinstance(a1_data, np.float64):
                         pass
-                    elif type(a1_data) == np.ndarray:
+                    elif isinstance(a1_data, np.ndarray):
                         dask.array.from_array(data)
                         a1_data = a1_data.compute()
                     else:
