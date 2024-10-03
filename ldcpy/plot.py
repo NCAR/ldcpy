@@ -163,7 +163,10 @@ class calcsPlot(object):
             lat_dim = dd[0]
             lon_dim = dd[1]
 
-        time_dim = da.cf.coordinates['time'][0]
+        if 'time' in da_data.cf.coordinates.keys():
+            time_dim = da_data.cf.coordinates['time'][0]
+        else:
+            time_dim = None
 
         if self._plot_type in ['spatial']:
             calcs_da = lm.Datasetcalcs(da_data, data_type, [time_dim], weighted=self._weighted)
@@ -180,8 +183,10 @@ class calcsPlot(object):
 
     def get_plot_data(self, raw_data_1, raw_data_2=None):
 
-        time_dim = self._ds.cf.coordinates['time'][0]
-
+        if 'time' in self._ds.cf.coordinates.keys():
+            time_dim = self._ds.cf.coordinates['time'][0]
+        else:
+            time_dim = None
         if self._calc_type == 'diff':
             plot_data = raw_data_1 - raw_data_2
             plot_data.attrs = raw_data_1.attrs
@@ -208,7 +213,8 @@ class calcsPlot(object):
             pass
         elif self._transform == 'log':
             plot_attrs = plot_data.attrs
-            plot_data = np.log10(plot_data)
+            # this next bit can have a divide by zero if the data has zeros
+            plot_data = np.log10(plot_data, where=plot_data.values != 0)
             plot_data.attrs = plot_attrs
         else:
             raise ValueError(f'calc transformation {self._transform} not supported')
@@ -309,7 +315,7 @@ class calcsPlot(object):
             fig = plt.figure(dpi=300, figsize=(9, 2.5 * nrows))
             plt.rcParams.update({'font.size': 10})
 
-        mymap = copy.copy(mpl.cm.get_cmap(f'{self._color}'))
+        mymap = copy.copy(mpl.colormaps[f'{self._color}'])
         mymap.set_under(color='black')
         mymap.set_over(color='white')
         mymap.set_bad(alpha=0)
@@ -739,7 +745,10 @@ class calcsPlot(object):
             lat_dim = dd[0]
             lon_dim = dd[1]
 
-        time_dim = data.cf.coordinates['time'][0]
+        if 'time' in data.cf.coordinates.keys():
+            time_dim = data.cf.coordinates['time'][0]
+        else:
+            time_dim = None
 
         # Get special calc names
         if self._short_title is False:
@@ -1106,12 +1115,16 @@ def plot(
 
     # Subset data (by var and collection)
     dss = []
-    time_dim = ds.cf.coordinates['time'][0]
+    if 'time' in ds.cf.coordinates.keys():
+        time_dim = ds.cf.coordinates['time'][0]
+    else:
+        time_dim = None
     lat_dim = ds.cf.coordinates['latitude'][0]
     lon_dim = ds.cf.coordinates['longitude'][0]
 
-    if 'bounds' in ds[time_dim].attrs.keys():
-        ds[time_dim].attrs.pop('bounds')
+    if time_dim is not None:
+        if 'bounds' in ds[time_dim].attrs.keys():
+            ds[time_dim].attrs.pop('bounds')
 
     if 'collection' in ds[varname].dims:
         if sets is not None:

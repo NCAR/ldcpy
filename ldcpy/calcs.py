@@ -74,7 +74,7 @@ class Datasetcalcs:
             lat_coord_name = ds.cf.coordinates['latitude'][0]
         self._lat_coord_name = lat_coord_name
 
-        # WARNING WRF ALSO HAS XLAT_U and XLONG_U, XLAT_v and XLONG_V
+        # WRF ALSO HAS XLAT_U and XLONG_U, XLAT_v and XLONG_V
         dd = ds.cf[ds.cf.coordinates['latitude'][0]].dims
 
         ll = len(dd)
@@ -114,7 +114,11 @@ class Datasetcalcs:
 
         # time dimension
         if time_dim_name is None:
-            time_dim_name = ds.cf.coordinates['time'][0]
+            if 'time' in ds.cf.coordinates.keys():
+                time_dim_name = ds.cf.coordinates['time'][0]
+            else:
+                time_dim_name = None
+
         self._time_dim_name = time_dim_name
 
         self._quantile = q
@@ -330,8 +334,10 @@ class Datasetcalcs:
             )
         return self._most_repeated_pct
 
-    def log_max(ds):
-        return np.log10(abs(ds)).where(np.log10(abs(ds)) != -np.inf).max(skipna=True)
+    # def log_max(ds):
+    #    a_d = abs(ds)
+    #    return np.log10(a_d, where=a_d.data > 0 ).max(skipna=True)
+    # return np.log10(abs(ds)).where(np.log10(abs(ds)) != -np.inf).max(skipna=True)
 
     @property
     def magnitude_range(self) -> xr.DataArray:
@@ -346,7 +352,10 @@ class Datasetcalcs:
             def min_agg(ds):
                 return ds.min(skipna=True)
 
-            log_ds = np.log10(abs(self._ds)).where(np.log10(abs(self._ds)) != -np.inf)
+            # avoid divde by zero warning
+            # log_ds = np.log10(abs(self._ds)).where(np.log10(abs(self._ds)) != -np.inf)
+            a_d = abs(self._ds)
+            log_ds = np.log10(a_d, where=a_d.data > 0)
 
             if len(self._not_agg_dims) == 0:
                 my_max = max_agg(log_ds)
@@ -366,8 +375,8 @@ class Datasetcalcs:
                 return self._magnitude_range
             else:
                 self._magnitude_range = my_max - my_min
-            # self._magnitude_range.attrs = self._ds.attrs
-        return self._magnitude_range
+            # print(self._magnitude_range)
+            return self._magnitude_range
 
     @property
     def magnitude_diff_ew(self) -> xr.DataArray:
@@ -895,13 +904,16 @@ class Datasetcalcs:
         NOTE: currently assumes we are aggregating along the time dimension so is only suitable for a spatial plot.
         """
         if not self._is_memoized('_zscore'):
-            self._zscore = np.divide(
-                self.mean, self.std / np.sqrt(self._ds.sizes[self._time_dim_name])
-            )
-            self._zscore.attrs = self._ds.attrs
-            if hasattr(self._ds, 'units'):
-                self._zscore.attrs['units'] = ''
-
+            if self._time_dim_name is not None:
+                self._zscore = np.divide(
+                    self.mean, self.std / np.sqrt(self._ds.sizes[self._time_dim_name])
+                )
+                self._zscore.attrs = self._ds.attrs
+                if hasattr(self._ds, 'units'):
+                    self._zscore.attrs['units'] = ''
+            else:
+                self._zscore = 0
+                print('Warning: Zscore requires a time dimension')
         return self._zscore
 
     @property
@@ -1167,8 +1179,8 @@ class Datasetcalcs:
                 {self._time_dim_name: time_length - 1}
             )
 
-            num = current.fillna(0).dot(next.fillna(0), dims=self._time_dim_name)
-            denom = current.fillna(0).dot(current.fillna(0), dims=self._time_dim_name)
+            num = current.fillna(0).dot(next.fillna(0), dim=self._time_dim_name)
+            denom = current.fillna(0).dot(current.fillna(0), dim=self._time_dim_name)
             self._lag1 = num / denom
 
             self._lag1.attrs = self._ds.attrs
@@ -1185,14 +1197,25 @@ class Datasetcalcs:
         so can only be plotted in a spatial plot.
         """
         if not self._is_memoized('_lag1_first_difference'):
-            key = f'{self._time_dim_name}.dayofyear'
-            grouped = self._ds.groupby(key)
-            self._deseas_resid = grouped - grouped.mean(dim=self._time_dim_name)
+
+            if 'dayofyear' in self._ds.attrs.keys():
+                key = f'{self._time_dim_name}.dayofyear'
+            else:
+                key = f'{self._time_dim_name}'
+
+            grouped = self._ds.groupby(key, squeeze=False)
+            if self._time_dim_name in self._ds.attrs.keys():
+                self._deseas_resid = grouped - grouped.mean(dim=self._time_dim_name)
+            else:
+                # note: not actually deseasonalized
+                self._deseas_resid = grouped.mean(dim=self._time_dim_name) - self._ds.mean()
+
             time_length = self._deseas_resid.sizes[self._time_dim_name]
             current = self._deseas_resid.head({self._time_dim_name: time_length - 1})
             next = self._deseas_resid.shift({self._time_dim_name: -1}).head(
                 {self._time_dim_name: time_length - 1}
             )
+
             first_difference = next - current
             first_difference_current = first_difference.head({self._time_dim_name: time_length - 1})
             first_difference_next = first_difference.shift({self._time_dim_name: -1}).head(
@@ -1202,7 +1225,9 @@ class Datasetcalcs:
             num = (first_difference_current * first_difference_next).sum(
                 dim=[self._time_dim_name], skipna=True
             )
-            denom = first_difference_current.dot(first_difference_current, dims=self._time_dim_name)
+
+            denom = first_difference_current.dot(first_difference_current, dim=self._time_dim_name)
+
             self._lag1_first_difference = num / denom
 
             self._lag1_first_difference.attrs = self._ds.attrs

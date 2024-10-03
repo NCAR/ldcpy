@@ -272,7 +272,7 @@ def open_datasets(data_type, varnames, list_of_files, labels, weights=True, **kw
     elif data_type == 'cam-fv' and weights is True:
         full_ds.coords['cell_area'] = (
             xr.DataArray(full_ds.variables.mapping.get(weights_name))
-            .expand_dims(lon=full_ds.dims['lon'])
+            .expand_dims(lon=full_ds.sizes['lon'])
             .transpose()
         )
 
