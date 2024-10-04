@@ -435,60 +435,52 @@ def compare_stats(
     temp_ac_lat = []
     temp_ac_lon = []
     temp_entropy = []
-    # temp_info = []
+    temp_info = []
 
     for i in range(num):
         # only use compute if it's a dask array
-        # temp_mean.append(da_set_calcs[i].get_calc('mean').data.compute())
         temp_return = da_set_calcs[i].get_calc('mean').data
         if using_dask:
             temp_mean.append(temp_return.compute())
         else:
             temp_mean.append(temp_return)
 
-        # temp_var.append(da_set_calcs[i].get_calc('variance').data.compute())
         temp_return = da_set_calcs[i].get_calc('variance').data
         if using_dask:
             temp_var.append(temp_return.compute())
         else:
             temp_var.append(temp_return)
 
-        # temp_std.append(da_set_calcs[i].get_calc('std').data.compute())
         temp_return = da_set_calcs[i].get_calc('std').data
         if using_dask:
             temp_std.append(temp_return.compute())
         else:
             temp_std.append(temp_return)
 
-        # temp_max.append(da_set_calcs[i].get_calc('max_val').data.compute())
         temp_return = da_set_calcs[i].get_calc('max_val').data
         if using_dask:
             temp_max.append(temp_return.compute())
         else:
             temp_max.append(temp_return)
 
-        # temp_min.append(da_set_calcs[i].get_calc('min_val').data.compute())
         temp_return = da_set_calcs[i].get_calc('min_val').data
         if using_dask:
             temp_min.append(temp_return.compute())
         else:
             temp_min.append(temp_return)
 
-        # temp_min_abs_nonzero.append(da_set_calcs[i].get_calc('min_abs_nonzero').data.compute())
         temp_return = da_set_calcs[i].get_calc('min_abs_nonzero').data
         if using_dask:
             temp_min_abs_nonzero.append(temp_return.compute())
         else:
             temp_min_abs_nonzero.append(temp_return)
 
-        # temp_pos.append(da_set_calcs[i].get_calc('prob_positive').data.compute())
         temp_return = da_set_calcs[i].get_calc('prob_positive').data
         if using_dask:
             temp_pos.append(temp_return.compute())
         else:
             temp_pos.append(temp_return)
 
-        # temp_zeros.append(da_set_calcs[i].get_calc('num_zero').data.compute())
         temp_return = da_set_calcs[i].get_calc('num_zero').data
         if using_dask:
             temp_zeros.append(temp_return.compute())
@@ -496,10 +488,12 @@ def compare_stats(
             temp_zeros.append(temp_return)
 
         # Alex is fixing ..
-        # temp_info.append(da_set_calcs[i].get_single_calc('real_information_cutoff'))
+        temp_info.append(da_set_calcs[i].get_single_calc('real_information_cutoff'))
+
         if data_type == 'cam-fv':
             temp_ac_lat.append(da_set_calcs[i].get_single_calc('lat_autocorr'))
             temp_ac_lon.append(da_set_calcs[i].get_single_calc('lon_autocorr'))
+
         temp_entropy.append(da_set_calcs[i].get_single_calc('entropy'))
 
     df_dict['mean'] = temp_mean
@@ -510,7 +504,7 @@ def compare_stats(
     df_dict['max value'] = temp_max
     df_dict['probability positive'] = temp_pos
     df_dict['number of zeros'] = temp_zeros
-    #   df_dict['99% real information cutoff bit'] = temp_info
+    df_dict['99% real information cutoff bit'] = temp_info
     if data_type == 'cam-fv':
         df_dict['spatial autocorr - latitude'] = temp_ac_lat
         df_dict['spatial autocorr - longitude'] = temp_ac_lon
@@ -627,8 +621,6 @@ def compare_stats(
 
     if include_file_size:
         df_dict2['file size ratio'] = temp_cr
-
-    # print(df_dict2)
 
     for d in df_dict2.keys():
         fo = [f'%.{significant_digits}g' % item for item in df_dict2[d]]

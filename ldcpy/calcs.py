@@ -812,7 +812,10 @@ class Datasetcalcs:
         The pooled variance along the aggregate dimensions
         """
         if not self._is_memoized('_pooled_variance_ratio'):
-            self._pooled_variance_ratio = self.variance / self.pooled_variance
+            denom = self.pooled_variance.copy().fillna(0)
+            denom = np.where(denom == 0, 1e-12, denom)
+            self._pooled_variance_ratio = self.variance / denom
+            # self._pooled_variance_ratio = self.variance / self.pooled_variance
             self._pooled_variance_ratio.attrs = self._ds.attrs
             if hasattr(self._ds, 'units'):
                 self._pooled_variance_ratio.attrs['units'] = ''
@@ -1166,7 +1169,6 @@ class Datasetcalcs:
                 key = f'{self._time_dim_name}.dayofyear'
             else:
                 key = f'{self._time_dim_name}'
-
             grouped = self._ds.groupby(key, squeeze=False)
             if self._time_dim_name in self._ds.attrs.keys():
                 self._deseas_resid = grouped - grouped.mean(dim=self._time_dim_name)
@@ -1175,12 +1177,14 @@ class Datasetcalcs:
                 self._deseas_resid = grouped.mean(dim=self._time_dim_name) - self._ds.mean()
             time_length = self._deseas_resid.sizes[self._time_dim_name]
             current = self._deseas_resid.head({self._time_dim_name: time_length - 1})
-            next = self._deseas_resid.shift({self._time_dim_name: -1}).head(
+            next_one = self._deseas_resid.shift({self._time_dim_name: -1}).head(
                 {self._time_dim_name: time_length - 1}
             )
 
-            num = current.fillna(0).dot(next.fillna(0), dim=self._time_dim_name)
+            num = current.fillna(0).dot(next_one.fillna(0), dim=self._time_dim_name)
             denom = current.fillna(0).dot(current.fillna(0), dim=self._time_dim_name)
+            # don't divide by zero :)
+            denom = np.where(denom == 0, 1e-12, denom)
             self._lag1 = num / denom
 
             self._lag1.attrs = self._ds.attrs
@@ -1212,11 +1216,11 @@ class Datasetcalcs:
 
             time_length = self._deseas_resid.sizes[self._time_dim_name]
             current = self._deseas_resid.head({self._time_dim_name: time_length - 1})
-            next = self._deseas_resid.shift({self._time_dim_name: -1}).head(
+            next_one = self._deseas_resid.shift({self._time_dim_name: -1}).head(
                 {self._time_dim_name: time_length - 1}
             )
 
-            first_difference = next - current
+            first_difference = next_one - current
             first_difference_current = first_difference.head({self._time_dim_name: time_length - 1})
             first_difference_next = first_difference.shift({self._time_dim_name: -1}).head(
                 {self._time_dim_name: time_length - 1}
@@ -1227,6 +1231,8 @@ class Datasetcalcs:
             )
 
             denom = first_difference_current.dot(first_difference_current, dim=self._time_dim_name)
+            # don't divide by zero
+            denom = np.where(denom == 0, 1e-12, denom)
 
             self._lag1_first_difference = num / denom
 

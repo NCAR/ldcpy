@@ -16,7 +16,7 @@ pop_data = np.arange(1, 61).reshape(3, 4, 5)
 test_data = xr.DataArray(
     pop_data,
     coords={
-        'time': times,
+        'time': ('time', times, {'standard_name': 'time'}),
         'TLAT': (('nlat', 'nlon'), lats, {'standard_name': 'latitude', 'units': 'degrees_north'}),
         'TLON': (('nlat', 'nlon'), lons, {'standard_name': 'longitude', 'units': 'degrees_east'}),
     },
@@ -28,7 +28,7 @@ pop_data2 = np.arange(0, 60).reshape(3, 4, 5)
 test_data_2 = xr.DataArray(
     pop_data2,
     coords={
-        'time': times,
+        'time': ('time', times, {'standard_name': 'time'}),
         'TLAT': (('nlat', 'nlon'), lats, {'standard_name': 'latitude', 'units': 'degrees_north'}),
         'TLON': (('nlat', 'nlon'), lons, {'standard_name': 'longitude', 'units': 'degrees_east'}),
     },
@@ -153,7 +153,6 @@ class TestErrorcalcsPOP(TestCase):
 
     def test_TS_02(self):
         import xarray as xr
-        import zfpy
 
         ds = xr.open_dataset('data/pop/pop.SST.60days.nc')
 
