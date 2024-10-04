@@ -354,7 +354,7 @@ class Datasetcalcs:
 
             # avoid divde by zero warning
             # log_ds = np.log10(abs(self._ds)).where(np.log10(abs(self._ds)) != -np.inf)
-            a_d = abs(self._ds)
+            a_d = abs(self._ds.copy())
             log_ds = np.log10(a_d, where=a_d.data > 0)
 
             if len(self._not_agg_dims) == 0:
@@ -364,7 +364,6 @@ class Datasetcalcs:
                 stack = log_ds.stack(multi_index=tuple(self._not_agg_dims))
                 my_max = stack.groupby('multi_index').map(max_agg)
                 my_min = stack.groupby('multi_index').map(min_agg)
-
             if (
                 np.isinf(my_max).any()
                 or np.isinf(my_min).any()
@@ -375,8 +374,8 @@ class Datasetcalcs:
                 return self._magnitude_range
             else:
                 self._magnitude_range = my_max - my_min
-            # print(self._magnitude_range)
-            return self._magnitude_range
+
+        return self._magnitude_range
 
     @property
     def magnitude_diff_ew(self) -> xr.DataArray:

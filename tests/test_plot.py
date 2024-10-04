@@ -302,7 +302,7 @@ class TestPlot(TestCase):
         )
         self.assertTrue(True is True)
 
-    @pytest.mark.nonsequential
+    #    @pytest.mark.nonsequential
     def test_mean_diff_time_series_subset(self):
         ldcpy.plot(
             ds2,

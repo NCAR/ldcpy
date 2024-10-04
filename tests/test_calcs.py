@@ -40,7 +40,10 @@ test_data_2 = xr.DataArray(
     ],
     dims=['lat', 'lon', 'time'],
 )
+
+
 d = ds['TS'].sel(collection='orig')
+
 ds_pointwise_calcs = ldcpy.Datasetcalcs(d, 'cam-fv', [], weighted=False)
 ds_spatial_calcs = ldcpy.Datasetcalcs(d, 'cam-fv', ['time'], weighted=False)
 
@@ -97,12 +100,6 @@ class TestErrorcalcs(TestCase):
             }
         ]
 
-    #    def test_fftsum(self):
-    #        f = ds_spatial_calcs.get_calc('fft2')
-    #        t = ldcpy.Datasetcalcs(f, 'cam-fv', [], weighted=False)
-    #        t.get_single_calc('fftsum')
-    #        self.assertTrue(True)
-
     def test_creation_01(self):
         Diffcalcs(
             xr.DataArray(self._samples[0]['observed']),
@@ -152,7 +149,6 @@ class TestErrorcalcs(TestCase):
         import xarray as xr
 
         # import zfpy
-
         ds = xr.open_dataset('data/cam-fv/orig.TS.100days.nc')
 
         TS = ds.TS
@@ -166,8 +162,7 @@ class TestErrorcalcs(TestCase):
         self.assertTrue(test_overall_calcs.mean == -0.5)
 
     def test_magnitude_range(self):
-        # check if the sum of the magnitude range is 2 with a tolerance of 1e-09
-        value = test_overall_calcs.magnitude_range.values.sum()
+        value = float(test_overall_calcs.magnitude_range.values)
         self.assertTrue(np.isclose(value, 2, rtol=1e-04))
 
     def test_mean_abs(self):

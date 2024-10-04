@@ -114,6 +114,7 @@ class TestErrorcalcsPOP(TestCase):
         Diffcalcs(
             xr.DataArray(self._samples[0]['observed']),
             xr.DataArray(self._samples[0]['measured']),
+            'pop',
             [],
         )
 
