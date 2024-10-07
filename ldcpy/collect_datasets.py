@@ -6,7 +6,7 @@ def preprocess(ds, varnames):
     return ds[varnames]
 
 
-def collect_datasets(data_type, varnames, list_of_ds, labels, **kwargs):
+def OLD_collect_datasets(data_type, varnames, list_of_ds, labels, **kwargs):
     """
     Concatenate several different xarray datasets across a new
     "collection" dimension, which can be accessed with the specified

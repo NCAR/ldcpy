@@ -7,7 +7,6 @@ import time
 from math import exp, pi, sqrt
 from typing import Optional
 
-
 import cf_xarray as cf
 import dask
 import matplotlib as mpl
@@ -28,7 +27,7 @@ from skimage.metrics import structural_similarity as ssim
 from skimage.util import crop
 from xrft import dft
 
-from .collect_datasets import collect_datasets
+# from .collect_datasets import collect_datasets
 
 xr.set_options(keep_attrs=True)
 
@@ -43,7 +42,7 @@ class Datasetcalcs:
         ds: xr.DataArray,
         data_type: str,
         aggregate_dims: list,
-        time_dim_name: str = 'time',
+        time_dim_name: str = None,
         lat_dim_name: str = None,
         lon_dim_name: str = None,
         vert_dim_name: str = None,
@@ -55,6 +54,9 @@ class Datasetcalcs:
         self._ds = ds if (ds.dtype == np.float64) else ds.astype(np.float64)
         # For some reason, casting to float64 removes all attrs from the dataset
         self._ds.attrs = ds.attrs
+
+        if data_type == 'wrf':
+            weighted = False
 
         if weighted:
             if 'cell_measures' not in self._ds.attrs:
@@ -72,6 +74,7 @@ class Datasetcalcs:
             lat_coord_name = ds.cf.coordinates['latitude'][0]
         self._lat_coord_name = lat_coord_name
 
+        # WRF ALSO HAS XLAT_U and XLONG_U, XLAT_v and XLONG_V
         dd = ds.cf[ds.cf.coordinates['latitude'][0]].dims
 
         ll = len(dd)
@@ -85,6 +88,11 @@ class Datasetcalcs:
                 lat_dim_name = dd[0]
             if lon_dim_name is None:
                 lon_dim_name = dd[1]
+        elif data_type == 'wrf':
+            if lat_dim_name is None:
+                lat_dim_name = dd[0]
+            if lon_dim_name is None:
+                lon_dim_name = dd[1]
         else:
             print('Warning: unknown data_type: ', data_type)
 
@@ -94,12 +102,23 @@ class Datasetcalcs:
 
         # vertical dimension?
         if vert_dim_name is None:
-            vert = 'vertical' in ds.cf
-            if vert:
-                vert_dim_name = ds.cf['vertical'].name
+            if data_type == 'wrf':
+                vert = 'z' in ds.dims
+                if vert:
+                    vert_dim_name = 'z'
+            else:
+                vert = 'vertical' in ds.cf
+                if vert:
+                    vert_dim_name = ds.cf['vertical'].name
         self._vert_dim_name = vert_dim_name
 
-        # time dimension TO DO: check this (after cf_xarray update)
+        # time dimension
+        if time_dim_name is None:
+            if 'time' in ds.cf.coordinates.keys():
+                time_dim_name = ds.cf.coordinates['time'][0]
+            else:
+                time_dim_name = None
+
         self._time_dim_name = time_dim_name
 
         self._quantile = q
@@ -315,8 +334,10 @@ class Datasetcalcs:
             )
         return self._most_repeated_pct
 
-    def log_max(ds):
-        return np.log10(abs(ds)).where(np.log10(abs(ds)) != -np.inf).max(skipna=True)
+    # def log_max(ds):
+    #    a_d = abs(ds)
+    #    return np.log10(a_d, where=a_d.data > 0 ).max(skipna=True)
+    # return np.log10(abs(ds)).where(np.log10(abs(ds)) != -np.inf).max(skipna=True)
 
     @property
     def magnitude_range(self) -> xr.DataArray:
@@ -331,7 +352,10 @@ class Datasetcalcs:
             def min_agg(ds):
                 return ds.min(skipna=True)
 
-            log_ds = np.log10(abs(self._ds)).where(np.log10(abs(self._ds)) != -np.inf)
+            # avoid divde by zero warning
+            # log_ds = np.log10(abs(self._ds)).where(np.log10(abs(self._ds)) != -np.inf)
+            a_d = abs(self._ds.copy())
+            log_ds = np.log10(a_d, where=a_d.data > 0)
 
             if len(self._not_agg_dims) == 0:
                 my_max = max_agg(log_ds)
@@ -340,7 +364,6 @@ class Datasetcalcs:
                 stack = log_ds.stack(multi_index=tuple(self._not_agg_dims))
                 my_max = stack.groupby('multi_index').map(max_agg)
                 my_min = stack.groupby('multi_index').map(min_agg)
-
             if (
                 np.isinf(my_max).any()
                 or np.isinf(my_min).any()
@@ -351,7 +374,7 @@ class Datasetcalcs:
                 return self._magnitude_range
             else:
                 self._magnitude_range = my_max - my_min
-            # self._magnitude_range.attrs = self._ds.attrs
+
         return self._magnitude_range
 
     @property
@@ -788,7 +811,10 @@ class Datasetcalcs:
         The pooled variance along the aggregate dimensions
         """
         if not self._is_memoized('_pooled_variance_ratio'):
-            self._pooled_variance_ratio = self.variance / self.pooled_variance
+            denom = self.pooled_variance.copy().fillna(0)
+            denom = np.where(denom == 0, 1e-12, denom)
+            self._pooled_variance_ratio = self.variance / denom
+            # self._pooled_variance_ratio = self.variance / self.pooled_variance
             self._pooled_variance_ratio.attrs = self._ds.attrs
             if hasattr(self._ds, 'units'):
                 self._pooled_variance_ratio.attrs['units'] = ''
@@ -880,13 +906,16 @@ class Datasetcalcs:
         NOTE: currently assumes we are aggregating along the time dimension so is only suitable for a spatial plot.
         """
         if not self._is_memoized('_zscore'):
-            self._zscore = np.divide(
-                self.mean, self.std / np.sqrt(self._ds.sizes[self._time_dim_name])
-            )
-            self._zscore.attrs = self._ds.attrs
-            if hasattr(self._ds, 'units'):
-                self._zscore.attrs['units'] = ''
-
+            if self._time_dim_name is not None:
+                self._zscore = np.divide(
+                    self.mean, self.std / np.sqrt(self._ds.sizes[self._time_dim_name])
+                )
+                self._zscore.attrs = self._ds.attrs
+                if hasattr(self._ds, 'units'):
+                    self._zscore.attrs['units'] = ''
+            else:
+                self._zscore = 0
+                print('Warning: Zscore requires a time dimension')
         return self._zscore
 
     @property
@@ -1138,7 +1167,7 @@ class Datasetcalcs:
             if 'dayofyear' in self._ds.attrs.keys():
                 key = f'{self._time_dim_name}.dayofyear'
             else:
-                key = 'time'
+                key = f'{self._time_dim_name}'
             grouped = self._ds.groupby(key, squeeze=False)
             if self._time_dim_name in self._ds.attrs.keys():
                 self._deseas_resid = grouped - grouped.mean(dim=self._time_dim_name)
@@ -1147,12 +1176,14 @@ class Datasetcalcs:
                 self._deseas_resid = grouped.mean(dim=self._time_dim_name) - self._ds.mean()
             time_length = self._deseas_resid.sizes[self._time_dim_name]
             current = self._deseas_resid.head({self._time_dim_name: time_length - 1})
-            next = self._deseas_resid.shift({self._time_dim_name: -1}).head(
+            next_one = self._deseas_resid.shift({self._time_dim_name: -1}).head(
                 {self._time_dim_name: time_length - 1}
             )
 
-            num = current.fillna(0).dot(next.fillna(0), dims=self._time_dim_name)
-            denom = current.fillna(0).dot(current.fillna(0), dims=self._time_dim_name)
+            num = current.fillna(0).dot(next_one.fillna(0), dim=self._time_dim_name)
+            denom = current.fillna(0).dot(current.fillna(0), dim=self._time_dim_name)
+            # don't divide by zero :)
+            denom = np.where(denom == 0, 1e-12, denom)
             self._lag1 = num / denom
 
             self._lag1.attrs = self._ds.attrs
@@ -1169,15 +1200,26 @@ class Datasetcalcs:
         so can only be plotted in a spatial plot.
         """
         if not self._is_memoized('_lag1_first_difference'):
-            key = f'{self._time_dim_name}.dayofyear'
-            grouped = self._ds.groupby(key)
-            self._deseas_resid = grouped - grouped.mean(dim=self._time_dim_name)
+
+            if 'dayofyear' in self._ds.attrs.keys():
+                key = f'{self._time_dim_name}.dayofyear'
+            else:
+                key = f'{self._time_dim_name}'
+
+            grouped = self._ds.groupby(key, squeeze=False)
+            if self._time_dim_name in self._ds.attrs.keys():
+                self._deseas_resid = grouped - grouped.mean(dim=self._time_dim_name)
+            else:
+                # note: not actually deseasonalized
+                self._deseas_resid = grouped.mean(dim=self._time_dim_name) - self._ds.mean()
+
             time_length = self._deseas_resid.sizes[self._time_dim_name]
             current = self._deseas_resid.head({self._time_dim_name: time_length - 1})
-            next = self._deseas_resid.shift({self._time_dim_name: -1}).head(
+            next_one = self._deseas_resid.shift({self._time_dim_name: -1}).head(
                 {self._time_dim_name: time_length - 1}
             )
-            first_difference = next - current
+
+            first_difference = next_one - current
             first_difference_current = first_difference.head({self._time_dim_name: time_length - 1})
             first_difference_next = first_difference.shift({self._time_dim_name: -1}).head(
                 {self._time_dim_name: time_length - 1}
@@ -1186,7 +1228,11 @@ class Datasetcalcs:
             num = (first_difference_current * first_difference_next).sum(
                 dim=[self._time_dim_name], skipna=True
             )
-            denom = first_difference_current.dot(first_difference_current, dims=self._time_dim_name)
+
+            denom = first_difference_current.dot(first_difference_current, dim=self._time_dim_name)
+            # don't divide by zero
+            denom = np.where(denom == 0, 1e-12, denom)
+
             self._lag1_first_difference = num / denom
 
             self._lag1_first_difference.attrs = self._ds.attrs
@@ -1203,7 +1249,11 @@ class Datasetcalcs:
             # if hasattr(self._ds, 'units'):
             #    self._fft2.attrs['units'] = f'{self._ds.units}'
             self._fft2 = self._fft2.rename(
-                {'dim_0': 'time', 'dim_1': self._lat_dim_name, 'dim_2': self._lon_dim_name}
+                {
+                    'dim_0': self._time_dim_name,
+                    'dim_1': self._lat_dim_name,
+                    'dim_2': self._lon_dim_name,
+                }
             )
             self._fft2 = self._fft2.assign_coords(
                 {
@@ -1479,10 +1529,13 @@ class Datasetcalcs:
                 sorted_pvals = np.sort(pvals_array).flatten()
             fdr_zscore = 0.01
             p = np.argwhere(sorted_pvals <= fdr_zscore * np.arange(1, pvals.size + 1) / pvals.size)
-            pval_cutoff = sorted_pvals[p[len(p) - 1]]
-            if not (pval_cutoff.size == 0):
-                sig_locs = np.argwhere(pvals <= pval_cutoff)
-                percent_sig = 100 * np.size(sig_locs, 0) / pvals.size
+            if p.size > 0:
+                pval_cutoff = sorted_pvals[p[len(p) - 1]]
+                if not (pval_cutoff.size == 0):
+                    sig_locs = np.argwhere(pvals <= pval_cutoff)
+                    percent_sig = 100 * np.size(sig_locs, 0) / pvals.size
+                else:
+                    percent_sig = 0
             else:
                 percent_sig = 0
             self._zscore_percent_significant = percent_sig
@@ -1493,9 +1546,6 @@ class Datasetcalcs:
         da = self.get_calc(calc_name)
         ds = da.squeeze().to_dataset(name=var_name, promote_attrs=True)
         ds.attrs['data_type'] = da.data_type
-        # new_ds = collect_datasets(self._ds.data_type, [var_name], [ds],
-        #                                [self._ds.set_name])
-        # new_ds = new_ds.astype(self.dtype)
         return ds
 
     def get_calc(self, name: str, q: Optional[int] = 0.5, grouping: Optional[str] = None, ddof=1):
@@ -2074,16 +2124,9 @@ class Diffcalcs:
         This creates two plots and uses the standard SSIM.
         """
 
-        # import tempfile
-
-        # import skimage.io
-        # import skimage.metrics
-        # from skimage.metrics import structural_similarity as ssim
-
         k1 = self._k1
         k2 = self._k2
 
-        #        if not self._is_memoized('_ssim_value'):
         if True:
             # Prevent showing stuff
             backend_ = mpl.get_backend()
@@ -2101,25 +2144,28 @@ class Diffcalcs:
             central = 0.0  # might make this a parameter later
             if self._data_type == 'pop':
                 central = 300.0
-            # make periodic
+            # make periodic for pop or cam-fv
             if self._data_type == 'pop':
                 cy_lon1 = np.hstack((lon1, lon1[:, 0:1]))
                 cy_lon2 = np.hstack((lon2, lon2[:, 0:1]))
-
                 cy_lat1 = np.hstack((lat1, lat1[:, 0:1]))
                 cy_lat2 = np.hstack((lat2, lat2[:, 0:1]))
-
                 cy1 = add_cyclic_point(d1)
                 cy2 = add_cyclic_point(d2)
+                no_inf_d1 = np.nan_to_num(cy1, nan=np.nan)
+                no_inf_d2 = np.nan_to_num(cy2, nan=np.nan)
 
-            else:  # cam-fv
+            elif self._data_type == 'cam-fv':  # cam-fv
                 cy1, cy_lon1 = add_cyclic_point(d1, coord=lon1)
                 cy2, cy_lon2 = add_cyclic_point(d2, coord=lon2)
                 cy_lat1 = lat1
                 cy_lat2 = lat2
+                no_inf_d1 = np.nan_to_num(cy1, nan=np.nan)
+                no_inf_d2 = np.nan_to_num(cy2, nan=np.nan)
 
-            no_inf_d1 = np.nan_to_num(cy1, nan=np.nan)
-            no_inf_d2 = np.nan_to_num(cy2, nan=np.nan)
+            elif self._data_type == 'wrf':
+                no_inf_d1 = np.nan_to_num(d1, nan=np.nan)
+                no_inf_d2 = np.nan_to_num(d2, nan=np.nan)
 
             # is it 3D? must do each level
             if self._calcs1._vert_dim_name is not None:

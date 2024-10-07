@@ -3,7 +3,7 @@ channels:
   - conda-forge
 dependencies:
   #  - python=*=*cp*
-  - python=3.9
+  - python
   - cartopy
   - cmocean
   - codecov
@@ -11,8 +11,6 @@ dependencies:
   - dask
   - graphviz
   - intake-esm
-  - notebook=6.4.12
-  - jupyter_contrib_nbextensions
   - jupyterlab
   - matplotlib
   - matplotlib-base
@@ -30,11 +28,9 @@ dependencies:
   - setuptools
   - zfpy
   - cf_xarray
+  - xarray
+  - xrft
   - astropy
   - ipython
   - pooch
   - statsmodels
-  - pip:
-      - git+https://github.com/pydata/xarray.git
-      - git+https://github.com/xarray-contrib/cf-xarray.git
-      - git+https://github.com/xgcm/xrft.git

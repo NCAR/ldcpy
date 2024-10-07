@@ -10,7 +10,9 @@ import xarray as xr
 from .calcs import Datasetcalcs, Diffcalcs
 
 
-def collect_datasets(data_type, varnames, list_of_ds, labels, **kwargs):
+def collect_datasets(
+    data_type, varnames, list_of_ds, labels, coords_ds=None, file_sizes=None, **kwargs
+):
     """
     Concatonate several different xarray datasets across a new
     "collection" dimension, which can be accessed with the specified
@@ -22,15 +24,18 @@ def collect_datasets(data_type, varnames, list_of_ds, labels, **kwargs):
     Parameters
     ==========
     data_type: string
-        Current data types: :cam-fv, pop
+        Current data types: :cam-fv, pop, wrf
     varnames : list
         The variable(s) of interest to combine across input files (usually just one)
     list_of_datasets : list
-        The datasets to be concatonated into a collection
+        The xarray datasets to be concatonated into a collection
     labels : list
         The respective label to access data from each dataset (also used in plotting fcns)
-
-        **kwargs :
+    coords_ds : xarray dataset
+        (optional) Specify an additional file that contains lat/lon corrds (common for WRF data)
+    file_sizes : list
+         (optional) sizes of files that each dataset corresponds to (used to print in compare_stats table
+    **kwargs :
         (optional) – Additional arguments passed on to xarray.concat(). A list of available arguments can
         be found here: https://xarray-test.readthedocs.io/en/latest/generated/xarray.concat.html
 
@@ -38,6 +43,12 @@ def collect_datasets(data_type, varnames, list_of_ds, labels, **kwargs):
     =======
     out : xarray.Dataset
           a collection containing all the data from the list datasets
+
+    Notes
+    ======
+    -WRF data must be postprocessed with xWRF before passing to ldcpy
+    (e.g., ds = xr.open_dataset(wrf_file, engine="netcdf4").xwrf.postprocess())
+    -For now lat/lon info must be in the same file!
 
     """
     # Error checking:
@@ -49,16 +60,52 @@ def collect_datasets(data_type, varnames, list_of_ds, labels, **kwargs):
     # the number of timeslices must be the same
     sz = np.zeros(len(list_of_ds))
     for i, myds in enumerate(list_of_ds):
-        sz[i] = myds.sizes['time']
+        time_name = myds.cf.coordinates['time'][0]
+        sz[i] = myds.sizes[time_name]
     indx = np.unique(sz)
     assert indx.size == 1, 'ERROR: all datasets must have the same length time dimension'
 
+    # file sizes?
+    if file_sizes is not None:
+        assert len(file_sizes) == len(
+            labels
+        ), 'ERROR::collect_dataset dataset list and file sizes arguments must be the same length'
+
+    # wrf data must contain lat/lon info in same file if a coord_file is not specified
+    if data_type == 'wrf':
+        if coords_ds is None:
+            latlon_found = np.zeros(len(list_of_ds))
+            for i, myds in enumerate(list_of_ds):
+                # XLAT,XLONG,XLAT_U,XLONG_U,XLAT_V,XLONG_V
+                for j in myds.coords.keys():
+                    if j == 'XLAT' or j == 'XLONG':
+                        latlon_found[i] += 1
+            indx = np.where(latlon_found > 1)[0]
+            assert len(indx) == len(list_of_ds), 'ERROR: WRF datasets must contain XLAT and XLONG'
+        else:  # has a coords ds
+            ds_notime = coords_ds.drop_dims('Time')
+            # copy coords to EACH of the datasets
+            for i, myds in enumerate(list_of_ds):
+                ds_new = myds.assign_coords(ds_notime.coords)
+                list_of_ds[i] = ds_new.copy(deep=True)
+
+    # weights?
     if data_type == 'cam-fv':
         weights_name = 'gw'
-        varnames.append(weights_name)
+        if weights_name in list_of_ds[0].variables:
+            varnames.append(weights_name)
+        else:
+            weights_name = None
     elif data_type == 'pop':
         weights_name = 'TAREA'
         varnames.append(weights_name)
+    elif data_type == 'wrf':
+        weights_name = None
+
+    if weights_name is None:
+        weighted = False
+    else:
+        weighted = True
 
     # preprocess_vars is here for working on jupyter hub...
     def preprocess_vars(ds, varnames):
@@ -72,7 +119,7 @@ def collect_datasets(data_type, varnames, list_of_ds, labels, **kwargs):
 
     if data_type == 'pop':
         full_ds.coords['cell_area'] = xr.DataArray(full_ds.variables.mapping.get(weights_name))[0]
-    else:
+    elif data_type == 'cam-fv':
         full_ds.coords['cell_area'] = (
             xr.DataArray(full_ds.variables.mapping.get(weights_name))
             .expand_dims(lon=full_ds.dims['lon'])
@@ -81,13 +128,36 @@ def collect_datasets(data_type, varnames, list_of_ds, labels, **kwargs):
 
     full_ds.attrs['cell_measures'] = 'area: cell_area'
 
-    full_ds = full_ds.drop(weights_name)
+    if weights_name:
+        full_ds = full_ds.drop(weights_name)
 
     full_ds['collection'] = xr.DataArray(labels, dims='collection')
 
     print('dataset size in GB {:0.2f}\n'.format(full_ds.nbytes / 1e9))
     full_ds.attrs['data_type'] = data_type
     full_ds.attrs['file_size'] = None
+    full_ds.attrs['weighted'] = weighted
+
+    # file sizes?
+    if file_sizes is not None:
+        file_size_dict = {}
+        for i, myfile in enumerate(list_of_ds):
+            file_size_dict[labels[i]] = file_sizes[i]
+        full_ds.attrs['file_size'] = file_size_dict
+
+    # from other copy of this function
+    for v in varnames[:-1]:
+        new_ds = []
+        i = 0
+        for label in labels:
+            new_ds.append(full_ds[v].sel(collection=label))
+            new_ds[i].attrs['data_type'] = data_type
+            new_ds[i].attrs['set_name'] = label
+            new_ds[i].attrs['weighted'] = weighted
+
+        # d = xr.combine_by_coords(new_ds)
+        d = xr.concat(new_ds, 'collection')
+        full_ds[v] = d
 
     return full_ds
 
@@ -106,6 +176,7 @@ def open_datasets(data_type, varnames, list_of_files, labels, weights=True, **kw
     a new 'collection' dimension, which can be accessed with the specified
     labels. Stores them in an xarray dataset which can be passed to the ldcpy
     plot functions.
+
 
     Parameters
     ==========
@@ -127,6 +198,12 @@ def open_datasets(data_type, varnames, list_of_files, labels, weights=True, **kw
     out : xarray.Dataset
           a collection containing all the data from the list of files
 
+
+    Notes
+    ======
+    wrf netcdf data must be postprocessed with xwrf, e.g.
+    ds = xr.open_dataset(wrf_file, engine="netcdf4").xwrf.postprocess()
+    So need to use collect_data instead.
     """
 
     # Error checking:
@@ -134,6 +211,10 @@ def open_datasets(data_type, varnames, list_of_files, labels, weights=True, **kw
     assert len(list_of_files) == len(
         labels
     ), 'ERROR: open_dataset file list and labels arguments must be the same length'
+    # can't use wrf wwith this function
+    assert (
+        data_type != 'wrf'
+    ), 'ERROR: WRF files must be postprocessed with xWRF and passed to collect_dataset'
 
     # all must have the same time dimension
     sz = np.zeros(len(list_of_files))
@@ -156,13 +237,25 @@ def open_datasets(data_type, varnames, list_of_files, labels, weights=True, **kw
 
         return ds[varnames]
 
+    # check the weights
+    tmp_ds = xr.open_dataset(list_of_files[0])
     if data_type == 'cam-fv' and weights is True:
-        pass
         weights_name = 'gw'
-        varnames.append(weights_name)
+        if weights_name in tmp_ds.variables:
+            varnames.append(weights_name)
+        else:
+            weights_name = None
     elif data_type == 'pop' and weights is True:
         weights_name = 'TAREA'
         varnames.append(weights_name)
+    elif data_type == 'wrf':
+        weights = False
+        weights_name = None
+
+    if weights_name is None:
+        weighted = False
+    else:
+        weighted = True
 
     full_ds = xr.open_mfdataset(
         list_of_files,
@@ -176,10 +269,10 @@ def open_datasets(data_type, varnames, list_of_files, labels, weights=True, **kw
 
     if data_type == 'pop' and weights is True:
         full_ds.coords['cell_area'] = xr.DataArray(full_ds.variables.mapping.get(weights_name))[0]
-    elif weights is True:
+    elif data_type == 'cam-fv' and weights is True:
         full_ds.coords['cell_area'] = (
             xr.DataArray(full_ds.variables.mapping.get(weights_name))
-            .expand_dims(lon=full_ds.dims['lon'])
+            .expand_dims(lon=full_ds.sizes['lon'])
             .transpose()
         )
 
@@ -192,6 +285,7 @@ def open_datasets(data_type, varnames, list_of_files, labels, weights=True, **kw
     print('dataset size in GB {:0.2f}\n'.format(full_ds.nbytes / 1e9))
     full_ds.attrs['data_type'] = data_type
     full_ds.attrs['file_size'] = file_size_dict
+    full_ds.attrs['weighted'] = weighted
 
     for v in varnames[:-1]:
         new_ds = []
@@ -200,6 +294,7 @@ def open_datasets(data_type, varnames, list_of_files, labels, weights=True, **kw
             new_ds.append(full_ds[v].sel(collection=label))
             new_ds[i].attrs['data_type'] = data_type
             new_ds[i].attrs['set_name'] = label
+            new_ds[i].attrs['weighted'] = weighted
 
         # d = xr.combine_by_coords(new_ds)
         d = xr.concat(new_ds, 'collection')
@@ -249,6 +344,18 @@ def compare_stats(
 
     da = ds[varname]
     data_type = ds.attrs['data_type']
+    attr_weighted = ds.attrs['weighted']
+
+    # no weights for wrf
+    if data_type == 'cam-fv':
+        if weighted:
+            if not attr_weighted:
+                print(
+                    'Warning - this data does not contain weights, so averages will be unweighted.'
+                )
+                weighted = False
+    if data_type == 'wrf':
+        weighted = False
 
     file_size_dict = ds.attrs['file_size']
     if file_size_dict is None:
@@ -302,6 +409,12 @@ def compare_stats(
             )
         )
 
+    # are the arrays using dask
+    if da_sets[0].chunks is not None:
+        using_dask = True
+    else:
+        using_dask = False
+
     # DATA FRAME
     import pandas as pd
     from IPython.display import HTML, display
@@ -322,22 +435,65 @@ def compare_stats(
     temp_ac_lat = []
     temp_ac_lon = []
     temp_entropy = []
-    # temp_info = []
+    temp_info = []
 
     for i in range(num):
-        temp_mean.append(da_set_calcs[i].get_calc('mean').data.compute())
-        temp_var.append(da_set_calcs[i].get_calc('variance').data.compute())
-        temp_std.append(da_set_calcs[i].get_calc('std').data.compute())
-        temp_max.append(da_set_calcs[i].get_calc('max_val').data.compute())
-        temp_min.append(da_set_calcs[i].get_calc('min_val').data.compute())
-        temp_min_abs_nonzero.append(da_set_calcs[i].get_calc('min_abs_nonzero').data.compute())
-        temp_pos.append(da_set_calcs[i].get_calc('prob_positive').data.compute())
-        temp_zeros.append(da_set_calcs[i].get_calc('num_zero').data.compute())
+        # only use compute if it's a dask array
+        temp_return = da_set_calcs[i].get_calc('mean').data
+        if using_dask:
+            temp_mean.append(temp_return.compute())
+        else:
+            temp_mean.append(temp_return)
+
+        temp_return = da_set_calcs[i].get_calc('variance').data
+        if using_dask:
+            temp_var.append(temp_return.compute())
+        else:
+            temp_var.append(temp_return)
+
+        temp_return = da_set_calcs[i].get_calc('std').data
+        if using_dask:
+            temp_std.append(temp_return.compute())
+        else:
+            temp_std.append(temp_return)
+
+        temp_return = da_set_calcs[i].get_calc('max_val').data
+        if using_dask:
+            temp_max.append(temp_return.compute())
+        else:
+            temp_max.append(temp_return)
+
+        temp_return = da_set_calcs[i].get_calc('min_val').data
+        if using_dask:
+            temp_min.append(temp_return.compute())
+        else:
+            temp_min.append(temp_return)
+
+        temp_return = da_set_calcs[i].get_calc('min_abs_nonzero').data
+        if using_dask:
+            temp_min_abs_nonzero.append(temp_return.compute())
+        else:
+            temp_min_abs_nonzero.append(temp_return)
+
+        temp_return = da_set_calcs[i].get_calc('prob_positive').data
+        if using_dask:
+            temp_pos.append(temp_return.compute())
+        else:
+            temp_pos.append(temp_return)
+
+        temp_return = da_set_calcs[i].get_calc('num_zero').data
+        if using_dask:
+            temp_zeros.append(temp_return.compute())
+        else:
+            temp_zeros.append(temp_return)
+
         # Alex is fixing ..
-        # temp_info.append(da_set_calcs[i].get_single_calc('real_information_cutoff'))
+        temp_info.append(da_set_calcs[i].get_single_calc('real_information_cutoff'))
+
         if data_type == 'cam-fv':
             temp_ac_lat.append(da_set_calcs[i].get_single_calc('lat_autocorr'))
             temp_ac_lon.append(da_set_calcs[i].get_single_calc('lon_autocorr'))
+
         temp_entropy.append(da_set_calcs[i].get_single_calc('entropy'))
 
     df_dict['mean'] = temp_mean
@@ -348,7 +504,7 @@ def compare_stats(
     df_dict['max value'] = temp_max
     df_dict['probability positive'] = temp_pos
     df_dict['number of zeros'] = temp_zeros
-    #   df_dict['99% real information cutoff bit'] = temp_info
+    df_dict['99% real information cutoff bit'] = temp_info
     if data_type == 'cam-fv':
         df_dict['spatial autocorr - latitude'] = temp_ac_lat
         df_dict['spatial autocorr - longitude'] = temp_ac_lon
@@ -378,11 +534,40 @@ def compare_stats(
     temp_rms = []
 
     for i in range(num - 1):
-        temp_max_abs.append(dd_set_calcs[i].get_calc('max_abs').data.compute())
-        temp_min_abs.append(dd_set_calcs[i].get_calc('min_abs').data.compute())
-        temp_mean_abs.append(dd_set_calcs[i].get_calc('mean_abs').data.compute())
-        temp_mean_sq.append(dd_set_calcs[i].get_calc('mean_squared').data.compute())
-        temp_rms.append(dd_set_calcs[i].get_calc('rms').data.compute())
+        # temp_max_abs.append(dd_set_calcs[i].get_calc('max_abs').data.compute())
+        temp_return = dd_set_calcs[i].get_calc('max_abs').data
+        if using_dask:
+            temp_max_abs.append(temp_return.compute())
+        else:
+            temp_max_abs.append(temp_return)
+
+        # temp_min_abs.append(dd_set_calcs[i].get_calc('min_abs').data.compute())
+        temp_return = dd_set_calcs[i].get_calc('min_abs').data
+        if using_dask:
+            temp_min_abs.append(temp_return.compute())
+        else:
+            temp_min_abs.append(temp_return)
+
+        # temp_mean_abs.append(dd_set_calcs[i].get_calc('mean_abs').data.compute())
+        temp_return = dd_set_calcs[i].get_calc('mean_abs').data
+        if using_dask:
+            temp_mean_abs.append(temp_return.compute())
+        else:
+            temp_mean_abs.append(temp_return)
+
+        # temp_mean_sq.append(dd_set_calcs[i].get_calc('mean_squared').data.compute())
+        temp_return = dd_set_calcs[i].get_calc('mean_squared').data
+        if using_dask:
+            temp_mean_sq.append(temp_return.compute())
+        else:
+            temp_mean_sq.append(temp_return)
+
+        # temp_rms.append(dd_set_calcs[i].get_calc('rms').data.compute())
+        temp_return = dd_set_calcs[i].get_calc('rms').data
+        if using_dask:
+            temp_rms.append(temp_return.compute())
+        else:
+            temp_rms.append(temp_return)
 
     df_dict2['max abs diff'] = temp_max_abs
     df_dict2['min abs diff'] = temp_min_abs
@@ -532,12 +717,13 @@ def check_metrics(
     num_fail = 0
     # Pearson less than pcc_tol means fail
     pcc = diff_calcs.get_diff_calc('pearson_correlation_coefficient')
+    # print(type(pcc))
     if pcc < pcc_tol:
 
         print('     *FAILED pearson correlation coefficient test...(pcc = {0:.5f}'.format(pcc), ')')
         num_fail = num_fail + 1
     else:
-        print('     PASSED pearson correlation coefficient test...(pcc = {0:.5f}'.format(pcc), ')')
+        print('     PASSED pearson correlation coefficient test...(pcc = {0: .5f}'.format(pcc), ')')
     # K-S p-value less than ks_tol means fail (can reject null hypo)
     ks = diff_calcs.get_diff_calc('ks_p_value')
     if ks < ks_tol:
@@ -573,7 +759,7 @@ def subset_data(
     lev=None,
     start=None,
     end=None,
-    time_dim_name='time',
+    time_dim_name=None,
     vertical_dim_name=None,
     lat_coord_name=None,
     lon_coord_name=None,
@@ -599,6 +785,9 @@ def subset_data(
             vertical_dim_name = ds.cf.coordinates['vertical'][0]
 
     # print(lat_coord_name, lon_coord_name, vertical_dim_name)
+
+    if time_dim_name is None:
+        time_dim_name = ds.cf.coordinates['time'][0]
 
     latdim = ds_subset.cf[lon_coord_name].ndim
     # need dim names
@@ -639,32 +828,47 @@ def subset_data(
 
     elif latdim == 2:
 
-        # print(ds_subset)
-
         if lat is not None:
             if lon is not None:
 
-                # lat is -90 to 90
-                # lon should be 0- 360
-                ad_lon = lon
-                if ad_lon < 0:
-                    ad_lon = ad_lon + 360
+                if ds_subset.data_type == 'pop':
 
-                mlat = ds_subset[lat_coord_name].compute()
-                mlon = ds_subset[lon_coord_name].compute()
-                # euclidean dist for now....
-                di = np.sqrt(np.square(ad_lon - mlon) + np.square(lat - mlat))
-                index = np.where(di == np.min(di))
-                xmin = index[0][0]
-                ymin = index[1][0]
+                    # lat is -90 to 90
+                    # lon should be 0- 360
+                    ad_lon = lon
+                    if ad_lon < 0:
+                        ad_lon = ad_lon + 360
 
-                # Don't want if it's a land point
-                check = ds_subset.isel(nlat=xmin, nlon=ymin, time=1).compute()
-                if np.isnan(check):
-                    print(
-                        'You have chosen a lat/lon point with Nan values (i.e., a land point). Plot will not make sense.'
-                    )
-                ds_subset = ds_subset.isel({lat_dim_name: [xmin], lon_dim_name: [ymin]})
+                    mlat = ds_subset[lat_coord_name].compute()
+                    mlon = ds_subset[lon_coord_name].compute()
+                    # euclidean dist for now....
+                    di = np.sqrt(np.square(ad_lon - mlon) + np.square(lat - mlat))
+                    index = np.where(di == np.min(di))
+                    xmin = index[0][0]
+                    ymin = index[1][0]
+
+                    # Don't want if it's a land point
+                    check = ds_subset.isel(nlat=xmin, nlon=ymin, time=1).compute()
+                    if np.isnan(check):
+                        print(
+                            'You have chosen a lat/lon point with Nan values (i.e., a land point). Plot will not make sense.'
+                        )
+                    ds_subset = ds_subset.isel({lat_dim_name: [xmin], lon_dim_name: [ymin]})
+
+                elif ds_subset.data_type == 'wrf':
+                    # print(lat_dim_name, lon_dim_name)
+                    ad_lon = lon
+                    mlat = ds_subset[lat_coord_name].compute()
+                    mlon = ds_subset[lon_coord_name].compute()
+                    di = np.sqrt(np.square(ad_lon - mlon) + np.square(lat - mlat))
+                    index = np.where(di == np.min(di))
+                    xmin = index[0][0]
+                    ymin = index[1][0]
+                    # print(xmin, ymin)
+                    # TO DO: add error checking for if it's out of bounds
+                    # check = ds_subset.isel({lat_dim_name: [xmin], lon_dim_name : [ymin], time_dim_name: [1]}).compute()
+                    # print(check)
+                    ds_subset = ds_subset.isel({lat_dim_name: [xmin], lon_dim_name: [ymin]})
 
                 # ds_subset.compute()
 

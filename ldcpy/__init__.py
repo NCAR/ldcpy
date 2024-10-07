@@ -4,13 +4,14 @@
 from pkg_resources import DistributionNotFound, get_distribution
 
 from .calcs import Datasetcalcs, Diffcalcs
-from .collect_datasets import collect_datasets
+
+# from .collect_datasets import collect_datasets
 from .comp_checker import CompChecker
 from .derived_vars import cam_budgets
 from .plot import plot
 from .util import (
     check_metrics,
-    combine_datasets,
+    collect_datasets,
     compare_stats,
     open_datasets,
     save_metrics,

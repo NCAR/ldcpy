@@ -27,7 +27,7 @@ test_data = xr.DataArray(
     coords=[
         ('lat', lats, {'standard_name': 'latitude', 'units': 'degrees_north'}),
         ('lon', lons, {'standard_name': 'longitude', 'units': 'degrees_east'}),
-        ('time', times),
+        ('time', times, {'standard_name': 'time'}),
     ],
     dims=['lat', 'lon', 'time'],
 )
@@ -36,11 +36,14 @@ test_data_2 = xr.DataArray(
     coords=[
         ('lat', lats, {'standard_name': 'latitude', 'units': 'degrees_north'}),
         ('lon', lons, {'standard_name': 'longitude', 'units': 'degrees_east'}),
-        ('time', times),
+        ('time', times, {'standard_name': 'time'}),
     ],
     dims=['lat', 'lon', 'time'],
 )
+
+
 d = ds['TS'].sel(collection='orig')
+
 ds_pointwise_calcs = ldcpy.Datasetcalcs(d, 'cam-fv', [], weighted=False)
 ds_spatial_calcs = ldcpy.Datasetcalcs(d, 'cam-fv', ['time'], weighted=False)
 
@@ -97,17 +100,11 @@ class TestErrorcalcs(TestCase):
             }
         ]
 
-    #    def test_fftsum(self):
-    #        f = ds_spatial_calcs.get_calc('fft2')
-    #        t = ldcpy.Datasetcalcs(f, 'cam-fv', [], weighted=False)
-    #        t.get_single_calc('fftsum')
-    #        self.assertTrue(True)
-
     def test_creation_01(self):
         Diffcalcs(
             xr.DataArray(self._samples[0]['observed']),
             xr.DataArray(self._samples[0]['measured']),
-            [],
+            'cam-fv',
         )
 
     def test_error_01(self):
@@ -132,7 +129,7 @@ class TestErrorcalcs(TestCase):
     def test_mean_error_02(self):
         em = Datasetcalcs(
             xr.DataArray(self._samples[0]['observed'] - xr.DataArray(self._samples[0]['measured'])),
-            'ca47774m0-fv',
+            'cam-fv',
             [],
             weighted=False,
         )
@@ -152,11 +149,9 @@ class TestErrorcalcs(TestCase):
         import xarray as xr
 
         # import zfpy
-
         ds = xr.open_dataset('data/cam-fv/orig.TS.100days.nc')
 
         TS = ds.TS
-
         print(type(TS))
 
     def test_calc_ds(self):
@@ -167,8 +162,8 @@ class TestErrorcalcs(TestCase):
         self.assertTrue(test_overall_calcs.mean == -0.5)
 
     def test_magnitude_range(self):
-        # check if the sum of the magnitude range is 3.7 with a tolerance of 1e-09
-        self.assertTrue(np.isclose(test_overall_calcs.magnitude_range.values.sum(), 2, rtol=1e-04))
+        value = float(test_overall_calcs.magnitude_range.values)
+        self.assertTrue(np.isclose(value, 2, rtol=1e-04))
 
     def test_mean_abs(self):
         self.assertTrue(test_overall_calcs.mean_abs == 50)
