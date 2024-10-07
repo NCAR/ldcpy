@@ -11,7 +11,6 @@ dependencies:
   - dask
   - graphviz
   - intake-esm
-  - jupyter_contrib_nbextensions
   - jupyterlab
   - matplotlib
   - matplotlib-base
@@ -35,6 +34,3 @@ dependencies:
   - ipython
   - pooch
   - statsmodels
-  - pip:
-      - tensorflow[and-cuda]=2.15
-      - keras
