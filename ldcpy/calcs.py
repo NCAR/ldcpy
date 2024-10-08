@@ -1048,34 +1048,41 @@ class Datasetcalcs:
         print(b)
         return '{:032b}'.format(int32bits)
 
-    def get_adj_bit(self, bit_pos):
-        return [bit_pos[0] - 1, bit_pos[1]]
+    #    def get_adj_bit(self, bit_pos):
+    #        return [bit_pos[0] - 1, bit_pos[1]]
 
-    def get_dict_list(self, data_array, x_index):
+    def get_dict_list(self, data_array):
         dict_list_H = []
+        # To do: should make this work for 64 also
         N_BITS = 32
+
+        # sz = data_array.size
+        # Intialize
         for i in range(N_BITS - 1):
             new_dict = {'00': 0, '01': 0, '10': 0, '11': 0}
             dict_list_H.append(new_dict)
 
-        b = np.empty(data_array[x_index].size, dtype=object)
+        # convert data array values to bits (so len(b) = sz)
+        b = np.empty(data_array.size, dtype=object)
         i = 0
-        for y in np.nditer(np.asarray(data_array[x_index], dtype=np.float32).view(np.int32)):
+        for y in np.nditer(np.asarray(data_array, dtype=np.float32).view(np.int32)):
             b[i] = '{:032b}'.format(y)
             i += 1
 
+        # go through each bit position (i) (except the last)
         for i in range(N_BITS - 1):
             count = 0
-            for y in range(1, len(b) - 1):
-                if b[y][i] in ('0', '1') and b[y + 1][i] in ('0', '1'):
-                    count += 1
-                    p00 = p01 = p10 = p11 = 0
-                    dict_list_H[i][b[y][i] + b[y + 1][i]] += 1
-                    dict_list_H[i]['00'] += p00
-                    dict_list_H[i]['01'] += p01
-                    dict_list_H[i]['10'] += p10
-                    dict_list_H[i]['11'] += p11
+            for y in range(1, len(b)):  # go through each data point
 
+                if b[y - 1][i] in ('0', '1') and b[y][i] in ('0', '1'):
+                    count += 1
+                    dict_list_H[i][b[y - 1][i] + b[y][i]] += 1
+                    # dict_list_H[i]['00']
+                    # dict_list_H[i]['01']
+                    # dict_list_H[i]['10']
+                    # dict_list_H[i]['11']
+
+            # turn to fractions (probabilities)
             if count == 0:
                 dict_list_H[i]['00'] = 0
                 dict_list_H[i]['01'] = 0
@@ -1086,6 +1093,7 @@ class Datasetcalcs:
                 dict_list_H[i]['01'] /= count
                 dict_list_H[i]['10'] /= count
                 dict_list_H[i]['11'] /= count
+
         return dict_list_H
 
     def get_mutual_info(self, p00, p01, p10, p11):
@@ -1107,15 +1115,17 @@ class Datasetcalcs:
 
         return mutual_info
 
-    def get_real_info(self, x_index):
+    def get_real_info(self):
         # first, flatten the data array by stacking all the dimensions and removing the coordinates
         # like this:        flattened_ds = self._ds.stack(flattened=['lat', 'lon', 'time']).reset_index('flattened')
         # but over any number of dimensions
         flattened_ds = self._ds.stack(flattened=self._ds.dims).reset_index('flattened')
 
-        dict_list_H = self.get_dict_list(flattened_ds, x_index)
+        dict_list_H = self.get_dict_list(flattened_ds)
+        # print(dict_list_H)
 
         mutual_info_array = []
+        # here we go thru each bit position
         for bit_pos_dict in dict_list_H:
             p00 = bit_pos_dict['00']
             p01 = bit_pos_dict['01']
@@ -1127,14 +1137,15 @@ class Datasetcalcs:
             mutual_info_array.append(mutual_info)
 
         mutual_info_array = np.array(mutual_info_array)
-        # print(mutual_info_array)
+        # print("MIA =", mutual_info_array)
+
         return xr.DataArray(mutual_info_array)
 
     @property
     def real_information(self) -> xr.DataArray:
         if not self._is_memoized('_real_information'):
-            # get the first binary digit
-            self._real_information = self.get_real_info(0)
+
+            self._real_information = self.get_real_info()
             if hasattr(self._ds, 'units'):
                 self._real_information.attrs['units'] = f'{self._ds.units}'
 
@@ -1146,9 +1157,8 @@ class Datasetcalcs:
             # get the first binary digit
             self._real_information_cutoff = 0
             self._captured_information = 0
-            # if self.real_information.sum() > 0:
-            normalized_information = self.real_information / self.real_information.sum()
             # print(self.real_information)
+            normalized_information = self.real_information / self.real_information.sum()
             while self._captured_information < 0.99:
                 self._captured_information += normalized_information[self._real_information_cutoff]
                 self._real_information_cutoff += 1
