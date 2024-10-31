@@ -487,7 +487,6 @@ def compare_stats(
         else:
             temp_zeros.append(temp_return)
 
-        # Alex is fixing ..
         temp_info.append(da_set_calcs[i].get_single_calc('real_information_cutoff'))
 
         if data_type == 'cam-fv':
@@ -593,7 +592,10 @@ def compare_stats(
     for i in range(num - 1):
         temp_nrms.append(diff_calcs[i].get_diff_calc('n_rms'))
         temp_max_pe.append(diff_calcs[i].get_diff_calc('n_emax'))
-        temp_pcc.append(diff_calcs[i].get_diff_calc('pearson_correlation_coefficient'))
+
+        temptemp = diff_calcs[i].get_diff_calc('pearson_correlation_coefficient')
+        temp_pcc.append(temptemp)
+
         temp_ks.append(diff_calcs[i].get_diff_calc('ks_p_value'))
         diff_calcs[i].spre_tol = rel_errors[0]
         temp_sre.append(diff_calcs[i].get_diff_calc('spatial_rel_error'))
@@ -610,7 +612,6 @@ def compare_stats(
     df_dict2['normalized max pointwise error'] = temp_max_pe
     df_dict2['pearson correlation coefficient'] = temp_pcc
     df_dict2['ks p-value'] = temp_ks
-
     tmp_str = 'spatial relative error(% > ' + str(rel_errors[0]) + ')'
     df_dict2[tmp_str] = temp_sre
 
@@ -717,28 +718,37 @@ def check_metrics(
     num_fail = 0
     # Pearson less than pcc_tol means fail
     pcc = diff_calcs.get_diff_calc('pearson_correlation_coefficient')
-    # print(type(pcc))
     if pcc < pcc_tol:
-
-        print('     *FAILED pearson correlation coefficient test...(pcc = {0:.5f}'.format(pcc), ')')
+        print(
+            '     *FAILED pearson correlation coefficient test...(pcc = {0:.5f}'.format(pcc.values),
+            ')',
+        )
         num_fail = num_fail + 1
     else:
-        print('     PASSED pearson correlation coefficient test...(pcc = {0: .5f}'.format(pcc), ')')
+        print(
+            '     PASSED pearson correlation coefficient test...(pcc = {0:.5f}'.format(pcc.values),
+            ')',
+        )
     # K-S p-value less than ks_tol means fail (can reject null hypo)
     ks = diff_calcs.get_diff_calc('ks_p_value')
     if ks < ks_tol:
-        print('     *FAILED ks test...(ks p_val = {0:.4f}'.format(ks), ')')
+        print('     *FAILED ks test...(ks p_val = {0:.5f}'.format(ks.values), ')')
         num_fail = num_fail + 1
     else:
-        print('     PASSED ks test...(ks p_val = {0:.4f}'.format(ks), ')')
+        print('     PASSED ks test...(ks p_val = {0:.5f}'.format(ks.values), ')')
     # Spatial rel error fails if more than spre_tol
     spre = diff_calcs.get_diff_calc('spatial_rel_error')
 
     if spre > spre_tol:
-        print('     *FAILED spatial relative error test ... (spre = {0:.2f}'.format(spre), ' %)')
+        print(
+            '     *FAILED spatial relative error test ... (spre = {0:.2f}'.format(spre.values),
+            ' %)',
+        )
         num_fail = num_fail + 1
     else:
-        print('     PASSED spatial relative error test ...(spre = {0:.2f}'.format(spre), ' %)')
+        print(
+            '     PASSED spatial relative error test ...(spre = {0:.2f}'.format(spre.values), ' %)'
+        )
     # SSIM less than of ssim_tol is failing
     ssim_val = diff_calcs.get_diff_calc('ssim_fp')
     if ssim_val < ssim_tol:
