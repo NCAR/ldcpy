@@ -1943,11 +1943,19 @@ class Diffcalcs:
         if not self._is_memoized('_ks_p_value'):
             # Apply the KS test across the specified dimensions
             # This will create a DataArray of p-values
+
+            if self._aggregate_dims is None:
+                lat_n = self._ds1.cf['latitude'].name
+                lon_n = self._ds2.cf['longitude'].name
+                core_d = [[lat_n, lon_n], [lat_n, lon_n]]
+            else:
+                core_d = [self._aggregate_dims, self._aggregate_dims]
+            # print(core_d)
             self._ks_p_value = xr.apply_ufunc(
                 lambda x, y: ss.ks_2samp(x.ravel(), y.ravel())[1],
                 self._ds1,
                 self._ds2,
-                input_core_dims=[self._aggregate_dims, self._aggregate_dims],
+                input_core_dims=core_d,
                 dask='parallelized',
                 dask_gufunc_kwargs={'allow_rechunk': True},
                 vectorize=True,

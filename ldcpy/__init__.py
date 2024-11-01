@@ -16,6 +16,7 @@ from .util import (
     open_datasets,
     save_metrics,
     subset_data,
+    combine_datasets,
 )
 
 try:
