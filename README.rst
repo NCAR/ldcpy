@@ -32,7 +32,7 @@ It also contains a number of statistical and visual tools for gathering metrics 
 
 
 :AUTHORS: Alex Pinard, Allison Baker, Anderson Banihirwe, Dorit Hammerling
-:COPYRIGHT: 2020 University Corporation for Atmospheric Research
+:COPYRIGHT: 2024 University Corporation for Atmospheric Research
 :LICENSE: Apache 2.0
 
 Documentation and usage examples are available `here <http://ldcpy.readthedocs.io>`_.
