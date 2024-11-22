@@ -783,8 +783,7 @@ class calcsPlot(object):
                     if isinstance(a1_data, np.float64):
                         pass
                     elif isinstance(a1_data, np.ndarray):
-                        dask.array.from_array(data)
-                        a1_data = a1_data.compute()
+                        a1_data = dask.array.from_array(a1_data).compute()
                     else:
                         a1_data = a1_data.compute()
                 else:
@@ -835,8 +834,7 @@ class calcsPlot(object):
                     if isinstance(a1_data, np.float64):
                         pass
                     elif isinstance(a1_data, np.ndarray):
-                        dask.array.from_array(data)
-                        a1_data = a1_data.compute()
+                        a1_data = dask.array.from_array(a1_data).compute()
                     else:
                         a1_data = a1_data.compute()
                 elif calc in ['fft2', 'stft', 'real_information']:
@@ -849,7 +847,8 @@ class calcsPlot(object):
                     if isinstance(a1_data, np.float64):
                         pass
                     elif isinstance(a1_data, np.ndarray):
-                        a1_data = a1_data
+                        # a1_data = a1_data
+                        a1_data = dask.array.from_array(a1_data).compute()
                     else:
                         a1_data = a1_data.compute()
                 else:
@@ -862,7 +861,7 @@ class calcsPlot(object):
                     if isinstance(a1_data, np.float64):
                         pass
                     elif isinstance(a1_data, np.ndarray):
-                        dask.array.from_array(a1_data).compute()
+                        a1_data = dask.array.from_array(a1_data).compute()
                     else:
                         a1_data = a1_data.compute()
                 if abs(a1_data) > 0.01:
@@ -882,8 +881,7 @@ class calcsPlot(object):
                     if isinstance(a1_data, np.float64):
                         pass
                     elif isinstance(a1_data, np.ndarray):
-                        dask.array.from_array(data)
-                        a1_data = a1_data.compute()
+                        a1_data = dask.array.from_array(a1_data).compute()
                     else:
                         a1_data = a1_data.compute()
                 else:
@@ -898,12 +896,11 @@ class calcsPlot(object):
                     if isinstance(a1_data, np.float64):
                         pass
                     elif isinstance(a1_data, np.ndarray):
-                        dask.array.from_array(data)
-                        a1_data = a1_data.compute()
+                        a1_data = dask.array.from_array(a1_data).compute()
                     else:
                         a1_data = a1_data.compute()
 
-                if abs(a1_data) > 0.01:
+                if np.any(abs(a1_data) > 0.01):
                     calc_name = f'{calc} = {a1_data: .2f}'
                 else:
                     calc_name = f'{calc} = {a1_data: .2e}'
