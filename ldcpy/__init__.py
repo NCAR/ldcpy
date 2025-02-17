@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # flake8: noqa
-""" Top-level module for ldcpy. """
+"""Top-level module for ldcpy."""
 from pkg_resources import DistributionNotFound, get_distribution
 
 from .calcs import Datasetcalcs, Diffcalcs
