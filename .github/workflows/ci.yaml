@@ -33,17 +33,16 @@ jobs:
       - uses: actions/checkout@v3
       - uses: conda-incubator/setup-miniconda@v3
         with:
-          channels: conda-forge
+          channels: conda-forge, defaults
           #channel-priority: strict
           mamba-version: '*'
           activate-environment: ldcpy # Defined in ci/environment.yml
-          auto-update-conda: false
+          auto-update-conda: true
           python-version: ${{ matrix.python-version }}
           environment-file: ci/environment.yml
 
       - name: Install ldcpy
         run: |
-          conda config --set channel_priority flexible
           conda install ldcpy
           conda list
 
