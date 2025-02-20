@@ -37,13 +37,13 @@ jobs:
           #channel-priority: strict
           mamba-version: '*'
           activate-environment: ldcpy # Defined in ci/environment.yml
-          auto-update-conda: true
+          auto-update-conda: false
           python-version: ${{ matrix.python-version }}
           environment-file: ci/environment.yml
 
       - name: Install ldcpy
         run: |
-          conda install ldcpy
+          conda install python=${{matrix.python-version}} ldcpy
           conda list
 
       - name: Run Tests
