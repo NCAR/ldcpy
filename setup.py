@@ -16,7 +16,7 @@ CLASSIFIERS = [
     'Intended Audience :: Science/Research',
     'Programming Language :: Python',
     'Programming Language :: Python :: 3',
-    'Programming Language :: Python :: 3.9',
+    'Programming Language :: Python :: 3.10',
     'Topic :: Scientific/Engineering',
 ]
 
@@ -24,7 +24,7 @@ setup(
     name='ldcpy',
     description='A library for lossy compression of netCDF files using xarray',
     long_description=long_description,
-    python_requires='>=3.9',
+    python_requires='>=3.10',
     maintainer='Alex Pinard',
     maintainer_email='apinard@mines.edu',
     classifiers=CLASSIFIERS,
