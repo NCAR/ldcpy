@@ -43,7 +43,7 @@ jobs:
 
       - name: Install ldcpy
         run: |
-          conda install python=${{matrix.python-version}} ldcpy
+          conda install ldcpy
           conda list
 
       - name: Run Tests
