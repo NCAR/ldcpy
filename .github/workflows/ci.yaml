@@ -34,7 +34,7 @@ jobs:
       - uses: conda-incubator/setup-miniconda@v3
         with:
           channels: conda-forge
-          channel-priority: strict
+          channel-priority: flexible
           mamba-version: '*'
           activate-environment: ldcpy # Defined in ci/environment.yml
           auto-update-conda: false
