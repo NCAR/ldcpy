@@ -31,12 +31,11 @@ jobs:
         with:
           access_token: ${{ github.token }}
       - uses: actions/checkout@v3
-      - name: Set up micromamba
-        uses: mamba-org/micromamba-action@v0.1
+      - uses: mamba-org/setup-micromamba@v1
         with:
-          micromamba-version: '0.17.0' # Specify the version you want
-          environment-file: ci/environment.yml
           channels: conda-forge
+          environment-file: ci/environment.yml
+          activate-environment: ldcpy
 
       - name: Install ldcpy
         run: |
