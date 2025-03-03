@@ -388,23 +388,37 @@ class calcsPlot(object):
                     axs[i].set_facecolor('#39ff14')
 
             cyxr = xr.DataArray(data=cy_datas)
+            # print("min of cydata = ", np.min(cy_datas.data))
 
+            # AB added flags to fix bug below
+            use_default_cmin = 0
+            use_default_cmax = 0
             if self._cmax is not None:
                 cmax.append(self._cmax)
+                use_default_cmax = 1
             if self._cmin is not None:
                 cmin.append(self._cmin)
+                use_default_cmax = 1
 
             offset_factor = 1e-6
 
-            if not np.isinf(cyxr).all() and len(cmax) == 0 and len(cmin) == 0:
+            # this old code only happens for first plot (because then cmax and cmin are not length zero)
+            # so now we'll set if no default
+            # if not np.isinf(cyxr).all() and len(cmax) == 0 and len(cmin) == 0:
+            if not np.isinf(cyxr).all():
+
                 data_range = np.max(cyxr.where(cyxr != np.inf).max()) - np.min(
                     cyxr.where(cyxr != -np.inf).min()
                 )
-                # Calculate dynamic offsets based on the order of magnitude of the values
                 c_offset = data_range * offset_factor
+                # print("data range = ", data_range.data)
+                # print("c_offset = ", c_offset)
 
-                cmin.append(np.min(cyxr.where(cyxr != -np.inf).min()) - c_offset)
-                cmax.append(np.max(cyxr.where(cyxr != np.inf).max()) + c_offset)
+                # Calculate dynamic offsets based on the order of magnitude of the values
+                if use_default_cmin == 0:
+                    cmin.append(np.min(cyxr.where(cyxr != -np.inf).min()) - c_offset)
+                if use_default_cmax == 0:
+                    cmax.append(np.max(cyxr.where(cyxr != np.inf).max()) + c_offset)
 
             if data_type == 'pop' or data_type == 'wrf':
                 no_inf_data_set = np.nan_to_num(cyxr.astype(np.float32), nan=np.nan)
@@ -456,7 +470,7 @@ class calcsPlot(object):
                 axs[i].set_title(tex_escape(titles[i]))
             del cy_datas
 
-            # end of for loop on plots
+            # end of for loop (i) on plots
 
         if len(cmin) > 0:
             color_min = np.min(cmin)
