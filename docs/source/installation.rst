@@ -6,12 +6,12 @@ Installation
 Installation using Conda (recommended)
 ______________________________________
 
-Ensure conda is up to date and create a clean Python (3.6+) environment:
+Ensure conda is up to date and create a clean Python (3.8+) environment:
 
 .. code-block:: bash
 
     conda update conda
-    conda create --name ldcpy python=3.8
+    conda create --name ldcpy python=3.10
     conda activate ldcpy
 
 Now install ldcpy:
@@ -23,7 +23,7 @@ Now install ldcpy:
 Alternative Installation
 ________________________
 
-Ensure pip is up to date, and your version of python is at least 3.6:
+Ensure pip is up to date, and your version of python is at least 3.8:
 
 .. code-block:: bash
 

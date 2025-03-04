@@ -2,7 +2,7 @@ name: ldcpy-docs
 channels:
   - conda-forge
 dependencies:
-  - python=3.9
+  - python
   - numpy
   - cartopy
   - xarray
