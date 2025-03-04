@@ -398,7 +398,7 @@ class calcsPlot(object):
                 use_default_cmax = 1
             if self._cmin is not None:
                 cmin.append(self._cmin)
-                use_default_cmax = 1
+                use_default_cmin = 1
 
             offset_factor = 1e-6
 
@@ -480,6 +480,8 @@ class calcsPlot(object):
             color_max = np.max(cmax)
         else:
             color_max = 0.1
+        #        print("color_min = ", color_min)
+        #        print("color_max = ", color_max)
 
         if self._axes_symmetric:
             color_max_abs = max(abs(color_min), abs(color_max))
