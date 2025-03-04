@@ -32,7 +32,7 @@ It also contains a number of statistical and visual tools for gathering metrics 
 
 
 :AUTHORS: Alex Pinard, Allison Baker, Anderson Banihirwe, Dorit Hammerling
-:COPYRIGHT: 2024 University Corporation for Atmospheric Research
+:COPYRIGHT: 2025 University Corporation for Atmospheric Research
 :LICENSE: Apache 2.0
 
 Documentation and usage examples are available `here <http://ldcpy.readthedocs.io>`_.
@@ -48,12 +48,12 @@ https://doi.org/10.1109/BigData50022.2020.9378100
 Installation using Conda (recommended)
 ______________________________________
 
-Ensure conda is up to date and create a clean Python (3.6+) environment:
+Ensure conda is up to date and create a clean Python (3.8+) environment:
 
 .. code-block:: bash
 
     conda update conda
-    conda create --name ldcpy python=3.8
+    conda create --name ldcpy python=3.10
     conda activate ldcpy
 
 Now install ldcpy:
@@ -65,7 +65,7 @@ Now install ldcpy:
 Alternative Installation
 ________________________
 
-Ensure pip is up to date, and your version of python is at least 3.6:
+Ensure pip is up to date, and your version of python is at least 3.8:
 
 .. code-block:: bash
 
