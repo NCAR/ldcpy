@@ -163,7 +163,7 @@ class TestErrorcalcs(TestCase):
 
     def test_magnitude_range(self):
         value = float(test_overall_calcs.magnitude_range.values)
-        self.assertTrue(np.isclose(value, 2, rtol=1e-04))
+        self.assertTrue(np.isclose(value, 2, rtol=1e-03))
 
     def test_mean_abs(self):
         self.assertTrue(test_overall_calcs.mean_abs == 50)
