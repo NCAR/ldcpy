@@ -360,10 +360,14 @@ class Datasetcalcs:
             if len(self._not_agg_dims) == 0:
                 my_max = max_agg(log_ds)
                 my_min = min_agg(log_ds)
+                print('mg 1')
             else:
                 stack = log_ds.stack(multi_index=tuple(self._not_agg_dims))
                 my_max = stack.groupby('multi_index').map(max_agg)
                 my_min = stack.groupby('multi_index').map(min_agg)
+                print('mg 2')
+            print('max = ', my_max)
+            print('min = ', my_min)
             if (
                 np.isinf(my_max).any()
                 or np.isinf(my_min).any()
