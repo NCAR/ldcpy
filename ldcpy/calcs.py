@@ -355,8 +355,9 @@ class Datasetcalcs:
             # avoid divde by zero warning
             # log_ds = np.log10(abs(self._ds)).where(np.log10(abs(self._ds)) != -np.inf)
             a_d = abs(self._ds.copy())
+            print('a_d = ', a_d.data)
             log_ds = np.log10(a_d, where=a_d.data > 0)
-            print(log_ds.data)
+            print('log_ds = ', log_ds.data)
             print('data: min abs nonzero = ', self.min_abs_nonzero)
             print('data: max value = ', self.max_val)
             if len(self._not_agg_dims) == 0:
