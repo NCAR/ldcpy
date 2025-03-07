@@ -353,10 +353,12 @@ class Datasetcalcs:
                 return ds.min(skipna=True)
 
             # avoid divde by zero warning
-            # log_ds = np.log10(abs(self._ds)).where(np.log10(abs(self._ds)) != -np.inf)
             a_d = abs(self._ds.copy())
+            # print('a_d = ', a_d.data)
             log_ds = np.log10(a_d, where=a_d.data > 0)
-
+            # print('log_ds = ', log_ds.data)
+            # print('data: min abs nonzero = ', self.min_abs_nonzero)
+            # print('data: max value = ', self.max_val)
             if len(self._not_agg_dims) == 0:
                 my_max = max_agg(log_ds)
                 my_min = min_agg(log_ds)
@@ -364,6 +366,8 @@ class Datasetcalcs:
                 stack = log_ds.stack(multi_index=tuple(self._not_agg_dims))
                 my_max = stack.groupby('multi_index').map(max_agg)
                 my_min = stack.groupby('multi_index').map(min_agg)
+            # print('max exp= ', my_max)
+            # print('min exp = ', my_min)
             if (
                 np.isinf(my_max).any()
                 or np.isinf(my_min).any()
@@ -373,6 +377,7 @@ class Datasetcalcs:
                 self._magnitude_range = -1
                 return self._magnitude_range
             else:
+
                 self._magnitude_range = my_max - my_min
 
         return self._magnitude_range
@@ -406,18 +411,20 @@ class Datasetcalcs:
         Maximum magnitude irst difference along the n-s direction
         """
         if not self._is_memoized('_magnitude_diff_ns'):
-            max = np.log10(abs(self._ds.diff('lat').max(self._agg_dims)))
-            min = np.log10(abs(self._ds.diff('lat').min(self._agg_dims)))
+            my_max = np.log10(abs(self._ds.diff('lat').max(self._agg_dims)))
+            my_min = np.log10(abs(self._ds.diff('lat').min(self._agg_dims)))
+            print('max = ', my_max)
+            print('min = ', my_min)
             if (
-                np.isinf(max).any()
-                or np.isinf(min).any()
-                or np.isnan(max).any()
-                or np.isnan(min).any()
+                np.isinf(my_max).any()
+                or np.isinf(my_min).any()
+                or np.isnan(my_max).any()
+                or np.isnan(my_min).any()
             ):
                 self._magnitude_diff_ns_int = -1
                 return xr.DataArray(self._magnitude_diff_ns_int)
             else:
-                self._magnitude_diff_ns_int = max - min
+                self._magnitude_diff_ns_int = my_max - my_min
             # self._first_differences = self._ds.roll({"lon": -1}, roll_coords=False) - self._ds.roll({"lat": 1},                                                                                        roll_coords=False)
         self._magnitude_diff_ns = xr.DataArray(self._magnitude_diff_ns_int)
         self._magnitude_diff_ns.attrs = self._ds.attrs

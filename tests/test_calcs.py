@@ -23,7 +23,7 @@ times = pd.date_range('2000-01-01', periods=10)
 lats = [0, 1, 2, 3]
 lons = [0, 1, 2, 3, 4]
 test_data = xr.DataArray(
-    np.arange(-100, 100).reshape(4, 5, 10),
+    np.arange(-100.0, 100.0).reshape(4, 5, 10),
     coords=[
         ('lat', lats, {'standard_name': 'latitude', 'units': 'degrees_north'}),
         ('lon', lons, {'standard_name': 'longitude', 'units': 'degrees_east'}),
@@ -32,7 +32,7 @@ test_data = xr.DataArray(
     dims=['lat', 'lon', 'time'],
 )
 test_data_2 = xr.DataArray(
-    np.arange(-99, 101).reshape(4, 5, 10),
+    np.arange(-99.0, 101.0).reshape(4, 5, 10),
     coords=[
         ('lat', lats, {'standard_name': 'latitude', 'units': 'degrees_north'}),
         ('lon', lons, {'standard_name': 'longitude', 'units': 'degrees_east'}),
@@ -163,7 +163,7 @@ class TestErrorcalcs(TestCase):
 
     def test_magnitude_range(self):
         value = float(test_overall_calcs.magnitude_range.values)
-        print('VALUE =', value)
+        print('VALUE = ', value)
         self.assertTrue(np.isclose(value, 2, rtol=1e-04))
 
     def test_mean_abs(self):
