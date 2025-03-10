@@ -10,7 +10,6 @@ xarray
 xrft
 cf_xarray
 cartopy
-nodejs
 pandas
 astropy
 ipython
