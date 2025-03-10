@@ -27,7 +27,7 @@ jobs:
         python-version: ['3.10', '3.11', '3.12']
     steps:
       - name: Cancel previous runs
-        uses: styfle/cancel-workflow-action@0.11.0
+        uses: styfle/cancel-workflow-action@0.12.1
         with:
           access_token: ${{ github.token }}
       - uses: actions/checkout@v3
@@ -71,7 +71,7 @@ jobs:
   #        python-version: ['3.10', '3.11', '3.12']
   #    steps:
   #      - name: Cancel previous runs
-  #        uses: styfle/cancel-workflow-action@0.11.0
+  #        uses: styfle/cancel-workflow-action@0.12.1
   #        with:
   #          access_token: ${{ github.token }}
   #      - uses: actions/checkout@v3
@@ -114,7 +114,7 @@ jobs:
     continue-on-error: true # Allow this job to fail without failing the workflow
     steps:
       - name: Cancel previous runs
-        uses: styfle/cancel-workflow-action@0.11.0
+        uses: styfle/cancel-workflow-action@0.12.1
         with:
           access_token: ${{ github.token }}
       - uses: actions/checkout@v3
