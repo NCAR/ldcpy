@@ -345,6 +345,11 @@ class Datasetcalcs:
         The range of the dataset
         """
         if not self._is_memoized('_magnitude_range'):
+            mag_min = self.min_abs_nonzero
+            mag_max = self.max_abs
+            mag_range = np.log10(mag_max) - np.log10(mag_min)
+            print('RANGE = ', mag_range)
+
             # Get the range in exponent space
             def max_agg(ds):
                 return ds.max(skipna=True)
@@ -355,7 +360,7 @@ class Datasetcalcs:
             # avoid divde by zero warning
             a_d = abs(self._ds.copy())
             print('a_d = ', a_d.data)
-            log_ds = np.log10(a_d, where=a_d.data > 0.000000000001)
+            log_ds = np.log10(a_d, where=a_d.data > 0)
             print('log_ds = ', log_ds.data)
             print('data: min abs nonzero = ', self.min_abs_nonzero)
             print('data: max value = ', self.max_val)
