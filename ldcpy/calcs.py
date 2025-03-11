@@ -354,11 +354,11 @@ class Datasetcalcs:
 
             # avoid divde by zero warning
             a_d = abs(self._ds.copy())
-            # print('a_d = ', a_d.data)
-            log_ds = np.log10(a_d, where=a_d.data > 0)
-            # print('log_ds = ', log_ds.data)
-            # print('data: min abs nonzero = ', self.min_abs_nonzero)
-            # print('data: max value = ', self.max_val)
+            print('a_d = ', a_d.data)
+            log_ds = np.log10(a_d, where=a_d.data > 0.000000000001)
+            print('log_ds = ', log_ds.data)
+            print('data: min abs nonzero = ', self.min_abs_nonzero)
+            print('data: max value = ', self.max_val)
             if len(self._not_agg_dims) == 0:
                 my_max = max_agg(log_ds)
                 my_min = min_agg(log_ds)
@@ -366,8 +366,8 @@ class Datasetcalcs:
                 stack = log_ds.stack(multi_index=tuple(self._not_agg_dims))
                 my_max = stack.groupby('multi_index').map(max_agg)
                 my_min = stack.groupby('multi_index').map(min_agg)
-            # print('max exp= ', my_max)
-            # print('min exp = ', my_min)
+            print('max exp= ', my_max)
+            print('min exp = ', my_min)
             if (
                 np.isinf(my_max).any()
                 or np.isinf(my_min).any()
