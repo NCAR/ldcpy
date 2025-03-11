@@ -348,7 +348,7 @@ class Datasetcalcs:
             mag_min = self.min_abs_nonzero
             mag_max = self.max_abs
             mag_range = np.log10(mag_max) - np.log10(mag_min)
-            print('RANGE = ', mag_range)
+            # print('RANGE = ', mag_range)
             self._magnitude_range = mag_range
 
             # Get the range in exponent space
@@ -980,7 +980,7 @@ class Datasetcalcs:
     @property
     def max_abs(self) -> xr.DataArray:
         if not self._is_memoized('_max_abs'):
-            self._max_abs = abs(self._ds).max(dim=self._agg_dims)
+            self._max_abs = abs(self._ds).max(dim=self._agg_dims, skipna=True)
             self._max_abs.attrs = self._ds.attrs
             if hasattr(self._ds, 'units'):
                 self._max_abs.attrs['units'] = f'{self._ds.units}'
@@ -1011,7 +1011,7 @@ class Datasetcalcs:
     @property
     def max_val(self) -> xr.DataArray:
         if not self._is_memoized('_max_val'):
-            self._max_val = self._ds.max(dim=self._agg_dims)
+            self._max_val = self._ds.max(dim=self._agg_dims, skipna=True)
             self._max_val.attrs = self._ds.attrs
             if hasattr(self._ds, 'units'):
                 self._max_val.attrs['units'] = f'{self._ds.units}'
@@ -1021,7 +1021,7 @@ class Datasetcalcs:
     @property
     def min_val(self) -> xr.DataArray:
         if not self._is_memoized('_min_val'):
-            self._min_val = self._ds.min(dim=self._agg_dims)
+            self._min_val = self._ds.min(dim=self._agg_dims, skipna=True)
             self._min_val.attrs = self._ds.attrs
             if hasattr(self._ds, 'units'):
                 self._min_val.attrs['units'] = f'{self._ds.units}'
