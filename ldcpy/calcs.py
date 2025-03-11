@@ -349,41 +349,42 @@ class Datasetcalcs:
             mag_max = self.max_abs
             mag_range = np.log10(mag_max) - np.log10(mag_min)
             print('RANGE = ', mag_range)
+            self._magnitude_range = mag_range
 
             # Get the range in exponent space
-            def max_agg(ds):
-                return ds.max(skipna=True)
+            # def max_agg(ds):
+            #    return ds.max(skipna=True)
 
-            def min_agg(ds):
-                return ds.min(skipna=True)
+            # def min_agg(ds):
+            #    return ds.min(skipna=True)
 
             # avoid divde by zero warning
-            a_d = abs(self._ds.copy())
-            print('a_d = ', a_d.data)
-            log_ds = np.log10(a_d, where=a_d.data > 0)
-            print('log_ds = ', log_ds.data)
-            print('data: min abs nonzero = ', self.min_abs_nonzero)
-            print('data: max value = ', self.max_val)
-            if len(self._not_agg_dims) == 0:
-                my_max = max_agg(log_ds)
-                my_min = min_agg(log_ds)
-            else:
-                stack = log_ds.stack(multi_index=tuple(self._not_agg_dims))
-                my_max = stack.groupby('multi_index').map(max_agg)
-                my_min = stack.groupby('multi_index').map(min_agg)
-            print('max exp= ', my_max)
-            print('min exp = ', my_min)
-            if (
-                np.isinf(my_max).any()
-                or np.isinf(my_min).any()
-                or np.isnan(my_max).any()
-                or np.isnan(my_min).any()
-            ):
-                self._magnitude_range = -1
-                return self._magnitude_range
-            else:
+            # a_d = abs(self._ds.copy())
+            # print('a_d = ', a_d.data)
+            # log_ds = np.log10(a_d, where=a_d.data > 0)
+            # print('log_ds = ', log_ds.data)
+            # print('data: min abs nonzero = ', self.min_abs_nonzero)
+            # print('data: max value = ', self.max_val)
+            # if len(self._not_agg_dims) == 0:
+            #    my_max = max_agg(log_ds)
+            #    my_min = min_agg(log_ds)
+            # else:
+            #    stack = log_ds.stack(multi_index=tuple(self._not_agg_dims))
+            #    my_max = stack.groupby('multi_index').map(max_agg)
+            #    my_min = stack.groupby('multi_index').map(min_agg)
+            # print('max exp= ', my_max)
+            # print('min exp = ', my_min)
+            # if (
+            #    np.isinf(my_max).any()
+            #    or np.isinf(my_min).any()
+            #    or np.isnan(my_max).any()
+            #    or np.isnan(my_min).any()
+            # ):
+            #    self._magnitude_range = -1
+            #    return self._magnitude_range
+            # else:
 
-                self._magnitude_range = my_max - my_min
+            # self._magnitude_range = my_max - my_min
 
         return self._magnitude_range
 
