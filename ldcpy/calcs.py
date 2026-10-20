@@ -25,7 +25,7 @@ from scipy.ndimage import gaussian_filter
 from scipy.signal import stft
 from skimage.metrics import structural_similarity as ssim
 from skimage.util import crop
-from xrft import dft
+from xrft import fft
 
 # from .collect_datasets import collect_datasets
 
@@ -320,7 +320,7 @@ class Datasetcalcs:
         Most repeated value in dataset
         """
         if not self._is_memoized('_most_repeated'):
-            self._most_repeated = ss.mode(self._ds.values.flatten())[0]
+            self._most_repeated = np.squeeze(ss.mode(self._ds.values.flatten()).mode)
         return self._most_repeated
 
     @property
@@ -329,7 +329,7 @@ class Datasetcalcs:
         Most repeated value in dataset
         """
         if not self._is_memoized('_most_repeated_pct'):
-            self._most_repeated_pct = ss.mode(self._ds.values.flatten())[1][0] / len(
+            self._most_repeated_pct = np.squeeze(ss.mode(self._ds.values.flatten()).count) / len(
                 self._ds.values.flatten()
             )
         return self._most_repeated_pct
@@ -619,7 +619,7 @@ class Datasetcalcs:
                     es.append(e)
 
             if len(self._not_agg_dims) == 0:
-                self._entropy = xr.DataArray(es)
+                self._entropy = xr.DataArray(es[0])
             else:
                 self._entropy = xr.DataArray(es, dims=self._not_agg_dims)
             self._entropy.attrs = self._ds.attrs
@@ -1444,7 +1444,13 @@ class Datasetcalcs:
 
             # rechunk to a single time chunk
             new_ds2 = new_ds.chunk({self._time_dim_name: new_ds[self._time_dim_name].size})
-            DF = dft(new_ds2, dim=[self._time_dim_name], detrend='constant')
+            DF = fft(
+                new_ds2,
+                dim=[self._time_dim_name],
+                detrend='constant',
+                true_phase=False,
+                true_amplitude=False,
+            )
             # the above does not preserve the lat/lon attributes
             DF[lon_coord_name].attrs = new_ds[lon_coord_name].attrs
             DF[lat_coord_name].attrs = new_ds[lat_coord_name].attrs

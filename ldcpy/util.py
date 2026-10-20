@@ -122,14 +122,14 @@ def collect_datasets(
     elif data_type == 'cam-fv':
         full_ds.coords['cell_area'] = (
             xr.DataArray(full_ds.variables.mapping.get(weights_name))
-            .expand_dims(lon=full_ds.dims['lon'])
+            .expand_dims(lon=full_ds.sizes['lon'])
             .transpose()
         )
 
     full_ds.attrs['cell_measures'] = 'area: cell_area'
 
     if weights_name:
-        full_ds = full_ds.drop(weights_name)
+        full_ds = full_ds.drop_vars(weights_name)
 
     full_ds['collection'] = xr.DataArray(labels, dims='collection')
 
@@ -279,7 +279,7 @@ def open_datasets(data_type, varnames, list_of_files, labels, weights=True, **kw
     full_ds.attrs['cell_measures'] = 'area: cell_area'
 
     if weights is True:
-        full_ds = full_ds.drop(weights_name)
+        full_ds = full_ds.drop_vars(weights_name)
 
     full_ds['collection'] = xr.DataArray(labels, dims='collection')
     print('dataset size in GB {:0.2f}\n'.format(full_ds.nbytes / 1e9))

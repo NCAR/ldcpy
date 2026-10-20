@@ -1,5 +1,4 @@
 import calendar
-import copy
 import warnings
 
 
@@ -14,7 +13,6 @@ import xrft
 from cartopy import crs as ccrs
 from cartopy.util import add_cyclic_point
 from matplotlib import pyplot as plt
-from pylab import flipud
 
 from ldcpy import calcs as lm, util as lu
 
@@ -315,10 +313,9 @@ class calcsPlot(object):
             fig = plt.figure(dpi=300, figsize=(9, 2.5 * nrows))
             plt.rcParams.update({'font.size': 10})
 
-        mymap = copy.copy(mpl.colormaps[f'{self._color}'])
-        mymap.set_under(color='black')
-        mymap.set_over(color='white')
-        mymap.set_bad(alpha=0)
+        mymap = mpl.colormaps[f'{self._color}'].with_extremes(
+            under='black', over='white', bad=(0, 0, 0, 0)
+        )
 
         axs = {}
         psets = {}
@@ -446,7 +443,7 @@ class calcsPlot(object):
 
             elif data_type == 'cam-fv':
                 psets[i] = axs[i].imshow(
-                    img=flipud(no_inf_data_set), transform=ccrs.PlateCarree(), cmap=mymap
+                    img=np.flipud(no_inf_data_set), transform=ccrs.PlateCarree(), cmap=mymap
                 )
 
             if data_type != 'wrf':
@@ -587,10 +584,12 @@ class calcsPlot(object):
     def periodogram_plot(self, plot_data, title):
         plt.figure()
         for j in range(plot_data.sets.size):
-            dat = xrft.dft(
+            dat = xrft.fft(
                 xr.DataArray(plot_data[j].data - plot_data[j].data.mean()).chunk(
                     (plot_data[j].data - plot_data[j].data.mean()).size
-                )
+                ),
+                true_phase=False,
+                true_amplitude=False,
             )
             i = (np.multiply(dat, np.conj(dat)) / dat.size).real
             i = np.log10(i[2 : int(dat.size / 2) + 1])
