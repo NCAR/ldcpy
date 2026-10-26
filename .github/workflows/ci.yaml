@@ -75,7 +75,7 @@ jobs:
   #        uses: styfle/cancel-workflow-action@0.13.0
   #        with:
   #          access_token: ${{ github.token }}
-  #      - uses: actions/checkout@v6
+  #      - uses: actions/checkout@v7
   #      - uses: conda-incubator/setup-miniconda@v3
   #        with:
   #          channels: conda-forge
@@ -118,7 +118,7 @@ jobs:
         uses: styfle/cancel-workflow-action@0.13.0
         with:
           access_token: ${{ github.token }}
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       #   - uses: conda-incubator/setup-miniconda@v3
       - uses: mamba-org/setup-micromamba@v3
         with:
